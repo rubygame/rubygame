@@ -7,16 +7,13 @@ def wait_for_keypress(queue)
 		loop do
 			queue.get.each do |event|
 				case(event)
-					when Rubygame::QuitEvent
-						throw :rubygame_quit
-					when Rubygame::KeyDownEvent
-						if event.key == Rubygame::K_ESCAPE
-							throw :rubygame_quit
-						else
-							throw :keypress
-						end
+				when Rubygame::QuitEvent
+					throw :keypress
+				when Rubygame::KeyDownEvent
+					throw :keypress
 				end
 			end
+			Rubygame::Time.wait(5)
 		end
 	end
 end
@@ -24,6 +21,7 @@ end
 screen = Rubygame::Display.set_mode([320,240])
 queue = Rubygame::Queue.instance
 image = Rubygame::Image.load("panda.png")
+puts "Size is: [%s,%s]"%image.size
 image.blit(screen,[0,0])
 screen.update()
 wait_for_keypress(queue)
