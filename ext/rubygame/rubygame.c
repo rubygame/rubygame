@@ -60,7 +60,6 @@ void Init_rubygame()
 	rb_define_module_function(mRubygame,"init",rbgm_init,0);
 	cRect = rb_define_class_under(mRubygame,"Rect",rb_cObject);
 	eSDLError = rb_define_class_under(mRubygame,"SDLError",rb_eStandardError);
-	eALError = rb_define_class_under(mRubygame,"ALError",rb_eStandardError);
 
 	//mKey = rb_define_module_under(mRubygame,"Key");
 	//mMouse = rb_define_module_under(mRubygame,"Mouse");
