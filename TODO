@@ -4,9 +4,9 @@ Features:
 	- Clock class:
 		- Rubygame apps freeze when limiting FPS, esp. if window loses focus
 	- Draw module:
-		- pie and polygon functions do not work (SegFault)
 		- maybe add bezier curve
 	- Sound/music playback (SDL_Sound, OpenAL?)
+		- use rbopenal for good sound, also allow mixer for beeps and boops
 	- Transform module:
 		- hq2x, hq3x, hq4x -- http://www.hiend3d.com/hq3x.html
 	- CD playback
