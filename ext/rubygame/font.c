@@ -18,8 +18,11 @@
 */
 
 #include "rubygame.h"
-#ifdef HAVE_SDL_TTF
+
+#ifdef HAVE_SDL_TTF_H
 #include "SDL_ttf.h"
+
+VALUE rbgm_font_loadedp(VALUE module) { return Qtrue; }
 
 VALUE rbgm_font_init(VALUE module)
 {
@@ -220,6 +223,7 @@ VALUE rbgm_ttf_render(int argc, VALUE *argv, VALUE self)
 void Rubygame_Init_Font()
 {
 	mFont = rb_define_module_under(mRubygame,"Font");
+	rb_define_module_function(mFont,"loaded?",rbgm_font_loadedp,0);
 	rb_define_module_function(mFont,"init",rbgm_font_init,0);
 	rb_define_module_function(mFont,"quit",rbgm_font_quit,0);
 
@@ -239,23 +243,26 @@ void Rubygame_Init_Font()
 	rb_define_method(cTTF,"render",rbgm_ttf_render,-1);
 }
 
-#else /* ndef HAVE_SDL_TTF */
+#else /* HAVE_SDL_TTF_H */
 
-VALUE rbgm_ttf_notloaded(int argc, VALUE *argv, VALUE classmod)
+VALUE rbgm_font_loadedp(VALUE module) { return Qfalse; }
+
+VALUE rbgm_font_notloaded(int argc, VALUE *argv, VALUE classmod)
 {
-	rb_raise(rb_eStandardError,"TTF module could not be loaded: SDL_ttf is missing. Install SDL_ttf and recompile Rubygame.");
+	rb_raise(rb_eStandardError,"TTF could not be loaded: SDL_ttf is missing. Install SDL_ttf and recompile Rubygame.");
 	return Qnil;
 }
 
 void Rubygame_Init_Font()
 {
 	mFont = rb_define_module_under(mRubygame,"Font");
-	rb_define_module_function(mFont,"init",rbgm_ttf_notloaded,-1);
-	rb_define_module_function(mFont,"quit",rbgm_ttf_notloaded,-1);
+	rb_define_module_function(mFont,"loaded?",rbgm_font_loadedp,0);
+	rb_define_module_function(mFont,"init",rbgm_font_notloaded,-1);
+	rb_define_module_function(mFont,"quit",rbgm_font_notloaded,-1);
 
 	cTTF = rb_define_class_under(mFont,"TTF",rb_cObject);
-	rb_define_singleton_method(cTTF,"new",rbgm_ttf_notloaded,-1);
-	rb_define_method(cTTF,"initialize",rbgm_ttf_notloaded,-1);
+	rb_define_singleton_method(cTTF,"new",rbgm_font_notloaded,-1);
+	rb_define_method(cTTF,"initialize",rbgm_font_notloaded,-1);
 }
 
-#endif /* def HAVE_SDL_TTF */
+#endif /* HAVE_SDL_TTF_H */

@@ -9,15 +9,11 @@ sdl_config = with_config('sdl-config', 'sdl-config')
 $CFLAGS += ' -Wall ' + `#{sdl_config} --cflags`.chomp
 $LOCAL_LIBS += ' ' + `#{sdl_config} --libs`.chomp
 
-if have_library("SDL_gfx") then
-	$CFLAGS+= " -D HAVE_SDL_GFX"
-end
-if have_library("SDL_image") then
-	$CFLAGS+= " -D HAVE_SDL_IMAGE"
-end
-if have_library("SDL_ttf") then
-	$CFLAGS+= " -D HAVE_SDL_TTF"
-end
+have_header("SDL_gfxPrimitives.h")
+have_header("SDL_rotozoom.h")
+have_header("SDL_image.h")
+have_header("SDL_ttf.h")
+
 #if enable_config("opengl",false) then
 #	dir_config('x11','/usr/X11R6')
 #  

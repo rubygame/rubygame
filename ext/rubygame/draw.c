@@ -18,8 +18,10 @@
 */
 
 #include "rubygame.h"
-#ifdef HAVE_SDL_GFX
+#ifdef HAVE_SDL_GFXPRIMITIVES_H
 #include <SDL_gfxPrimitives.h>
+
+VALUE rbgm_draw_loadedp(VALUE module){ return Qtrue; }
 
 /* This is wrapped by rbgm_draw_line and rbgm_draw_aaline */
 void draw_line(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int aa)
@@ -470,6 +472,7 @@ void Rubygame_Init_Draw()
 {
 	/* Draw module */
 	mDraw = rb_define_module_under(mRubygame,"Draw");
+	rb_define_module_function(mDraw,"loaded?",rbgm_draw_loadedp,0);
 	/* Draw functions */
 	rb_define_module_function(mDraw,"line",rbgm_draw_line,4);
 	rb_define_module_function(mDraw,"aaline",rbgm_draw_aaline,4);
@@ -489,11 +492,13 @@ void Rubygame_Init_Draw()
 	rb_define_module_function(mDraw,"filled_pie",rbgm_draw_fillpie,5);
 
 }
-#else /* ndef HAVE_SDL_GFX */
+#else /* ndef HAVE_SDL_GFXPRIMITIVES_H */
 /*
 If SDL_gfx is not installed, module still exists, but
 all functions are dummy functions which raise StandardError
 */
+
+VALUE rbgm_draw_loadedp(VALUE module){ return Qfalse; }
 
 VALUE rbgm_draw_notloaded(int argc, VALUE *argv, VALUE classmod)
 {
@@ -505,23 +510,23 @@ void Rubygame_Init_Draw()
 {
 	/* Draw module */
 	mDraw = rb_define_module_under(mRubygame,"Draw");
+	rb_define_module_function(mDraw,"loaded?",rbgm_draw_loadedp,0);
 	/* Draw functions */
-	rb_define_module_function(mDraw,"line",rbgm_draw_notloaded,4);
-	rb_define_module_function(mDraw,"aaline",rbgm_draw_notloaded,4);
-	rb_define_module_function(mDraw,"box",rbgm_draw_notloaded,4);
-	rb_define_module_function(mDraw,"filled_box",rbgm_draw_notloaded,4);
-	rb_define_module_function(mDraw,"circle",rbgm_draw_notloaded,4);
-	rb_define_module_function(mDraw,"aacircle",rbgm_draw_notloaded,4);
-	rb_define_module_function(mDraw,"filled_circle",rbgm_draw_notloaded,4);
-	rb_define_module_function(mDraw,"ellipse",rbgm_draw_notloaded,4);
-	rb_define_module_function(mDraw,"aaellipse",rbgm_draw_notloaded,4);
-	rb_define_module_function(mDraw,"filled_ellipse",rbgm_draw_notloaded,4);
+	rb_define_module_function(mDraw,"line",rbgm_draw_notloaded,-1);
+	rb_define_module_function(mDraw,"aaline",rbgm_draw_notloaded,-1);
+	rb_define_module_function(mDraw,"box",rbgm_draw_notloaded,-1);
+	rb_define_module_function(mDraw,"filled_box",rbgm_draw_notloaded,-1);
+	rb_define_module_function(mDraw,"circle",rbgm_draw_notloaded,-1);
+	rb_define_module_function(mDraw,"aacircle",rbgm_draw_notloaded,-1);
+	rb_define_module_function(mDraw,"filled_circle",rbgm_draw_notloaded,-1);
+	rb_define_module_function(mDraw,"ellipse",rbgm_draw_notloaded,-1);
+	rb_define_module_function(mDraw,"aaellipse",rbgm_draw_notloaded,-1);
+	rb_define_module_function(mDraw,"filled_ellipse",rbgm_draw_notloaded,-1);
 
-	rb_define_module_function(mDraw,"polygon",rbgm_draw_notloaded,3);
-	rb_define_module_function(mDraw,"aapolygon",rbgm_draw_notloaded,3);
-	rb_define_module_function(mDraw,"filled_polygon",rbgm_draw_notloaded,3);
-	//rb_define_module_function(mDraw,"pie",rbgm_draw_notloaded,5);
-	rb_define_module_function(mDraw,"filled_pie",rbgm_draw_notloaded,5);
-
+	rb_define_module_function(mDraw,"polygon",rbgm_draw_notloaded,-1);
+	rb_define_module_function(mDraw,"aapolygon",rbgm_draw_notloaded,-1);
+	rb_define_module_function(mDraw,"filled_polygon",rbgm_draw_notloaded,-1);
+	//rb_define_module_function(mDraw,"pie",rbgm_draw_notloaded,-1);
+	rb_define_module_function(mDraw,"filled_pie",rbgm_draw_notloaded,-1);
 }
-#endif /* HAVE_SDL_GFX */
+#endif /* HAVE_SDL_GFXPRIMITIVES_H */

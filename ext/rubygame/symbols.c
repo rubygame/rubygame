@@ -51,6 +51,8 @@ VALUE rbgm_screen_flip(VALUE);
 /* Draw */
 VALUE mDraw;
 void Rubygame_Init_Draw();
+VALUE rbgm_draw_loadedp(VALUE);
+#ifdef HAVE_SDL_GFXPRIMITIVES_H
 void draw_line(VALUE, VALUE, VALUE, VALUE, int);
 VALUE rbgm_draw_line(VALUE, VALUE, VALUE, VALUE, VALUE);
 VALUE rbgm_draw_aaline(VALUE, VALUE, VALUE, VALUE, VALUE);
@@ -72,6 +74,9 @@ void draw_polygon(VALUE, VALUE, VALUE, int, int);
 VALUE rbgm_draw_polygon(VALUE, VALUE, VALUE, VALUE);
 VALUE rbgm_draw_aapolygon(VALUE, VALUE, VALUE, VALUE);
 VALUE rbgm_draw_fillpolygon(VALUE, VALUE, VALUE, VALUE);
+#else /* HAVE_SDL_GFXPRIMITIVES_H */
+VALUE rbgm_draw_notloaded(int, VALUE*, VALUE);
+#endif /* HAVE_SDL_GFXPRIMITIVES_H */
 
 /* Event */
 VALUE mEvent;
@@ -103,6 +108,8 @@ VALUE mFont;
 VALUE cTTF;
 VALUE cSFont;
 void Rubygame_Init_Font();
+VALUE rbgm_font_loadedp(VALUE);
+#ifdef HAVE_SDL_TTF_H
 VALUE rbgm_font_init(VALUE);
 VALUE rbgm_font_quit(VALUE);
 VALUE rbgm_ttf_new(int, VALUE*, VALUE);
@@ -117,12 +124,20 @@ VALUE rbgm_ttf_ascent(VALUE);
 VALUE rbgm_ttf_descent(VALUE);
 VALUE rbgm_ttf_lineskip(VALUE);
 VALUE rbgm_ttf_render(int, VALUE*, VALUE);
+#else /* HAVE_SDL_TTF_H */
+VALUE rbgm_image_notloaded(int, VALUE*, VALUE);
+#endif /* HAVE_SDL_TTF_H */
 
 /* Image */
 VALUE mImage;
 void Rubygame_Init_Image();
+VALUE rbgm_image_loadedp(VALUE);
+#ifdef HAVE_SDL_IMAGE_H
 VALUE rbgm_image_load(VALUE, VALUE);
 VALUE rbgm_image_savebmp(VALUE, VALUE, VALUE);
+#else /* HAVE_SDL_IMAGE_H */
+VALUE rbgm_image_notloaded(int, VALUE*, VALUE);
+#endif /* HAVE_SDL_IMAGE_H */
 
 /* Joy */
 VALUE mJoy;
@@ -166,7 +181,12 @@ VALUE rbgm_time_getticks(VALUE);
 /* Transform */
 VALUE mTrans;
 void Rubygame_Init_Transform();
+VALUE rbgm_font_loadedp(VALUE);
+#ifdef HAVE_SDL_ROTOZOOM_H
 VALUE rbgm_transform_rotozoom(int, VALUE*, VALUE);
 VALUE rbgm_transform_rotozoomsize(int, VALUE*, VALUE);
 VALUE rbgm_transform_zoom(int, VALUE*, VALUE);
 VALUE rbgm_transform_zoomsize(int, VALUE*, VALUE);
+#else /* HAVE_SDL_ROTOZOOM_H */
+VALUE rbgm_trans_notloaded(int, VALUE*, VALUE);
+#endif /* HAVE_SDL_ROTOZOOM_H */

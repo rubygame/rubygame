@@ -18,9 +18,13 @@
 */
 
 #include "rubygame.h"
+
+#ifdef HAVE_SDL_IMAGE_H
 #include "SDL_image.h"
 
 /* Image module functions: */
+
+VALUE rbgm_image_loadedp(VALUE module) { return Qtrue; }
 
 VALUE rbgm_image_load( VALUE module, VALUE filename )
 {
@@ -58,6 +62,29 @@ void Rubygame_Init_Image()
 	/* Image module */
 	mImage = rb_define_module_under(mRubygame,"Image");
 	/* Image methods */
+	rb_define_module_function(mImage,"loaded?",rbgm_image_loadedp,0);
 	rb_define_module_function(mImage,"load",rbgm_image_load,1);
 	rb_define_module_function(mImage,"savebmp",rbgm_image_savebmp,2);
 }
+
+#else /* HAVE_SDL_IMAGE_H */
+
+VALUE rbgm_image_notloaded(int argc, VALUE *argv, VALUE classmod)
+{
+	rb_raise(rb_eStandardError,"Image module could not be loaded: SDL_image is missing. Install SDL_image and recompile Rubygame.");	
+	return Qnil;
+}
+
+VALUE rbgm_image_loadedp(VALUE module) { return Qfalse; }
+
+void Rubygame_Init_Image()
+{
+	/* Image module */
+	mImage = rb_define_module_under(mRubygame,"Image");
+
+	rb_define_module_function(mImage,"loaded?",rbgm_image_loadedp,0);
+	rb_define_module_function(mImage,"load",rbgm_image_notloaded,-1);
+	rb_define_module_function(mImage,"savebmp",rbgm_image_notloaded,-1);
+}
+
+#endif /* HAVE_SDL_IMAGE_H */
