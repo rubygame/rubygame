@@ -17,6 +17,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifdef HAVE_SDL_GFX
 #include "rubygame.h"
 #include <SDL_rotozoom.h>
 
@@ -124,4 +125,27 @@ void Rubygame_Init_Transform()
 	rb_define_module_function(mTrans,"rotozoom_size",rbgm_transform_rotozoomsize,-1);
 	rb_define_module_function(mTrans,"zoom",rbgm_transform_zoom,-1);
 	rb_define_module_function(mTrans,"zoom_size",rbgm_transform_zoomsize,-1);
-}	
+}
+#else /* ndef HAVE_SDL_GFX */
+/*
+If SDL_gfx is not installed, module still exists, but
+all functions are dummy functions which raise StandardError
+*/
+
+VALUE rbgm_trans_notloaded(int argc, VALUE *argv, VALUE classmod)
+{
+	rb_raise(eStandardError,"Transform module could not be loaded: SDL_gfx is missing. Install SDL_gfx and recompile Rubygame.");
+	return Qnil;
+}
+
+void Rubygame_Init_Transform()
+{
+	mTrans = rb_define_module_under(mRubygame,"Transform");
+
+	rb_define_module_function(mTrans,"rotozoom",rbgm_trans_notloaded,-1);
+	rb_define_module_function(mTrans,"rotozoom_size",rbgm_trans_notloaded,-1);
+	rb_define_module_function(mTrans,"zoom",rbgm_trans_notloaded,-1);
+	rb_define_module_function(mTrans,"zoom_size",rbgm_trans_notloaded,-1);
+}
+
+#endif /* HAVE_SDL_GFX */

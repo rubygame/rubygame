@@ -17,6 +17,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifdef HAVE_SDL_GFX
 #include "rubygame.h"
 #include <SDL_gfxPrimitives.h>
 
@@ -488,3 +489,39 @@ void Rubygame_Init_Draw()
 	rb_define_module_function(mDraw,"filled_pie",rbgm_draw_fillpie,5);
 
 }
+#else /* ndef HAVE_SDL_GFX */
+/*
+If SDL_gfx is not installed, module still exists, but
+all functions are dummy functions which raise StandardError
+*/
+
+VALUE rbgm_draw_notloaded(int argc, VALUE *argv, VALUE classmod)
+{
+	rb_raise(eStandardError,"Transform module could not be loaded: SDL_gfx is missing. Install SDL_gfx and recompile Rubygame.");
+	return Qnil;
+}
+
+void Rubygame_Init_Draw()
+{
+	/* Draw module */
+	mDraw = rb_define_module_under(mRubygame,"Draw");
+	/* Draw functions */
+	rb_define_module_function(mDraw,"line",rbgm_draw_notloaded,4);
+	rb_define_module_function(mDraw,"aaline",rbgm_draw_notloaded,4);
+	rb_define_module_function(mDraw,"box",rbgm_draw_notloaded,4);
+	rb_define_module_function(mDraw,"filled_box",rbgm_draw_notloaded,4);
+	rb_define_module_function(mDraw,"circle",rbgm_draw_notloaded,4);
+	rb_define_module_function(mDraw,"aacircle",rbgm_draw_notloaded,4);
+	rb_define_module_function(mDraw,"filled_circle",rbgm_draw_notloaded,4);
+	rb_define_module_function(mDraw,"ellipse",rbgm_draw_notloaded,4);
+	rb_define_module_function(mDraw,"aaellipse",rbgm_draw_notloaded,4);
+	rb_define_module_function(mDraw,"filled_ellipse",rbgm_draw_notloaded,4);
+
+	rb_define_module_function(mDraw,"polygon",rbgm_draw_notloaded,3);
+	rb_define_module_function(mDraw,"aapolygon",rbgm_draw_notloaded,3);
+	rb_define_module_function(mDraw,"filled_polygon",rbgm_draw_notloaded,3);
+	//rb_define_module_function(mDraw,"pie",rbgm_draw_notloaded,5);
+	rb_define_module_function(mDraw,"filled_pie",rbgm_draw_notloaded,5);
+
+}
+#endif /* HAVE_SDL_GFX */
