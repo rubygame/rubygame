@@ -1,20 +1,26 @@
 Rubygame README
 ============
 
-	Rubygame is based on Ruby/SDL [1] and pygame [2], intended to provide
-	functionality similar to pygame, but for those who prefer Ruby over Python.
+	Rubygame is loosely based on Ruby/SDL [1] and pygame [2], intended
+	to provide functionality similar to pygame, but for those who 
+	prefer Ruby over Python. It was born out of a need (specifically,
+	MY need) for a clean, convenient Ruby-to-SDL binding. If Rubygame
+	isn't your cup of tea, you might also check out RUDL [3].
 
-	Note that while I intend to make it as easy to make games in Ruby as it is
-	to make games in Python, this is not just a clone of pygame. This is to say,
-	where there are opportunities to improve the layout (particularly to make it
-	more object-oriented), I will attempt to make those improvements.
+	Note that while I intend to make it as easy to make games in Ruby
+	as it is to make games in Python, this is not just a clone of 
+	pygame. This is to say, where there are opportunities to improve
+	the layout (particularly to make it more object-oriented), I will
+	attempt to make those improvements.
 
-	Many of the tutorials and examples for pygame will work with Rubygame, 
-	after some minor modification, so I encourage you to consult those as well.
+	Many of the tutorials and examples for pygame will work with 
+	Rubygame, after some minor modification, so I encourage you to 
+	consult those as well.
 
 	---- Footnotes ----
 	1. http://www.kmc.gr.jp/~ohai/rubysdl.en.html
 	2. http://www.pygame.org
+	3. http://rudl.sourceforge.net
 
 Requirements
 ------------
@@ -22,31 +28,32 @@ Requirements
 	Rubygame has been tested (and was developed) on the following,
 	although older/newer versions might work:
 
-		* ruby 1.8
-		* SDL 1.2.7
-		* SDL_gfx 2.0.10
-		* SDL_image 1.2.3
-		* SDL_ttf 2.0.6
+		* ruby        1.8    -  1.8.2
+		* SDL         1.2.7  -  1.2.8
+		* SDL_gfx     2.0.10 -  2.0.12
+		* SDL_image   1.2.3  -  1.2.4
+		* SDL_ttf     2.0.6  -  2.0.7
 
-	If you are compiling from source you will also need the following:
-		* a compiler, like gcc. gcc-3.3.2 to 3.3.4 are known to work.
+	If you are compiling source, you will also need the following:
+		* gcc         3.3.2  -  3.4.3
+			(other compilers might work too)
 
-	If you are using a binary-based ditribution (like Debian, Fedora, SuSe, 
-	Slackware, etc.) you will also need the "dev" packages of ruby, SDL,
-	SDL_gfx, SDL_image, and SDL_ttf in order to compile Rubygame.
+	If you are compiling source on a binary-based ditribution
+	(i.e., not Gentoo or LFS) you will also need the "dev" packages
+	of ruby, SDL, SDL_gfx, SDL_image, and SDL_ttf.
 
 Install
 -------
 
 	Decompress archive and enter its top directory.
-	Then type:
+	Then run ($ indicates as user, # as root):
 
 		$ ruby setup.rb config
 		$ ruby setup.rb setup
 		# ruby setup.rb install
 
-	You can also install files into your favorite directory
-	by supplying setup.rb some options. Try "ruby setup.rb --help".
+	You can also install files into your favorite directory by
+	supplying setup.rb some options. Try "ruby setup.rb --help".
 
 Usage
 -----
@@ -60,8 +67,8 @@ Usage
 		screen = Rubygame::Display.set_mode( [640,480] )
 		queue = Rubygame::Queue.instance()
 
-	For more information, see the documentation in the "doc/" folder or
-	online at rubygame.seul.org
+	For more information, see the documentation in the "doc/" folder
+	or online at http://rubygame.seul.org
 
 License
 -------
