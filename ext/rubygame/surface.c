@@ -239,11 +239,25 @@ VALUE rbgm_surface_blit(int argc, VALUE *argv, VALUE self)
 	if(argc < 2 || argc > 3)
 		rb_raise( rb_eArgError,"Wrong number of arguments to blit (%d for 2)",argc);
 
+	//int temp_x,temp_y,dest_x,dest_y,dest_w,dest_h, src_x,src_y,src_w,src_h;
 	int dest_x,dest_y, src_x,src_y,src_w,src_h;
+	VALUE returnrect;
 	SDL_Surface *src, *dest;
 	SDL_Rect *src_rect, *dest_rect;
 	Data_Get_Struct(self, SDL_Surface, src);
 	Data_Get_Struct(argv[0], SDL_Surface, dest);
+
+#if 0
+	/* experimental (broken) rectangle cropping code */
+	temp_x = rect_entry(argv[1],0);
+	temp_y = rect_entry(argv[1],1);
+	/* crop if it went off left or top */
+	dest_x = (temp_x > 0) ? temp_x : 0;
+	dest_y = (temp_y > 0) ? temp_y : 0;
+	/* crop if it went off right or bottom */
+	dest_w = (dest_x+src->w < dest->w) ? src->w : (dest->w - temp_x);
+	dest_h = (dest_y+src->h < dest->h) ? src->h : (dest->h - temp_y);
+#endif
 
 	dest_x = rect_entry(argv[1],0);
 	dest_y = rect_entry(argv[1],1);
@@ -252,6 +266,7 @@ VALUE rbgm_surface_blit(int argc, VALUE *argv, VALUE self)
 	/* did we get a src_rect argument or not? */
 	if(argc>2)
 	{
+		/* it might be good to check that it's actually a rect here */
 		src_x = rect_entry(argv[2],0);
 		src_y = rect_entry(argv[2],1);
 		src_w = rect_entry(argv[2],2);
@@ -264,10 +279,14 @@ VALUE rbgm_surface_blit(int argc, VALUE *argv, VALUE self)
 //	printf("dest_rect: [%d %d %d %d]\n",dest_rect->x,dest_rect->y,dest_rect->w,dest_rect->h);
 //	printf("src_rect:  [%d %d %d %d]\n",src_rect->x,src_rect->y,src_rect->w,src_rect->h);
 	SDL_BlitSurface(src,src_rect,dest,dest_rect);
-	/* blit should be made to return dest_rect as a Rubygame Rect */
+
+	returnrect = rb_funcall(cRect,rb_intern("new"),4,
+		INT2NUM(dest_x),INT2NUM(dest_y),\
+		INT2NUM(src->w),INT2NUM(src->h));
+
 	free(dest_rect);
 	free(src_rect);
-	return self;
+	return returnrect;
 }
 
 VALUE rbgm_surface_fill( int argc, VALUE *argv, VALUE self )
