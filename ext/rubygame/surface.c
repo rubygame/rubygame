@@ -234,57 +234,72 @@ VALUE rbgm_surface_set_colorkey( int argc, VALUE *argv, VALUE self)
 	return self;
 }
 
+static inline int max(int a, int b) {
+  return a > b ? a : b;
+}
+static inline int min(int a, int b) {
+  return a > b ? b : a;
+}
+
 VALUE rbgm_surface_blit(int argc, VALUE *argv, VALUE self)
 {
 	if(argc < 2 || argc > 3)
 		rb_raise( rb_eArgError,"Wrong number of arguments to blit (%d for 2)",argc);
 
-	//int temp_x,temp_y,dest_x,dest_y,dest_w,dest_h, src_x,src_y,src_w,src_h;
-	int dest_x,dest_y, src_x,src_y,src_w,src_h;
+	int left, top, right, bottom;
+	int blit_x,blit_y,blit_w,blit_h;
+	//int dest_x,dest_y,dest_w,dest_h;
+	int src_x,src_y,src_w,src_h;
 	VALUE returnrect;
 	SDL_Surface *src, *dest;
-	SDL_Rect *src_rect, *dest_rect;
+	SDL_Rect *src_rect, *blit_rect;
 	Data_Get_Struct(self, SDL_Surface, src);
 	Data_Get_Struct(argv[0], SDL_Surface, dest);
 
-#if 0
-	/* experimental (broken) rectangle cropping code */
-	temp_x = rect_entry(argv[1],0);
-	temp_y = rect_entry(argv[1],1);
-	/* crop if it went off left or top */
-	dest_x = (temp_x > 0) ? temp_x : 0;
-	dest_y = (temp_y > 0) ? temp_y : 0;
-	/* crop if it went off right or bottom */
-	dest_w = (dest_x+src->w < dest->w) ? src->w : (dest->w - temp_x);
-	dest_h = (dest_y+src->h < dest->h) ? src->h : (dest->h - temp_y);
-#endif
-
-	dest_x = rect_entry(argv[1],0);
-	dest_y = rect_entry(argv[1],1);
-	dest_rect = make_rect( dest_x, dest_y, src->w, src->h );
+	blit_x = rect_entry(argv[1],0);
+	blit_y = rect_entry(argv[1],1);
 
 	/* did we get a src_rect argument or not? */
 	if(argc>2)
 	{
-		/* it might be good to check that it's actually a rect here */
+		/* it might be good to check that it's actually a rect */
 		src_x = rect_entry(argv[2],0);
 		src_y = rect_entry(argv[2],1);
 		src_w = rect_entry(argv[2],2);
 		src_h = rect_entry(argv[2],3);
-		src_rect = make_rect( src_x, src_y, src_w, src_h );
 	}
 	else
-		src_rect = make_rect( 0, 0, src->w, src->h );
+	{
+		src_x = 0;
+		src_y = 0;
+		src_w = src->w;
+		src_h = src->h;
+	}
+	src_rect = make_rect( src_x, src_y, src_w, src_h );
+
+	/* experimental (broken) rectangle cropping code */
+	/* crop if it went off left/top/right/bottom */
+	left = max(blit_x,0);
+	top = max(blit_y,0);
+	right = min(blit_x+src_w,dest->w);
+	bottom = min(blit_y+src_h,dest->h);
 		
-//	printf("dest_rect: [%d %d %d %d]\n",dest_rect->x,dest_rect->y,dest_rect->w,dest_rect->h);
+	//blit_w = min(blit_x+blit_w,dest->w) - max(blit_x,0);
+	//blit_h = min(blit_y+blit_h,dest->h) - max(blit_y,0);
+	blit_w = right - left;
+	blit_h = bottom - top;
+	
+	blit_rect = make_rect( left, top, blit_w, blit_h );
+
+//	printf("blit_rect: [%d %d %d %d]\n",blit_rect->x,blit_rect->y,blit_rect->w,blit_rect->h);
 //	printf("src_rect:  [%d %d %d %d]\n",src_rect->x,src_rect->y,src_rect->w,src_rect->h);
-	SDL_BlitSurface(src,src_rect,dest,dest_rect);
+	SDL_BlitSurface(src,src_rect,dest,blit_rect);
 
 	returnrect = rb_funcall(cRect,rb_intern("new"),4,
-		INT2NUM(dest_x),INT2NUM(dest_y),\
-		INT2NUM(src->w),INT2NUM(src->h));
+		INT2NUM(blit_x),INT2NUM(blit_y),\
+		INT2NUM(blit_w),INT2NUM(blit_h));
 
-	free(dest_rect);
+	free(blit_rect);
 	free(src_rect);
 	return returnrect;
 }
