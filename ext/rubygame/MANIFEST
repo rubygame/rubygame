@@ -10,5 +10,6 @@ joystick.c
 rubygame.c
 rubygame.h
 surface.c
+symbols.c
 time.c
 transform.c
