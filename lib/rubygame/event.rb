@@ -17,33 +17,6 @@
 #	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-require "singleton" #used by Queue
-
-# Table of Contents:
-#
-# ALL_EVENT_CLASSES -- a list of all the event classes
-# key2str -- get display string for a key
-#
-# class Event
-#
-# class ActiveEvent
-# class KeyDownEvent
-# class KeyUpEvent
-# class MouseMotionEvent
-# class MouseDownEvent
-# class MouseUpEvent
-# class JoyAxisEvent
-# class JoyBallEvent
-# class JoyHatEvent
-# class JoyDownEvent
-# class JoyUpEvent
-# class ResizeEvent
-# class QuitEvent
-#
-# class Queue
-#
-# End Table of Contents
-
 module Rubygame
 
 	# List of all event classes.
@@ -54,21 +27,11 @@ module Rubygame
 
 	def Rubygame.key2str( sym, mods )
 		if (mods.include? K_LSHIFT) or (mods.include? K_RSHIFT)
-			str = Rubygame::Key::KEY2UPPER[sym]
+			return (Rubygame::Key::KEY2UPPER[sym]\
+				or Rubygame::Key::KEY2ASCII[sym] or "")
 		else
-			str = Rubygame::Key::KEY2LOWER[sym]
-		end
-
-		#it will be nil if it was not in KEY2UPPER or KEY2LOWER
-		if str == nil # last resort
-			str = Rubygame::Key::KEY2ASCII[sym] 
-		end
-
-		# it will still be nil if it wasn't in KEY2ASCII either
-		if str == nil
-			return ""
-		else
-			return str
+			return (Rubygame::Key::KEY2LOWER[sym]\
+				or Rubygame::Key::KEY2ASCII[sym] or "")
 		end
 	end
 
@@ -90,7 +53,7 @@ module Rubygame
 				@key = key
 				@string = Rubygame.key2str(key, mods) #a string or nil
 			elsif key.kind_of? String
-				@key = Rubygame::ASCII2KEY[key]
+				@key = Rubygame::Key::ASCII2KEY[key]
 				if @key != nil
 					@string = key
 				else
@@ -108,7 +71,7 @@ module Rubygame
 				@key = key
 				@string = Rubygame.key2str(key, mods) #a string or nil
 			elsif key.kind_of? String
-				@key = Rubygame::ASCII2KEY[key]
+				@key = Rubygame::Key::ASCII2KEY[key]
 				if @key != nil
 					@string = key
 				else
@@ -224,6 +187,8 @@ module Rubygame
 
 #------------------------------
 
+	require "singleton"
+
 	class Queue
 		include Singleton
 		def initialize()
@@ -231,12 +196,55 @@ module Rubygame
 			@@allowed = Rubygame::ALL_EVENT_CLASSES
 		end
 
-		def update_pending
-			#puts "Going to get SDL events..."
-			@@pending += get_sdl()
-			#puts "Got SDL events."
+		def allow(*types)
+			added = (Rubygame::ALL_EVENT_CLASSES - types.flatten()) & @@allowed
+			for type in types.flatten()
+				if type.kind_of? Class
+					if not @@allowed.include? type
+						@@allowed.push(type)
+					end
+				elsif type.kind_of? Event
+					@@allowed.push(type.class)
+				end
+			end
+			return added
 		end
-		private :update_pending
+
+		def allowed
+			return @@allowed.dup
+		end
+
+		def allowed=(*types)
+			added = Rubygame::ALL_EVENT_CLASSES - (types.flatten() & @@allowed)
+			@@allowed = []
+			self.allow(types)
+			return added
+		end
+
+		def block(*types)
+			removed = @@allowed & types.flatten()
+			for type in types.flatten()
+				if type.kind_of? Class
+					if @@allowed.include? type
+						@@allowed.delete(type)
+					end
+				elsif type.kind_of? Event
+					@allowed.delete(type.class)
+				end
+			end
+			return blocked
+		end
+
+		def blocked
+			return Rubygame::ALL_EVENT_CLASSES - @@allowed.dup
+		end
+
+		def blocked=(*types)
+			removed = types.flatten() & @@allowed
+			@@allowed = Rubygame.ALL_EVENT_CLASSES
+			self.block(types)
+			return removed
+		end
 
 		def get(*types)
 			allow = []
@@ -274,54 +282,31 @@ module Rubygame
 			return not_added
 		end
 
-		def allow(*types)
-			added = (Rubygame::ALL_EVENT_CLASSES - types.flatten()) & @@allowed
-			for type in types.flatten()
-				if type.kind_of? Class
-					if not @@allowed.include? type
-						@@allowed.push(type)
+		def update_pending
+			#puts "Going to get SDL events..."
+			@@pending += get_sdl()
+			#puts "Got SDL events."
+		end
+		private :update_pending
+
+		def wait( *types )
+			loop do
+				if types.length < 1 # no args
+					types = Rubygame::ALL_EVENT_CLASSES
+				else
+					# eliminate invalid args
+					types = types.flatten.delete_if{ |type| 
+						not Rubygame::ALL_EVENT_CLASSES.include? type
+					}
+					if types.length < 1 # no _valid_ args
+						return nil
 					end
-				elsif type.kind_of? Event
-					@@allowed.push(type.class)
+				end
+				event = _wait()
+				if types.include? event.class
+					return event
 				end
 			end
-			return added
-		end
-
-		def block(*types)
-			removed = @@allowed & types.flatten()
-			for type in types.flatten()
-				if type.kind_of? Class
-					if @@allowed.include? type
-						@@allowed.delete(type)
-					end
-				elsif type.kind_of? Event
-					@allowed.delete(type.class)
-				end
-			end
-			return blocked
-		end
-
-		def allowed
-			return @@allowed.dup
-		end
-
-		def blocked
-			return Rubygame::ALL_EVENT_CLASSES - @@allowed.dup
-		end
-
-		def allowed=(*types)
-			added = Rubygame::ALL_EVENT_CLASSES - (types.flatten() & @@allowed)
-			@@allowed = []
-			self.allow(types)
-			return added
-		end
-
-		def blocked=(*types)
-			removed = types.flatten() & @@allowed
-			@@allowed = Rubygame.ALL_EVENT_CLASSES
-			self.block(types)
-			return removed
 		end
 
 	end # class Queue

@@ -24,25 +24,14 @@ module Rubygame
 			attr_accessor :image, :rect
 	
 			def initialize
-				if not defined? @groups
-					@groups = Array.new
-				end
+				@groups = []
 			end
 
 			def add(*groups)
-				groups.flatten.each { |group|
-					if not @groups.include? group
+				groups.each { |group|
+					unless @groups.include? group
 						@groups.push(group)
-						group.add( self )
-					end
-				}
-			end
-
-			def remove(*groups)
-				groups.flatten.each { |group|
-					if @groups.include? group
-						@groups.remove(group)
-						group.remove(self)
+						group.push(self)
 					end
 				}
 			end
@@ -51,17 +40,22 @@ module Rubygame
 				return @groups.length > 0
 			end
 
-			def kill
-				@groups.each { |group| group.remove(self) }
-				@groups = []
+			attr_writer :col_rect
+			def col_rect
+				if defined? @col_rect 
+					return (@col_rect or rect)
+				else
+					return rect
+				end
 			end
 
-			def draw(destination)
-				@image.blit(destination, @rect)
-				return @rect
-			end
-
-			def update( *args )
+			def collide(other)
+				if other.class.is_a? Group
+					return collide_group(other)
+				elsif other.class.included_modules.include? Sprite and\
+					collide_sprite?(other)
+					return [other]
+				end
 			end
 
 			def collide_group(group)
@@ -80,74 +74,45 @@ module Rubygame
 				return self.rect.collide_rect?(sprite.rect)
 			end
 
-			def collide(other)
-				if other.class.included_modules.include? SpriteGroup
-					return self.collide_group(other)
-				elsif other.class.included_modules.include? Sprite
-					return(self.collide_sprite?(other) and [other])
-				end
+			def draw(destination)
+				self.image.blit(destination, self.rect)
+				return self.rect
 			end
+
+			def kill
+				@groups.each { |group| group.delete(self) }
+				@groups = []
+			end
+
+			def remove(*groups)
+				groups.each { |group|
+					if @groups.include? group
+						@groups.delete(group)
+						group.delete(self)
+					end
+				}
+			end
+
+			def update( *args )
+			end
+
 
 		end # module Sprite
 
-		module SpriteGroup
-			attr_reader :sprites
-
-			def initialize
-				if not defined? @sprites
-					@sprites = Array.new
-				end
-			end
-			
-			def add(*sprites)
-				sprites.flatten.each { |sprite|
-					if not @sprites.include? sprite
-						@sprites.push(sprite)
-						sprite.add(self)
-					end
-				}
-			end
-
-			def remove(*sprites)
-				sprites.flatten.each { |sprite|
-					if @sprite.include? sprite
-						@sprites.remove(sprite)
-						sprite.remove(self)
-					end
-				}
-			end
-
-			def draw(dest)
-				@sprites.each { |sprite| sprite.draw(dest) }
-			end
-
-			def clear
-				@sprites.each { |sprite| sprite.remove(self) }
-			end
-
-			def empty?
-				return @sprites.length == 0
-			end
-
-			def each
-				if not block_given?
-					raise(LocalJumpError,"no block given")
-				end
-				@sprites.each { |sprite|
-					yield sprite
-				}
-			end
-			
-			def update(*args)
-				@sprites.each { |sprite|
-					sprite.update(*args)
-				}
+		class Group < Array
+			def <<(sprite)
+				self.push(sprite)
+				return self
 			end
 
 			def call(symbol,*args)
-				@sprites.each { |sprite|
+				self.each { |sprite|
 					sprite.send(symbol,*args)
 				}
+			end
+
+			def clear
+				self.each { |sprite| sprite.remove(self) }
 			end
 
 			def collide_sprite(sprite)
@@ -156,7 +121,7 @@ module Rubygame
 
 			def collide_group(group, killa=false, killb=false)
 				sprites = {}
-				@sprites.each { |sprite|
+				self.each { |sprite|
 					sprites[sprite] = sprite.collide_group(group)
 				}
 				if killa
@@ -166,22 +131,53 @@ module Rubygame
 					sprites.each_value { |sprite| sprite.kill }
 				end
 			end
-		end #module SpriteGroup
 
-		class SpriteGroupClass
-			include SpriteGroup
-		end
-
-		module UpdateGroup
-			attr_accessor :dirty_rects
-
-			def initialize
-				super
-				@dirty_rects = Array.new
+			def delete(*sprites)
+				sprites.each { |sprite|
+					if self.include? sprite
+						super(sprite)
+						sprite.remove(self)
+					end
+				return self
+				}
 			end
 
 			def draw(dest)
-				@sprites.each { |sprite| 
+				self.each { |sprite| sprite.draw(dest) }
+			end
+
+			def push(*sprites)
+				sprites.each { |sprite|
+					unless self.include? sprite
+						super(sprite)
+						sprite.add(self)
+					end
+				return self
+				}
+			end
+
+			def update(*args)
+				self.each { |sprite|
+					sprite.update(*args)
+				}
+			end
+
+		end #class Group
+
+		module UpdateGroup
+			attr_accessor :dirty_rects
+			def UpdateGroup.extend_object(obj)
+				super
+				obj.dirty_rects = []
+			end
+
+			def initialize
+				super
+				@dirty_rects = []
+			end
+
+			def draw(dest)
+				self.each { |sprite| 
 					@dirty_rects.push( sprite.draw(dest) ) 
 				}
 				rects = @dirty_rects.dup
@@ -190,32 +186,35 @@ module Rubygame
 			end
 
 			def undraw(dest,background)
-				@sprites.each { |sprite|
+				self.each { |sprite|
 					background.blit(dest,sprite.rect,sprite.rect)
 					@dirty_rects.push(sprite.rect)
 				}
 			end
 		end # module UpdateGroup
 
-		class UpdateGroupClass
-			include SpriteGroup
-			include UpdateGroup
-		end
-
 		# can hold at most N sprites, removes old ones to make room
 		module LimitGroup
+			attr_accessor :limit
+			def LimitGroup.extend_object(obj)
+				super
+				obj.limit = 1
+			end
+
 			def initialize(limit=1)
 				@limit = limit
 			end
 
-			def add( *sprites )
-				sprites.flatten.each { |sprite|
-					if not @sprites.include? sprite
-						@sprites.push(sprite)
-						sprite.add(self)
-						if @sprites.length > @limit
-							@sprites.slice!(0)
+			def push(*sprites )
+				sprites.each { |sprite|
+					if not include? sprite
+						super(sprite)
+						if length > @limit
+							self.slice!(0)
 						end
+					else # move sprite to the back of the queue
+						self.delete(sprite)
+						super(sprite)
 					end
 				}
 			end

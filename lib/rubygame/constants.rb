@@ -28,14 +28,14 @@ module Rubygame
 		}
 		# And to translate the other way...
 		STR2MOUSE = MOUSE2STR.invert()
-		# And allow numbers too...
+		# And allow numbers too (1 = left, so on)...
 		STR2MOUSE[1] = MOUSE_LEFT
 		STR2MOUSE[2] = MOUSE_MIDDLE
 		STR2MOUSE[3] = MOUSE_RIGHT
 	end # module Mouse
 
 	module Key
-		# A big old hash, to translate keysyms into ASCII
+		# All the keys which have ASCII print values
 		# It is 87 lines from here to the closing }, if you want to skip it...
 		KEY2ASCII = {
 			K_BACKSPACE => "\b",
@@ -123,19 +123,16 @@ module Rubygame
 			K_KP_PLUS => "+",
 			K_KP_ENTER => "\n", #again, SDL docs say "\r"
 			K_KP_EQUALS => "=",
-		} #phew, that is a biggie!
+		}
+
 		# And to translate the other way...
 		ASCII2KEY = KEY2ASCII.invert()
 		# accept uppercase letters too, return same as lowercase version:
 		("a".."z").each{ |letter| ASCII2KEY[letter.upcase] = ASCII2KEY[letter] }
 
-		# 71 lines from here to end }
+		# All the keys that are affected by the Shift key, in lower case
+		# 49 lines from here to the end of the hash
 		KEY2LOWER = {
-			K_BACKSPACE => "\b",
-			K_TAB => "\t",
-			K_RETURN => "\n",
-			K_ESCAPE => "^[",
-			K_SPACE => " ",
 			K_QUOTE => "\'",
 			K_COMMA => ",",
 			K_MINUS => "-",
@@ -183,36 +180,15 @@ module Rubygame
 			K_X => "x",
 			K_Y => "y",
 			K_Z => "z",
-			K_KP0 => "0",
-			K_KP1 => "1",
-			K_KP2 => "2",
-			K_KP3 => "3",
-			K_KP4 => "4",
-			K_KP5 => "5",
-			K_KP6 => "6",
-			K_KP7 => "7",
-			K_KP8 => "8",
-			K_KP9 => "9",
-			K_KP_PERIOD => ".",
-			K_KP_DIVIDE => "/",
-			K_KP_MULTIPLY => "*",
-			K_KP_MINUS => "-",
-			K_KP_PLUS => "+",
-			K_KP_ENTER => "\n",
-			K_KP_EQUALS => "=",
 		}
 
-		# 71 lines from here to end }
+		# All the keys that are affected by the Shift key, in UPPER case
+		# 49 lines from here to the end of the hash
 		KEY2UPPER = {
-			K_BACKSPACE => "\b",
-			K_TAB => "\t",
-			K_RETURN => "\n",
-			K_ESCAPE => "^[",
-			K_SPACE => " ",
 			K_QUOTE => "\"",
-			K_COMMA => ",",
+			K_COMMA => "<",
 			K_MINUS => "_",
-			K_PERIOD => "<",
+			K_PERIOD => ">",
 			K_SLASH => "?",
 			K_0 => ")",
 			K_1 => "!",
@@ -256,23 +232,6 @@ module Rubygame
 			K_X => "X",
 			K_Y => "Y",
 			K_Z => "Z",
-			K_KP0 => "0",
-			K_KP1 => "1",
-			K_KP2 => "2",
-			K_KP3 => "3",
-			K_KP4 => "4",
-			K_KP5 => "5",
-			K_KP6 => "6",
-			K_KP7 => "7",
-			K_KP8 => "8",
-			K_KP9 => "9",
-			K_KP_PERIOD => ".",
-			K_KP_DIVIDE => "/",
-			K_KP_MULTIPLY => "*",
-			K_KP_MINUS => "-",
-			K_KP_PLUS => "+",
-			K_KP_ENTER => "\n",
-			K_KP_EQUALS => "=",
 		}
 	end #module Key
 

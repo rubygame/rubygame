@@ -1,17 +1,16 @@
 == Sprite
 === Sprite
 You can include Rubygame::Sprite::Sprite in a class to make instances of the
-class be sprites. In order to work correctly, each sprite needs two attributes
-(accessors for these attributes are available):
-    * ((|@image|)): a Surface containing the sprite's image. Required for the
-      default ((<Sprite#draw>)) method to work properly.
-    * ((|@rect|)): a Rect of the sprite's location/size. Required for the
+class be sprites. In order to work correctly, each sprite needs two methods:
+    * ((|image|)): return a Surface containing the sprite's image. Required for
+      the default ((<Sprite#draw>)) method to work properly.
+    * ((|rect|)): return a Rect of the sprite's location/size. Required for the
       default ((<Sprite#draw>)), ((<Sprite#collide_group>)), and 
       ((<Sprite#collide_sprite>)) methods to work properly.
 Additionally, each sprite has a ((|@groups|)) attribute (and corresponding
 accessor), which is created when you call ((<Sprite#initialize>)). Use
 ((<Sprite#add>)) and ((<Sprite#remove>)) to cleanly modify ((|@groups|)).
-	* ((|@groups|)): an Array of all the groups of which the sprite is a member.
+	* ((|@groups|)): an Array of the groups of which the sprite is a member.
 
 --- Sprite#initialize
     Should be called (e.g. using super) when a sprite is initialized. Creates
@@ -23,6 +22,13 @@ accessor), which is created when you call ((<Sprite#initialize>)). Use
 
 --- Sprite#alive?
     Returns true if the sprite is in any groups.
+
+--- Sprite#col_rect
+--- Sprite#col_rect=( rect )
+    By default, accessors to ((|@col_rect|)), an optional rect which will be
+    used for the purposes of collision detection only (not drawing). If
+    ((|@col_rect|)) has not been set, attempting to read it will return the
+    value of ((<Sprite#rect>)) automatically.
 
 --- Sprite#collide_group( group )
     Return an array of all sprites in the given group that collide with the
@@ -39,8 +45,22 @@ accessor), which is created when you call ((<Sprite#initialize>)). Use
     needed.
         * ((|dest|)): the destination surface to blit to.
 
+--- Sprite#image
+--- Sprite#image=
+    By default, an accessor to ((|@image|)), which should be a Surface of the
+    sprite's image. You can override this method to do other things, but it
+    should ((*always*)) return a Surface. Required for the sprite to be drawn.
+
 --- Sprite#kill
     Remove the sprite from all groups.
+
+--- Sprite#rect
+--- Sprite#rect=
+    By default, an accessor to ((|@rect|)), which should be a Rect of the 
+    sprite's location/size. You can override this method to do other things, 
+    but it should ((*always*)) return a Rect. Required for the sprite to be
+    drawn or collision detected (unless ((<col_rect|Sprite#col_rect>)) is
+    present).
 
 --- Sprite#remove( *groups )
     Remove the sprite from the given group(s), if the sprite is in the groups.
@@ -50,34 +70,24 @@ accessor), which is created when you call ((<Sprite#initialize>)). Use
     Does nothing. Should be overridden to update the sprite's state (e.g. 
     location, image, etc.) in a meaningful way.
 
-=== SpriteGroup
-You can include Rubygame::Sprite::SpriteGroup in a class to make instances of
-the class be SpriteGroups. Alternatively, you can create an instance of
-((<SpriteGroupClass>)), which includes this module.
+=== Group
+A Group is a subclass of Array, used to manage sets of sprites. The sprites can
+be drawn, updated, and check collision with other sprites or groups. A Group
+can only include a Sprite once (no duplicates).
 
-A SpriteGroup has a list of member sprites, ((|@sprites|)), (and corresponding
-accessor) which is created by ((<SpriteGroup#initialize>)). It uses this list 
-to draw and check collision, among other things. Use ((<SpriteGroup#add>)) and 
-((<SpriteGroup#remove>)) to cleanly modify ((|@sprites|)).
-	* ((|@sprites|)): an Array of all the sprites which are a member of the 
-      group.
+--- Group#<<( sprite )
+    Append the given sprite to the Group. If the Sprite is already in the
+    group, it will not be added.
 
---- SpriteGroup#initialize
-    Should be called (e.g. using super) when a group is initialized. Creates
-    ((|@sprites|)).
-
---- SpriteGroup#add( *sprites )
-    Add the given sprite(s) to the group, if the sprites are not in the group.
-
---- SpriteGroup#call( symbol, *args )
+--- Group#call( symbol, *args )
     A shortcut to call a method on all sprites in the group.
         * ((|symbol|)): the method to call, as a (({:symbol})).
         * ((|args|)): the args to be passed to the sprites.
 
---- SpriteGroup#clear
+--- Group#clear
     Remove all sprites from ((|@sprites|)).
 
---- SpriteGroup#collide_group( other_group, killa, killb )
+--- Group#collide_group( other_group, killa, killb )
     Check collision between all sprites in the group and all sprites in another
     group. Optionally kill colliding sprites from one or both groups.
         * ((|other_group|)): the group to check collision with.
@@ -86,49 +96,48 @@ to draw and check collision, among other things. Use ((<SpriteGroup#add>)) and
         * ((|killb|)): give true to kill all sprites in the other group that
           collide with sprites in the group.
 
---- SpriteGroup#collide_sprite( sprite )
+--- Group#collide_sprite( sprite )
     Check collision between all sprites in the group and another sprite. This
     is equivalent to calling ((<Sprite#collide_group>))( group ).
         * ((|sprite|)): the sprite to check collision with.
 
---- SpriteGroup#draw( dest )
+--- Group#delete( *sprites )
+    Remove the given sprites from the Group.
+
+--- Group#draw( dest )
     Calls ((<draw|Sprite#draw>)) for each sprite, with the destination surface 
     as the argument. The sprite is responsible for actually blitting to the 
     destination surface.
 
---- SpriteGroup#each { |sprite| ... }
-    Iterate over all sprites in ((|@sprite|)).
+--- Group#push( *sprites )
+    Add the given sprite(s) to the Group. If any sprite is given that is 
+    already in the group, that sprite will not be added.
 
---- SpriteGroup#empty?
-    True if there are no sprites in the group.
-
---- SpriteGroup#update( *args )
+--- Group#update( *args )
     A shortcut to call ((<update|Sprite#update>)) on all the sprites in the
     group with the given arguments. Note that the default ((<Sprite#update>))
     does nothing, and should be overridden to provide meaningful behavior.
 
-=== SpriteGroupClass
-A simple class which includes the ((<SpriteGroup>)) module.
 
 === UpdateGroup
-Adds one feature to the ((<SpriteGroup|SpriteGroup mixin>)) (both should be
-included in a class): the ((<UpdateGroup#undraw>)) method. By calling this,
-updating the sprites (with ((<SpriteGroup#update>))), and then calling the new
-((<draw|UpdateGroup#draw>)) method, and then passing the returned list of Rects
-to ((<Screen#update>)), you can update only the part of the screen that has
-changed, which is more efficient than re-drawing the entire thing.
+Include Rubygame::Sprite::UpdateGroup to add the ((<UpdateGroup#undraw>)) 
+method to a group. By calling this, updating the sprites (with 
+((<Group#update>))), calling the new ((<draw|UpdateGroup#draw>)) method,
+and then passing the returned list of Rects to ((<Screen#update>)), you can 
+update only the part of the screen that has changed, which is more efficient 
+than updating the entire thing.
 
 To facilitate this new functionality, the group has a new attribute (and 
-corresponding accessor), ((|@dirty_rects|)), which is created by
+corresponding accessor), ((|@dirty_rects|)), which is created when you call
 ((<UpdateGroup#initialize>)).
     * ((|@dirty_rects|)): an Array to hold the rects which need to be re-drawn.
 
 --- UpdateGroup#initialize
-    Should be called (e.g. using super) when a group is initialized. Creates
-    ((|@dirty_rects|)) and calls super.
+    Should be called (e.g. using (({super}))) when a group is initialized.
+    Calls (({super})) and creates ((|@dirty_rects|)).
 
 --- UpdateGroup#draw( dest )
-    The same as ((<SpriteGroup#draw>)), but returns a list of all the Rects
+    The same as ((<Group#draw>)), but returns a list of all the Rects
     which need to be updated on the Screen, including the Rects from 
     ((<UpdateGroup#undraw>)). The list should be passed to ((<Screen#update>)).
 
@@ -140,21 +149,19 @@ corresponding accessor), ((|@dirty_rects|)), which is created by
           The sprite's ((|@rect|)) is used as a source rect for the blit. This
           surface should be about the same size as ((|dest|)) to look right.
 
-=== UpdateGroupClass
-A simple class which includes the ((<UpdateGroup>)) and 
-((<SpriteGroup>)) modules.
-
 --- LimitGroup
-Limits a sprite group to a certain number of sprites. If any further sprites
-are added, older sprites will be removed on a FIFO (first in, first out) basis.
+Include Rubygame::Sprite::LimitGroup to limit a sprite group to a certain 
+number of sprites. If any further sprites are added, older sprites will be 
+removed on a "first in, first out" basis.
 
 To facilitate this new functionality, the group has a new attribute (and 
-corresponding accessor), ((|@limit|)), which is created by
+corresponding accessor), ((|@limit|)), which is created when you call
 ((<LimitGroup#initialize>)).
+    * ((|@limit|)): the maximum number of sprites the group can hold.
 
 --- LimitGroup#initialize( limit=1 )
-    Should be called (e.g. using super) when a group is initialized. Creates
-    ((|@limit|)) and calls super.
+    Should be called (e.g. using super) when a group is initialized. Calls
+    (({super})) and creates ((|@limit|)).
         * ((|limit|)): the maximum number of sprites which can be in the group.
           The default is 1.
 

@@ -45,7 +45,6 @@ class Panda
 	end
 
 	def update(time)
-
 		x,y = @rect.center
 		self.update_image(time)
 		@rect.size = @image.size
@@ -109,9 +108,11 @@ puts "title: %s   icon title: %s"%screen.get_caption()
 panda1 = SpinnyPanda.new(100,50)
 panda2 = ExpandaPanda.new(150,50)
 panda3 = WobblyPanda.new(200,50,0.5)
-pandas = Rubygame::Sprite::UpdateGroupClass.new
-pandas.add(panda1,panda2,panda3)
-puts "panda1.groups: %s"%[panda1.groups]
+
+pandas = Rubygame::Sprite::Group.new
+pandas.extend(Rubygame::Sprite::UpdateGroup)
+pandas.push(panda1,panda2,panda3)
+puts "pandas: %s"%pandas.inspect
 
 background = Rubygame::Surface.new(screen.size)
 puts "default colorkey is nil?: %s"%[background.get_colorkey==nil]
@@ -141,11 +142,11 @@ Rubygame::Draw.aapolygon(background,\
 # draw a pizza!!
 Rubygame::Draw.filled_pie(background,[250,200],34,[210,150],[180,130,50])
 Rubygame::Draw.filled_pie(background,[250,200],30,[210,150],[230,180,80])
-Rubygame::Draw.filled_circle(background,[240,180],5,[200,50,10])
-Rubygame::Draw.filled_circle(background,[265,185],5,[200,50,10])
-Rubygame::Draw.filled_circle(background,[258,200],5,[200,50,10])
-Rubygame::Draw.filled_circle(background,[240,215],5,[200,50,10])
-Rubygame::Draw.filled_circle(background,[260,220],5,[200,50,10])
+Rubygame::Draw.filled_circle(background,[240,180],4,[200,50,10])
+Rubygame::Draw.filled_circle(background,[265,185],4,[200,50,10])
+Rubygame::Draw.filled_circle(background,[258,200],4,[200,50,10])
+Rubygame::Draw.filled_circle(background,[240,215],4,[200,50,10])
+Rubygame::Draw.filled_circle(background,[260,220],4,[200,50,10])
 
 a.blit(background,[50,50],[0,0,90,80])
 screen.update()
@@ -211,7 +212,7 @@ catch(:rubygame_quit) do
 		pandas.draw(screen)
 		screen.update()
 		update_time = clock.tick()
-		#update_time = clock.tick(100)
+		#update_time = clock.tick(100) # causes freeze
 		if not fps == clock.fps
 			fps = clock.fps
 			screen.set_caption("Rubygame test [%d fps]"%fps)
