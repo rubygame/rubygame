@@ -24,151 +24,155 @@
 #include <ruby.h>
 #include <stdio.h>
 
+/* As of 20 Dec 2004 (svn revision 20) the symbols are defined in symbols.c 
+ * so that it will compile cleanly on MacOSX.
+ */
+
 /* General */
-VALUE mRubygame;
-VALUE eSDLError;
-VALUE cRect;
-VALUE mKey;
-VALUE mMouse;
-VALUE rbgm_init(VALUE);
-SDL_Rect *make_rect(int x, int y, int w, int h);
-int rect_entry(VALUE rect, int index);
-void Define_Rubygame_Constants();
+extern VALUE mRubygame;
+extern VALUE eSDLError;
+extern VALUE cRect;
+extern VALUE mKey;
+extern VALUE mMouse;
+extern VALUE rbgm_init(VALUE);
+extern SDL_Rect *make_rect(int x, int y, int w, int h);
+extern int rect_entry(VALUE rect, int index);
+extern void Define_Rubygame_Constants();
 
 /* Display */
-VALUE mDisplay;
-VALUE cScreen;
-void Rubygame_Init_Display();
-VALUE rbgm_display_setmode(int, VALUE*, VALUE);
-VALUE rbgm_display_getsurface(VALUE);
-VALUE rbgm_screen_new(VALUE); /* dummy function */
-VALUE rbgm_screen_getcaption(VALUE);
-VALUE rbgm_screen_setcaption(int, VALUE*, VALUE);
-VALUE rbgm_screen_update(int, VALUE*, VALUE);
-VALUE rbgm_screen_updaterects(VALUE, VALUE);
-VALUE rbgm_screen_flip(VALUE);
+extern VALUE mDisplay;
+extern VALUE cScreen;
+extern void Rubygame_Init_Display();
+extern VALUE rbgm_display_setmode(int, VALUE*, VALUE);
+extern VALUE rbgm_display_getsurface(VALUE);
+extern VALUE rbgm_screen_new(VALUE); /* dummy function */
+extern VALUE rbgm_screen_getcaption(VALUE);
+extern VALUE rbgm_screen_setcaption(int, VALUE*, VALUE);
+extern VALUE rbgm_screen_update(int, VALUE*, VALUE);
+extern VALUE rbgm_screen_updaterects(VALUE, VALUE);
+extern VALUE rbgm_screen_flip(VALUE);
 
 /* Draw */
-VALUE mDraw;
-void Rubygame_Init_Draw();
-void draw_line(VALUE, VALUE, VALUE, VALUE, int);
-VALUE rbgm_draw_line(VALUE, VALUE, VALUE, VALUE, VALUE);
-VALUE rbgm_draw_aaline(VALUE, VALUE, VALUE, VALUE, VALUE);
-void draw_rect(VALUE, VALUE, VALUE, VALUE, int);
-VALUE rbgm_draw_rect(VALUE, VALUE, VALUE, VALUE, VALUE);
-VALUE rbgm_draw_fillrect(VALUE, VALUE, VALUE, VALUE, VALUE);
-void draw_circle(VALUE, VALUE, VALUE, VALUE, int, int);
-VALUE rbgm_draw_circle(VALUE, VALUE, VALUE, VALUE, VALUE);
-VALUE rbgm_draw_aacircle(VALUE, VALUE, VALUE, VALUE, VALUE);
-VALUE rbgm_draw_fillcircle(VALUE, VALUE, VALUE, VALUE, VALUE);
-void draw_ellipse(VALUE, VALUE, VALUE, VALUE, int, int);
-VALUE rbgm_draw_ellipse(VALUE, VALUE, VALUE, VALUE, VALUE);
-VALUE rbgm_draw_aaellipse(VALUE, VALUE, VALUE, VALUE, VALUE);
-VALUE rbgm_draw_fillellipse(VALUE, VALUE, VALUE, VALUE, VALUE);
-void draw_pie(VALUE, VALUE, VALUE, VALUE, VALUE, int);
-VALUE rbgm_draw_pie(VALUE, VALUE, VALUE, VALUE, VALUE, VALUE);
-VALUE rbgm_draw_fillpie(VALUE, VALUE, VALUE, VALUE, VALUE, VALUE);
-void draw_polygon(VALUE, VALUE, VALUE, int, int);
-VALUE rbgm_draw_polygon(VALUE, VALUE, VALUE, VALUE);
-VALUE rbgm_draw_aapolygon(VALUE, VALUE, VALUE, VALUE);
-VALUE rbgm_draw_fillpolygon(VALUE, VALUE, VALUE, VALUE);
+extern VALUE mDraw;
+extern void Rubygame_Init_Draw();
+extern void draw_line(VALUE, VALUE, VALUE, VALUE, int);
+extern VALUE rbgm_draw_line(VALUE, VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_aaline(VALUE, VALUE, VALUE, VALUE, VALUE);
+extern void draw_rect(VALUE, VALUE, VALUE, VALUE, int);
+extern VALUE rbgm_draw_rect(VALUE, VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_fillrect(VALUE, VALUE, VALUE, VALUE, VALUE);
+extern void draw_circle(VALUE, VALUE, VALUE, VALUE, int, int);
+extern VALUE rbgm_draw_circle(VALUE, VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_aacircle(VALUE, VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_fillcircle(VALUE, VALUE, VALUE, VALUE, VALUE);
+extern void draw_ellipse(VALUE, VALUE, VALUE, VALUE, int, int);
+extern VALUE rbgm_draw_ellipse(VALUE, VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_aaellipse(VALUE, VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_fillellipse(VALUE, VALUE, VALUE, VALUE, VALUE);
+extern void draw_pie(VALUE, VALUE, VALUE, VALUE, VALUE, int);
+extern VALUE rbgm_draw_pie(VALUE, VALUE, VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_fillpie(VALUE, VALUE, VALUE, VALUE, VALUE, VALUE);
+extern void draw_polygon(VALUE, VALUE, VALUE, int, int);
+extern VALUE rbgm_draw_polygon(VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_aapolygon(VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_fillpolygon(VALUE, VALUE, VALUE, VALUE);
 
 /* Event */
-VALUE mEvent;
-VALUE cEvent;
-VALUE cQueue;
-VALUE cActiveEvent;
-VALUE cKeyDownEvent;
-VALUE cKeyUpEvent;
-VALUE cMouseMotionEvent;
-VALUE cMouseDownEvent;
-VALUE cMouseUpEvent;
-VALUE cJoyAxisEvent;
-VALUE cJoyBallEvent;
-VALUE cJoyHatEvent;
-VALUE cJoyDownEvent;
-VALUE cJoyUpEvent;
-VALUE cQuitEvent;
-VALUE cSysWMEvent;
-VALUE cResizeEvent;
-void Rubygame_Init_Event();
-VALUE convert_active(Uint8);
-VALUE convert_keymod(SDLMod);
-VALUE convert_mousebuttons(Uint8);
-VALUE rbgm_convert_sdlevent(SDL_Event);
-VALUE rbgm_queue_getsdl(VALUE);
+extern VALUE mEvent;
+extern VALUE cEvent;
+extern VALUE cQueue;
+extern VALUE cActiveEvent;
+extern VALUE cKeyDownEvent;
+extern VALUE cKeyUpEvent;
+extern VALUE cMouseMotionEvent;
+extern VALUE cMouseDownEvent;
+extern VALUE cMouseUpEvent;
+extern VALUE cJoyAxisEvent;
+extern VALUE cJoyBallEvent;
+extern VALUE cJoyHatEvent;
+extern VALUE cJoyDownEvent;
+extern VALUE cJoyUpEvent;
+extern VALUE cQuitEvent;
+extern VALUE cSysWMEvent;
+extern VALUE cResizeEvent;
+extern void Rubygame_Init_Event();
+extern VALUE convert_active(Uint8);
+extern VALUE convert_keymod(SDLMod);
+extern VALUE convert_mousebuttons(Uint8);
+extern VALUE rbgm_convert_sdlevent(SDL_Event);
+extern VALUE rbgm_queue_getsdl(VALUE);
 
 /* Font */
-VALUE mFont;
-VALUE cTTF;
-VALUE cSFont;
-void Rubygame_Init_Font();
-VALUE rbgm_font_init(VALUE);
-VALUE rbgm_font_quit(VALUE);
-VALUE rbgm_ttf_new(int, VALUE*, VALUE);
-VALUE rbgm_ttf_getbold(VALUE);
-VALUE rbgm_ttf_setbold(VALUE, VALUE);
-VALUE rbgm_ttf_getitalic(VALUE);
-VALUE rbgm_ttf_setitalic(VALUE, VALUE);
-VALUE rbgm_ttf_getunderline(VALUE);
-VALUE rbgm_ttf_setunderline(VALUE, VALUE);
-VALUE rbgm_ttf_height(VALUE);
-VALUE rbgm_ttf_ascent(VALUE);
-VALUE rbgm_ttf_descent(VALUE);
-VALUE rbgm_ttf_lineskip(VALUE);
-VALUE rbgm_ttf_render(int, VALUE*, VALUE);
+extern VALUE mFont;
+extern VALUE cTTF;
+extern VALUE cSFont;
+extern void Rubygame_Init_Font();
+extern VALUE rbgm_font_init(VALUE);
+extern VALUE rbgm_font_quit(VALUE);
+extern VALUE rbgm_ttf_new(int, VALUE*, VALUE);
+extern VALUE rbgm_ttf_getbold(VALUE);
+extern VALUE rbgm_ttf_setbold(VALUE, VALUE);
+extern VALUE rbgm_ttf_getitalic(VALUE);
+extern VALUE rbgm_ttf_setitalic(VALUE, VALUE);
+extern VALUE rbgm_ttf_getunderline(VALUE);
+extern VALUE rbgm_ttf_setunderline(VALUE, VALUE);
+extern VALUE rbgm_ttf_height(VALUE);
+extern VALUE rbgm_ttf_ascent(VALUE);
+extern VALUE rbgm_ttf_descent(VALUE);
+extern VALUE rbgm_ttf_lineskip(VALUE);
+extern VALUE rbgm_ttf_render(int, VALUE*, VALUE);
 
 /* Image */
-VALUE mImage;
-void Rubygame_Init_Image();
-VALUE rbgm_image_load(VALUE, VALUE);
-VALUE rbgm_image_savebmp(VALUE, VALUE, VALUE);
+extern VALUE mImage;
+extern void Rubygame_Init_Image();
+extern VALUE rbgm_image_load(VALUE, VALUE);
+extern VALUE rbgm_image_savebmp(VALUE, VALUE, VALUE);
 
 /* Joy */
-VALUE mJoy;
-VALUE cJoystick;
-void Rubygame_Init_Joystick();
-VALUE rbgm_joy_numjoysticks(VALUE);
-VALUE rbgm_joy_getname(VALUE, VALUE);
-VALUE rbgm_joystick_new(int, VALUE*, VALUE);
-VALUE rbgm_joystick_index(VALUE);
-VALUE rbgm_joystick_name(VALUE);
-VALUE rbgm_joystick_numaxes(VALUE);
-VALUE rbgm_joystick_numballs(VALUE);
-VALUE rbgm_joystick_numhats(VALUE);
-VALUE rbgm_joystick_numbuttons(VALUE);
+extern VALUE mJoy;
+extern VALUE cJoystick;
+extern void Rubygame_Init_Joystick();
+extern VALUE rbgm_joy_numjoysticks(VALUE);
+extern VALUE rbgm_joy_getname(VALUE, VALUE);
+extern VALUE rbgm_joystick_new(int, VALUE*, VALUE);
+extern VALUE rbgm_joystick_index(VALUE);
+extern VALUE rbgm_joystick_name(VALUE);
+extern VALUE rbgm_joystick_numaxes(VALUE);
+extern VALUE rbgm_joystick_numballs(VALUE);
+extern VALUE rbgm_joystick_numhats(VALUE);
+extern VALUE rbgm_joystick_numbuttons(VALUE);
 
 /* Surface */
-VALUE cSurface;
-void Rubygame_Init_Surface();
-VALUE rbgm_surface_new(int, VALUE*, VALUE);
-VALUE rbgm_surface_get_w(VALUE);
-VALUE rbgm_surface_get_h(VALUE);
-VALUE rbgm_surface_get_size(VALUE);
-VALUE rbgm_surface_get_depth(VALUE);
-VALUE rbgm_surface_get_flags(VALUE);
-VALUE rbgm_surface_get_masks(VALUE);
-VALUE rbgm_surface_get_alpha(VALUE);
-VALUE rbgm_surface_set_alpha(int, VALUE*, VALUE);
-VALUE rbgm_surface_get_colorkey(VALUE);
-VALUE rbgm_surface_set_colorkey(int, VALUE*, VALUE);
-VALUE rbgm_surface_blit(int, VALUE*, VALUE);
-VALUE rbgm_surface_fill( int, VALUE*, VALUE);
-VALUE rbgm_surface_getat( int, VALUE*, VALUE);
+extern VALUE cSurface;
+extern void Rubygame_Init_Surface();
+extern VALUE rbgm_surface_new(int, VALUE*, VALUE);
+extern VALUE rbgm_surface_get_w(VALUE);
+extern VALUE rbgm_surface_get_h(VALUE);
+extern VALUE rbgm_surface_get_size(VALUE);
+extern VALUE rbgm_surface_get_depth(VALUE);
+extern VALUE rbgm_surface_get_flags(VALUE);
+extern VALUE rbgm_surface_get_masks(VALUE);
+extern VALUE rbgm_surface_get_alpha(VALUE);
+extern VALUE rbgm_surface_set_alpha(int, VALUE*, VALUE);
+extern VALUE rbgm_surface_get_colorkey(VALUE);
+extern VALUE rbgm_surface_set_colorkey(int, VALUE*, VALUE);
+extern VALUE rbgm_surface_blit(int, VALUE*, VALUE);
+extern VALUE rbgm_surface_fill( int, VALUE*, VALUE);
+extern VALUE rbgm_surface_getat( int, VALUE*, VALUE);
 
 /* Time */
-VALUE mTime;
-void Rubygame_Init_Time();
-VALUE rbgm_time_wait(VALUE, VALUE);
-VALUE rbgm_time_delay(VALUE, VALUE);
-VALUE rbgm_time_getticks(VALUE);
+extern VALUE mTime;
+extern void Rubygame_Init_Time();
+extern VALUE rbgm_time_wait(VALUE, VALUE);
+extern VALUE rbgm_time_delay(VALUE, VALUE);
+extern VALUE rbgm_time_getticks(VALUE);
 
 /* Transform */
-VALUE mTrans;
-void Rubygame_Init_Transform();
-VALUE rbgm_transform_rotozoom(int, VALUE*, VALUE);
-VALUE rbgm_transform_rotozoomsize(int, VALUE*, VALUE);
-VALUE rbgm_transform_zoom(int, VALUE*, VALUE);
-VALUE rbgm_transform_zoomsize(int, VALUE*, VALUE);
+extern VALUE mTrans;
+extern void Rubygame_Init_Transform();
+extern VALUE rbgm_transform_rotozoom(int, VALUE*, VALUE);
+extern VALUE rbgm_transform_rotozoomsize(int, VALUE*, VALUE);
+extern VALUE rbgm_transform_zoom(int, VALUE*, VALUE);
+extern VALUE rbgm_transform_zoomsize(int, VALUE*, VALUE);
 
 #endif /* _RUBYGAME_H */
