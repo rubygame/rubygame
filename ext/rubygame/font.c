@@ -17,8 +17,8 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifdef HAVE_SDL_TTF
 #include "rubygame.h"
+#ifdef HAVE_SDL_TTF
 #include "SDL_ttf.h"
 
 VALUE rbgm_font_init(VALUE module)
@@ -243,7 +243,7 @@ void Rubygame_Init_Font()
 
 VALUE rbgm_ttf_notloaded(int argc, VALUE *argv, VALUE classmod)
 {
-	rb_raise(eStandardError,"TTF module could not be loaded: SDL_ttf is missing. Install SDL_ttf and recompile Rubygame.");
+	rb_raise(rb_eStandardError,"TTF module could not be loaded: SDL_ttf is missing. Install SDL_ttf and recompile Rubygame.");
 	return Qnil;
 }
 

@@ -17,8 +17,8 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifdef HAVE_SDL_GFX
 #include "rubygame.h"
+#ifdef HAVE_SDL_GFX
 #include <SDL_gfxPrimitives.h>
 
 /* This is wrapped by rbgm_draw_line and rbgm_draw_aaline */
@@ -497,7 +497,7 @@ all functions are dummy functions which raise StandardError
 
 VALUE rbgm_draw_notloaded(int argc, VALUE *argv, VALUE classmod)
 {
-	rb_raise(eStandardError,"Transform module could not be loaded: SDL_gfx is missing. Install SDL_gfx and recompile Rubygame.");
+	rb_raise(rb_eStandardError,"Transform module could not be loaded: SDL_gfx is missing. Install SDL_gfx and recompile Rubygame.");
 	return Qnil;
 }
 
