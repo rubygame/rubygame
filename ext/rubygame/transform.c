@@ -123,7 +123,7 @@ void Rubygame_Init_Transform()
 {
 	mTrans = rb_define_module_under(mRubygame,"Transform");
 
-	rb_define_module_function(mTrans,"loaded?",rbgm_trans_loadedp,0);
+	rb_define_module_function(mTrans,"loaded?",rbgm_transform_loadedp,0);
 	rb_define_module_function(mTrans,"rotozoom",rbgm_transform_rotozoom,-1);
 	rb_define_module_function(mTrans,"rotozoom_size",rbgm_transform_rotozoomsize,-1);
 	rb_define_module_function(mTrans,"zoom",rbgm_transform_zoom,-1);
