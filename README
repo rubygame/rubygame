@@ -1,0 +1,72 @@
+Rubygame README
+============
+
+	Rubygame is based on Ruby/SDL [1] and pygame [2], intended to provide
+	functionality similar to pygame, but for those who prefer Ruby over Python.
+
+	Note that while I intend to make it as easy to make games in Ruby as it is
+	to make games in Python, this is not just a clone of pygame. This is to say,
+	where there are opportunities to improve the layout (particularly to make it
+	more object-oriented), I will attempt to make those improvements.
+
+	Many of the tutorials and examples for pygame will work with Rubygame, 
+	after some minor modification, so I encourage you to consult those as well.
+
+	---- Footnotes ----
+	1. http://www.kmc.gr.jp/~ohai/rubysdl.en.html
+	2. http://www.pygame.org
+
+Requirements
+------------
+
+	Rubygame has been tested (and was developed) on the following,
+	although older/newer versions might work:
+
+		* ruby 1.8
+		* SDL 1.2.7
+		* SDL_gfx 2.0.10
+		* SDL_image 1.2.3
+		* SDL_ttf 2.0.6
+
+	If you are compiling from source you will also need the following:
+		* a compiler, like gcc. gcc-3.3.2 to 3.3.4 are known to work.
+
+	If you are using a binary-based ditribution (like Debian, Fedora, SuSe, 
+	Slackware, etc.) you will also need the "dev" packages of ruby, SDL,
+	SDL_gfx, SDL_image, and SDL_ttf in order to compile Rubygame.
+
+Install
+-------
+
+	Decompress archive and enter its top directory.
+	Then type:
+
+		$ ruby setup.rb config
+		$ ruby setup.rb setup
+		# ruby setup.rb install
+
+	You can also install files into your favorite directory
+	by supplying setup.rb some options. Try "ruby setup.rb --help".
+
+Usage
+-----
+
+	To use Rubygame in an application, do:
+
+		require 'rubygame'
+
+	You will probably also want a display window and event queue:
+
+		screen = Rubygame::Display.set_mode( [640,480] )
+		queue = Rubygame::Queue.instance()
+
+	For more information, see the documentation in the "doc/" folder or
+	online at rubygame.seul.org
+
+License
+-------
+
+	Rubygame is distributed under the terms of the GNU Lesser GPL.
+	See LICENSE for more details.
+
+John 'jacius' Croisant  (jacius at seul dot org)
