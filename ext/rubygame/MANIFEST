@@ -1,0 +1,13 @@
+MANIFEST
+constants.c
+display.c
+draw.c
+event.c
+font.c
+image.c
+joystick.c
+rubygame.c
+rubygame.h
+surface.c
+time.c
+transform.c

@@ -1,0 +1,26 @@
+Rubygame TODO:
+
+Features:
+	- Clock class:
+		- Rubygame apps freeze when limiting FPS, esp. if window loses focus
+	- Draw module:
+		- pie and polygon functions do not work (SegFault)
+		- maybe add bezier curve
+	- Sound/music playback (SDL_Sound, OpenAL?)
+	- Transform module:
+		- hq2x, hq3x, hq4x -- http://www.hiend3d.com/hq3x.html
+	- CD playback
+
+Internal:
+	- use -Wall or be smote!
+	- C equivalent of rect_from_object (see rect.rb) (better than rect_entry)
+		- Screen#update (cannot pass object with rect attribute)
+		- Screen#update_rects (same as above)
+	- More argument checking! Make sure arguments are the right type.
+		- NUM2INT, etc. check if it is a Numeric? Works with Floats?
+		- make sure color values are between 0 and 255?
+	- Surface#blit should return affected area: Rect [dst_x,dst_y,src_w,src_h]
+	- UpdateGroup union highly-overlapping rectangles to be more efficient.
+	- LimitGroup#add could be more efficient (remove multiple, use super)
+	- Better support for non-US keyboards, particularly generating strings for
+	  keypresses. (EURO, WORLD)
