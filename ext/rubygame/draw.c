@@ -351,13 +351,22 @@ void draw_pie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba
 	if(fill)
 	{
 		//printf("filled pie\n");
+#if (SDL_GFXPRIMITIVES_MAJOR >= 2 && SDL_GFXPRIMITIVES_MINOR >= 0 && SDL_GFXPRIMITIVES_MICRO >= 12)
 		filledPieRGBA(dest,x,y,rad,start,end,r,g,b,a);
+#else
+		/* until sdl-gfx 2.0.12, it used to be: */
+		filledpieRGBA(dest,x,y,rad,start,end,r,g,b,a);
+#endif
 	}
 	else
 	{
 		//printf("pie\n");
-		/* this function does not exist?? */
+#if (SDL_GFXPRIMITIVES_MAJOR >= 2 && SDL_GFXPRIMITIVES_MINOR >= 0 && SDL_GFXPRIMITIVES_MICRO >= 11)
+		/* this function did not exist until sdl-gfx 2.0.11 */
 		pieRGBA(dest,x,y,rad,start,end,r,g,b,a);
+#else
+		rb_warn("Drawing non-filled pies is not supported by your version of SDL_gfx (%d,%d,%d). Please upgrade to 2.0.11 or later.", SDL_GFXPRIMITIVES_MAJOR, SDL_GFXPRIMITIVES_MINOR, SDL_GFXPRIMITIVES_MICRO);
+#endif
 	}
 	return;
 }
