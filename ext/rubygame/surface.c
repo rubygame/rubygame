@@ -296,7 +296,7 @@ VALUE rbgm_surface_blit(int argc, VALUE *argv, VALUE self)
 	SDL_BlitSurface(src,src_rect,dest,blit_rect);
 
 	returnrect = rb_funcall(cRect,rb_intern("new"),4,
-		INT2NUM(blit_x),INT2NUM(blit_y),\
+		INT2NUM(left),INT2NUM(top),\
 		INT2NUM(blit_w),INT2NUM(blit_h));
 
 	free(blit_rect);
