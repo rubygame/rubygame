@@ -1,5 +1,5 @@
 /*
-	Rubygame -- Ruby bindings to SDL to facilitate game creation
+	Rubygame -- Ruby code and bindings to SDL/OpenAL to facilitate game creation
 	Copyright (C) 2004  John 'jacius' Croisant
 
 	This library is free software; you can redistribute it and/or
@@ -38,11 +38,12 @@ VALUE rbgm_joy_numjoysticks( VALUE module )
 VALUE rbgm_joy_getname( VALUE module, VALUE joynum )
 {
 	char *name;
-	int index;
+	int n;
+	int size=1024;
 
-	index = NUM2INT(joynum);
-	asprintf(&name,"%s\0",SDL_JoystickName(index));
-	return rb_str_new2(name);
+	name = (char *)malloc(size);
+	n = snprintf(name,size,"%s",SDL_JoystickName(NUM2INT(joynum)));;
+	return rb_str_new(name,n);
 }
 
 /* Rubygame Joystick class */
@@ -86,11 +87,14 @@ VALUE rbgm_joystick_name( VALUE self )
 	char *name;
 	SDL_Joystick *joy;
 	Uint8 index;
+	int n;
+	int size = 1024;
 
 	Data_Get_Struct(self,SDL_Joystick,joy);
 	index = SDL_JoystickIndex(joy);
-	asprintf(&name,"%s\0",SDL_JoystickName(index));
-	return rb_str_new2(name);
+	name = (char *)malloc(size);
+	n = snprintf(name,size,"%s",SDL_JoystickName(index));
+	return rb_str_new(name,n);
 }
 
 VALUE rbgm_joystick_numaxes( VALUE self )

@@ -1,5 +1,5 @@
 /*
-	Rubygame -- Ruby bindings to SDL to facilitate game creation
+	Rubygame -- Ruby code and bindings to SDL/OpenAL to facilitate game creation
 	Copyright (C) 2004  John 'jacius' Croisant
 
 	This library is free software; you can redistribute it and/or
@@ -351,13 +351,13 @@ void draw_pie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba
 	if(fill)
 	{
 		//printf("filled pie\n");
-		filledpieRGBA(dest,x,y,rad,start,end,r,g,b,a);
+		filledPieRGBA(dest,x,y,rad,start,end,r,g,b,a);
 	}
 	else
 	{
 		//printf("pie\n");
 		/* this function does not exist?? */
-		//pieRGBA(dest,x,y,rad,start,end,r,g,b,a);
+		pieRGBA(dest,x,y,rad,start,end,r,g,b,a);
 	}
 	return;
 }

@@ -1,5 +1,5 @@
 /*
-	Rubygame -- Ruby bindings to SDL to facilitate game creation
+	Rubygame -- Ruby code and bindings to SDL/OpenAL to facilitate game creation
 	Copyright (C) 2004  John 'jacius' Croisant
 
 	This library is free software; you can redistribute it and/or
@@ -24,61 +24,20 @@
 #include <ruby.h>
 #include <stdio.h>
 
-#if 0
-#ifndef SDL_VERSION_ATLEAST
-#define SDL_COMPILEDVERSION SDL_VERSIONNUM(SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL)
-     
-#define SDL_VERSION_ATLEAST(X, Y, Z) (SDL_COMPILEDVERSION >= SDL_VERSIONNUM(X, Y, Z))
-     
-#endif /* ifndef SDL_VERSION_ATLEAST */
-#endif
-
+/* General */
 VALUE mRubygame;
 VALUE eSDLError;
-VALUE cVideoInfo;
 VALUE cRect;
-VALUE cSurface;
-VALUE mDisplay;
-VALUE cScreen;
-VALUE mTime;
-VALUE mImage;
-VALUE mDraw;
-VALUE mTrans; /* transform */
 VALUE mKey;
-VALUE mMixer;
-VALUE cWave;
-VALUE cMusic;
 VALUE mMouse;
-VALUE mFont;
-VALUE cTTF;
-VALUE cSFont;
-VALUE mJoy;
-VALUE cJoystick;
-VALUE cCD;
- 
-VALUE cEvent;
-VALUE cQueue;
-VALUE cActiveEvent;
-VALUE cKeyDownEvent;
-VALUE cKeyUpEvent;
-VALUE cMouseMotionEvent;
-VALUE cMouseDownEvent;
-VALUE cMouseUpEvent;
-VALUE cJoyAxisEvent;
-VALUE cJoyBallEvent;
-VALUE cJoyHatEvent;
-VALUE cJoyDownEvent;
-VALUE cJoyUpEvent;
-VALUE cQuitEvent;
-VALUE cSysWMEvent;
-VALUE cResizeEvent;
-
+VALUE rbgm_init(VALUE);
 SDL_Rect *make_rect(int x, int y, int w, int h);
 int rect_entry(VALUE rect, int index);
-
-/* Prototypes */
 void Define_Rubygame_Constants();
 
+/* Display */
+VALUE mDisplay;
+VALUE cScreen;
 void Rubygame_Init_Display();
 VALUE rbgm_display_setmode(int, VALUE*, VALUE);
 VALUE rbgm_display_getsurface(VALUE);
@@ -89,6 +48,8 @@ VALUE rbgm_screen_update(int, VALUE*, VALUE);
 VALUE rbgm_screen_updaterects(VALUE, VALUE);
 VALUE rbgm_screen_flip(VALUE);
 
+/* Draw */
+VALUE mDraw;
 void Rubygame_Init_Draw();
 void draw_line(VALUE, VALUE, VALUE, VALUE, int);
 VALUE rbgm_draw_line(VALUE, VALUE, VALUE, VALUE, VALUE);
@@ -112,6 +73,24 @@ VALUE rbgm_draw_polygon(VALUE, VALUE, VALUE, VALUE);
 VALUE rbgm_draw_aapolygon(VALUE, VALUE, VALUE, VALUE);
 VALUE rbgm_draw_fillpolygon(VALUE, VALUE, VALUE, VALUE);
 
+/* Event */
+VALUE mEvent;
+VALUE cEvent;
+VALUE cQueue;
+VALUE cActiveEvent;
+VALUE cKeyDownEvent;
+VALUE cKeyUpEvent;
+VALUE cMouseMotionEvent;
+VALUE cMouseDownEvent;
+VALUE cMouseUpEvent;
+VALUE cJoyAxisEvent;
+VALUE cJoyBallEvent;
+VALUE cJoyHatEvent;
+VALUE cJoyDownEvent;
+VALUE cJoyUpEvent;
+VALUE cQuitEvent;
+VALUE cSysWMEvent;
+VALUE cResizeEvent;
 void Rubygame_Init_Event();
 VALUE convert_active(Uint8);
 VALUE convert_keymod(SDLMod);
@@ -119,6 +98,10 @@ VALUE convert_mousebuttons(Uint8);
 VALUE rbgm_convert_sdlevent(SDL_Event);
 VALUE rbgm_queue_getsdl(VALUE);
 
+/* Font */
+VALUE mFont;
+VALUE cTTF;
+VALUE cSFont;
 void Rubygame_Init_Font();
 VALUE rbgm_font_init(VALUE);
 VALUE rbgm_font_quit(VALUE);
@@ -135,10 +118,15 @@ VALUE rbgm_ttf_descent(VALUE);
 VALUE rbgm_ttf_lineskip(VALUE);
 VALUE rbgm_ttf_render(int, VALUE*, VALUE);
 
+/* Image */
+VALUE mImage;
 void Rubygame_Init_Image();
 VALUE rbgm_image_load(VALUE, VALUE);
 VALUE rbgm_image_savebmp(VALUE, VALUE, VALUE);
 
+/* Joy */
+VALUE mJoy;
+VALUE cJoystick;
 void Rubygame_Init_Joystick();
 VALUE rbgm_joy_numjoysticks(VALUE);
 VALUE rbgm_joy_getname(VALUE, VALUE);
@@ -150,6 +138,8 @@ VALUE rbgm_joystick_numballs(VALUE);
 VALUE rbgm_joystick_numhats(VALUE);
 VALUE rbgm_joystick_numbuttons(VALUE);
 
+/* Surface */
+VALUE cSurface;
 void Rubygame_Init_Surface();
 VALUE rbgm_surface_new(int, VALUE*, VALUE);
 VALUE rbgm_surface_get_w(VALUE);
@@ -166,11 +156,15 @@ VALUE rbgm_surface_blit(int, VALUE*, VALUE);
 VALUE rbgm_surface_fill( int, VALUE*, VALUE);
 VALUE rbgm_surface_getat( int, VALUE*, VALUE);
 
+/* Time */
+VALUE mTime;
 void Rubygame_Init_Time();
 VALUE rbgm_time_wait(VALUE, VALUE);
 VALUE rbgm_time_delay(VALUE, VALUE);
 VALUE rbgm_time_getticks(VALUE);
 
+/* Transform */
+VALUE mTrans;
 void Rubygame_Init_Transform();
 VALUE rbgm_transform_rotozoom(int, VALUE*, VALUE);
 VALUE rbgm_transform_rotozoomsize(int, VALUE*, VALUE);

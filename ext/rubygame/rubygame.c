@@ -1,5 +1,5 @@
 /*
-	Rubygame -- Ruby bindings to SDL to facilitate game creation
+	Rubygame -- Ruby code and bindings to SDL/OpenAL to facilitate game creation
 	Copyright (C) 2004  John 'jacius' Croisant
 
 	This library is free software; you can redistribute it and/or
@@ -29,31 +29,6 @@ SDL_Rect *make_rect(int x, int y, int w, int h)
 	rect->h = h;
 	return rect;
 }
-/*
-int rect_entry(VALUE rect, int index)
-{
-	int value;
-
-	printf("Entered rect_entry... ");
-	switch(TYPE(rect))
-	{
-		case T_ARRAY:
-			printf("It's an array... ");
-			value = FIX2INT(rb_ary_entry(rect,index));
-			printf("value %d...\n",value);
-			return value;
-			break;
-		case T_OBJECT:
-			printf("It's an object... ");
-			value = FIX2INT(rb_funcall(rect,rb_intern("[]"),1,index));
-			printf("value %d...\n",value);
-			return value;
-			break;
-		default:
-			rb_raise(rb_eArgError,"Cannot get index of non- Object/Array");
-	}
-}
-*/
 
 int rect_entry( VALUE rect, int index )
 {
@@ -63,7 +38,7 @@ int rect_entry( VALUE rect, int index )
 	return NUM2INT(rb_ary_entry(array,index));
 }
 
-static VALUE rbgm_init(VALUE module)
+VALUE rbgm_init(VALUE module)
 {
 	if(SDL_Init(SDL_INIT_EVERYTHING)==0)
 	{
@@ -76,20 +51,6 @@ static VALUE rbgm_init(VALUE module)
 	}
 }
 
-/* wrap a ton of SDL constants */
-void Define_Rubygame_Constants();
-
-/* initialization function prototypes: */
-void Rubygame_Init_Surface();
-void Rubygame_Init_Display();
-void Rubygame_Init_Event();
-void Rubygame_Init_Time();
-void Rubygame_Init_Image();
-void Rubygame_Init_Draw();
-void Rubygame_Init_Joystick();
-void Rubygame_Init_Font();
-void Rubygame_Init_Transform();
-
 /* Wrap it all together into one module: */
 void Init_rubygame()
 {
@@ -99,9 +60,10 @@ void Init_rubygame()
 	rb_define_module_function(mRubygame,"init",rbgm_init,0);
 	cRect = rb_define_class_under(mRubygame,"Rect",rb_cObject);
 	eSDLError = rb_define_class_under(mRubygame,"SDLError",rb_eStandardError);
+	eALError = rb_define_class_under(mRubygame,"ALError",rb_eStandardError);
 
-	mKey = rb_define_module_under(mRubygame,"Key");
-	mMouse = rb_define_module_under(mRubygame,"Mouse");
+	//mKey = rb_define_module_under(mRubygame,"Key");
+	//mMouse = rb_define_module_under(mRubygame,"Mouse");
 
 	Rubygame_Init_Time();
 	Rubygame_Init_Surface();
