@@ -9,9 +9,17 @@ sdl_config = with_config('sdl-config', 'sdl-config')
 $CFLAGS += ' -Wall ' + `#{sdl_config} --cflags`.chomp
 $LOCAL_LIBS += ' ' + `#{sdl_config} --libs`.chomp
 
-if have_header("SDL_gfxPrimitives.h") or have_header("SDL_rotozoom.h")
-	$libs = "-lSDL_gfx "+$libs
+gfxincluded = false
+
+if have_header("SDL_gfxPrimitives.h")
+	$libs = "-lSDL_gfx "+$libs unless gfxincluded
+	gfxincluded = true
 end
+if have_header("SDL_rotozoom.h")
+	$libs = "-lSDL_gfx "+$libs unless gfxincluded
+	gfxincluded = true
+end
+
 $libs = "-lSDL_image "+$libs if have_header("SDL_image.h")
 $libs = "-lSDL_ttf "+$libs if have_header("SDL_ttf.h")
 
@@ -30,5 +38,9 @@ $libs = "-lSDL_ttf "+$libs if have_header("SDL_ttf.h")
 #		have_library("glu32","gluGetString")
 #	end
 #end
+
+puts "CFLAGS: %s"%$CFLAGS.to_s
+puts "LOCAL_LIBS: %s"%$LOCAL_LIBS.to_s
+puts "defs: %s"%$defs.to_s
 
 create_makefile("rubygame")
