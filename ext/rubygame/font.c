@@ -22,7 +22,14 @@
 #ifdef HAVE_SDL_TTF_H
 #include "SDL_ttf.h"
 
-VALUE rbgm_font_loadedp(VALUE module) { return Qtrue; }
+/* Return the major, minor, and patch numbers for SDL_ttf */
+VALUE rbgm_font_version(VALUE module)
+{ 
+  return rb_ary_new3(3,
+					 INT2NUM(SDL_TTF_MAJOR_VERSION),
+					 INT2NUM(SDL_TTF_MINOR_VERSION),
+					 INT2NUM(SDL_TTF_PATCHLEVEL));
+}
 
 VALUE rbgm_font_init(VALUE module)
 {
@@ -223,7 +230,8 @@ VALUE rbgm_ttf_render(int argc, VALUE *argv, VALUE self)
 void Rubygame_Init_Font()
 {
 	mFont = rb_define_module_under(mRubygame,"Font");
-	rb_define_module_function(mFont,"loaded?",rbgm_font_loadedp,0);
+	rb_define_module_function(mFont,"usable?",rbgm_usable,0);
+	rb_define_module_function(mFont,"version",rbgm_font_version,0);
 	rb_define_module_function(mFont,"init",rbgm_font_init,0);
 	rb_define_module_function(mFont,"quit",rbgm_font_quit,0);
 
@@ -245,24 +253,27 @@ void Rubygame_Init_Font()
 
 #else /* HAVE_SDL_TTF_H */
 
-VALUE rbgm_font_loadedp(VALUE module) { return Qfalse; }
-
-VALUE rbgm_font_notloaded(int argc, VALUE *argv, VALUE classmod)
-{
-	rb_raise(rb_eStandardError,"TTF could not be loaded: SDL_ttf is missing. Install SDL_ttf and recompile Rubygame.");
-	return Qnil;
+/* We don't have SDL_ttf, so the "version" is [0,0,0] */
+VALUE rbgm_font_version(VALUE module)
+{ 
+  return rb_ary_new3(3,
+					 INT2NUM(0),
+					 INT2NUM(0),
+					 INT2NUM(0));
 }
 
 void Rubygame_Init_Font()
 {
 	mFont = rb_define_module_under(mRubygame,"Font");
-	rb_define_module_function(mFont,"loaded?",rbgm_font_loadedp,0);
-	rb_define_module_function(mFont,"init",rbgm_font_notloaded,-1);
-	rb_define_module_function(mFont,"quit",rbgm_font_notloaded,-1);
+	rb_define_module_function(mFont,"usable?",rbgm_unusable,0);
+	rb_define_module_function(mFont,"version",rbgm_font_version,0);
+	rb_define_module_function(mFont,"init",rbgm_dummy,-1);
+	rb_define_module_function(mFont,"quit",rbgm_dummy,-1);
 
 	cTTF = rb_define_class_under(mFont,"TTF",rb_cObject);
-	rb_define_singleton_method(cTTF,"new",rbgm_font_notloaded,-1);
-	rb_define_method(cTTF,"initialize",rbgm_font_notloaded,-1);
+	rb_define_singleton_method(cTTF,"new",rbgm_dummy,-1);
+	rb_define_method(cTTF,"initialize",rbgm_dummy,-1);
+	/* No TTF objects can be made, so the other funcs are unneeded. Maybe. */
 }
 
 #endif /* HAVE_SDL_TTF_H */

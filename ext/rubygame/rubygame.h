@@ -111,8 +111,7 @@ extern VALUE mFont;
 extern VALUE cTTF;
 extern VALUE cSFont;
 extern void Rubygame_Init_Font();
-VALUE rbgm_font_loadedp(VALUE);
-#ifdef HAVE_SDL_TTF_H
+extern VALUE rbgm_font_version(VALUE);
 extern VALUE rbgm_font_init(VALUE);
 extern VALUE rbgm_font_quit(VALUE);
 extern VALUE rbgm_ttf_new(int, VALUE*, VALUE);
@@ -127,9 +126,6 @@ extern VALUE rbgm_ttf_ascent(VALUE);
 extern VALUE rbgm_ttf_descent(VALUE);
 extern VALUE rbgm_ttf_lineskip(VALUE);
 extern VALUE rbgm_ttf_render(int, VALUE*, VALUE);
-#else /* HAVE_SDL_TTF_H */
-VALUE rbgm_image_notloaded(int, VALUE*, VALUE);
-#endif /* HAVE_SDL_TTF_H */
 
 /* Image */
 extern VALUE mImage;
