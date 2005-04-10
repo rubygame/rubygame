@@ -101,7 +101,10 @@ module Rubygame
 
 		class Group < Array
 			def <<(sprite)
-				self.push(sprite)
+				unless self.include? sprite
+					super(sprite)
+					sprite.add(self)
+				end
 				return self
 			end
 
@@ -138,8 +141,8 @@ module Rubygame
 						super(sprite)
 						sprite.remove(self)
 					end
-				return self
 				}
+				return self
 			end
 
 			def draw(dest)
@@ -148,12 +151,9 @@ module Rubygame
 
 			def push(*sprites)
 				sprites.each { |sprite|
-					unless self.include? sprite
-						super(sprite)
-						sprite.add(self)
-					end
-				return self
+					self << sprite
 				}
+				return self
 			end
 
 			def update(*args)
