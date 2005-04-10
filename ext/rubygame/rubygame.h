@@ -58,8 +58,7 @@ extern VALUE rbgm_screen_flip(VALUE);
 /* Draw */
 extern VALUE mDraw;
 extern void Rubygame_Init_Draw();
-VALUE rbgm_draw_loadedp(VALUE);
-#ifdef HAVE_SDL_GFXPRIMITIVES_H
+extern VALUE rbgm_draw_version(VALUE);
 extern void draw_line(VALUE, VALUE, VALUE, VALUE, int);
 extern VALUE rbgm_draw_line(VALUE, VALUE, VALUE, VALUE, VALUE);
 extern VALUE rbgm_draw_aaline(VALUE, VALUE, VALUE, VALUE, VALUE);
@@ -81,9 +80,6 @@ extern void draw_polygon(VALUE, VALUE, VALUE, int, int);
 extern VALUE rbgm_draw_polygon(VALUE, VALUE, VALUE, VALUE);
 extern VALUE rbgm_draw_aapolygon(VALUE, VALUE, VALUE, VALUE);
 extern VALUE rbgm_draw_fillpolygon(VALUE, VALUE, VALUE, VALUE);
-#else /* HAVE_SDL_GFXPRIMITIVES_H */
-VALUE rbgm_draw_notloaded(int, VALUE*, VALUE);
-#endif /* HAVE_SDL_GFXPRIMITIVES_H */
 
 /* Event */
 extern VALUE mEvent;
