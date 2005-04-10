@@ -21,7 +21,21 @@
 #ifdef HAVE_SDL_GFXPRIMITIVES_H
 #include <SDL_gfxPrimitives.h>
 
-VALUE rbgm_draw_loadedp(VALUE module){ return Qtrue; }
+/* SDL_GFXPRIMITIVES_MICRO was not defined in some earlier versions,
+   so we have to define it ourselves if it is missing so it's not a
+   missing symbol. */
+#ifndef SDL_GFXPRIMITIVES_MICRO
+#define SDL_GFXPRIMITEVES_MICRO 0
+#endif
+
+/* Return the major, minor, and micro version numbers for SDL_gfxPrimitives */
+VALUE rbgm_draw_version(VALUE module)
+{ 
+  return rb_ary_new3(3,
+					 INT2NUM(SDL_GFXPRIMITIVES_MAJOR),
+					 INT2NUM(SDL_GFXPRIMITIVES_MINOR),
+					 INT2NUM(SDL_GFXPRIMITIVES_MICRO));
+}
 
 /* This is wrapped by rbgm_draw_line and rbgm_draw_aaline */
 void draw_line(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int aa)
@@ -312,7 +326,9 @@ VALUE rbgm_draw_fillellipse(VALUE module, VALUE target, VALUE center, VALUE radi
 	return target;
 }
 
-/* This is wrapped by rbgm_draw_(|aa|fill)ellipse */
+/* Unfortunately, SDL_gfx had a bad function name prior to 2.0.12,
+   so we have to check which function name to use. */
+/* This is wrapped by rbgm_draw_(|aa|fill)pie */
 void draw_pie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba, int fill)
 {
 	SDL_Surface *dest;
@@ -354,39 +370,53 @@ void draw_pie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba
 	if(fill)
 	{
 		//printf("filled pie\n");
-#if (SDL_GFXPRIMITIVES_MAJOR >= 2 && SDL_GFXPRIMITIVES_MINOR >= 0 && SDL_GFXPRIMITIVES_MICRO >= 12)
+
+/* Check if we have at least version 2.0.12 of SDL_gfxPrimitives */
+#if ((SDL_GFXPRIMITIVES_MAJOR > 2) || (SDL_GFXPRIMITIVES_MAJOR == 2 && SDL_GFXPRIMITIVES_MINOR > 0) || (SDL_GFXPRIMITIVES_MAJOR == 2 && SDL_GFXPRIMITIVES_MINOR == 0 && SDL_GFXPRIMITIVES_MICRO >= 12))
 		filledPieRGBA(dest,x,y,rad,start,end,r,g,b,a);
 #else
-		/* until sdl-gfx 2.0.12, it used to be: */
+		/* before sdl-gfx 2.0.12, it used to be a lowercase pie: */
 		filledpieRGBA(dest,x,y,rad,start,end,r,g,b,a);
 #endif
+
 	}
 	else
 	{
-		//printf("pie\n");
-#if (SDL_GFXPRIMITIVES_MAJOR >= 2 && SDL_GFXPRIMITIVES_MINOR >= 0 && SDL_GFXPRIMITIVES_MICRO >= 11)
-		/* this function did not exist until sdl-gfx 2.0.11 */
+		/* this function did not exist until sdl-gfx 2.0.11, but
+		   rbgm_draw_fillpie checks the version. You should too if you
+		   directly call this function with fill==1. */
 		pieRGBA(dest,x,y,rad,start,end,r,g,b,a);
-#else
-		rb_warn("Drawing non-filled pies is not supported by your version of SDL_gfx (%d,%d,%d). Please upgrade to 2.0.11 or later.", SDL_GFXPRIMITIVES_MAJOR, SDL_GFXPRIMITIVES_MINOR, SDL_GFXPRIMITIVES_MICRO);
-#endif
 	}
 	return;
 }
 
-#if 0
 VALUE rbgm_draw_pie(VALUE module, VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba)
 {
 	draw_pie(target,center,radius,angles,rgba,0); /* no fill */
 	return target;
 }
-#endif
 
+/* Non-filled pie shapes (arcs) were not supported prior to 2.0.11. */
+/* Check if we have at least version 2.0.11 of SDL_gfxPrimitives */
+#if ((SDL_GFXPRIMITIVES_MAJOR > 2) || (SDL_GFXPRIMITIVES_MAJOR == 2 && SDL_GFXPRIMITIVES_MINOR > 0) || (SDL_GFXPRIMITIVES_MAJOR == 2 && SDL_GFXPRIMITIVES_MINOR == 0 && SDL_GFXPRIMITIVES_MICRO >= 11))
+
+/* The real function. */
 VALUE rbgm_draw_fillpie(VALUE module, VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba)
 {
 	draw_pie(target,center,radius,angles,rgba,1); /* fill */
 	return target;
 }
+
+#else
+
+/* A fake function which warns and returns nil */
+VALUE rbgm_draw_fillpie(VALUE module, VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba)
+{
+	rb_warn("Drawing non-filled pies is not supported by your version of SDL_gfx (%d,%d,%d). Please upgrade to 2.0.11 or later.", SDL_GFXPRIMITIVES_MAJOR, SDL_GFXPRIMITIVES_MINOR, SDL_GFXPRIMITIVES_MICRO);	
+	return nil;
+}
+
+#endif
 
 /* This is wrapped by rbgm_draw_(|aa|fill)polygon */
 void draw_polygon(VALUE target, VALUE points, VALUE rgba, int aa, int fill)
@@ -472,7 +502,8 @@ void Rubygame_Init_Draw()
 {
 	/* Draw module */
 	mDraw = rb_define_module_under(mRubygame,"Draw");
-	rb_define_module_function(mDraw,"loaded?",rbgm_draw_loadedp,0);
+	rb_define_module_function(mDraw,"usable?",rbgm_usable,0);
+	rb_define_module_function(mDraw,"version",rbgm_draw_version,0);
 	/* Draw functions */
 	rb_define_module_function(mDraw,"line",rbgm_draw_line,4);
 	rb_define_module_function(mDraw,"aaline",rbgm_draw_aaline,4);
@@ -484,25 +515,33 @@ void Rubygame_Init_Draw()
 	rb_define_module_function(mDraw,"ellipse",rbgm_draw_ellipse,4);
 	rb_define_module_function(mDraw,"aaellipse",rbgm_draw_aaellipse,4);
 	rb_define_module_function(mDraw,"filled_ellipse",rbgm_draw_fillellipse,4);
-
+	rb_define_module_function(mDraw,"pie",rbgm_draw_pie,5);
+	rb_define_module_function(mDraw,"filled_pie",rbgm_draw_fillpie,5);
 	rb_define_module_function(mDraw,"polygon",rbgm_draw_polygon,3);
 	rb_define_module_function(mDraw,"aapolygon",rbgm_draw_aapolygon,3);
 	rb_define_module_function(mDraw,"filled_polygon",rbgm_draw_fillpolygon,3);
-	//rb_define_module_function(mDraw,"pie",rbgm_draw_pie,5);
-	rb_define_module_function(mDraw,"filled_pie",rbgm_draw_fillpie,5);
-
 }
-#else /* ndef HAVE_SDL_GFXPRIMITIVES_H */
+
 /*
-If SDL_gfx is not installed, module still exists, but
-all functions are dummy functions which raise StandardError
+If SDL_gfx is not installed, the module still exists, but
+all functions are dummy functions which return nil.
+Programs should check if it is loaded with Rubygame::Draw.loaded?
+and act appropriately!
 */
 
-VALUE rbgm_draw_loadedp(VALUE module){ return Qfalse; }
+#else /* HAVE_SDL_GFXPRIMITIVES_H */
 
-VALUE rbgm_draw_notloaded(int argc, VALUE *argv, VALUE classmod)
+/* We don't have SDL_gfxPrimitives, so the "version" is [0,0,0] */
+VALUE rbgm_draw_version(VALUE module)
+{ 
+  return rb_ary_new3(3,
+					 INT2NUM(0),
+					 INT2NUM(0),
+					 INT2NUM(0));
+}
+
+VALUE rbgm_dummy(int argc, VALUE *argv, VALUE classmod)
 {
-	rb_raise(rb_eStandardError,"Transform module could not be loaded: SDL_gfx is missing. Install SDL_gfx and recompile Rubygame.");
 	return Qnil;
 }
 
@@ -510,23 +549,23 @@ void Rubygame_Init_Draw()
 {
 	/* Draw module */
 	mDraw = rb_define_module_under(mRubygame,"Draw");
-	rb_define_module_function(mDraw,"loaded?",rbgm_draw_loadedp,0);
-	/* Draw functions */
-	rb_define_module_function(mDraw,"line",rbgm_draw_notloaded,-1);
-	rb_define_module_function(mDraw,"aaline",rbgm_draw_notloaded,-1);
-	rb_define_module_function(mDraw,"box",rbgm_draw_notloaded,-1);
-	rb_define_module_function(mDraw,"filled_box",rbgm_draw_notloaded,-1);
-	rb_define_module_function(mDraw,"circle",rbgm_draw_notloaded,-1);
-	rb_define_module_function(mDraw,"aacircle",rbgm_draw_notloaded,-1);
-	rb_define_module_function(mDraw,"filled_circle",rbgm_draw_notloaded,-1);
-	rb_define_module_function(mDraw,"ellipse",rbgm_draw_notloaded,-1);
-	rb_define_module_function(mDraw,"aaellipse",rbgm_draw_notloaded,-1);
-	rb_define_module_function(mDraw,"filled_ellipse",rbgm_draw_notloaded,-1);
-
-	rb_define_module_function(mDraw,"polygon",rbgm_draw_notloaded,-1);
-	rb_define_module_function(mDraw,"aapolygon",rbgm_draw_notloaded,-1);
-	rb_define_module_function(mDraw,"filled_polygon",rbgm_draw_notloaded,-1);
-	//rb_define_module_function(mDraw,"pie",rbgm_draw_notloaded,-1);
-	rb_define_module_function(mDraw,"filled_pie",rbgm_draw_notloaded,-1);
+	rb_define_module_function(mDraw,"usable?",rbgm_unusable,0);
+	rb_define_module_function(mDraw,"version",rbgm_draw_version,0);
+	/* Dummy functions */
+	rb_define_module_function(mDraw,"line",rbgm_dummy,-1);
+	rb_define_module_function(mDraw,"aaline",rbgm_dummy,-1);
+	rb_define_module_function(mDraw,"box",rbgm_dummy,-1);
+	rb_define_module_function(mDraw,"filled_box",rbgm_dummy,-1);
+	rb_define_module_function(mDraw,"circle",rbgm_dummy,-1);
+	rb_define_module_function(mDraw,"aacircle",rbgm_dummy,-1);
+	rb_define_module_function(mDraw,"filled_circle",rbgm_dummy,-1);
+	rb_define_module_function(mDraw,"ellipse",rbgm_dummy,-1);
+	rb_define_module_function(mDraw,"aaellipse",rbgm_dummy,-1);
+	rb_define_module_function(mDraw,"filled_ellipse",rbgm_dummy,-1);
+	rb_define_module_function(mDraw,"pie",rbgm_dummy,-1);
+	rb_define_module_function(mDraw,"filled_pie",rbgm_dummy,-1);
+	rb_define_module_function(mDraw,"polygon",rbgm_dummy,-1);
+	rb_define_module_function(mDraw,"aapolygon",rbgm_dummy,-1);
+	rb_define_module_function(mDraw,"filled_polygon",rbgm_dummy,-1);
 }
 #endif /* HAVE_SDL_GFXPRIMITIVES_H */
