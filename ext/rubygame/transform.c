@@ -21,8 +21,6 @@
 #ifdef HAVE_SDL_ROTOZOOM_H
 #include <SDL_rotozoom.h>
 
-VALUE rbgm_transform_loadedp(VALUE module) { return Qtrue; }
-
 VALUE rbgm_transform_rotozoom(int argc, VALUE *argv, VALUE module)
 {
 	SDL_Surface *src, *dst;
@@ -122,35 +120,32 @@ VALUE rbgm_transform_zoomsize(int argc, VALUE *argv, VALUE module)
 void Rubygame_Init_Transform()
 {
 	mTrans = rb_define_module_under(mRubygame,"Transform");
+	rb_define_module_function(mTrans,"usable?",rbgm_usable,0);
 
-	rb_define_module_function(mTrans,"loaded?",rbgm_transform_loadedp,0);
 	rb_define_module_function(mTrans,"rotozoom",rbgm_transform_rotozoom,-1);
 	rb_define_module_function(mTrans,"rotozoom_size",rbgm_transform_rotozoomsize,-1);
 	rb_define_module_function(mTrans,"zoom",rbgm_transform_zoom,-1);
 	rb_define_module_function(mTrans,"zoom_size",rbgm_transform_zoomsize,-1);
 }
-#else /* ndef HAVE_SDL_ROTOZOOM_H */
-/*
-If SDL_gfx is not installed, module still exists, but
-all functions are dummy functions which raise StandardError
-*/
-VALUE rbgm_transform_loadedp(VALUE module) { return Qfalse; }
 
-VALUE rbgm_trans_notloaded(int argc, VALUE *argv, VALUE classmod)
-{
-//	rb_raise(rb_eStandardError,"Transform module could not be loaded: SDL_gfx is missing. Install SDL_gfx and recompile Rubygame.");
-	return Qnil;
-}
+/*
+If SDL_gfx is not installed, the module still exists, but
+all functions are dummy functions which return nil.
+Programs should check if it is loaded with Rubygame::Transform.usable?
+and act appropriately!
+*/
+
+#else /* HAVE_SDL_ROTOZOOM_H */
 
 void Rubygame_Init_Transform()
 {
 	mTrans = rb_define_module_under(mRubygame,"Transform");
+	rb_define_module_function(mTrans,"usable?",rbgm_unusable,0);
 
-	rb_define_module_function(mTrans,"loaded?",rbgm_transform_loadedp,0);
-	rb_define_module_function(mTrans,"rotozoom",rbgm_trans_notloaded,-1);
-	rb_define_module_function(mTrans,"rotozoom_size",rbgm_trans_notloaded,-1);
-	rb_define_module_function(mTrans,"zoom",rbgm_trans_notloaded,-1);
-	rb_define_module_function(mTrans,"zoom_size",rbgm_trans_notloaded,-1);
+	rb_define_module_function(mTrans,"rotozoom",rbgm_dummy,-1);
+	rb_define_module_function(mTrans,"rotozoom_size",rbgm_dummy,-1);
+	rb_define_module_function(mTrans,"zoom",rbgm_dummy,-1);
+	rb_define_module_function(mTrans,"zoom_size",rbgm_dummy,-1);
 }
 
 #endif /* HAVE_SDL_ROTOZOOM_H */

@@ -184,14 +184,9 @@ extern VALUE rbgm_time_getticks(VALUE);
 /* Transform */
 extern VALUE mTrans;
 extern void Rubygame_Init_Transform();
-VALUE rbgm_font_loadedp(VALUE);
-#ifdef HAVE_SDL_ROTOZOOM_H
 extern VALUE rbgm_transform_rotozoom(int, VALUE*, VALUE);
 extern VALUE rbgm_transform_rotozoomsize(int, VALUE*, VALUE);
 extern VALUE rbgm_transform_zoom(int, VALUE*, VALUE);
 extern VALUE rbgm_transform_zoomsize(int, VALUE*, VALUE);
-#else /* HAVE_SDL_ROTOZOOM_H */
-VALUE rbgm_trans_notloaded(int, VALUE*, VALUE);
-#endif /* HAVE_SDL_ROTOZOOM_H */
 
 #endif /* _RUBYGAME_H */
