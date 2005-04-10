@@ -35,8 +35,11 @@ extern VALUE cRect;
 extern VALUE mKey;
 extern VALUE mMouse;
 extern VALUE rbgm_init(VALUE);
-extern SDL_Rect *make_rect(int x, int y, int w, int h);
-extern int rect_entry(VALUE rect, int index);
+extern SDL_Rect *make_rect(int, int, int, int);
+extern int rect_entry(VALUE, int);
+extern VALUE rbgm_usable(VALUE);
+extern VALUE rbgm_unusable(VALUE);
+extern VALUE rbgm_dummy(int, VALUE*, VALUE);
 extern void Define_Rubygame_Constants();
 
 /* Display */

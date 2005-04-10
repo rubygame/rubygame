@@ -38,6 +38,21 @@ int rect_entry( VALUE rect, int index )
 	return NUM2INT(rb_ary_entry(array,index));
 }
 
+VALUE rbgm_usable(VALUE mod)
+{
+  return Qtrue;
+}
+
+VALUE rbgm_unusable(VALUE mod)
+{
+  return Qfalse;
+}
+
+VALUE rbgm_dummy(int argc, VALUE *argv, VALUE classmod)
+{
+  return Qnil;
+}
+
 VALUE rbgm_init(VALUE module)
 {
 	if(SDL_Init(SDL_INIT_EVERYTHING)==0)
