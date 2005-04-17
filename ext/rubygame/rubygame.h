@@ -130,13 +130,9 @@ extern VALUE rbgm_ttf_render(int, VALUE*, VALUE);
 /* Image */
 extern VALUE mImage;
 extern void Rubygame_Init_Image();
-VALUE rbgm_image_loadedp(VALUE);
-#ifdef HAVE_SDL_IMAGE_H
+extern VALUE rbgm_image_version(VALUE);
 extern VALUE rbgm_image_load(VALUE, VALUE);
 extern VALUE rbgm_image_savebmp(VALUE, VALUE, VALUE);
-#else /* HAVE_SDL_IMAGE_H */
-VALUE rbgm_image_notloaded(int, VALUE*, VALUE);
-#endif /* HAVE_SDL_IMAGE_H */
 
 /* Joy */
 extern VALUE mJoy;

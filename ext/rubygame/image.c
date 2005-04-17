@@ -24,7 +24,14 @@
 
 /* Image module functions: */
 
-VALUE rbgm_image_loadedp(VALUE module) { return Qtrue; }
+/* Return the major, minor, and patch numbers for SDL_ttf */
+VALUE rbgm_image_version(VALUE module)
+{ 
+  return rb_ary_new3(3,
+					 INT2NUM(SDL_IMAGE_MAJOR_VERSION),
+					 INT2NUM(SDL_IMAGE_MINOR_VERSION),
+					 INT2NUM(SDL_IMAGE_PATCHLEVEL));
+}
 
 VALUE rbgm_image_load( VALUE module, VALUE filename )
 {
@@ -50,7 +57,7 @@ VALUE rbgm_image_savebmp( VALUE module, VALUE surface, VALUE filename )
 	if(SDL_SaveBMP(surf,name)!=0)
 	{
 		rb_raise(eSDLError,\
-			"Couldn't same surface to %s: %s",name,SDL_GetError());
+			"Couldn't save surface to file %s: %s",name,SDL_GetError());
 	}
 	return Qnil;
 }
@@ -62,29 +69,30 @@ void Rubygame_Init_Image()
 	/* Image module */
 	mImage = rb_define_module_under(mRubygame,"Image");
 	/* Image methods */
-	rb_define_module_function(mImage,"loaded?",rbgm_image_loadedp,0);
+	rb_define_module_function(mImage,"usable?",rbgm_usable,0);
 	rb_define_module_function(mImage,"load",rbgm_image_load,1);
 	rb_define_module_function(mImage,"savebmp",rbgm_image_savebmp,2);
 }
 
 #else /* HAVE_SDL_IMAGE_H */
 
-VALUE rbgm_image_notloaded(int argc, VALUE *argv, VALUE classmod)
-{
-	rb_raise(rb_eStandardError,"Image module could not be loaded: SDL_image is missing. Install SDL_image and recompile Rubygame.");	
-	return Qnil;
+/* We don't have SDL_image, so the "version" is [0,0,0] */
+VALUE rbgm_image_version(VALUE module)
+{ 
+  return rb_ary_new3(3,
+					 INT2NUM(0),
+					 INT2NUM(0),
+					 INT2NUM(0));
 }
-
-VALUE rbgm_image_loadedp(VALUE module) { return Qfalse; }
 
 void Rubygame_Init_Image()
 {
 	/* Image module */
 	mImage = rb_define_module_under(mRubygame,"Image");
-
-	rb_define_module_function(mImage,"loaded?",rbgm_image_loadedp,0);
-	rb_define_module_function(mImage,"load",rbgm_image_notloaded,-1);
-	rb_define_module_function(mImage,"savebmp",rbgm_image_notloaded,-1);
+	/* Dummy methods */
+	rb_define_module_function(mImage,"usable?",rbgm_unusable,0);
+	rb_define_module_function(mImage,"load",rbgm_dummy,-1);
+	rb_define_module_function(mImage,"savebmp",rbgm_dummy,-1);
 }
 
 #endif /* HAVE_SDL_IMAGE_H */
