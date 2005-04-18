@@ -413,7 +413,7 @@ VALUE rbgm_draw_fillpie(VALUE module, VALUE target, VALUE center, VALUE radius, 
 VALUE rbgm_draw_fillpie(VALUE module, VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba)
 {
 	rb_warn("Drawing non-filled pies is not supported by your version of SDL_gfx (%d,%d,%d). Please upgrade to 2.0.11 or later.", SDL_GFXPRIMITIVES_MAJOR, SDL_GFXPRIMITIVES_MINOR, SDL_GFXPRIMITIVES_MICRO);	
-	return nil;
+	return Qnil;
 }
 
 #endif
@@ -525,7 +525,7 @@ void Rubygame_Init_Draw()
 /*
 If SDL_gfx is not installed, the module still exists, but
 all functions are dummy functions which return nil.
-Programs should check if it is loaded with Rubygame::Draw.loaded?
+Programs should check if it is loaded with Rubygame::Draw.usable?
 and act appropriately!
 */
 
@@ -538,11 +538,6 @@ VALUE rbgm_draw_version(VALUE module)
 					 INT2NUM(0),
 					 INT2NUM(0),
 					 INT2NUM(0));
-}
-
-VALUE rbgm_dummy(int argc, VALUE *argv, VALUE classmod)
-{
-	return Qnil;
 }
 
 void Rubygame_Init_Draw()
