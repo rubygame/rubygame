@@ -53,6 +53,11 @@ VALUE rbgm_dummy(int argc, VALUE *argv, VALUE classmod)
   return Qnil;
 }
 
+/* Rubygame.init
+ *
+ * Initialize Rubygame. This should be called soon after you +require+
+ * Rubygame, so that everything will work properly.
+ */
 VALUE rbgm_init(VALUE module)
 {
 	if(SDL_Init(SDL_INIT_EVERYTHING)==0)
