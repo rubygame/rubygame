@@ -372,23 +372,23 @@ void Rubygame_Init_Font()
 	cTTF = rb_define_class_under(mFont,"TTF",rb_cObject);
 	rb_define_singleton_method(cTTF,"new",rbgm_ttf_new,-1);
 	rb_define_singleton_method(cTTF,"usable?",rbgm_usable,0);
-	rb_define_singleton_method(cTTF,"version",rbgm_font_version,0);
-	rb_define_singleton_method(cTTF,"init",rbgm_font_init,0);
-	rb_define_singleton_method(cTTF,"quit",rbgm_font_quit,0);
+	rb_define_singleton_method(cTTF,"version",rbgm_ttf_version,0);
+	rb_define_singleton_method(cTTF,"setup",rbgm_ttf_setup,0);
+	rb_define_singleton_method(cTTF,"quit",rbgm_ttf_quit,0);
 
 	rb_define_method(cTTF,"initialize",rbgm_ttf_initialize,-1);
 	rb_define_method(cTTF,"bold",rbgm_ttf_getitalic,0);
 	rb_define_method(cTTF,"bold=",rbgm_ttf_setitalic,1);
-	rb_define_alias( cTTF,"b","bold")
-	rb_define_alias( cTTF,"b=","bold=")
+	rb_define_alias( cTTF,"b","bold");
+	rb_define_alias( cTTF,"b=","bold=");
 	rb_define_method(cTTF,"italic",rbgm_ttf_getitalic,0);
 	rb_define_method(cTTF,"italic=",rbgm_ttf_setitalic,1);
-	rb_define_alias( cTTF,"i","italic")
-	rb_define_alias( cTTF,"i=","italic=")
+	rb_define_alias( cTTF,"i","italic");
+	rb_define_alias( cTTF,"i=","italic=");
 	rb_define_method(cTTF,"underline",rbgm_ttf_getunderline,0);
 	rb_define_method(cTTF,"underline=",rbgm_ttf_setunderline,1);
-	rb_define_alias( cTTF,"u","underline")
-	rb_define_alias( cTTF,"u=","underline=")
+	rb_define_alias( cTTF,"u","underline");
+	rb_define_alias( cTTF,"u=","underline=");
 	rb_define_method(cTTF,"height",rbgm_ttf_height,0);
 	rb_define_method(cTTF,"ascent",rbgm_ttf_ascent,0);
 	rb_define_method(cTTF,"descent",rbgm_ttf_descent,0);
