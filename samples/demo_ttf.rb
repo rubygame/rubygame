@@ -7,7 +7,6 @@
 
 require "rubygame"
 Rubygame.init()
-Rubygame::Font.init()
 
 def wait_for_keypress(queue)
 	catch :keypress do
@@ -55,110 +54,110 @@ end
 
 def test_bold_noaa(font,screen,y)
 	puts "Bold, no antialiasing..."
-	font.set_bold(true)
+	font.bold = true
 	text = font.render("Bold, no AA",false,[200,200,200])
 	text.blit(screen,[0,y])
-	font.set_bold(false)
+	font.bold = false
 end
 
 def test_bold_aa(font,screen,y)
 	puts "Bold, antialiasing..."
-	font.set_bold(true)
+	font.bold = true
 	text = font.render("Bold, AA",true,[200,200,200])
 	text.blit(screen,[0,y])
-	font.set_bold(false)
+	font.bold = false
 end
 
 def test_italic_noaa(font,screen,y)
 	puts "Italic, no antialiasing..."
-	font.set_italic(true)
+	font.italic = true
 	text = font.render("Italic, no AA",false,[200,200,200])
 	text.blit(screen,[0,y])
-	font.set_italic(false)
+	font.italic = false
 end
 
 def test_italic_aa(font,screen,y)
 	puts "Italic, antialiasing..."
-	font.set_italic(true)
+	font.italic = true
 	text = font.render("Italic, AA",true,[200,200,200])
 	text.blit(screen,[0,y])
-	font.set_italic(false)
+	font.italic = false
 end
 
 def test_underline_noaa(font,screen,y)
 	puts "Underline, no antialiasing..."
-	font.set_underline(true)
+	font.underline = true
 	text = font.render("Underline, no AA",false,[200,200,200])
 	text.blit(screen,[0,y])
-	font.set_underline(false)
+	font.underline = false
 end
 
 def test_underline_aa(font,screen,y)
 	puts "Underline, antialiasing..."
-	font.set_underline(true)
+	font.underline = true
 	text = font.render("Underline, AA",true,[200,200,200])
 	text.blit(screen,[0,y])
-	font.set_underline(false)
+	font.underline = false
 end
 
 def test_bi_noaa(font,screen,y)
 	puts "Bold, Italic, no antialiasing..."
-	font.set_bold(true)
-	font.set_italic(true)
+	font.bold = true
+	font.italic = true
 	text = font.render("B, I, no AA",false,[200,200,200])
 	text.blit(screen,[0,y])
-	font.set_bold(false)
-	font.set_italic(false)
+	font.bold = false
+	font.italic = false
 end
 
 def test_bu_noaa(font,screen,y)
 	puts "Bold, Underline, no antialiasing..."
-	font.set_bold(true)
-	font.set_underline(true)
+	font.bold = true
+	font.underline = true
 	text = font.render("B, U, no AA",false,[200,200,200])
 	text.blit(screen,[0,y])
-	font.set_bold(false)
-	font.set_underline(false)
+	font.bold = false
+	font.underline = false
 end
 
 def test_iu_noaa(font,screen,y)
 	puts "Italic, Underline, no antialiasing..."
-	font.set_italic(true)
-	font.set_underline(true)
+	font.italic = true
+	font.underline = true
 	text = font.render("I, U, no AA",false,[200,200,200])
 	text.blit(screen,[0,y])
-	font.set_italic(false)
-	font.set_underline(false)
+	font.italic = false
+	font.underline = false
 end
 
 def test_bi_aa(font,screen,y)
 	puts "Bold, Italic, antialiasing..."
-	font.set_bold(true)
-	font.set_italic(true)
+	font.bold = true
+	font.italic = true
 	text = font.render("B, I, AA",true,[200,200,200])
 	text.blit(screen,[0,y])
-	font.set_bold(false)
-	font.set_italic(false)
+	font.bold = false
+	font.italic = false
 end
 
 def test_bu_aa(font,screen,y)
 	puts "Bold, Underline, antialiasing..."
-	font.set_bold(true)
-	font.set_underline(true)
+	font.bold = true
+	font.underline = true
 	text = font.render("B, U, AA",true,[200,200,200])
 	text.blit(screen,[0,y])
-	font.set_bold(false)
-	font.set_underline(false)
+	font.bold = false
+	font.underline = false
 end
 
 def test_iu_aa(font,screen,y)
 	puts "Italic, Underline, antialiasing..."
-	font.set_italic(true)
-	font.set_underline(true)
+	font.italic = true
+	font.underline = true
 	text = font.render("I, U, AA",true,[200,200,200])
 	text.blit(screen,[0,y])
-	font.set_italic(false)
-	font.set_underline(false)
+	font.italic = false
+	font.underline = false
 end
 
 def main
@@ -166,7 +165,14 @@ def main
 		screen = Rubygame::Display.set_mode([300,300])
 		queue = Rubygame::Queue.instance()
 		queue.allowed = Rubygame::QuitEvent,Rubygame::KeyDownEvent
+
+
+		unless Rubygame::Font::TTF.usable?()
+			raise "TTF is not usable. Bailing out."
+		end
+		Rubygame::Font::TTF.setup()
 		font = Rubygame::Font::TTF.new("freesansbold.ttf",30)
+
 		skip = font.line_skip()
 
 		screen.fill([30,70,30])
