@@ -28,7 +28,35 @@
 #define SDL_GFXPRIMITEVES_MICRO 0
 #endif
 
-/* Return the major, minor, and micro version numbers for SDL_gfxPrimitives */
+/* If we have at least version 2.0.12 of SDL_gfxPrimitives, draw_pie calls 
+   filledPieRGBA, otherwise it calls filledpieRGBA (lowercase pie)*/
+#ifndef HAVE_UPPERCASEPIE
+#if ((SDL_GFXPRIMITIVES_MAJOR > 2) || (SDL_GFXPRIMITIVES_MAJOR == 2 && SDL_GFXPRIMITIVES_MINOR > 0) || (SDL_GFXPRIMITIVES_MAJOR == 2 && SDL_GFXPRIMITIVES_MINOR == 0 && SDL_GFXPRIMITIVES_MICRO >= 12))
+#define HAVE_UPPERCASEPIE
+#endif
+#endif
+
+/* Non-filled pie shapes (arcs) were not supported prior to 2.0.11. */
+/* Check if we have at least version 2.0.11 of SDL_gfxPrimitives */
+#ifndef HAVE_NONFILLEDPIE
+#if ((SDL_GFXPRIMITIVES_MAJOR > 2) || (SDL_GFXPRIMITIVES_MAJOR == 2 && SDL_GFXPRIMITIVES_MINOR > 0) || (SDL_GFXPRIMITIVES_MAJOR == 2 && SDL_GFXPRIMITIVES_MINOR == 0 && SDL_GFXPRIMITIVES_MICRO >= 11))
+#define HAVE_NONFILLEDPIE
+#endif
+#endif
+
+/*  
+ *  call-seq:
+ *     Rubygame::Draw.version => [major, minor, micro]
+ *
+ *  Return the major, minor, and micro version numbers for the version of 
+ *  SDL_gfxPrimitives that Rubygame was compiled with. This is intended to
+ *  allow games to detect which drawing operations are permitted and decide
+ *  whether the SDL_gfxPrimitives version is Good Enough to play the game
+ *  (perhaps without certain "optional" graphical effects).
+ *
+ *  More sophisticated methods of detecting which operations are permitted are
+ *  planned for future versions.
+ */
 VALUE rbgm_draw_version(VALUE module)
 { 
   return rb_ary_new3(3,
@@ -36,6 +64,10 @@ VALUE rbgm_draw_version(VALUE module)
 					 INT2NUM(SDL_GFXPRIMITIVES_MINOR),
 					 INT2NUM(SDL_GFXPRIMITIVES_MICRO));
 }
+
+/*********
+ * LINES *
+ *********/
 
 /* This is wrapped by rbgm_draw_line and rbgm_draw_aaline */
 void draw_line(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int aa)
@@ -100,17 +132,39 @@ void draw_line(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int aa)
 	return;
 }
 
+/*  call-seq:
+ *    Rubygame::Draw.line(surface, point1, point2, color)
+ *
+ *  Draw a line segment between two points on a surface. The line will not be
+ *  anti-aliased (it will have "jaggies").
+ *
+ *  This method takes these arguments:
+ *  - surface:: the target surface to draw on.
+ *  - point1::  the coordinates of one end of the line, in the form +[x,y]+.
+ *  - point2::  the coordinates of the other end of the line, as above.
+ *  - color::   the color of the shape, in the form +[r,g,b,a]+. If +a+
+ *              is omitted, it is drawn at full opacity.
+ */
 VALUE rbgm_draw_line(VALUE module, VALUE target, VALUE pt1, VALUE pt2, VALUE rgba)
 {
 	draw_line(target,pt1,pt2,rgba,0); /* no anti-aliasing */
 	return target;
 }
-
+/*  call-seq:
+ *    Rubygame::Draw.aaline(surface, point1, point2, color)
+ *
+ *  As Rubygame::Draw.line, but the line will be anti-aliased (no "jaggies").
+ *  This is a substantially slower operation than its aliased counterpart.
+ */
 VALUE rbgm_draw_aaline(VALUE module, VALUE target, VALUE pt1, VALUE pt2, VALUE rgba)
 {
 	draw_line(target,pt1,pt2,rgba,1); /* anti-aliasing */
 	return target;
 }
+
+/**********************
+ * RECTANGLES (BOXES) *
+ **********************/
 
 /* This is wrapped by rbgm_draw_rect and rbgm_draw_fillrect */
 void draw_rect(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int fill)
@@ -162,18 +216,41 @@ void draw_rect(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int fill)
 	}
 	return;
 }
-
+/*  call-seq:
+ *     Rubygame::Draw.box(surface, point1, point2, color)
+ *
+ *  Draw a non-filled box (rectangle) on a surface, given the coordinates of
+ *  its top-left corner and bottom-right corner.
+ *
+ *  This method takes these arguments:
+ *  - surface:: the target surface to draw on.
+ *  - point1::  the coordinates of top-left corner, in the form +[x,y]+.
+ *  - point2::  the coordinates of bottom-right corner, in the form +[x,y]+.
+ *  - color::   the color of the shape, in the form +[r,g,b,a]+. If +a+
+ *              is omitted, it is drawn at full opacity.
+ */
 VALUE rbgm_draw_rect(VALUE module, VALUE target, VALUE pt1, VALUE pt2, VALUE rgba)
 {
 	draw_rect(target,pt1,pt2,rgba,0); /* no fill */
 	return target;
 }
 
+/*  call-seq:
+ *     Rubygame::Draw.filled_box(surface, point1, point2, color)
+ *
+ *  As Rubygame::Draw.box, but the box is filled with the color. You might
+ *  find using Surface#fill to be more convenient, and perhaps faster than
+ *  this method.
+ */
 VALUE rbgm_draw_fillrect(VALUE module, VALUE target, VALUE pt1, VALUE pt2, VALUE rgba)
 {
 	draw_rect(target,pt1,pt2,rgba,1); /* fill */
 	return target;
 }
+
+/***********
+ * CIRCLES *
+ ***********/
 
 /* This is wrapped by rbgm_draw_(|aa|fill)circle */
 void draw_circle(VALUE target, VALUE center, VALUE radius, VALUE rgba, int aa, int fill)
@@ -231,23 +308,51 @@ void draw_circle(VALUE target, VALUE center, VALUE radius, VALUE rgba, int aa, i
 	return;
 }
 
+/* 
+ *  call-seq:
+ *     Rubygame::Draw.circle(surface, center, radius, color)
+ *
+ *  Draw a non-filled circle on a surface, given the coordinates of its center
+ *  and its radius.
+ *
+ *  This method takes these arguments:
+ *  - surface:: the target surface to draw on.
+ *  - center::  the coordinates of circle's center, in the form +[x,y]+.
+ *  - radius::  the radius (pixels) of the circle.
+ *  - color::   the color of the shape, in the form +[r,g,b,a]+. If +a+
+ *              is omitted, it is drawn at full opacity.
+ */
 VALUE rbgm_draw_circle(VALUE module, VALUE target, VALUE center, VALUE radius, VALUE rgba)
 {
 	draw_circle(target,center,radius,rgba,0,0); /* no aa, no fill */
 	return target;
 }
-
+/* 
+ *  call-seq:
+ *     Rubygame::Draw.aacircle(surface, center, radius, color)
+ *
+ *  As Rubygame::Draw.circle, but the circle border is anti-aliased.
+ */
 VALUE rbgm_draw_aacircle(VALUE module, VALUE target, VALUE center, VALUE radius, VALUE rgba)
 {
 	draw_circle(target,center,radius,rgba,1,0); /* aa, no fill */
 	return target;
 }
-
+/* 
+ *  call-seq:
+ *     Rubygame::Draw.filled_circle(surface, center, radius, color)
+ *
+ *  As Rubygame::Draw.circle, but the circle is filled with the color.
+ */
 VALUE rbgm_draw_fillcircle(VALUE module, VALUE target, VALUE center, VALUE radius, VALUE rgba)
 {
 	draw_circle(target,center,radius,rgba,0,1); /* no aa, fill */
 	return target;
 }
+
+/************
+ * ELLIPSES *
+ ************/
 
 /* This is wrapped by rbgm_draw_(|aa|fill)ellipse */
 void draw_ellipse(VALUE target, VALUE center, VALUE radii, VALUE rgba, int aa, int fill)
@@ -308,26 +413,53 @@ void draw_ellipse(VALUE target, VALUE center, VALUE radii, VALUE rgba, int aa, i
 	return;
 }
 
+/* 
+ *  call-seq:
+ *     Rubygame::Draw.ellipse(surface, center, radius, color)
+ *
+ *  Draw a non-filled ellipse (oval) on a surface, given the coordinates of 
+ *  its center and its horizontal and vertical radii.
+ *
+ *  This method takes these arguments:
+ *  - surface:: the target surface to draw on.
+ *  - center::  the coordinates of ellipse's center, in the form +[x,y]+.
+ *  - radii::   the x and y radii (pixels), in the form +[xr,yr]+.
+ *  - color::   the color of the shape, in the form +[r,g,b,a]+. If +a+
+ *              is omitted, it is drawn at full opacity.
+ */
 VALUE rbgm_draw_ellipse(VALUE module, VALUE target, VALUE center, VALUE radii, VALUE rgba)
 {
 	draw_ellipse(target,center,radii,rgba,0,0); /* no aa, no fill */
 	return target;
 }
-
+/* 
+ *  call-seq:
+ *     Rubygame::Draw.aaellipse(surface, center, radius, color)
+ *
+ *  As Rubygame::Draw.ellipse, but the ellipse border is anti-aliased.
+ */
 VALUE rbgm_draw_aaellipse(VALUE module, VALUE target, VALUE center, VALUE radii, VALUE rgba)
 {
 	draw_ellipse(target,center,radii,rgba,1,0); /* aa, no fill */
 	return target;
 }
 
+/* 
+ *  call-seq:
+ *     Rubygame::Draw.aaellipse(surface, center, radius, color)
+ *
+ *  As Rubygame::Draw.ellipse, but the ellipse is filled with the color.
+ */
 VALUE rbgm_draw_fillellipse(VALUE module, VALUE target, VALUE center, VALUE radii, VALUE rgba)
 {
 	draw_ellipse(target,center,radii,rgba,0,1); /* no aa, fill */
 	return target;
 }
 
-/* Unfortunately, SDL_gfx had a bad function name prior to 2.0.12,
-   so we have to check which function name to use. */
+/********
+ * PIES *
+ ********/
+
 /* This is wrapped by rbgm_draw_(|aa|fill)pie */
 void draw_pie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba, int fill)
 {
@@ -370,15 +502,12 @@ void draw_pie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba
 	if(fill)
 	{
 		//printf("filled pie\n");
-
-/* Check if we have at least version 2.0.12 of SDL_gfxPrimitives */
-#if ((SDL_GFXPRIMITIVES_MAJOR > 2) || (SDL_GFXPRIMITIVES_MAJOR == 2 && SDL_GFXPRIMITIVES_MINOR > 0) || (SDL_GFXPRIMITIVES_MAJOR == 2 && SDL_GFXPRIMITIVES_MINOR == 0 && SDL_GFXPRIMITIVES_MICRO >= 12))
+#ifdef HAVE_UPPERCASEPIE
 		filledPieRGBA(dest,x,y,rad,start,end,r,g,b,a);
 #else
 		/* before sdl-gfx 2.0.12, it used to be a lowercase pie: */
 		filledpieRGBA(dest,x,y,rad,start,end,r,g,b,a);
 #endif
-
 	}
 	else
 	{
@@ -390,33 +519,54 @@ void draw_pie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba
 	return;
 }
 
+/* 
+ *  call-seq:
+ *     Rubygame::Draw.pie(surface, center, radius, angles, color)
+ *
+ *  Draw a non-filled pie shape (an arc), given the coordinates of its center,
+ *  its radius, and its starting and ending angles. The shape is that of a 
+ *  circle with a "slice" removed, as if it were a pie.
+ *
+ *  This function can only be used if Rubygame was compiled with at least 
+ *  version 2.0.11 of SDL_gfxPrimitives. Otherwise, it will issue a warning and
+ *  return +nil+.
+ *
+ *  This method takes these arguments:
+ *  - surface:: the target surface to draw on.
+ *  - center::  the coordinates of circle's center, in the form +[x,y]+.
+ *  - radius::  the radius (pixels) of the circle.
+ *  - angles::  the start and end angles (in degrees) of the arc, in the form
+ *              +[start,end]+. Angles are *clockwise* from the positive x axis.
+ *  - color::   the color of the shape, in the form +[r,g,b,a]+. If +a+
+ *              is omitted, it is drawn at full opacity.
+ */
 VALUE rbgm_draw_pie(VALUE module, VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba)
 {
+#ifdef HAVE_NONFILLEDPIE
 	draw_pie(target,center,radius,angles,rgba,0); /* no fill */
 	return target;
+#else
+	rb_warn("Drawing non-filled pies is not supported by your version of SDL_gfx (%d,%d,%d). Please upgrade to 2.0.11 or later.", SDL_GFXPRIMITIVES_MAJOR, SDL_GFXPRIMITIVES_MINOR, SDL_GFXPRIMITIVES_MICRO);	
+	return Qnil;
+#endif
 }
-
-/* Non-filled pie shapes (arcs) were not supported prior to 2.0.11. */
-/* Check if we have at least version 2.0.11 of SDL_gfxPrimitives */
-#if ((SDL_GFXPRIMITIVES_MAJOR > 2) || (SDL_GFXPRIMITIVES_MAJOR == 2 && SDL_GFXPRIMITIVES_MINOR > 0) || (SDL_GFXPRIMITIVES_MAJOR == 2 && SDL_GFXPRIMITIVES_MINOR == 0 && SDL_GFXPRIMITIVES_MICRO >= 11))
-
-/* The real function. */
+/* 
+ *  call-seq:
+ *     Rubygame::Draw.filled_pie(surface, center, radius, angles, color)
+ *
+ *  As Rubygame::Draw.pie, but the pie shape is filled with color. This is to
+ *  say, the area of the circle between the starting and ending angles is
+ *  filled with color, while the rest is not.
+ */
 VALUE rbgm_draw_fillpie(VALUE module, VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba)
 {
 	draw_pie(target,center,radius,angles,rgba,1); /* fill */
 	return target;
 }
 
-#else
-
-/* A fake function which warns and returns nil */
-VALUE rbgm_draw_fillpie(VALUE module, VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba)
-{
-	rb_warn("Drawing non-filled pies is not supported by your version of SDL_gfx (%d,%d,%d). Please upgrade to 2.0.11 or later.", SDL_GFXPRIMITIVES_MAJOR, SDL_GFXPRIMITIVES_MINOR, SDL_GFXPRIMITIVES_MICRO);	
-	return Qnil;
-}
-
-#endif
+/************
+ * POLYGONS *
+ ************/
 
 /* This is wrapped by rbgm_draw_(|aa|fill)polygon */
 void draw_polygon(VALUE target, VALUE points, VALUE rgba, int aa, int fill)
@@ -478,19 +628,46 @@ void draw_polygon(VALUE target, VALUE points, VALUE rgba, int aa, int fill)
 	}
 	return;
 }
-
+/* 
+ *  call-seq:
+ *     Rubygame::Draw.polygon(surface, points, color)
+ *
+ *  Draw a non-filled polygon, given the coordinates of its vertices, in the
+ *  order that they are connected. This is essentially a series of connected
+ *  dots.
+ *
+ *  This method takes these arguments:
+ *  - surface:: the target surface to draw on.
+ *  - points::  an Array containing the coordinate pairs for each vertex of the
+ *              polygon, in the order that they are connected, e.g.
+ *              +[ [x1,y1], [x2,y2], ..., [xn,yn] ]+. To draw closed shape, the
+ *              final coordinates should be the same as the first coordinates.
+ *  - color::   the color of the shape, in the form +[r,g,b,a]+. If +a+
+ *              is omitted, it is drawn at full opacity.
+ */
 VALUE rbgm_draw_polygon(VALUE module, VALUE target, VALUE points, VALUE rgba)
 {
 	draw_polygon(target,points,rgba,0,0); /* no aa, no fill */
 	return target;
 }
-
+/* 
+ *  call-seq:
+ *     Rubygame::Draw.aapolygon(surface, points, color)
+ *
+ *  As Rubygame::Draw.polygon, but the lines are anti-aliased.
+ */
 VALUE rbgm_draw_aapolygon(VALUE module, VALUE target, VALUE points, VALUE rgba)
 {
 	draw_polygon(target,points,rgba,1,0); /* aa, no fill */
 	return target;
 }
 
+/* 
+ *  call-seq:
+ *     Rubygame::Draw.filled_polygon(surface, points, color)
+ *
+ *  As Rubygame::Draw.polygon, but the shape is filled with color.
+ */
 VALUE rbgm_draw_fillpolygon(VALUE module, VALUE target, VALUE points, VALUE rgba)
 {
 	draw_polygon(target,points,rgba,0,1); /* no aa, fill */
@@ -521,6 +698,8 @@ void Rubygame_Init_Draw()
 	rb_define_module_function(mDraw,"aapolygon",rbgm_draw_aapolygon,3);
 	rb_define_module_function(mDraw,"filled_polygon",rbgm_draw_fillpolygon,3);
 }
+
+/* -- */
 
 /*
 If SDL_gfx is not installed, the module still exists, but
