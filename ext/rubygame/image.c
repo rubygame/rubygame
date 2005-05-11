@@ -22,6 +22,18 @@
 #ifdef HAVE_SDL_IMAGE_H
 #include "SDL_image.h"
 
+#ifndef SDL_IMAGE_MAJOR_VERSION
+#define SDL_IMAGE_MAJOR_VERSION 0
+#endif
+
+#ifndef SDL_IMAGE_MINOR_VERSION
+#define SDL_IMAGE_MINOR_VERSION 0
+#endif
+
+#ifndef SDL_IMAGE_PATCHLEVEL
+#define SDL_IMAGE_PATCHLEVEL 0
+#endif
+
 /* Image module functions: */
 
 /* Return the major, minor, and patch numbers for SDL_ttf */
