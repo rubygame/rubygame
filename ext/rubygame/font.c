@@ -22,6 +22,18 @@
 #ifdef HAVE_SDL_TTF_H
 #include "SDL_ttf.h"
 
+#ifndef SDL_TTF_MAJOR_VERSION
+#define SDL_TTF_MAJOR_VERSION 0
+#endif
+
+#ifndef SDL_TTF_MINOR_VERSION
+#define SDL_TTF_MINOR_VERSION 0
+#endif
+
+#ifndef SDL_TTF_PATCHLEVEL
+#define SDL_TTF_PATCHLEVEL 0
+#endif
+
 /*
  *  call-seq:
  *     Rubygame::TTF.version  =>  [major,minor,patch]
