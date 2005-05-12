@@ -5,6 +5,9 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
+# This script is very, very messy, but it demonstrates almost all of
+# Rubygame's features, and thus served as something of a test program.
+
 #puts "Loading rubygame..."
 require "rubygame"
 #puts "Rubygame loaded."
@@ -20,12 +23,10 @@ puts "Creating queue and clock..."
 queue = Rubygame::Queue.instance()
 queue.block Rubygame::MouseMotionEvent
 clock = Rubygame::Time::Clock.new()
+#clock.desired_fps = 20
 
-#begin
-#screen = Rubygame::Display::Screen.new()
-#rescue StandardError => error
-#puts "Rescued StandardError: %s"%error.to_s
-#end
+puts "Transform is usable? %s"%[Rubygame::Transform.usable?]
+puts "Draw is usable? %s"%[Rubygame::Draw.usable?]
 
 class Panda
 	include Rubygame::Sprite::Sprite
@@ -101,45 +102,57 @@ class WobblyPanda < Panda
 	end
 end
 
+class PandaGroup < Rubygame::Sprite::Group
+	include Rubygame::Sprite::UpdateGroup
+end
+
+# Create the SDL window
 screen = Rubygame::Display.set_mode([320,240])
 screen.set_caption("Rubygame test","This is the icon title")
-puts "title: %s   icon title: %s"%screen.get_caption()
+puts "title: %s   icon title: %s"%screen.caption()
 
+# Create the very cute panda objects!
 panda1 = SpinnyPanda.new(100,50)
 panda2 = ExpandaPanda.new(150,50)
 panda3 = WobblyPanda.new(200,50,0.5)
 
-pandas = Rubygame::Sprite::Group.new
-pandas.extend(Rubygame::Sprite::UpdateGroup)
+# Put the pandas in a group
+pandas = PandaGroup.new
 pandas.push(panda1,panda2,panda3)
 puts "pandas: %s"%pandas.inspect
 
+# Make the background surface
 background = Rubygame::Surface.new(screen.size)
-puts "default colorkey is nil?: %s"%[background.get_colorkey==nil]
+puts "default colorkey is nil?: %s"%[background.colorkey==nil]
+
+# Create and test a new surface
 a = Rubygame::Surface.new([100,100])
-b = Rubygame::Surface.new([200,50])
 print "Surf(a): %dx%d, "%a.size
 print "%d bpp. Flags: %d "%[a.depth,a.flags]
 print "Masks: [%d, %d, %d, %d]\n"%a.masks
+
+# Draw a bunch of shapes on it to test the drawing module
 a.fill([70,70,255])
 rect1 = Rubygame::Rect.new([3,3,94,94])
 a.fill([40,40,1500],rect1)
 Rubygame::Draw.filled_box(a,[30,30],[70,70],[0,0,0])
 Rubygame::Draw.box(a,[31,31],[69,69],[255,255,255])
 Rubygame::Draw.filled_circle(a,[50,50],10,[100,150,200])
-Rubygame::Draw.line(a,[30,70],[50,30],[255,255,255])
-Rubygame::Draw.aaline(a,[50,30],[70,70],[255,255,255])
-Rubygame::Draw.filled_ellipse(background,[200,150],[30,25],[200,150,100])
-Rubygame::Draw.aaellipse(background,[200,150],[30,25],[200,150,100])
+# Two diagonal white lines, the right anti-aliased, the left not.
+Rubygame::Draw.line(a,[31,69],[49,31],[255,255,255])
+Rubygame::Draw.aaline(a,[49,31],[69,69],[255,255,255])
+# Finally, copy this interesting surface onto the background image 
+a.blit(background,[50,50],[0,0,90,80])
 
-# draw a filled polygon with a lighter border
+# Draw some shapes on the background for fun
+# ... a filled pentagon with a lighter border
 Rubygame::Draw.filled_polygon(background,\
 	[[50,150],[100,140],[150,160],[120,180],[60,170]],\
 	[100,100,100])
 Rubygame::Draw.aapolygon(background,\
 	[[50,150],[100,140],[150,160],[120,180],[60,170]],\
 	[200,200,200])
-# draw a pizza!!
+# ... a pepperoni pizza!! (if you use your imagination...)
 Rubygame::Draw.filled_pie(background,[250,200],34,[210,150],[180,130,50])
 Rubygame::Draw.filled_pie(background,[250,200],30,[210,150],[230,180,80])
 Rubygame::Draw.filled_circle(background,[240,180],4,[200,50,10])
@@ -148,13 +161,19 @@ Rubygame::Draw.filled_circle(background,[258,200],4,[200,50,10])
 Rubygame::Draw.filled_circle(background,[240,215],4,[200,50,10])
 Rubygame::Draw.filled_circle(background,[260,220],4,[200,50,10])
 
-a.blit(background,[50,50],[0,0,90,80])
-screen.update()
+# _Try_ to make an anti-aliased, filled ellipse, but it doesn't work well.
+# If you look closely at the white ellipse, you can see that it isn't
+# AA on the left and right side, and there are some black specks on the top
+# and bottom where the two ellipses don't quite match.
+Rubygame::Draw.filled_ellipse(background,[200,150],[30,25],[250,250,250])
+Rubygame::Draw.aaellipse(background,[200,150],[30,25],[250,250,250])
+
+# Create another surface to test transparency blitting
+b = Rubygame::Surface.new([200,50])
 b.fill([150,20,40])
-b.set_alpha(123)# approx. half
+b.set_alpha(123)# approx. half transparent
 b.blit(background,[20,40])
 background.blit(screen,[0,0])
-screen.update()
 
 if Rubygame::Joy.num_joysticks > 0
 	joys = true
@@ -212,8 +231,7 @@ catch(:rubygame_quit) do
 		pandas.draw(screen)
 		screen.update()
 		update_time = clock.tick()
-		#update_time = clock.tick(100) # causes freeze
-		if not fps == clock.fps
+		unless fps == clock.fps
 			fps = clock.fps
 			screen.set_caption("Rubygame test [%d fps]"%fps)
 			#puts "tick: %d  fps: %d"%[update_time,fps]
