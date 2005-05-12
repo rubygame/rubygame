@@ -153,6 +153,14 @@ end
 $CFLAGS += ' -Wall ' + `sdl-config --cflags`.chomp
 $LOCAL_LIBS += ' ' + `sdl-config --libs`.chomp
 
+if OPTS[:include_path]
+	$INCFLAGS += parse_path(OPTS[:include_path], "-I")
+end
+
+if OPTS[:library_path]
+	$LOCAL_LIBS += parse_path(OPTS[:library_path], "-L")
+end
+
 gfxincluded = false
 
 if OPTS[:with_gfx]
@@ -174,14 +182,6 @@ if OPTS[:with_ttf]
 	$libs = "-lSDL_ttf "+$libs if have_header("SDL_ttf.h")
 end
 
-if OPTS[:include_path]
-	$CFLAGS += parse_path(OPTS[:include_path], "-I")
-end
-
-if OPTS[:library_path]
-	$LOCAL_LIBS += parse_path(OPTS[:include_path], "-L")
-end
-
 #if enable_config("opengl",false) then
 #	dir_config('x11','/usr/X11R6')
 #  
@@ -199,6 +199,7 @@ end
 #end
 
 puts "CFLAGS: %s"%$CFLAGS.to_s
+puts "INCFLAGS: %s"%$INCFLAGS.to_s
 puts "LOCAL_LIBS: %s"%$LOCAL_LIBS.to_s
 puts "defs: %s"%$defs.to_s
 
