@@ -93,10 +93,6 @@ VALUE rbgm_ttf_quit(VALUE module)
  *           +.FON+ file.
  *  - size:: point size (based on 72DPI). Or, the height in pixels from the
  *           bottom of the descent to the top of the ascent.
- *
- *           Please note that pygame scales fonts by a factor of 0.6875, so to
- *           replicate the apparent font size of a pygame application, you will
- *           need to provide an equally scaled font size to Rubygame.
  */
 VALUE rbgm_ttf_new(int argc, VALUE *argv, VALUE class)
 {

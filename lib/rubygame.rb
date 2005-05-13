@@ -17,8 +17,8 @@
 #	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-# This is the file that should be imported, it in turn imports rubygame.so,
-# which has all of the C code for rubygame, and all the other rubygame modules
+# This is the file that should be imported, it in turn imports rubygame.so
+# (which has all of the C code for rubygame) and all the other rubygame modules
 
 begin
 	require "rubygame.so"
@@ -31,5 +31,5 @@ require "rubygame/event"
 require "rubygame/rect"
 require "rubygame/sprite"
 require "rubygame/clock"
-require "rubygame/font"
+require "rubygame/sfont"
 require "rubygame/string"
