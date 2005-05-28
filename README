@@ -5,17 +5,38 @@ Rubygame README
 	to provide functionality similar to pygame, but for those who 
 	prefer Ruby over Python. It was born out of a need (specifically,
 	MY need) for a clean, convenient Ruby-to-SDL binding. If Rubygame
-	isn't your cup of tea, you might also check out RUDL [3].
+	isn't your cup of tea, you might try another Ruby-to-SDL
+	binding, RUDL [3].
 
 	Note that while I intend to make it as easy to make games in Ruby
-	as it is to make games in Python, this is not just a clone of 
-	pygame. This is to say, where there are opportunities to improve
-	the layout (particularly to make it more object-oriented), I will
-	attempt to make those improvements.
+	as it is to make games in Python, this is NOT just a clone of 
+	pygame. This is to say, where there are opportunities for improvement,
+	I will attempt to make those improvements.
 
 	Many of the tutorials and examples for pygame will work with 
 	Rubygame, after some minor modification, so I encourage you to 
 	consult those as well.
+
+	Rubygame is being programmed to be modular, meaning you can pick
+	and choose which parts to use. For example, if you don't need
+	TrueType font support, SDL_ttf is not needed to compile Rubygame.
+	Additionally, it is possible for a game to detect at run-time which
+	features are present, and behave differently (for example, disabling
+	optional features).
+
+	Further, Rubygame is (or will be) multi-tiered, meaning that you can
+	access Rubygame's functionality on a number of levels, each level
+	being built on the level below it. At the lowest level, Rubygame is
+	essentially a Ruby interface to SDL. At higher levels, Rubygame 
+	provides sprite classes, event queues, etc. At still higher levels,
+	Rubygame might (in the future) provide features like a simple physics
+	model or animation classes. Each higher level is closer to a complete
+	game, but is also less flexible.
+
+	Rubygame is still (as of May 2005) in early development, and as such
+	it may contain many bugs and is prone to API changes. If you would
+	like to help make Rubygame better, please send me comments via email
+	(address at bottom of file)!
 
 	---- Footnotes ----
 	1. http://www.kmc.gr.jp/~ohai/rubysdl.en.html
@@ -26,21 +47,28 @@ Requirements
 ------------
 
 	Rubygame has been tested (and was developed) on the following,
-	although older/newer versions might work:
+	although older versions might work:
 
-		* ruby        1.8    -  1.8.2
-		* SDL         1.2.7  -  1.2.8
-		* SDL_gfx     2.0.10 -  2.0.12
-		* SDL_image   1.2.3  -  1.2.4
-		* SDL_ttf     2.0.6  -  2.0.7
+		* ruby        >= 1.8 
+		* SDL         >= 1.2.7
+		* SDL_gfx     >= 2.0.10   (for Draw/Transform modules)
+		* SDL_image   >= 1.2.3    (for Image.load() method)
+		* SDL_ttf     >= 2.0.6    (for Font::TTF class)
 
-	If you are compiling source, you will also need the following:
-		* gcc         3.3.2  -  3.4.3
+	If you are compiling source, you will obviously need a C compiler
+	as well. These versions of gcc worked fine for me:
+
+		* gcc         >= 3.3.2
 			(other compilers might work too)
 
 	If you are compiling source on a binary-based ditribution
 	(i.e., not Gentoo or LFS) you will also need the "dev" packages
 	of ruby, SDL, SDL_gfx, SDL_image, and SDL_ttf.
+
+	At this time, Rubygame is only known to work on GNU/Linux. MacOSX and
+	(eventually) Windows ports are likely. If you want to use Rubygame
+	on either of those platforms, please send me an email (address at
+	bottom of file) and tell me, so I can guage interest!
 
 Install
 -------
@@ -52,8 +80,43 @@ Install
 		$ ruby setup.rb setup
 		# ruby setup.rb install
 
+	or just:
+
+		# ruby setup.rb all
+
 	You can also install files into your favorite directory by
 	supplying setup.rb some options. Try "ruby setup.rb --help".
+
+	During the 'config' phase, you may pass any of these additional arguments
+	like so: "ruby setup.rb config -- --arg1 val --arg2"
+
+		--with-gfx      (bool, default: yes)
+			Compile Rubygame with SDL_gfx support? This is required for the
+			'Draw' and 'Transform' modules to work.
+
+		--with-image    (bool, default: yes)
+			Compile Rubygame with SDL_image support? This is required for the
+			Image.load() method to work.
+
+		--with-ttf      (bool, default: yes)
+			Compile Rubygame with SDL_ttf support? This is required for the
+			Font::TTF class to work.
+
+		--include-path  (path)
+			A colon-separated list of directory paths to check for C headers,
+			supplementing the directory given by `sdl-config --cflags`.
+			Use this to help the compiler find headers installed in unusual
+			places.
+
+		--library-path  (path)
+			A colon-separated list of directory paths to check for libraries,
+			supplementing the directory given by `sdl-config --libs`.
+			Use this to help the compiler find libraries installed in unusual
+			places.
+
+		--no-sdl-config (bool, default: no)
+			Don't use `sdl-config` to get compiler flags or include/library
+			paths. Only use this if you know what you're doing!
 
 Usage
 -----
@@ -64,7 +127,7 @@ Usage
 
 	You will probably also want a display window and event queue:
 
-		screen = Rubygame::Display.set_mode( [640,480] )
+		screen = Rubygame::Screen.set_mode( [640,480] )
 		queue = Rubygame::Queue.instance()
 
 	For more information, see the documentation in the "doc/" folder
@@ -75,5 +138,9 @@ License
 
 	Rubygame is distributed under the terms of the GNU Lesser GPL.
 	See LICENSE for more details.
+
+	The font file, 'samples/freesansbold.ttf' is distributed under
+	the terms of the GNU GPL. See 'samples/README' and 'samples/GPL'
+	for more details.
 
 John 'jacius' Croisant  (jacius at seul dot org)
