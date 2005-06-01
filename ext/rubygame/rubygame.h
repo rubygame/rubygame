@@ -1,5 +1,5 @@
 /*
-	Rubygame -- Ruby code and bindings to SDL/OpenAL to facilitate game creation
+	Rubygame -- Ruby code and bindings to SDL to facilitate game creation
 	Copyright (C) 2004  John 'jacius' Croisant
 
 	This library is free software; you can redistribute it and/or
@@ -46,8 +46,8 @@ extern void Define_Rubygame_Constants();
 extern VALUE mDisplay;
 extern VALUE cScreen;
 extern void Rubygame_Init_Display();
-extern VALUE rbgm_display_setmode(int, VALUE*, VALUE);
-extern VALUE rbgm_display_getsurface(VALUE);
+extern VALUE rbgm_screen_setmode(int, VALUE*, VALUE);
+extern VALUE rbgm_screen_getsurface(VALUE);
 extern VALUE rbgm_screen_new(VALUE); /* dummy function */
 extern VALUE rbgm_screen_getcaption(VALUE);
 extern VALUE rbgm_screen_setcaption(int, VALUE*, VALUE);
@@ -170,7 +170,7 @@ extern VALUE rbgm_surface_getat( int, VALUE*, VALUE);
 extern VALUE mTime;
 extern void Rubygame_Init_Time();
 extern VALUE rbgm_time_wait(VALUE, VALUE);
-extern VALUE rbgm_time_delay(VALUE, VALUE);
+extern VALUE rbgm_time_delay(int, VALUE*, VALUE);
 extern VALUE rbgm_time_getticks(VALUE);
 
 /* Transform */
