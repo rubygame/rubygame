@@ -1,5 +1,5 @@
 /*
-	Rubygame -- Ruby code and bindings to SDL/OpenAL to facilitate game creation
+	Rubygame -- Ruby code and bindings to SDL to facilitate game creation
 	Copyright (C) 2004  John 'jacius' Croisant
 
 	This library is free software; you can redistribute it and/or
@@ -175,7 +175,7 @@ VALUE rbgm_surface_getat( int, VALUE*, VALUE);
 VALUE mTime;
 void Rubygame_Init_Time();
 VALUE rbgm_time_wait(VALUE, VALUE);
-VALUE rbgm_time_delay(VALUE, VALUE);
+VALUE rbgm_time_delay(int, VALUE*, VALUE);
 VALUE rbgm_time_getticks(VALUE);
 
 /* Transform */
