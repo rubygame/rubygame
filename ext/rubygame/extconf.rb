@@ -3,127 +3,6 @@
 require 'mkmf'
 require 'getoptlong'
 
-VAL_FALSE = ["f","false","n","no"]
-VAL_TRUE = ["t","true","y","yes"]
-
-FLAG = GetoptLong::NO_ARGUMENT
-OPT = GetoptLong::OPTIONAL_ARGUMENT
-REQ = GetoptLong::REQUIRED_ARGUMENT
-
-# OPT_INFO entry format:
-#   :opt_name => [ key, args, short_describe, long_describe ]
-# 
-# :opt_name will be transformed into "--opt-name" for the command line string
-# 
-# args is an Array describing what sort of arguments the flag takes.
-#
-# The first value describes whether the arguments are required, and is one of:
-#   FLAG (takes no additional arguments)
-#   OPT (takes optional arguments)
-#   REQ (takes required arguments)
-#
-# If the first value is FLAG, the rest of the values are ignored.
-#
-# The second value is an integer or nil, which indicates which, if any, of the
-# following arguments is the default value. 1 refers to the first possible
-# value, i.e. the third value in the Array. nil means there is no default.
-#
-# The rest of the arguments are possible values that the argument can be.
-#
-# e.g. [REQ 1,"yes","no"] indicates that the argument is required, is either
-# "yes" or "no", and entry 1 ("yes") is the default.
-OPT_INFO = {
-	:with_gfx => [[OPT, 1, "yes","no"],
-		"Compile Rubygame with SDL_gfx",
-		"If no, Rubygame will not be compile with SDL_gfx, and the Draw and "\
-		"Transform modules will be unusable."],
-	:with_ttf => [[OPT, 1, "yes","no"],
-		"Compile Rubygame with SDL_ttf",
-		"If no, Rubygame will not be compile with SDL_ttf, and the Font::TTF"\
-		"class will be unusable."],
-	:with_image => [[OPT, 1, "yes","no"],
-		"Compile Rubygame with SDL_image",
-		"If no, Rubygame will not be compile with SDL_image, and the Image"\
-		"module will be unusable."],
-	:include_path => [[REQ, 1, ""],
-		"Paths to check for C headers",
-		"A colon-separated list of directories to check for C headers."\
-		"The path listed by `sdl-config --cflags' will also be checked."],
-	:library_path => [[REQ, 1, ""],
-		"Paths to check for C libraries",
-		"A colon-separated list of directories to check for C libraries."\
-		"The path listed by `sdl-config --libs' will also be checked."],
-}
-
-# Convert :opt_name into "--opt-name"
-def convert_opt_symbol(symbol)
-	"--%s"%[symbol.to_s.gsub("_","-")]
-end
-
-# Convert "--opt-name" into :opt_name
-def convert_opt_string(string)
-	string[2..-1].gsub("-","_").intern
-end
-
-# Convert e.g. [REQ, 1, a, b, c] into "a"
-def convert_values_short(values)
-	if values[0] == FLAG
-		return nil
-	else
-		return values[values[2]]
-	end
-end
-
-# Convert e.g. [REQ, 1, a, b, c] into "a/b/c (default: a)"
-# if there is no default, omit the "(default: )" part
-def convert_values_long(values)
-	if values[0] == FLAG
-		return nil
-	else
-		v = values[1..-1]
-		i = values[0] - 1
-		default = v[i]
-		return "%s%s"%[v.join("/"),
-			(default and " (default: %s)"%[default])
-		]
-	end
-end
-
-# return string for pretty print short option description
-def pprint_opt_short(symbol)
-	name = convert_opt_symbol(symbol)
-	info = OPT_INFO[symbol]
-	unless info[0] == FLAG
-		vals = convert_values_short(info[1])
-	else
-		vals = ""
-	end
-	desc = info[3]
-	return "#{name} (#{vals}) #{desc}"
-end
-
-# return string for pretty print short option description
-def pprint_opt_long(symbol)
-	name = convert_opt_symbol(symbol)
-	info = OPT_INFO[symbol]
-	unless info[0] == FLAG
-		vals = convert_values_long(info[1])
-	else
-		vals = ""
-	end
-	desc, longdesc = info[3..4]
-	return "#{name} #{desc} \nCan be: #{values} \n#{longdesc}"
-end
-
-def generate_opts_list(info)
-	list = []
-	info.each{|k,v|
-		# [--opt-name, FLAG||OPT||REQ]
-		list.push([convert_opt_symbol(k),info[k][0][0]])
-	}
-	return list
-end
-
 # Break up a colon-separated list into separate elements, prefix the given
 # string, and put them together in a string, like this:
 #   >> parse_path("/usr/local/lib:/usr/lib", "-L")
@@ -137,24 +16,70 @@ def parse_path(path,prefix="")
 	return s
 end
 
-OPTS = {}
-opts = GetoptLong.new( *generate_opts_list(OPT_INFO) )
+VAL_FALSE = ["f","false","n","no"]
+VAL_TRUE = ["t","true","y","yes"]
 
-opts.each do |opt, arg|
+# Return true of false if +arg+ seems to be a bool-like string,
+# otherwise return +default+
+def parse_truth(arg,default=nil)
 	if VAL_TRUE.include? arg
-		OPTS[convert_opt_string(opt)] = true
+		return true
 	elsif VAL_FALSE.include? arg
-		OPTS[convert_opt_string(opt)] = false
+		return false
 	else
-		OPTS[convert_opt_string(opt)] = arg
+		return default
 	end
 end
 
-$CFLAGS += ' -Wall ' + `sdl-config --cflags`.chomp
-$LOCAL_LIBS += ' ' + `sdl-config --libs`.chomp
+getopts = GetoptLong.new(
+	['--with-gfx',       GetoptLong::OPTIONAL_ARGUMENT],
+	['--with-image',     GetoptLong::OPTIONAL_ARGUMENT],
+	['--with-ttf',       GetoptLong::OPTIONAL_ARGUMENT],
+	['--library-path',   GetoptLong::REQUIRED_ARGUMENT],
+	['--include-path',   GetoptLong::REQUIRED_ARGUMENT],
+	['--cflags',         GetoptLong::REQUIRED_ARGUMENT],
+	['--no-sdl-config',  GetoptLong::NO_ARGUMENT] )
+
+# Option values
+OPTS = {
+	:with_gfx      => true,
+	:with_image    => true,
+	:with_ttf      => true,
+	:library_path  => "",
+	:include_path  => "",
+	:cflags        => "",
+	:no_sdl_config => false,
+}
+
+# Parse options
+getopts.each do |opt, arg|
+	case(opt)
+	when '--with-gfx'
+		OPTS[:with_gfx] = parse_truth(arg, true)
+	when '--with-image'
+		OPTS[:with_image] = parse_truth(arg, true)
+	when '--with-ttf'
+		OPTS[:with_ttf] = parse_truth(arg, true)
+	when '--library-path'
+		OPTS[:library_path] = arg
+	when '--include-path'
+		OPTS[:include_path] = arg
+	when '--cflags'
+		OPTS[:cflags] = arg
+	when '--no-sdl-config'
+		OPTS[:no_sdl_config] = parse_truth(arg, true)
+	end
+end
+
+$CFLAGS += " -Wall %s "%[OPTS[:cflags]]
+
+unless OPTS[:no_sdl_config]
+	$CFLAGS += " %s"%`sdl-config --cflags`.chomp
+	$LOCAL_LIBS += " %s"%`sdl-config --libs`.chomp
+end
 
 if OPTS[:include_path]
-	$INCFLAGS += parse_path(OPTS[:include_path], "-I")
+	$CFLAGS += parse_path(OPTS[:include_path], "-I")
 end
 
 if OPTS[:library_path]
@@ -201,6 +126,6 @@ end
 puts "CFLAGS: %s"%$CFLAGS.to_s
 puts "INCFLAGS: %s"%$INCFLAGS.to_s
 puts "LOCAL_LIBS: %s"%$LOCAL_LIBS.to_s
-puts "defs: %s"%$defs.to_s
+puts "defs: %s"%$defs.join(' ')
 
 create_makefile("rubygame")
