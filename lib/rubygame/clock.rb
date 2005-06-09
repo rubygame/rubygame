@@ -20,51 +20,80 @@
 module Rubygame
 	module Time
 		class Clock
-			def initialize
-				@last_tick = Rubygame::Time.get_ticks()
-				@passed = 0
-				@raw_passed = 0
-				@ticks = 0
-				@time = 0
+			attr_reader :start,:passed,:ticks,:desired_fps,:desired_mspf
+			def initialize(desired_fps=nil)
+				@start = Rubygame::Time.get_ticks()
+				@last_tick = @start	# time that last tick occured
+				@passed = 0		# time (ms) since last tick
+				@raw_passed = 0	# @passed, before applying delay to steady FPS
+				@ticks = 0		# incremented every time Clock#tick is called
+				self.desired_fps=desired_fps # frames per second to delay for
 			end
 
+			# Set the desired number of frames per second. If this is set,
+			# Clock#tick() will add a small delay to each frame to slow down
+			# execution if it is running faster than this value.
+			# If nil, no slowdown will be made to execution.
+			#
+			# This implicitely sets @desired_mspf.
+			def desired_fps=(dfps)
+				@desired_fps = dfps
+				@desired_mspf = (dfps and 1000.0/dfps)
+			end
+
+			# Set the desired time (milliseconds) between frames. If this is 
+			# set, Clock#tick() will add a small delay to each frame to slow 
+			# down execution if the natural delay between frames is too small.
+			# If nil, no slowdown will be made to execution.
+			# 
+			# This implicitely sets @desired_fps.
+			def desired_msfp=(dmsfp)
+				@desired_fps = (dmsfp and 1000.0/dmspf)
+				@desired_mspf = dmsfp
+			end
+
+			# Returns milliseconds since this Clock was initialized
+			def time
+				@last_tick - @start
+			end
+
+			# Return frames per second (fps) recorded by the Clock
 			def fps
 				begin
-					return 1000*@ticks/@time
+					return 1000*@ticks / (@last_tick - @start)
 				rescue ZeroDivisionError
 					return 0
 				end
 			end
 
-			def tick(fps_limit=nil)
-				now = Rubygame::Time.get_ticks()
-				@passed = now - @last_tick
-				@last_tick = now
-				@ticks += 1
-				@time += @passed
-				@raw_passed = @passed
-				fps = self.fps
-				extra = 0
-				if fps_limit and fps > fps_limit
-					#print "before: %d "%[@passed]
+			# Call this function once per frame to use framerate tracking.
+			# Returns the number of milliseconds since the last time you
+			# called the function.
+			# If @desired_fps is set, this function will delay execution for a
+			# certain amount of time so that (if you call this function once
+			# per frame) the program will run at that framerate.
+			def tick()
+				now = Rubygame::Time.get_ticks() # ms since init'd Rubygame
+ 				@passed = now - @last_tick # how long since the last tick?
+ 				@last_tick = now # update last tick time
+				@ticks += 1		# increment ticks
+				@raw_passed = @passed # save unadjusted @passed
 
-					extra = 1000.0/fps_limit - @passed
-					if extra < 0 or extra > 100
-						raise(StandardError,"whoa, that's a weird extra! (%d)"%extra)
-					else
-						extra = Rubygame::Time.delay( extra)
+				# Now we manually delay if we are too early, so the 
+				# frames per second stays approx. at the desired rate.
+				goal_delay = 0   # store what we want
+				actual_delay = 0 # store what we get
+				if @desired_fps and (self.fps() > @desired_fps)
+					goal_delay = @desired_mspf - @passed
+					unless goal_delay < 0
+						actual_delay = Rubygame::Time.delay(goal_delay)
+						@passed += actual_delay	# why @raw_passed is different
+					# else we are running too slow anyway, can't un-delay
 					end
-					@passed += extra
-					@time += extra
-
-					# old, bad way:
-					#@passed = Rubygame::Time.delay( (fps/limit - 1) * @passed)
-
-					#print "after: %d\n"%[@passed]
 				end
-				#puts "%d, time: %5.2f, passed: %d (%d + %d)"%[@ticks,@time,@passed,@raw_passed,extra]
 				return @passed
 			end
+
 		end # class Clock
 	end # module Time
 end #module Rubygame
