@@ -201,6 +201,10 @@ class TC_Rect < Test::Unit::TestCase
 		assert_equal([3,2,20,40],rect)
 	end
 
+	# --
+	# CENTERS
+	# ++
+
 	def test_center
 		rect = Rect.new(3,5,20,40)
 		assert_equal([13,25],rect.center)
@@ -234,6 +238,10 @@ class TC_Rect < Test::Unit::TestCase
 		assert_equal([3,23,20,40],rect)
 	end
 
+	# --
+	# CORNERS
+	# ++
+
 	def test_topleft
 		rect = Rect.new(3,5,20,40)
 		assert_equal([3,5],rect.topleft)
@@ -255,6 +263,7 @@ class TC_Rect < Test::Unit::TestCase
 		rect.tl = [6,2]
 		assert_equal([6,2,20,40],rect)
 	end
+
 
 	def test_topright
 		rect = Rect.new(3,5,20,40)
@@ -278,6 +287,7 @@ class TC_Rect < Test::Unit::TestCase
 		assert_equal([6,2,20,40],rect)
 	end
 
+
 	def test_bottomright
 		rect = Rect.new(3,5,20,40)
 		assert_equal([23,45],rect.bottomright)
@@ -299,6 +309,33 @@ class TC_Rect < Test::Unit::TestCase
 		rect.br = [26,42]
 		assert_equal([6,2,20,40],rect)
 	end
+
+
+	def test_bottomleft
+		rect = Rect.new(3,5,20,40)
+		assert_equal([3,45],rect.bottomleft)
+	end
+
+	def test_set_bottomleft
+		rect = Rect.new(3,5,20,40)
+		rect.bottomleft = [6,42]
+		assert_equal([6,2,20,40],rect)
+	end
+
+	def test_bl
+		rect = Rect.new(3,5,20,40)
+		assert_equal([3,45],rect.bl)
+	end
+
+	def test_set_bl
+		rect = Rect.new(3,5,20,40)
+		rect.bl = [6,42]
+		assert_equal([6,2,20,40],rect)
+	end
+
+	# --
+	# MIDPOINTS
+	# ++
 
 	def test_midleft
 		rect = Rect.new(3,5,20,40)
@@ -322,6 +359,7 @@ class TC_Rect < Test::Unit::TestCase
 		assert_equal([6,2,20,40],rect)
 	end
 
+
 	def test_midtop
 		rect = Rect.new(3,5,20,40)
 		assert_equal([13,5],rect.midtop)
@@ -343,6 +381,7 @@ class TC_Rect < Test::Unit::TestCase
 		rect.mt = [16,2]
 		assert_equal([6,2,20,40],rect)
 	end
+
 
 	def test_midright
 		rect = Rect.new(3,5,20,40)
@@ -366,6 +405,7 @@ class TC_Rect < Test::Unit::TestCase
 		assert_equal([6,2,20,40],rect)
 	end
 
+
 	def test_midbottom
 		rect = Rect.new(3,5,20,40)
 		assert_equal([13,45],rect.midbottom)
@@ -387,3 +427,4 @@ class TC_Rect < Test::Unit::TestCase
 		rect.mb = [16,42]
 		assert_equal([6,2,20,40],rect)
 	end
+end
