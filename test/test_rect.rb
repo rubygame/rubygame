@@ -47,6 +47,10 @@ class TC_Rect < Test::Unit::TestCase
 		assert_equal("#<Rect [3.1,5.2,20.3,40.5]>",rect.to_s)
 	end
 
+	# --
+	# PRIMARY ATTRIBUTES
+	# ++
+
 	def test_x
 		rect = Rect.new(3,5,20,40)
 		assert_equal(3,rect.x)
@@ -69,6 +73,7 @@ class TC_Rect < Test::Unit::TestCase
 		assert_equal([9,5,20,40],rect)
 	end
 
+
 	def test_y
 		rect = Rect.new(3,5,20,40)
 		assert_equal(5,rect.y)
@@ -90,6 +95,7 @@ class TC_Rect < Test::Unit::TestCase
 		rect[1]=9
 		assert_equal([3,9,20,40],rect)
 	end
+
 
 	def test_w
 		rect = Rect.new(3,5,20,40)
@@ -124,6 +130,7 @@ class TC_Rect < Test::Unit::TestCase
 		assert_equal([3,5,9,40],rect)
 	end
 
+
 	def test_h
 		rect = Rect.new(3,5,20,40)
 		assert_equal(40,rect.h)
@@ -146,6 +153,7 @@ class TC_Rect < Test::Unit::TestCase
 		assert_equal([3,5,20,9],rect)
 	end
 
+
 	def test_size
 		rect = Rect.new(3,5,20,40)
 		assert_equal([20,40],rect.size)
@@ -156,6 +164,10 @@ class TC_Rect < Test::Unit::TestCase
 		rect.size = [9,5]
 		assert_equal([3,5,9,5],rect)
 	end
+
+	# --
+	# SIDES
+	# ++
 
 	def test_left
 		rect = Rect.new(3,5,20,40)
@@ -168,6 +180,7 @@ class TC_Rect < Test::Unit::TestCase
 		assert_equal([9,5,20,40],rect)
 	end
 
+
 	def test_top
 		rect = Rect.new(3,5,20,40)
 		assert_equal(5,rect.top)
@@ -179,6 +192,7 @@ class TC_Rect < Test::Unit::TestCase
 		assert_equal([3,9,20,40],rect)
 	end
 
+
 	def test_right
 		rect = Rect.new(3,5,20,40)
 		assert_equal(23,rect.right)
@@ -189,6 +203,7 @@ class TC_Rect < Test::Unit::TestCase
 		rect.right = 42
 		assert_equal([22,5,20,40],rect)
 	end
+
 
 	def test_bottom
 		rect = Rect.new(3,5,20,40)
@@ -427,4 +442,45 @@ class TC_Rect < Test::Unit::TestCase
 		rect.mb = [16,42]
 		assert_equal([6,2,20,40],rect)
 	end
+
+
+	# --
+	# CLAMP
+	# ++
+
+	# Clamp a rect that fits.
+	def test_clamp_fits
+		rect_a = Rect.new(0,0,20,20)
+		rect_b = Rect.new(40,10,6,6)
+		assert_equal([14,10,6,6],rect_b.clamp(rect_a))
+	end
+
+	# Clamp a rect that fits, but is already contained (no effect)
+	def test_clamp_contained
+		rect_a = Rect.new(0,0,20,20)
+		rect_b = Rect.new(10,10,6,6)
+		assert_equal([10,10,6,6],rect_b.clamp(rect_a))
+	end
+
+	# Clamp a rect that is too wide.
+	def test_clamp_wide
+		rect_a = Rect.new(0,0,20,20)
+		rect_b = Rect.new(40,10,30,6)
+		assert_equal([-5,10,30,6],rect_b.clamp(rect_a))
+	end
+
+	# Clamp a rect that is too tall.
+	def test_clamp_tall
+		rect_a = Rect.new(0,0,20,20)
+		rect_b = Rect.new(10,40,6,30)
+		assert_equal([10,-5,6,30],rect_b.clamp(rect_a))
+	end
+
+		# Clamp a rect that is both too wide and too tall.
+	def test_clamp_nofit
+		rect_a = Rect.new(0,0,20,20)
+		rect_b = Rect.new(10,40,30,30)
+		assert_equal([-5,-5,30,30],rect_b.clamp(rect_a))
+	end
+
 end
