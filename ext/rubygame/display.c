@@ -229,10 +229,10 @@ VALUE rbgm_screen_update(int argc, VALUE *argv, VALUE self)
 		x = y = w = h = 0;
 	  else						/* Array/Rect */
 		{
-		  x = NUM2INT(rect_entry(argv[0],0));
-		  y = NUM2INT(rect_entry(argv[0],1));
-		  w = NUM2INT(rect_entry(argv[0],2));
-		  h = NUM2INT(rect_entry(argv[0],3));
+		  x = NUM2INT(rb_ary_entry(argv[0],0));
+		  y = NUM2INT(rb_ary_entry(argv[0],1));
+		  w = NUM2INT(rb_ary_entry(argv[0],2));
+		  h = NUM2INT(rb_ary_entry(argv[0],3));
 		}
 	  break;
 	case 4:
@@ -276,10 +276,10 @@ VALUE rbgm_screen_updaterects(VALUE self, VALUE array_rects)
   for( i=0; i < num_rects; i++ )
 	{
 	  each_rect = rb_ary_entry(array_rects,i);
-	  rects[i]->x = rect_entry(each_rect,0);
-	  rects[i]->y = rect_entry(each_rect,1);
-	  rects[i]->w = rect_entry(each_rect,2);
-	  rects[i]->h = rect_entry(each_rect,3);
+	  rects[i]->x = NUM2INT(rb_ary_entry(each_rect,0));
+	  rects[i]->y = NUM2INT(rb_ary_entry(each_rect,1));
+	  rects[i]->w = NUM2INT(rb_ary_entry(each_rect,2));
+	  rects[i]->h = NUM2INT(rb_ary_entry(each_rect,3));
 	}
 
   /* call the SDL method to update from all these rects */
