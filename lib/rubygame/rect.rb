@@ -51,200 +51,154 @@
 
 module Rubygame
 
-	# Extract or generate a Rect from the given object, if possible, using the
-	# following process:
-	# 
-	#  1. If it's a Rect already, return a duplicate Rect.
-	#  2. Elsif it's an Array with at least 4 values, make a Rect from it.
-	#  3. Elsif it has a rect attribute, repeat this process on that attribute.
-	#  4. Otherwise, raise TypeError.
-	# 
-	def rect_from_object(object,recurse=0)
-		case(rect.class)
-		when Rect
-			return self.dup
-		when Array 
-			if rect.length >= 4
-				return Rect.new(object)
-			else
-				raise ArgumentError("Array does not have enough indices to be made into a Rect (%d for 4)."%rect.length )
-			end
-		else
-			begin 
-				if recurse < 1
-					return rect_from_object(rect.rect, recurse+1)
-				else
-					raise TypeError("Object must be a Rect or Array [x,y,w,h], or have an attribute called 'rect'. (Got %s instance)."%rect.class)
-				end
-			rescue NoMethodError # if no rect.rect
-				raise TypeError("Object must be a Rect or Array [x,y,w,h], or have an attribute called 'rect'. (Got %s instance.)"%rect.class)
-			end
-		end # case
-	end
-
-#--
-# Maybe Rect should be based on Array? Haven't we been through this before?
-# Or was that with Sprite::Group...
-#++
-
 # A Rect is a representation of a rectangle, with four core attributes
 # (x offset, y offset, width, and height) and a variety of functions
 # for manipulating and accessing these attributes.
-# 
+#
 # Like all coordinates in Rubygame (and its base library, SDL), x and y
-# offsets are measured from the top-left corner of the screen, with larger y
-# offsets being lower. Thus, specifying the x and y offsets of the Rect is
-# equivalent to setting the location of its top-left corner.
+# offsets are measured from the top-left corner of the screen, with greater
+# y offsets being lower. Thus, specifying the x and y offsets of the Rect
+# is equivalent to setting the location of its top-left corner.
 # 
 # In Rubygame, Rects are used for collision detection and describing 
 # the area of a Surface to operate on.
-class Rect
+class Rect < Array
 
 	# Create a new Rect, attempting to extract its own information from 
 	# the given arguments. The arguments must fall into one of these cases:
 	# 
-	#   - 4 integers, +(x, y, w, h)+.
-	#   - 1 Array containing 4 integers, +([x, y, w, h])+.
-	#   - 2 Arrays containing 2 integers each, +([x,y], [w,h])+.
-	#   - 1 valid Rect object.
-	#   - 1 object with a +rect+ attribute (such as a Sprite) which is valid 
-	#     Rect object.
+	#   - 4 integers +(x, y, w, h)+.
+	#   - 1 Rect or Array containing 4 integers +([x, y, w, h])+.
+	#   - 2 Arrays containing 2 integers each +([x,y], [w,h])+.
+	#   - 1 object with a +rect+ attribute which is a valid Rect object.
 	# 
 	# All rect core attributes (x,y,w,h) must be integers.
 	# 
 	def initialize(*argv)
 		case argv.length
 		when 1
-			if argv[0].kind_of? Rect; @x,@y,@w,@h = argv[0].to_a;
-			elsif argv[0].kind_of? Array; @x,@y,@w,@h = argv[0];
-			elsif argv[0].respond_to? :rect; @x,@y,@w,@h=argv[0].rect.to_a;
+			if argv[0].kind_of? Array; super(argv[0])
+			elsif argv[0].respond_to? :rect; super(argv[0])
 			end
 		when 2
-			@x,@y = argv[0]
-			@w,@h = argv[1]
+			super(argv[0].concat(argv[1]))
 		when 4
-			@x,@y,@w,@h = argv
+			super(argv)
 		end
 		return self
 	end
 
-	# Print the Rect in the form "+Rect(x,y,w,h)+"
-	def to_s; "Rect(%s,%s,%s,%s)"%[@x,@y,@w,@h]; end
-	alias inspect to_s
+	# Print the Rect in the form "+#<Rect [x,y,w,h]>"
+	def to_s; "#<Rect [%s,%s,%s,%s]>"%self; end
 
-	# Return an Array of the form +[x,y,w,h]+
-	def to_a; [@x,@y,@w,@h]; end
-
-	# Return the value of the Rect at the index as if it were an Array of the
-	# form [x,y,w,h].
-	def [](i); self.to_a[i]; end
-
-	# Set the value of the Rect at the index as if it were an Array of the form
-	# [x,y,w,h].
-	def []=(i,value)
-		case(i)
-		when 0; @x = value
-		when 1; @y = value
-		when 2; @w = value
-		when 3; @h = value
-		end
-		return value
-	end
-
-	# Convert the Rect and the other object to an Array (using #to_a) and
-	# test equality.
-	def ==(other)
-		other.to_a == self.to_a
-	end
+	# Print the Rect in the form "+#<Rect:id [x,y,w,h]>"
+	def inspect; "#<Rect:#{self.object_id} [%s,%s,%s,%s]>"%self; end
 
 	############################
 	##### RECT  ATTRIBUTES #####
 	############################
 
-	# Core attributes (x offset, y offset, width, height)
-	attr_accessor :x, :y, :w, :h
-
-	alias width w
-	alias width= w=;
-
-	alias height h
-	alias height= h=;
-
-	# Return the width and height of the Rect.
-	def size; [@w, @h]; end
-
-	# Set the width and height of the Rect.
-	def size=(size); @w, @h = size; return size; end
+	# Returns self[0]
+	def x; return self[0]; end
+	# Sets self[0] to +val+
+	def x=(val); self[0] = val; end
 
 	alias left x
 	alias left= x=;
 	alias l x
 	alias l= x=;
 
+	# Returns self[1]
+	def y; return self[1]; end
+	# Sets self[1] to +val+
+	def y=(val); self[1] = val; end
+
 	alias top y
 	alias top= y=;
 	alias t y
 	alias t= y=;
 
+	# Returns self[2]
+	def w; return self[2]; end
+	# Sets self[2] to +val+
+	def w=(val); self[2] = val; end
+
+	alias width w
+	alias width= w=;
+
+	# Returns self[3]
+	def h; return self[3]; end
+	# Sets self[3] to +val+
+	def h=(val); self[3] = val; end
+
+	alias height h
+	alias height= h=;
+
+	# Return the width and height of the Rect.
+	def size; return self[2..3]; end
+
+	# Set the width and height of the Rect.
+	def size=(size); self[2..3] = size; return size; end
+
 	# Return the x coordinate of the right side of the Rect.
-	def right; @x+@w; end
+	def right; return self[0]+self[2]; end
 
 	# Set the x coordinate of the right side of the Rect by translating the
 	# Rect (adjusting the x offset).
-	def right=(r); @x = r - @w; return r; end
+	def right=(r); self[0] = r - self[2]; return r; end
 
 	alias r right
 	alias r= right=;
 
 	# Return the y coordinate of the bottom side of the Rect.
-	def bottom; @y+@h; end
+	def bottom; return self[1]+self[3]; end
 
 	# Set the y coordinate of the bottom side of the Rect by translating the
 	# Rect (adjusting the y offset).
-	def bottom=(b); @y = b - @h; return b; end
+	def bottom=(b); self[1] = b - self[3]; return b; end
 
 	alias b bottom
 	alias b= bottom=;
 
 	# Return the x and y coordinates of the center of the Rect.
-	def center; [@x+@w/2, @y+@h/2]; end
+	def center; return self.centerx, self.centery; end
 
 	# Set the x and y coordinates of the center of the Rect by translating the
 	# Rect (adjusting the x and y offsets).
 	def center=(center)
-		@x, @y = center[0]-@w/2, center[1]-@h/2
+		self.centerx, self.centery = center
 		return center
 	end
 	alias c center
 	alias c= center=;
 
 	# Return the x coordinate of the center of the Rect
-	def centerx; @x+@w/2; end
+	def centerx; return self[0]+(self[2]/2); end
 
 	# Set the x coordinate of the center of the Rect by translating the
 	# Rect (adjusting the x offset).
-	def centerx=(x); @x = x-@w/2; return x; end
+	def centerx=(x); self[0] = x - (self[2]/2); return x; end
 
 	alias cx centerx
 	alias cx= centerx=;
 
 	# Return the y coordinate of the center of the Rect
-	def centery; @y+@h/2; end
+	def centery; return self[1]+(self[3]/2); end
 
 	# Set the y coordinate of the center of the Rect by translating the
 	# Rect (adjusting the y offset).
-	def centery=(y); @y = y-@h/2; return y; end
+	def centery=(y); self[1] = y- (self[3]/2); return y; end
 
 	alias cy centery
 	alias cy= centery=;
 
 	# Return the x and y coordinates of the top-left corner of the Rect
-	def topleft; [@x,@y]; end
+	def topleft; return self[0..1]; end
 
 	# Set the x and y coordinates of the top-left corner of the Rect by 
 	# translating the Rect (adjusting the x and y offsets).
 	def topleft=(topleft)
-		@x, @y = *topleft
+		self[0..1] = topleft
 		return topleft
 	end
 
@@ -252,12 +206,12 @@ class Rect
 	alias tl= topleft=;
 
 	# Return the x and y coordinates of the top-right corner of the Rect
-	def topright; [@x+@w, @y]; end
+	def topright; return self.right, self[1]; end
 
 	# Set the x and y coordinates of the top-right corner of the Rect by 
 	# translating the Rect (adjusting the x and y offsets).
 	def topright=(topright)
-		@x, @y = topright[0]-@w, topright[1]
+		self.right, self[1] = topright
 		return topright
 	end
 
@@ -265,12 +219,12 @@ class Rect
 	alias tr= topright=;
 
 	# Return the x and y coordinates of the bottom-left corner of the Rect
-	def bottomleft; [@x, @y+@h]; end
+	def bottomleft; return self[0], self.bottom; end
 
 	# Set the x and y coordinates of the bottom-left corner of the Rect by 
 	# translating the Rect (adjusting the x and y offsets).
 	def bottomleft=(bottomleft)
-		@x, @y = bottomleft[0], bottomleft[1]-@h
+		self[0], self.bottom = bottomleft
 		return bottomleft
 	end
 
@@ -278,12 +232,12 @@ class Rect
 	alias bl= bottomleft=;
 
 	# Return the x and y coordinates of the bottom-right corner of the Rect
-	def bottomright; [@x+@w, @y+@h]; end
+	def bottomright; return self.right, self.bottom; end
 
 	# Set the x and y coordinates of the bottom-right corner of the Rect by 
 	# translating the Rect (adjusting the x and y offsets).
 	def bottomright=(bottomright)
-		@x, @y = bottomright[0]-@w, bottomright[1]-@h
+		self.right, self.bottom = bottomright
 		return bottomright
 	end
 
@@ -292,12 +246,12 @@ class Rect
 
 	# Return the x and y coordinates of the midpoint on the left side of the
 	# Rect.
-	def midleft; [@x, @y+@h/2]; end	
+	def midleft; return self[0], self.centery; end	
 
 	# Set the x and y coordinates of the midpoint on the left side of the Rect
 	# by translating the Rect (adjusting the x and y offsets).
 	def midleft=(midleft)
-		@x, @y = midleft[0], midleft[1]-@h/2
+		self[0], self.centery = midleft
 		return midleft
 	end
 
@@ -306,12 +260,12 @@ class Rect
 
 	# Return the x and y coordinates of the midpoint on the left side of the
 	# Rect.
-	def midtop; [@x+@w/2, @y]; end	
+	def midtop; return self.centerx, self[1]; end	
 
 	# Set the x and y coordinates of the midpoint on the top side of the Rect
 	# by translating the Rect (adjusting the x and y offsets).
-	def midtop=(top)
-		@x, @y = midleft[0]-@w/2, midleft[1]
+	def midtop=(midtop)
+		self.centerx, self[1] = midtop
 		return midtop
 	end
 
@@ -320,26 +274,26 @@ class Rect
 
 	# Return the x and y coordinates of the midpoint on the left side of the
 	# Rect.
-	def midright; [@x+@w, @y+@h/2]; end	
+	def midright; return self.right, self.centery; end	
 
 	# Set the x and y coordinates of the midpoint on the right side of the Rect
 	# by translating the Rect (adjusting the x and y offsets).
-	def midright=(midleft)
-		@x, @y = midleft[0]-@w, midleft[1]-@h/2
+	def midright=(midright)
+		self.right, self.centery = midright
 		return midright
 	end
 
 	alias mr midright
 	alias mr= midright=;
-	
+
 	# Return the x and y coordinates of the midpoint on the left side of the
 	# Rect.
-	def midbottom; [@x+@w/2, @y+@h]; end	
+	def midbottom; return self.centerx, self.bottom; end	
 
 	# Set the x and y coordinates of the midpoint on the bottom side of the
 	# Rect by translating the Rect (adjusting the x and y offsets).
 	def midbottom=(midbottom)
-		@x, @y = midbottom[0]-@w/2, midbottom[1]-@h
+		self.centerx, self.bottom = midbottom
 		return midbottom
 	end
 
@@ -356,44 +310,45 @@ class Rect
 		self.dup.clamp!(rect)
 	end
 
-	# Translate the calling Rect to be entirely inside the given Rect. If the 
-	# caller is too large along either axis to fit in the given rect, it is 
-	# centered with respect to the given rect, along that axis.
+	# Translate the calling Rect to be entirely inside the given Rect. If 
+	# the caller is too large along either axis to fit in the given rect,
+	# it is centered with respect to the given rect, along that axis.
 	def clamp!(rect)
 		nself = self.normalize
-		rect = rect_from_object(rect)
+		rect = Rubygame.rect_from_object(rect)
 		#If self is inside given, there is no need to move self
-		if not rect.contains(nself)
+		unless rect.contain?(nself)
+
 			#If self is too wide:
-			if nself.w >= rect.w
-				@x = rect.centerx - nself.w/2
-			#Else self is not too wide
+			if nself[2] >= rect[2]
+				self[0] = rect.centerx - nself[2]/2
+				#Else self is not too wide
 			else
 				#If self is to the left of arg
-				if nself.x < rect.x
-					@x = rect.x
+				if nself[0] < rect[0]
+					self[0] = rect[0]
 				#If self is to the right of arg
 				elsif nself.right > rect.right
-					@x = rect.right - nself.w
+					self[0] = rect.right - nself[2]
 				#Otherwise, leave x alone
 				end
 			end
 
 			#If self is too tall:
-			if nself.h >= rect.h
-				@y = rect.centery - nself.h/2
-			#Else self is not too tall
+			if nself[3] >= rect[3]
+				self[1] = rect.centery - nself[3]/2
+				#Else self is not too tall
 			else
 				#If self is above arg
-				if nself.y < rect.y
-					@y = rect.y
+				if nself[1] < rect[1]
+					self[1] = rect[1]
 				#If self below arg
 				elsif nself.bottom > rect.bottom
-					@y = rect.bottom - nself.h
+					self[1] = rect.bottom - nself[3]
 				#Otherwise, leave y alone
 				end
 			end
-		end # if not rect.contains(self)
+		end
 		return self
 	end
 
@@ -401,33 +356,34 @@ class Rect
 	def clip(rect)
 		self.dup.clip!(rect)
 	end
-	
-	# Crop the calling Rect to be entirely inside the given Rect. If the caller
-	# does not intersect the given Rect at all, its width and height are set
-	# to zero, but its x and y offsets are not changed.
+
+	# Crop the calling Rect to be entirely inside the given Rect. If the
+	# caller does not intersect the given Rect at all, its width and height
+	# are set to zero, but its x and y offsets are not changed.
 	# 
 	# As a side effect, the Rect is normalized.
 	def clip!(rect)
 		nself = self.normalize
-		rect = rect_from_object(rect).normalize
+		rect = Rubygame.rect_from_object(rect).normalize
 		if self.collide_rect(rect)
-			@x = min(nself.right, rect.right) - nself.x
-			@h = min(nself.bottom, rect.bottom) - nself.y
-			@x = max(nself.x, rect.x)
-			@y = max(nself.y, rect.y)
-		#if they do not intersect at all:
+			self[0] = min(nself.right, rect.right) - nself[0]
+			self[3] = min(nself.bottom, rect.bottom) - nself[1]
+			self[0] = max(nself[0], rect[1])
+			self[1] = max(nself[1], rect[1])
+			#if they do not intersect at all:
 		else
-			@x, @y = nself.topleft
-			@w, @h = 0, 0
+			self[0], self[1] = nself.topleft
+			self[2], self[3] = 0, 0
 		end
 		return self
 	end
 
-	# Iterate through all key/value pairs in the given hash table, and return
-	# the first pair whose value is a Rect that collides with the caller.
-	# 
-	# Because a hash table is unordered, you should not expect any particular
-	# Rect to be returned first, if more than one collides with the caller.
+	# Iterate through all key/value pairs in the given hash table, and
+	# return the first pair whose value is a Rect that collides with the
+	# caller.
+	#
+	# Because a hash table is unordered, you should not expect any 
+	# particular Rect to be returned first.
 	def collide_hash(hash_rects)
 		hash_rects.each { |key,value|
 			if value.colliderect(self); return [key,value]; end
@@ -435,11 +391,11 @@ class Rect
 		return nil
 	end
 
-	# Iterate through all key/value pairs in the given hash table, and return
-	# an Array of every pair whose value is a Rect that collides with the 
-	# caller.
+	# Iterate through all key/value pairs in the given hash table, and
+	# return an Array of every pair whose value is a Rect that collides
+	# the caller.
 	# 
-	# Because a hash table is unordered, you should not expect the returned 
+	# Because a hash table is unordered, you should not expect the returned
 	# pairs to be in any particular order.
 	def collide_hash_all(hash_rects)
 		collection = []
@@ -450,8 +406,8 @@ class Rect
 	end
 
 	# Iterate through all elements in the given Array, and return
-	# the *index* of the first element which is a Rect that collides with the 
-	# caller.
+	# the *index* of the first element which is a Rect that collides with
+	# the caller.
 	def collide_array(array_rects)
 		for i in 0..(array_rects.length)
 			if array_rects[i].colliderect(self)
@@ -462,11 +418,11 @@ class Rect
 	end
 
 	# Iterate through all elements in the given Array, and return
-	# an Array containing the *indices* of every element that is a Rect that
-	# collides with the caller.
+	# an Array containing the *indices* of every element that is a Rect
+	# that collides with the caller.
 	def collide_array_all(array_rects)
 		indexes = []
-		for i in 0..(array_rects.length)
+		for i in (0..(array_rects.length))
 			if array_rects[i].colliderect(self)
 				indexes += [i]
 			end
@@ -477,14 +433,15 @@ class Rect
 	# True if the point is inside (including on the border) of the caller.
 	# The point can be given as either an Array or separate coordinates.
 	def collide_point?(x,y=nil)
-		begin
-			if not y; x, y = x[0], x[1]; end
-		rescue NoMethodError
-			raise ArgumentError("You must pass either 2 Numerics or 1 Array.")
+		unless y
+			x, y = x[0..1]
+			unless y
+				raise ArgumentError("You must pass 2 Numerics or 1 Array.")
+			end
 		end
 		nself = self.normalize
 		return ((nself.left..nself.right).include? x and
-			(nself.top..nself.bottom).include? y)
+					(nself.top..nself.bottom).include? y)
 	end
 
 	# True if the caller and the given Rect overlap at all.
@@ -492,18 +449,19 @@ class Rect
 		nself = self.normalize
 		rect = Rubygame.rect_from_object(rect).normalize
 		coll_horz = ((rect.left)..(rect.right)).include?(nself.left) or\
-			((nself.left)..(nself.right)).include?(rect.left)
+		((nself.left)..(nself.right)).include?(rect.left)
 		coll_vert = ((rect.top)..(rect.bottom)).include?(nself.top) or\
-			((nself.top)..(nself.bottom)).include?(rect.top)
+		((nself.top)..(nself.bottom)).include?(rect.top)
 		return (coll_horz and coll_vert)
 	end
 
-	# True if the given Rect is totally within the caller. Borders may touch.
+	# True if the given Rect is totally within the caller. Borders may
+	# overlap.
 	def contain?(rect)
 		nself = self.normalize
-		rect = rect_from_object(rect).normalize
+		rect = Rubygame.rect_from_object(rect).normalize
 		return (nself.left <= rect.left and rect.right <= nself.right and
-			nself.top <= rect.top and rect.bottom <= nself.bottom)
+					nself.top <= rect.top and rect.bottom <= nself.bottom)
 	end
 
 	# As #inflate!, but the original caller is not changed.
@@ -515,15 +473,16 @@ class Rect
 	# same center point. For best results, expand by an even number.
 	# X and y inflation can be given as an Array or as separate values.
 	def inflate!(x,y=nil)
-		begin
-			if not y; x, y = x[0], x[1]; end
-		rescue NoMethodError # x has no []
-			raise ArgumentError("You must pass either 2 Numerics or 1 Array.")
+		unless y
+			x, y = x[0..1]
+			unless y
+				raise ArgumentError("You must pass 2 Numerics or 1 Array.")
+			end
 		end
-		@x, @y = (@x - x/2), (@y - y/2)
+		self[0..1] = self[0] - x/2, self[1] - y/2
 		#if we just did x/2 or y/2 again, we would inflate it 1 pixel too
 		#few if x or y is an odd number, due to rounding.
-		@w, @h = (@w + (x-x/2)), (@h + (y-y/2))
+		self[2..3] = self[2] + (x-x/2), self[3] + (y-y/2)
 		return self
 	end
 
@@ -536,29 +495,31 @@ class Rect
 	# Positive values are rightward for x and downward for y.
 	# X and y movement can be given as an Array or as separate values.
 	def move!(x,y=nil)
-		begin
-			if not y; x, y = x[0], x[1]; end
-		rescue NoMethodError # x has no []
-			raise ArgumentError("You must pass either 2 Numerics or 1 Array.")
+		unless y
+			x, y = x
+			unless y
+				raise ArgumentError("You must pass 2 Numerics or 1 Array.")
+			end
 		end
-		@x+=x; @y+=y
+
+		self[0]+=x; self[1]+=y
 		return self
 	end
-		
- 	# As #normalize!, but the original caller is not changed.
+
+	# As #normalize!, but the original caller is not changed.
 	def normalize
 		self.dup.normalize!()
 	end
 
-	# Fix Rects that have negative width or height, without changing the area
-	# it represents. Has no effect on Rects with non-negative width and height.
-	# Some Rect methods will automatically normalize the Rect.
+	# Fix Rects that have negative width or height, without changing the
+	# area it represents. Has no effect on Rects with non-negative width
+	# and height. Some Rect methods will automatically normalize the Rect.
 	def normalize!
-		if @w < 0
-			@x, @w = @x+@w, -@w
+		if self[2] < 0
+			self[0], self[2] = self[0]+self[2], -self[2]
 		end
-		if @h < 0
-			@y, @h = @y+@h, -@h
+		if self[3] < 0
+			self[1], self[3] = self[1]+self[3], -self[3]
 		end
 		return self
 	end
@@ -569,15 +530,18 @@ class Rect
 	end
 
 	# Expand the caller to also cover the given Rect. The Rect is still a 
-	# rectangle,so it may also cover areas that neither of the original Rects
-	# did, for example areas between the two Rects.
+	# rectangle, so it may also cover areas that neither of the original
+	# Rects did, for example areas between the two Rects.
 	def union!(rect)
-		nself = self.normalize
-		rect = rect_from_object(rect).normalize
-		@x = min(nself.x, rect.x)
-		@y = min(nself.y, rect.y)
-		@w = max(nself.w, rect.w)
-		@h = max(nself.h, rect.h)
+		left, top, right, bottom = self.normalize
+		rect = Rubygame.rect_from_object(rect).normalize
+
+		left = min(left,rect.left)
+		top = min(top,rect.top)
+		right = max(right,rect.right)
+		bottom = max(bottom,rect.bottom)
+
+		self[0..3] = left, top, right - left, bottom-top
 		return self
 	end
 
@@ -588,21 +552,53 @@ class Rect
 
 	# Expand the caller to cover all of the given Rects. See also #union!
 	def union_all!(array_rects)
-		nself = self.normalize
-		left = nself.left
-		top = nself.top
-		right = nself.right
-		bottom = nself.bottom
+		left, top, right, bottom = self.normalize
 		array_rects.each do |r|
-			rect = rect_from_object(r).normalize
-			left = min(left,rect.left)
-			top = min(top,rect.top)
-			right = min(right,rect.right)
-			bottom = min(bottom,rect.bottom)
+			r = Rubygame.rect_from_object(r).normalize
+			left = min(left,r.left)
+			top = min(top,r.top)
+			right = max(right,r.right)
+			bottom = max(bottom,r.bottom)
 		end
-		@x, @y = left, top
-		@w, @h = right - left, bottom-top
+		self[0..3] = left, top, right - left, bottom-top
 		return self
 	end
 end # class Rect
+
+# Extract or generate a Rect from the given object, if possible, using the
+# following process:
+# 
+#  1. If it's a Rect already, return a duplicate Rect.
+#  2. Elsif it's an Array with at least 4 values, make a Rect from it.
+#  3. Elsif it has a +rect+ attribute., perform (1) and (2) on that.
+#  4. Otherwise, raise TypeError.
+# 
+def Rubygame.rect_from_object(object)
+	case(object)
+	when Rect
+		return object.dup
+	when Array 
+		if object.length >= 4
+			return Rect.new(object)
+		else
+			raise(ArgumentError,"Array does not have enough indices to be made into a Rect (%d for 4)."%object.length )
+		end
+	else
+		begin
+			case(object.rect)
+			when Rect
+				return object.rect.dup
+			when Array
+				if object.rect.length >= 4
+					return Rect.new(object.rect)
+				else
+					raise(ArgumentError,"Array does not have enough indices to be made into a Rect (%d for 4)."%object.rect.length )
+				end
+			end				# case object.rect
+		rescue NoMethodError # if no rect.rect
+			raise(TypeError,"Object must be a Rect or Array [x,y,w,h], or have an attribute called 'rect'. (Got %s instance.)"%object.class)
+		end
+	end # case object
+end
+
 end # module Rubygame
