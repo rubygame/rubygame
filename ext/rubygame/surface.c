@@ -1,5 +1,5 @@
 /*
-	Rubygame -- Ruby code and bindings to SDL/OpenAL to facilitate game creation
+	Rubygame -- Ruby code and bindings to SDL to facilitate game creation
 	Copyright (C) 2004  John 'jacius' Croisant
 
 	This library is free software; you can redistribute it and/or
@@ -21,34 +21,36 @@
 
 /* Surface class */
 
-/* Rubygame::Surface.new(size, depth=nil, flags=0)
+/* 
+ *  call-seq:
+ *     Rubygame::Surface.new(size, depth=nil, flags=0)
  *
- * Create and initialize a new Surface object. A display window must be set
- * using Rubygame::Display.set_mode before creating a surface.
+ *  Create and initialize a new Surface object. A display window must be set
+ *  using Rubygame::Display.set_mode before creating a surface.
  *
- * A Surface is a grid of image data which you blit (i.e. copy) onto other
- * Surfaces. Since the Rubygame display is also a Surface (see the Screen 
- * class), this method can be used to show images on the screen.
+ *  A Surface is a grid of image data which you blit (i.e. copy) onto other
+ *  Surfaces. Since the Rubygame display is also a Surface (see the Screen 
+ *  class), this method can be used to show images on the screen.
  *
- * This function takes these arguments:
- * - size::  requested surface size; an array of the form +[width, height]+.
- * - depth:: color depth (bits per pixel) of the surface; defaults to the
- *           depth of the Rubygame display.
- * - flags:: a bitwise OR'd ( | ) list of zero or more of the following flags
- *           (located in the Rubygame module, e.g. Rubygame::SWSURFACE).
- *           This argument may be omitted, in which case the Surface 
- *           will be a normal software surface (this is not necessarily a bad
- *           thing).
- *           - SWSURFACE::   (default) request a software surface.
- *           - HWSURFACE::   request a hardware-accelerated surface (using a 
- *                           graphics card), if available. Creates a software
- *                           surface if hardware surfaces are not available.
- *           - SRCCOLORKEY:: request a colorkeyed surface. Surface#set_colorkey
- *                           will enable colorkey as needed. For a description
- *                           of colorkeys, see Surface#set_colorkey.
- *           - SRCALPHA::    request an alpha channel. Surface#set_alpha will
- *                           also enable alpha. as needed. For a description of
- *                           alpha, see Surface#alpha.
+ *  This function takes these arguments:
+ *  - size::  requested surface size; an array of the form +[width, height]+.
+ *  - depth:: color depth (bits per pixel) of the surface; defaults to the
+ *            depth of the Rubygame display.
+ *  - flags:: a bitwise OR'd ( | ) list of zero or more of the following flags
+ *            (located in the Rubygame module, e.g. Rubygame::SWSURFACE).
+ *            This argument may be omitted, in which case the Surface 
+ *            will be a normal software surface (this is not necessarily a bad
+ *            thing).
+ *            - SWSURFACE::   (default) request a software surface.
+ *            - HWSURFACE::   request a hardware-accelerated surface (using a 
+ *                            graphics card), if available. Creates a software
+ *                            surface if hardware surfaces are not available.
+ *            - SRCCOLORKEY:: request a colorkeyed surface. #set_colorkey
+ *                            will enable colorkey as needed. For a description
+ *                            of colorkeys, see #set_colorkey.
+ *            - SRCALPHA::    request an alpha channel. #set_alpha will
+ *                            also enable alpha. as needed. For a description
+ *                            of alpha, see #alpha.
  */
 VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 {
@@ -263,13 +265,15 @@ VALUE rbgm_surface_set_alpha(int argc, VALUE *argv, VALUE self)
 	return self;
 }
 
-/* Rubygame::Surface#colorkey
+/*
+ *  call-seq:
+ *     Rubygame::Surface#colorkey
  *
- * Return the colorkey of the surface in the form +[r,g,b]+ (or +nil+ if there
- * is no key). The colorkey of a surface is the exact color which will be
- * ignored when the surface is blitted, effectively turning that color
- * transparent. This is often used to make a blue (for example) background
- * on an image seem transparent.
+ *  Return the colorkey of the surface in the form +[r,g,b]+ (or +nil+ if there
+ *  is no key). The colorkey of a surface is the exact color which will be
+ *  ignored when the surface is blitted, effectively turning that color
+ *  transparent. This is often used to make a blue (for example) background
+ *  on an image seem transparent.
  */
 VALUE rbgm_surface_get_colorkey( VALUE self )
 {
@@ -285,19 +289,21 @@ VALUE rbgm_surface_get_colorkey( VALUE self )
 	return rb_ary_new3(3,INT2NUM(r),INT2NUM(g),INT2NUM(b));
 }
 
-/* Rubygame::Surface#set_colorkey(color,flags=0)
+/*
+ *  call-seq:
+ *     Rubygame::Surface#set_colorkey(color,flags=0)
  *
- * Set the colorkey of the surface. See Surface#colorkey for a description
- * of colorkeys.
+ *  Set the colorkey of the surface. See Surface#colorkey for a description
+ *  of colorkeys.
  *
- * This method takes these arguments:
- * - color:: color to use as the key, in the form +[r,g,b]+. Can be +nil+ to
- *           un-set the colorkey.
- * - flags:: +0+ or Rubygame::SRC_COLORKEY (default) or 
- *           Rubygame::SRC_COLORKEY|Rubygame::SDL_RLEACCEL. Most people will 
- *           want the default, in which case this argument can be omitted. For
- *           advanced users: this flag affects the surface as described in the
- *           docs for the SDL C function, SDL_SetColorkey.
+ *  This method takes these arguments:
+ *  - color:: color to use as the key, in the form +[r,g,b]+. Can be +nil+ to
+ *            un-set the colorkey.
+ *  - flags:: +0+ or Rubygame::SRC_COLORKEY (default) or 
+ *            Rubygame::SRC_COLORKEY|Rubygame::SDL_RLEACCEL. Most people will 
+ *            want the default, in which case this argument can be omitted. For
+ *            advanced users: this flag affects the surface as described in the
+ *            docs for the SDL C function, SDL_SetColorkey.
  */
 VALUE rbgm_surface_set_colorkey( int argc, VALUE *argv, VALUE self)
 {
@@ -339,21 +345,23 @@ static inline int min(int a, int b) {
   return a > b ? b : a;
 }
 
-/* Rubygame::Surface#blit(target,dest,source=nil)
+/* 
+ *  call-seq:
+ *     Rubygame::Surface#blit(target,dest,source=nil)
  *
- * Blit (copy & paste) all or part of the surface's image onto another surface,
- * at a given position. Returns a Rubygame::Rect representing the area of 
- * +target+ which was affected by the blit.
+ *  Blit (copy & paste) all or part of the surface's image to another surface,
+ *  at a given position. Returns a Rect representing the area of 
+ *  +target+ which was affected by the blit.
  *
- * This method takes these arguments:
- * - target:: the target Surface on which to paste the image.
- * - dest::   the coordinates of the top-left corner of the blit. Affects the
- *            area of +other+ over which the image data is /pasted/.
- *            Can also be a Rubygame::Rect or an Array larger than 2, but
- *            width and height will be ignored. 
- * - source:: a Rect representing the area of the source surface to get data
- *            from. Affects the location from which the image data is /copied/.
- *            Can also be an Array of no less than 4 values. 
+ *  This method takes these arguments:
+ *  - target:: the target Surface on which to paste the image.
+ *  - dest::   the coordinates of the top-left corner of the blit. Affects the
+ *             area of +other+ the image data is /pasted/ over.
+ *             Can also be a Rect or an Array larger than 2, but
+ *             width and height will be ignored. 
+ *  - source:: a Rect representing the area of the source surface to get data
+ *             from. Affects where the image data is /copied/ from.
+ *             Can also be an Array of no less than 4 values. 
  */
 VALUE rbgm_surface_blit(int argc, VALUE *argv, VALUE self)
 {
@@ -370,17 +378,17 @@ VALUE rbgm_surface_blit(int argc, VALUE *argv, VALUE self)
 	Data_Get_Struct(self, SDL_Surface, src);
 	Data_Get_Struct(argv[0], SDL_Surface, dest);
 
-	blit_x = rect_entry(argv[1],0);
-	blit_y = rect_entry(argv[1],1);
+	blit_x = NUM2INT(rb_ary_entry(argv[1],0));
+	blit_y = NUM2INT(rb_ary_entry(argv[1],1));
 
 	/* did we get a src_rect argument or not? */
-	if(argc>2)
+	if(argc>2 && argv[2]!=Qnil)
 	{
 		/* it might be good to check that it's actually a rect */
-		src_x = rect_entry(argv[2],0);
-		src_y = rect_entry(argv[2],1);
-		src_w = rect_entry(argv[2],2);
-		src_h = rect_entry(argv[2],3);
+		src_x = NUM2INT(rb_ary_entry(argv[2],0));
+		src_y = NUM2INT(rb_ary_entry(argv[2],1));
+		src_w = NUM2INT(rb_ary_entry(argv[2],2));
+		src_h = NUM2INT(rb_ary_entry(argv[2],3));
 	}
 	else
 	{
@@ -405,8 +413,6 @@ VALUE rbgm_surface_blit(int argc, VALUE *argv, VALUE self)
 	
 	blit_rect = make_rect( left, top, blit_w, blit_h );
 
-//	printf("blit_rect: [%d %d %d %d]\n",blit_rect->x,blit_rect->y,blit_rect->w,blit_rect->h);
-//	printf("src_rect:  [%d %d %d %d]\n",src_rect->x,src_rect->y,src_rect->w,src_rect->h);
 	SDL_BlitSurface(src,src_rect,dest,blit_rect);
 
 	returnrect = rb_funcall(cRect,rb_intern("new"),4,
@@ -418,15 +424,17 @@ VALUE rbgm_surface_blit(int argc, VALUE *argv, VALUE self)
 	return returnrect;
 }
 
-/* Rubygame::Surface#fill(color,rect=nil)
+/* 
+ *  call-seq:
+ *     Rubygame::Surface#fill(color,rect=nil)
  *
- * Fill all or part of a Surface with a color.
+ *  Fill all or part of a Surface with a color.
  *
- * This method takes these arguments:
- * - color:: color to fill with, in the form +[r,g,b]+ or +[r,g,b,a]+ (for
- *           partially transparent fills).
- * - rect::  a Rubygame::Rect representing the area of the surface to fill with
- *           color, or +nil+ to fill the entire surface.
+ *  This method takes these arguments:
+ *  - color:: color to fill with, in the form +[r,g,b]+ or +[r,g,b,a]+ (for
+ *            partially transparent fills).
+ *  - rect::  a Rubygame::Rect representing the area of the surface to fill
+ *            with color. Omit to fill the entire surface.
  */
 VALUE rbgm_surface_fill( int argc, VALUE *argv, VALUE self )
 {
@@ -462,12 +470,11 @@ VALUE rbgm_surface_fill( int argc, VALUE *argv, VALUE self )
 			SDL_FillRect(surf,NULL,color);
 			break;
 		case 2: /* fill a given rect */
-			//printf("Going to make a rect for fill...\n");
 			rect = make_rect(\
-				rect_entry(argv[1],0),\
-				rect_entry(argv[1],1),\
-				rect_entry(argv[1],2),\
-				rect_entry(argv[1],3)\
+				NUM2INT(rb_ary_entry(argv[1],0)),\
+				NUM2INT(rb_ary_entry(argv[1],1)),\
+				NUM2INT(rb_ary_entry(argv[1],2)),\
+				NUM2INT(rb_ary_entry(argv[1],3))\
 			);
 			SDL_FillRect(surf,rect,color);
 			free(rect);
@@ -479,16 +486,18 @@ VALUE rbgm_surface_fill( int argc, VALUE *argv, VALUE self )
 	return self;
 }
 
-/* Rubygame::Surface#get_at(pos)
- * Rubygame::Surface#get_at(x,y)
+/* 
+ *  call-seq: 
+ *     Rubygame::Surface#get_at(pos)
+ *     Rubygame::Surface#get_at(x,y)
  *
- * Return the color (+[r,g,b,a]+) of the pixel at the given coordinate. 
+ *  Return the color (+[r,g,b,a]+) of the pixel at the given coordinate. 
  *
- * This method takes these argument:
- * - pos:: the coordinate of the pixel to get the color of.
+ *  This method takes these argument:
+ *  - pos:: the coordinate of the pixel to get the color of.
  *
- * The coordinate can also be given as two arguments, separate +x+ and +y+
- * positions.
+ *  The coordinate can also be given as two arguments, separate +x+ and +y+
+ *  positions.
  */
 VALUE rbgm_surface_getat( int argc, VALUE *argv, VALUE self )
 {
@@ -576,6 +585,12 @@ VALUE rbgm_surface_getat( int argc, VALUE *argv, VALUE self )
 
 void Rubygame_Init_Surface()
 {
+
+#if 0
+	/* Pretend to define Rubygame module, so RDoc knows about it: */
+	mRubygame = rb_define_module("Rubygame");
+#endif
+
 	cSurface = rb_define_class_under(mRubygame,"Surface",rb_cObject);
 	rb_define_singleton_method(cSurface,"new",rbgm_surface_new,-1);
 	rb_define_method(cSurface,"initialize",rbgm_surface_initialize,-1);
