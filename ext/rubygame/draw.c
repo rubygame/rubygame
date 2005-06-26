@@ -1,5 +1,5 @@
 /*
-	Rubygame -- Ruby code and bindings to SDL/OpenAL to facilitate game creation
+	Rubygame -- Ruby code and bindings to SDL to facilitate game creation
 	Copyright (C) 2004  John 'jacius' Croisant
 
 	This library is free software; you can redistribute it and/or
@@ -46,13 +46,13 @@
 
 /*  
  *  call-seq:
- *     Rubygame::Draw.version => [major, minor, micro]
+ *     Rubygame::Draw.version  =>  [major, minor, micro]
  *
  *  Return the major, minor, and micro version numbers for the version of 
  *  SDL_gfxPrimitives that Rubygame was compiled with. This is intended to
  *  allow games to detect which drawing operations are permitted and decide
  *  whether the SDL_gfxPrimitives version is Good Enough to play the game
- *  (perhaps without certain "optional" graphical effects).
+ *  (perhaps without certain "optional" features).
  *
  *  More sophisticated methods of detecting which operations are permitted are
  *  planned for future versions.
@@ -133,7 +133,7 @@ void draw_line(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int aa)
 }
 
 /*  call-seq:
- *    Rubygame::Draw.line(surface, point1, point2, color)
+ *    line(surface, point1, point2, color)
  *
  *  Draw a line segment between two points on a surface. The line will not be
  *  anti-aliased (it will have "jaggies").
@@ -151,7 +151,7 @@ VALUE rbgm_draw_line(VALUE module, VALUE target, VALUE pt1, VALUE pt2, VALUE rgb
 	return target;
 }
 /*  call-seq:
- *    Rubygame::Draw.aaline(surface, point1, point2, color)
+ *    aaline(surface, point1, point2, color)
  *
  *  As Rubygame::Draw.line, but the line will be anti-aliased (no "jaggies").
  *  This is a substantially slower operation than its aliased counterpart.
