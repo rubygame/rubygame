@@ -1,5 +1,5 @@
 /*
-	Rubygame -- Ruby code and bindings to SDL/OpenAL to facilitate game creation
+	Rubygame -- Ruby code and bindings to SDL to facilitate game creation
 	Copyright (C) 2004  John 'jacius' Croisant
 
 	This library is free software; you can redistribute it and/or
@@ -46,6 +46,7 @@ rb_define_const(mRubygame,"FULLSCREEN",INT2NUM(SDL_FULLSCREEN));
 rb_define_const(mRubygame,"OPENGL",INT2NUM(SDL_OPENGL));
 rb_define_const(mRubygame,"OPENGLBLIT",INT2NUM(SDL_OPENGLBLIT));
 rb_define_const(mRubygame,"RESIZABLE",INT2NUM(SDL_RESIZABLE));
+rb_define_const(mRubygame,"NOFRAME",INT2NUM(SDL_NOFRAME));
 rb_define_const(mRubygame,"HWACCEL",INT2NUM(SDL_HWACCEL));
 rb_define_const(mRubygame,"SRCCOLORKEY",INT2NUM(SDL_SRCCOLORKEY));
 rb_define_const(mRubygame,"RLEACCELOK",INT2NUM(SDL_RLEACCELOK));
