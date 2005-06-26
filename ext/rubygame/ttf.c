@@ -1,5 +1,5 @@
 /*
-	Rubygame -- Ruby code and bindings to SDL/OpenAL to facilitate game creation
+	Rubygame -- Ruby code and bindings to SDL to facilitate game creation
 	Copyright (C) 2004  John 'jacius' Croisant
 
 	This library is free software; you can redistribute it and/or
