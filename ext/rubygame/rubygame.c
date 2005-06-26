@@ -1,5 +1,5 @@
 /*
-	Rubygame -- Ruby code and bindings to SDL/OpenAL to facilitate game creation
+	Rubygame -- Ruby code and bindings to SDL to facilitate game creation
 	Copyright (C) 2004  John 'jacius' Croisant
 
 	This library is free software; you can redistribute it and/or
@@ -30,14 +30,6 @@ SDL_Rect *make_rect(int x, int y, int w, int h)
 	return rect;
 }
 
-int rect_entry( VALUE rect, int index )
-{
-	VALUE array;
-
-	array = rb_funcall(rect,rb_intern("to_a"),0);
-	return NUM2INT(rb_ary_entry(array,index));
-}
-
 VALUE rbgm_usable(VALUE mod)
 {
   return Qtrue;
@@ -53,10 +45,12 @@ VALUE rbgm_dummy(int argc, VALUE *argv, VALUE classmod)
   return Qnil;
 }
 
-/* Rubygame.init
+/*
+ *  call-seq:
+ *     init()  =>  nil
  *
- * Initialize Rubygame. This should be called soon after you +require+
- * Rubygame, so that everything will work properly.
+ *  Initialize Rubygame. This should be called soon after you +require+
+ *  Rubygame, so that everything will work properly.
  */
 VALUE rbgm_init(VALUE module)
 {
@@ -78,7 +72,7 @@ void Init_rubygame()
 	Define_Rubygame_Constants();
 
 	rb_define_module_function(mRubygame,"init",rbgm_init,0);
-	cRect = rb_define_class_under(mRubygame,"Rect",rb_cObject);
+	cRect = rb_define_class_under(mRubygame,"Rect",rb_cArray);
 	eSDLError = rb_define_class_under(mRubygame,"SDLError",rb_eStandardError);
 
 	//mKey = rb_define_module_under(mRubygame,"Key");

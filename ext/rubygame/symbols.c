@@ -21,7 +21,8 @@
 
 /*
  * This file contains all the C symbols used in Rubygame.
- * This should allow it to cleanly compile on MacOSX.
+ * This should (in theory) allow it to cleanly compile on MacOSX.
+ * I really don't like it though... it's hopelessly redundant.
  */
 
 /* General */
@@ -32,7 +33,6 @@ VALUE mKey;
 VALUE mMouse;
 VALUE rbgm_init(VALUE);
 SDL_Rect *make_rect(int x, int y, int w, int h);
-int rect_entry(VALUE rect, int index);
 void Define_Rubygame_Constants();
 
 /* Display */
