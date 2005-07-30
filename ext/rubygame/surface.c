@@ -401,10 +401,15 @@ VALUE rbgm_surface_blit(int argc, VALUE *argv, VALUE self)
 
 	/* experimental (broken) rectangle cropping code */
 	/* crop if it went off left/top/right/bottom */
-	left = max(blit_x,0);
-	top = max(blit_y,0);
-	right = min(blit_x+src_w,dest->w);
-	bottom = min(blit_y+src_h,dest->h);
+	//left = max(blit_x,0);
+	//top = max(blit_y,0);
+	//right = min(blit_x+src_w,dest->w);
+	//bottom = min(blit_y+src_h,dest->h);
+
+	left = blit_x;
+	top = blit_y;
+	right = blit_x+src_w;
+	bottom = blit_y+src_h;
 		
 	//blit_w = min(blit_x+blit_w,dest->w) - max(blit_x,0);
 	//blit_h = min(blit_y+blit_h,dest->h) - max(blit_y,0);
