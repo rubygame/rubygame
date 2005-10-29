@@ -24,6 +24,7 @@
 #class Rect
 #	GENERAL:
 #		initialize
+# 	new_from_object
 #		to_s
 #		to_a, to_ary
 #		[]
@@ -87,6 +88,44 @@ class Rect < Array
 		end
 		return self
 	end
+
+	# Extract or generate a Rect from the given object, if possible, using the
+	# following process:
+	# 
+	#  1. If it's a Rect already, return a duplicate Rect.
+	#  2. Elsif it's an Array with at least 4 values, make a Rect from it.
+	#  3. Elsif it has a +rect+ attribute., perform (1) and (2) on that.
+	#  4. Otherwise, raise TypeError.
+	# 
+	# See also Surface#make_rect()
+	def Rect.new_from_object(object)
+		case(object)
+		when Rect
+			return object.dup
+		when Array 
+			if object.length >= 4
+				return Rect.new(object)
+			else
+				raise(ArgumentError,"Array does not have enough indices to be made into a Rect (%d for 4)."%object.length )
+			end
+		else
+			begin
+				case(object.rect)
+				when Rect
+					return object.rect.dup
+				when Array
+					if object.rect.length >= 4
+						return Rect.new(object.rect)
+					else
+						raise(ArgumentError,"Array does not have enough indices to be made into a Rect (%d for 4)."%object.rect.length )
+					end
+				end				# case object.rect
+			rescue NoMethodError # if no rect.rect
+				raise(TypeError,"Object must be a Rect or Array [x,y,w,h], or have an attribute called 'rect'. (Got %s instance.)"%object.class)
+			end
+		end # case object
+	end
+
 
 	# Print the Rect in the form "+#<Rect [x,y,w,h]>"
 	def to_s; "#<Rect [%s,%s,%s,%s]>"%self; end
@@ -315,7 +354,7 @@ class Rect < Array
 	# it is centered with respect to the given rect, along that axis.
 	def clamp!(rect)
 		nself = self.normalize
-		rect = Rubygame.rect_from_object(rect)
+		rect = Rect.new_from_object(rect)
 		#If self is inside given, there is no need to move self
 		unless rect.contain?(nself)
 
@@ -364,7 +403,7 @@ class Rect < Array
 	# As a side effect, the Rect is normalized.
 	def clip!(rect)
 		nself = self.normalize
-		rect = Rubygame.rect_from_object(rect).normalize
+		rect = Rect.new_from_object(rect).normalize
 		if self.collide_rect(rect)
 			self[0] = min(nself.right, rect.right) - nself[0]
 			self[3] = min(nself.bottom, rect.bottom) - nself[1]
@@ -447,7 +486,7 @@ class Rect < Array
 	# True if the caller and the given Rect overlap at all.
 	def collide_rect?(rect)
 		nself = self.normalize
-		rect = Rubygame.rect_from_object(rect).normalize
+		rect = Rect.new_from_object(rect).normalize
 		coll_horz = ((rect.left)..(rect.right)).include?(nself.left) or\
 		((nself.left)..(nself.right)).include?(rect.left)
 		coll_vert = ((rect.top)..(rect.bottom)).include?(nself.top) or\
@@ -459,14 +498,24 @@ class Rect < Array
 	# overlap.
 	def contain?(rect)
 		nself = self.normalize
-		rect = Rubygame.rect_from_object(rect).normalize
+		rect = Rect.new_from_object(rect).normalize
 		return (nself.left <= rect.left and rect.right <= nself.right and
 					nself.top <= rect.top and rect.bottom <= nself.bottom)
 	end
 
 	# As #inflate!, but the original caller is not changed.
 	def inflate(x,y=nil)
-		self.dup.inflate!(x,y)
+		unless y
+			x, y = x[0..1]
+			unless y
+				raise ArgumentError("You must pass 2 Numerics or 1 Array.")
+			end
+		end
+
+		return self.class.new(self[0] - x/2,
+													self[1] - y/2,
+													self[2] + x,
+													self[3] + y)
 	end
 
 	# Increase the Rect's size is the x and y directions, while keeping the
@@ -479,10 +528,11 @@ class Rect < Array
 				raise ArgumentError("You must pass 2 Numerics or 1 Array.")
 			end
 		end
-		self[0..1] = self[0] - x/2, self[1] - y/2
-		#if we just did x/2 or y/2 again, we would inflate it 1 pixel too
-		#few if x or y is an odd number, due to rounding.
-		self[2..3] = self[2] + (x-x/2), self[3] + (y-y/2)
+
+		self[0] -= x/2
+		self[1] -= y/2
+		self[2] += x
+		self[3] += y
 		return self
 	end
 
@@ -534,7 +584,7 @@ class Rect < Array
 	# Rects did, for example areas between the two Rects.
 	def union!(rect)
 		left, top, right, bottom = self.normalize
-		rect = Rubygame.rect_from_object(rect).normalize
+		rect = Rect.new_from_object(rect).normalize
 
 		left = min(left,rect.left)
 		top = min(top,rect.top)
@@ -554,7 +604,7 @@ class Rect < Array
 	def union_all!(array_rects)
 		left, top, right, bottom = self.normalize
 		array_rects.each do |r|
-			r = Rubygame.rect_from_object(r).normalize
+			r = Rect.new_from_object(r).normalize
 			left = min(left,r.left)
 			top = min(top,r.top)
 			right = max(right,r.right)
@@ -563,42 +613,17 @@ class Rect < Array
 		self[0..3] = left, top, right - left, bottom-top
 		return self
 	end
+
+
 end # class Rect
 
-# Extract or generate a Rect from the given object, if possible, using the
-# following process:
-# 
-#  1. If it's a Rect already, return a duplicate Rect.
-#  2. Elsif it's an Array with at least 4 values, make a Rect from it.
-#  3. Elsif it has a +rect+ attribute., perform (1) and (2) on that.
-#  4. Otherwise, raise TypeError.
-# 
-def Rubygame.rect_from_object(object)
-	case(object)
-	when Rect
-		return object.dup
-	when Array 
-		if object.length >= 4
-			return Rect.new(object)
-		else
-			raise(ArgumentError,"Array does not have enough indices to be made into a Rect (%d for 4)."%object.length )
-		end
-	else
-		begin
-			case(object.rect)
-			when Rect
-				return object.rect.dup
-			when Array
-				if object.rect.length >= 4
-					return Rect.new(object.rect)
-				else
-					raise(ArgumentError,"Array does not have enough indices to be made into a Rect (%d for 4)."%object.rect.length )
-				end
-			end				# case object.rect
-		rescue NoMethodError # if no rect.rect
-			raise(TypeError,"Object must be a Rect or Array [x,y,w,h], or have an attribute called 'rect'. (Got %s instance.)"%object.class)
-		end
-	end # case object
+
+class Surface
+	# Return a Rect with the same width and height as the Surface, positioned
+	# at (0,0).
+	def make_rect()
+		return Rect.new(0,0,self.width,self.height)
+	end
 end
 
 end # module Rubygame
