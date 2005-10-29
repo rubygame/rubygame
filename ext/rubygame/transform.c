@@ -113,6 +113,10 @@ VALUE rbgm_transform_rotozoom(int argc, VALUE *argv, VALUE module)
  *  Transform.rotozoom() were called with a surface of the given size, and
  *  the same angle and zoom factors.
  *
+ *  This function will issue a warning and return +nil+ if Rubygame was not
+ *  compiled with a version of SDL_gfx great enough to perform the requested
+ *  function.
+ *
  *  - size::  an Array with the hypothetical surface width and height (pixels)
  *  - angle:: degrees to rotate counter-clockwise (negative for clockwise).
  *  - zoom::  scaling factor. If Rubygame was compiled with SDL_gfx >= 2.0.13,
@@ -266,57 +270,201 @@ VALUE rbgm_transform_zoomsize(int argc, VALUE *argv, VALUE module)
 	return rb_ary_new3(2,INT2NUM(dstw),INT2NUM(dsth));
 }
 
+#endif /* HAVE_SDL_ROTOZOOM_H */
+
+/* --
+ * Borrowed from Pygame:
+ * ++
+ */
+static SDL_Surface* newsurf_fromsurf(SDL_Surface* surf, int width, int height)
+{
+	SDL_Surface* newsurf;
+
+	if(surf->format->BytesPerPixel <= 0 || surf->format->BytesPerPixel > 4)
+		rb_raise(eSDLError,"unsupported Surface bit depth for transform");
+
+	newsurf = SDL_CreateRGBSurface(surf->flags, width, height, surf->format->BitsPerPixel,
+				surf->format->Rmask, surf->format->Gmask, surf->format->Bmask, surf->format->Amask);
+	if(!newsurf)
+		rb_raise(eSDLError,"%s",SDL_GetError());
+
+	/* Copy palette, colorkey, etc info */
+	if(surf->format->BytesPerPixel==1 && surf->format->palette)
+		SDL_SetColors(newsurf, surf->format->palette->colors, 0, surf->format->palette->ncolors);
+	if(surf->flags & SDL_SRCCOLORKEY)
+		SDL_SetColorKey(newsurf, (surf->flags&SDL_RLEACCEL)|SDL_SRCCOLORKEY, surf->format->colorkey);
+
+	return newsurf;
+}
+
+/* --
+ * Thanks, Pygame :)
+ * ++
+ */
+
+
 /* 
  * call-seq:
  *    Transform.flip(surface, flipXp, flipYp)
  * 
- *  This function is usable only if Rubygame was compiled with SDL_gfx 2.0.13
- *  or greater.
- *
  *  Flips the source +surface+ horizontally (if flipXp is true), vertically
- *  (if flipYp is true), or both (if both are true).
+ *  (if flipYp is true), or both (if both are true). This operation is
+ *  non-destructive; the original image can be perfectly reconstructed by
+ *  flipping the resultant image again.
  *
- *  You can achieve the same effect by giving X or Y zoom factors of -1 to
- *  Transform.rotozoom (if compiled with SDL_gfx 2.0.13 or greater).
+ *  This operation does NOT require SDL_gfx.
+ *
+ *  A similar effect can be achieved (supposedly) by giving X or Y zoom
+ *  factors of -1 to Transform.rotozoom (if compiled with SDL_gfx 2.0.13 or
+ *  greater). Your mileage may vary.
  */
 VALUE rbgm_transform_flip(int argc, VALUE *argv, VALUE module)
 {
-#ifdef HAVE_ROTOZOOMXY
-	SDL_Surface *src, *dst;
-	int flipx, flipy;
+	SDL_Surface *surf, *newsurf;
+	int xaxis, yaxis;
+
+	int loopx, loopy;
+	int pixsize, srcpitch, dstpitch;
+	Uint8 *srcpix, *dstpix;
+
+	xaxis = argv[1];
+  yaxis = argv[2];
 
 	if(argc < 2)
 		rb_raise(rb_eArgError,"wrong number of arguments (%d for 3)",argc);
-	Data_Get_Struct(argv[0],SDL_Surface,src);
+	Data_Get_Struct(argv[0],SDL_Surface,surf);
 
-	flipx = argv[1];
-    flipy = argv[2];
 
-	dst = rotozoomSurfaceXY(src,0,(flipx ? -1.0 : 1.0),(flipy ? -1.0 : 1.0),0);
-	if(dst == NULL)
+  /* Borrowed from Pygame: */
+	newsurf = newsurf_fromsurf(surf, surf->w, surf->h);
+	if(!newsurf)
+    return Qnil;
+
+	pixsize = surf->format->BytesPerPixel;
+	srcpitch = surf->pitch;
+	dstpitch = newsurf->pitch;
+
+	SDL_LockSurface(newsurf);
+
+	srcpix = (Uint8*)surf->pixels;
+	dstpix = (Uint8*)newsurf->pixels;
+
+	if(!xaxis)
+	{
+		if(!yaxis)
+		{
+			for(loopy = 0; loopy < surf->h; ++loopy)
+				memcpy(dstpix+loopy*dstpitch, srcpix+loopy*srcpitch, surf->w*surf->format->BytesPerPixel);
+		}
+		else
+		{
+			for(loopy = 0; loopy < surf->h; ++loopy)
+				memcpy(dstpix+loopy*dstpitch, srcpix+(surf->h-1-loopy)*srcpitch, surf->w*surf->format->BytesPerPixel);
+		}
+	}
+	else /*if (xaxis)*/
+	{
+		if(yaxis)
+		{
+			switch(surf->format->BytesPerPixel)
+			{
+			case 1:
+				for(loopy = 0; loopy < surf->h; ++loopy) {
+					Uint8* dst = (Uint8*)(dstpix+loopy*dstpitch);
+					Uint8* src = ((Uint8*)(srcpix+(surf->h-1-loopy)*srcpitch)) + surf->w - 1;
+					for(loopx = 0; loopx < surf->w; ++loopx)
+						*dst++ = *src--;
+				}break;
+			case 2:
+				for(loopy = 0; loopy < surf->h; ++loopy) {
+					Uint16* dst = (Uint16*)(dstpix+loopy*dstpitch);
+					Uint16* src = ((Uint16*)(srcpix+(surf->h-1-loopy)*srcpitch)) + surf->w - 1;
+					for(loopx = 0; loopx < surf->w; ++loopx)
+						*dst++ = *src--;
+				}break;
+			case 4:
+				for(loopy = 0; loopy < surf->h; ++loopy) {
+					Uint32* dst = (Uint32*)(dstpix+loopy*dstpitch);
+					Uint32* src = ((Uint32*)(srcpix+(surf->h-1-loopy)*srcpitch)) + surf->w - 1;
+					for(loopx = 0; loopx < surf->w; ++loopx)
+						*dst++ = *src--;
+				}break;
+			case 3:
+				for(loopy = 0; loopy < surf->h; ++loopy) {
+					Uint8* dst = (Uint8*)(dstpix+loopy*dstpitch);
+					Uint8* src = ((Uint8*)(srcpix+(surf->h-1-loopy)*srcpitch)) + surf->w*3 - 3;
+					for(loopx = 0; loopx < surf->w; ++loopx)
+					{
+						dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
+						dst += 3;
+						src -= 3;
+					}
+				}break;
+			}
+		}
+		else
+		{
+			switch(surf->format->BytesPerPixel)
+			{
+			case 1:
+				for(loopy = 0; loopy < surf->h; ++loopy) {
+					Uint8* dst = (Uint8*)(dstpix+loopy*dstpitch);
+					Uint8* src = ((Uint8*)(srcpix+loopy*srcpitch)) + surf->w - 1;
+					for(loopx = 0; loopx < surf->w; ++loopx)
+						*dst++ = *src--;
+				}break;
+			case 2:
+				for(loopy = 0; loopy < surf->h; ++loopy) {
+					Uint16* dst = (Uint16*)(dstpix+loopy*dstpitch);
+					Uint16* src = ((Uint16*)(srcpix+loopy*srcpitch)) + surf->w - 1;
+					for(loopx = 0; loopx < surf->w; ++loopx)
+						*dst++ = *src--;
+				}break;
+			case 4:
+				for(loopy = 0; loopy < surf->h; ++loopy) {
+					Uint32* dst = (Uint32*)(dstpix+loopy*dstpitch);
+					Uint32* src = ((Uint32*)(srcpix+loopy*srcpitch)) + surf->w - 1;
+					for(loopx = 0; loopx < surf->w; ++loopx)
+						*dst++ = *src--;
+				}break;
+			case 3:
+				for(loopy = 0; loopy < surf->h; ++loopy) {
+					Uint8* dst = (Uint8*)(dstpix+loopy*dstpitch);
+					Uint8* src = ((Uint8*)(srcpix+loopy*srcpitch)) + surf->w*3 - 3;
+					for(loopx = 0; loopx < surf->w; ++loopx)
+					{
+						dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
+						dst += 3;
+						src -= 3;
+					}
+				}break;
+			}
+		}
+	}
+
+	SDL_UnlockSurface(newsurf);
+  /* Thanks, Pygame :) */
+
+
+	if(newsurf == NULL)
 		rb_raise(eSDLError,"Could not rotozoom surface: %s",SDL_GetError());
-	return Data_Wrap_Struct(cSurface,0,SDL_FreeSurface,dst);
-
-#else
-
-	rb_warn("Surface flipping is not supported by your version of SDL_gfx (%d,%d,%d). Please upgrade to 2.0.13 or later.", SDL_GFXPRIMITIVES_MAJOR, SDL_GFXPRIMITIVES_MINOR, SDL_GFXPRIMITIVES_MICRO);
-	return Qnil;
-
-#endif /* HAVE_ROTOZOOMXY */
-
+	return Data_Wrap_Struct(cSurface,0,SDL_FreeSurface,newsurf);
 }
-	
+
+
 void Rubygame_Init_Transform()
 {
 	mTrans = rb_define_module_under(mRubygame,"Transform");
+	rb_define_module_function(mTrans,"flip",rbgm_transform_flip,-1);
+
+#if HAVE_SDL_ROTOZOOM_H
+
 	rb_define_module_function(mTrans,"usable?",rbgm_usable,0);
 
 	rb_define_module_function(mTrans,"rotozoom",rbgm_transform_rotozoom,-1);
 	rb_define_module_function(mTrans,"rotozoom_size",rbgm_transform_rzsize,-1);
 	rb_define_module_function(mTrans,"zoom",rbgm_transform_zoom,-1);
 	rb_define_module_function(mTrans,"zoom_size",rbgm_transform_zoomsize,-1);
-	rb_define_module_function(mTrans,"flip",rbgm_transform_flip,-1);
-}
 
 /*
 If SDL_gfx is not installed, the module still exists, but
@@ -327,16 +475,13 @@ and act appropriately!
 
 #else /* HAVE_SDL_ROTOZOOM_H */
 
-void Rubygame_Init_Transform()
-{
-	mTrans = rb_define_module_under(mRubygame,"Transform");
 	rb_define_module_function(mTrans,"usable?",rbgm_unusable,0);
 
 	rb_define_module_function(mTrans,"rotozoom",rbgm_dummy,-1);
 	rb_define_module_function(mTrans,"rotozoom_size",rbgm_dummy,-1);
 	rb_define_module_function(mTrans,"zoom",rbgm_dummy,-1);
 	rb_define_module_function(mTrans,"zoom_size",rbgm_dummy,-1);
-	rb_define_module_function(mTrans,"flip",rbgm_dummy,-1);
+#endif /* HAVE_SDL_ROTOZOOM_H */
 }
 
-#endif /* HAVE_SDL_ROTOZOOM_H */
+
