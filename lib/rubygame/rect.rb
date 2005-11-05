@@ -17,38 +17,42 @@
 #	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #++
 
-#Table of Contents:
+#--
+# Table of Contents:
 #
-#Rubygame.rect_from_object
+# class Rect
+# 	GENERAL:
+# 		initialize
+# 		new_from_object
+# 		to_s
+# 		to_a, to_ary
+# 		[]
+# 	ATTRIBUTES:
+# 		x, y, w, h [<- accessors]
+# 		width, height, size
+# 		left, top, right, bottom
+# 		center, centerx, centery
+# 		topleft, topright
+# 		bottomleft, bottomright
+# 		midleft, midtop, midright, midbottom
+# 	UTILITY METHODS:
+# 		clamp, clamp!
+# 		clip, clip!
+# 		collide_hash, collide_hash_all
+# 		collide_array, collide_array_all
+# 		collide_point?
+# 		collide_rect?
+# 		contain?
+# 		inflate, inflate!
+# 		move, move!
+# 		normalize, normalize!
+# 		union, union!
+# 		union_all, union_all!
 #
-#class Rect
-#	GENERAL:
-#		initialize
-# 	new_from_object
-#		to_s
-#		to_a, to_ary
-#		[]
-#	ATTRIBUTES:
-#		x, y, w, h [<- accessors]
-#		width, height, size
-#		left, top, right, bottom
-#		center, centerx, centery
-#		topleft, topright
-#		bottomleft, bottomright
-#		midleft, midtop, midright, midbottom
-#	METHODS:
-#		clamp, clamp!
-#		clip, clip!
-#		collide_hash, collide_hash_all
-#		collide_array, collide_array_all
-#		collide_point?
-#		collide_rect?
-#		contain?
-#		inflate, inflate!
-#		move, move!
-#		normalize, normalize!
-#		union, union!
-#		union_all, union_all!
+#	class Surface
+#		make_rect
+# 
+#++
 
 module Rubygame
 
@@ -64,6 +68,10 @@ module Rubygame
 # In Rubygame, Rects are used for collision detection and describing 
 # the area of a Surface to operate on.
 class Rect < Array
+
+	#--
+	# GENERAL
+	#++
 
 	# Create a new Rect, attempting to extract its own information from 
 	# the given arguments. The arguments must fall into one of these cases:
@@ -127,15 +135,15 @@ class Rect < Array
 	end
 
 
-	# Print the Rect in the form "+#<Rect [x,y,w,h]>"
+	# Print the Rect in the form "+#<Rect [x,y,w,h]>+"
 	def to_s; "#<Rect [%s,%s,%s,%s]>"%self; end
 
-	# Print the Rect in the form "+#<Rect:id [x,y,w,h]>"
+	# Print the Rect in the form "+#<Rect:id [x,y,w,h]>+"
 	def inspect; "#<Rect:#{self.object_id} [%s,%s,%s,%s]>"%self; end
 
-	############################
-	##### RECT  ATTRIBUTES #####
-	############################
+	#--
+	# ATTRIBUTES
+	#++
 
 	# Returns self[0]
 	def x; return self[0]; end
@@ -339,9 +347,9 @@ class Rect < Array
 	alias mb midbottom
 	alias mb= midbottom=;
 
-	#########################
-	##### RECT  METHODS #####
-	#########################
+	#--
+	# UTILITY METHODS
+	#++
 
 
 	# As #clamp!, but the original caller is not changed.
@@ -404,7 +412,7 @@ class Rect < Array
 	def clip!(rect)
 		nself = self.normalize
 		rect = Rect.new_from_object(rect).normalize
-		if self.collide_rect(rect)
+		if self.collide_rect?(rect)
 			self[0] = min(nself.right, rect.right) - nself[0]
 			self[3] = min(nself.bottom, rect.bottom) - nself[1]
 			self[0] = max(nself[0], rect[1])
@@ -425,7 +433,7 @@ class Rect < Array
 	# particular Rect to be returned first.
 	def collide_hash(hash_rects)
 		hash_rects.each { |key,value|
-			if value.colliderect(self); return [key,value]; end
+			if value.collide_rect?+(self); return [key,value]; end
 		}
 		return nil
 	end
@@ -439,7 +447,7 @@ class Rect < Array
 	def collide_hash_all(hash_rects)
 		collection = []
 		hash_rects.each { |key,value|
-			if value.colliderect(self); collection += [key,value]; end
+			if value.collide_rect?+(self); collection += [key,value]; end
 		}
 		return collection
 	end
@@ -449,7 +457,7 @@ class Rect < Array
 	# the caller.
 	def collide_array(array_rects)
 		for i in 0..(array_rects.length)
-			if array_rects[i].colliderect(self)
+			if array_rects[i].collide_rect?(self)
 				return i
 			end
 		end
@@ -462,7 +470,7 @@ class Rect < Array
 	def collide_array_all(array_rects)
 		indexes = []
 		for i in (0..(array_rects.length))
-			if array_rects[i].colliderect(self)
+			if array_rects[i].collide_rect?(self)
 				indexes += [i]
 			end
 		end
@@ -483,15 +491,14 @@ class Rect < Array
 					(nself.top..nself.bottom).include? y)
 	end
 
-	# True if the caller and the given Rect overlap at all.
+	# True if the caller and the given Rect overlap (or touch) at all.
 	def collide_rect?(rect)
 		nself = self.normalize
 		rect = Rect.new_from_object(rect).normalize
-		coll_horz = ((rect.left)..(rect.right)).include?(nself.left) or\
-		((nself.left)..(nself.right)).include?(rect.left)
-		coll_vert = ((rect.top)..(rect.bottom)).include?(nself.top) or\
-		((nself.top)..(nself.bottom)).include?(rect.top)
-		return (coll_horz and coll_vert)
+		return ((( (rect.l)..(rect.r) ).include?(nself.l)  or\
+						 ((nself.l)..(nself.r)).include?( rect.l)) and\
+						(( (rect.t)..(rect.b) ).include?(nself.t)  or\
+						 ((nself.t)..(nself.b)).include?( rect.t)))
 	end
 
 	# True if the given Rect is totally within the caller. Borders may
