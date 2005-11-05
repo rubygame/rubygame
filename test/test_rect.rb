@@ -4,12 +4,103 @@
 # It is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ 
+ 
+# This is a unit test suite for Rubygame Rects.
+# However. it is BY NO MEANS COMPREHENSIVE.
+#
+# If you have the time and motivation, please consider contributing
+# a few more tests to improve this suite.
+# 
+# The following methods (of Rect if unspecified) have NO TESTS:
+#  new_from_object
+#  clip
+#  clip!
+#  collide_hash
+#  collide_hash_all
+#  collide_array
+#  collide_array_all
+#  collide_point?
+#  collide_rect?
+#  contain?
+#  inflate!
+#  move
+#  move!
+#  normalize
+#  normalize!
+#  union
+#  union!
+#  union_all
+#  union_all!
+#  Surface#make_rect
+# 
+# The following methods (of Rect if unspecified) have INSUFFICIENT TESTS:
+#  (no methods)
+# 
+# The following methods (of Rect if unspecified) have SUFFICIENT TESTS:
+#  initialize
+#  to_s
+#  inspect
+#  []
+#  []=
+#  x
+#  y
+#  w
+#  h
+#  width
+#  height
+#  size
+#  left
+#  top
+#  right
+#  bottom
+#  center
+#  centerx
+#  centery
+#  topleft
+#  topright
+#  bottomleft
+#  bottomright
+#  midleft
+#  midtop
+#  midright
+#  midbottomX
+#
+
+# --
+# Table of Contents:
+#  INITIALIZATION
+#  CONVERSION
+#  PRIMARY ATTRIBUTES
+#  SIDES
+#  CENTERS
+#  CORNERS
+#  MIDPOINTS
+#  CLAMP
+#  INFLATE
+# ++
+
 
 require "test/unit"
 require "rubygame"
 Rect = Rubygame::Rect
 
+# A class to test Rect.new_from_object()'s ability to extract a Rect from
+# an object which responds to :rect
+class RectParent
+	attr_reader :rect
+	def initialize(r)
+		@rect = r
+	end
+end
+
+
 class TC_Rect < Test::Unit::TestCase
+
+	# --
+	# INITALIZATION
+	# ++
+
 	# Test init'n from 1 Array with 4 entries
 	def test_new1_arr
 		rect = Rect.new([3,5,20,40])
@@ -35,6 +126,39 @@ class TC_Rect < Test::Unit::TestCase
 		assert_equal([3,5,20,40],rect)
 	end
 
+	# Test #new_from_object with a Rect
+	def test_nfo_rect
+		rect = Rect.new_from_object(Rect.new(3,5,20,40))
+		assert_equal([3,5,20,40],rect)
+		assert_kind_of(Rect,rect)
+	end
+
+	# Test #new_from_object with an Array
+	def test_nfo_rect
+		rect = Rect.new_from_object([3,5,20,40])
+		assert_equal([3,5,20,40],rect)
+		assert_kind_of(Rect,rect)
+	end
+
+	# Test #new_from_object with a .rect attribute which is a Rect
+	def test_nfo_rect_attr_rect
+
+		rect = Rect.new_from_object(RectParent.new(Rect.new(3,5,20,40)))
+		assert_equal([3,5,20,40],rect)
+		assert_kind_of(Rect,rect)
+	end
+
+	# Test #new_from_object with a .rect attribute which is an Array
+	def test_nfo_rect_attr_rect
+		rect = Rect.new_from_object(RectParent.new([3,5,20,40]))
+		assert_equal([3,5,20,40],rect)
+		assert_kind_of(Rect,rect)
+	end
+
+	# --
+	# CONVERSION
+	# ++
+
 	# Test that output from #to_s is proper with a Rect of Integers
 	def test_to_s_int
 		rect = Rect.new(3,5,20,40)
@@ -43,8 +167,20 @@ class TC_Rect < Test::Unit::TestCase
 
 	# Test that output from #to_s is proper with a Rect of Floats
 	def test_to_s_float
-		rect = Rect.new(3.1,5.2,20.3,40.5)
-		assert_equal("#<Rect [3.1,5.2,20.3,40.5]>",rect.to_s)
+		rect = Rect.new(3.15,5.2,20.3,40.5)
+		assert_equal("#<Rect [3.15,5.2,20.3,40.5]>",rect.to_s)
+	end
+
+	# Test that output from #inspect is proper with a Rect of Integers
+	def test_inspect_int
+		rect = Rect.new(3,5,20,40)
+		assert_equal("#<Rect:#{rect.object_id} [3,5,20,40]>",rect.inspect)
+	end
+
+	# Test that output from #inspect is proper with a Rect of Floats
+	def test_inspect_float
+		rect = Rect.new(3.15,5.2,20.3,40.5)
+		assert_equal("#<Rect:#{rect.object_id} [3.15,5.2,20.3,40.5]>",rect.inspect)
 	end
 
 	# --
@@ -476,11 +612,119 @@ class TC_Rect < Test::Unit::TestCase
 		assert_equal([10,-5,6,30],rect_b.clamp(rect_a))
 	end
 
-		# Clamp a rect that is both too wide and too tall.
+	# Clamp a rect that is both too wide and too tall.
 	def test_clamp_nofit
 		rect_a = Rect.new(0,0,20,20)
 		rect_b = Rect.new(10,40,30,30)
 		assert_equal([-5,-5,30,30],rect_b.clamp(rect_a))
+	end
+
+
+	# --
+	# INFLATE
+	# ++
+
+	# Inflate a rect by zero on x and y
+	def test_inflate_zero_x_zero_y
+		assert_equal([0,0,20,20],
+								 Rect.new(0,0,20,20).inflate(0,0))
+	end
+
+	# Inflate a rect by an even positive integer on x and y
+	def test_inflate_evenposint_x_evenposint_y
+		assert_equal([-2,-3,24,26],
+								 Rect.new(0,0,20,20).inflate(4,6))
+	end
+
+	# Inflate a rect by an odd negative integer on x and y
+	# NOTE: Pygame would give a result of [-1,-3,23,25].
+	def test_inflate_oddposint_x_oddposint_y
+		assert_equal([-1,-2,23,25],
+								 Rect.new(0,0,20,20).inflate(3,5))
+	end
+
+	# Inflate a rect by an even negative integer on x and y
+	def test_inflate_evennegint_x_evennegint_y
+		assert_equal([2,3,16,14],
+								 Rect.new(0,0,20,20).inflate(-4,-6))
+	end
+
+	# Inflate a rect by an odd negative integer on x and y
+	# NOTE: Pygame would give a result of [1,2,17,15].
+	def test_inflate_oddnegint_x_oddnegint_y
+		assert_equal([2,3,17,15],
+								 Rect.new(0,0,20,20).inflate(-3,-5))
+	end
+
+	# --
+	# COLLIDE_RECT
+	# ++
+
+	# Test collision between rects which do not collide on either axis.
+	def test_collide_rect_nox_noy
+		r1 = Rect.new(0,0,10,10)
+		r2 = Rect.new(20,20,10,10)
+		assert(!(r1.collide_rect?(r2)), "r1 should not collide with r2")
+		assert(!(r2.collide_rect?(r1)), "r2 should not collide with r1")
+	end
+
+	# Test collision between rects which overlap on the X axis only
+	# (i.e. they would intersect if they were at the same vertical position).
+	def test_collide_rect_overlapx_noy
+		r1 = Rect.new(0,0,10,10)
+		r2 = Rect.new(5,30,10,10)
+		assert(!(r1.collide_rect?(r2)), "r1 should not collide with r2")
+		assert(!(r2.collide_rect?(r1)), "r2 should not collide with r1")
+	end
+
+	# Test collision between rects which overlap on the Y axis only
+	# (i.e. they would intersect if they were at the same horizontal position).
+	def test_collide_rect_nox_overlapy
+		r1 = Rect.new(0,0,10,10)
+		r2 = Rect.new(20,5,10,10)
+		assert(!(r1.collide_rect?(r2)), "r1 should not collide with r2")
+		assert(!(r2.collide_rect?(r1)), "r2 should not collide with r1")
+	end
+
+	# Test collision between rects which overlap on both axes.
+	def test_collide_rect_overlapx_overlapy
+		r1 = Rect.new(0,0,10,10)
+		r2 = Rect.new(5,5,10,10)
+		assert(r1.collide_rect?(r2), "r1 should collide with r2")
+		assert(r2.collide_rect?(r1), "r2 should collide with r1")
+	end
+
+	# Test collision between rects, one containing the other on both axes.
+	def test_collide_rect_conx_cony
+		r1 = Rect.new(0,0,10,10)
+		r2 = Rect.new(5,5,4,4)
+		assert(r1.collide_rect?(r2), "r1 should collide with r2")
+		assert(r2.collide_rect?(r1), "r2 should collide with r1")
+	end
+
+	# Test collision between rects touching but not overlapping on X axis only.
+	def test_collide_rect_touchx_noy
+		r1 = Rect.new(0,0,10,10)
+		r2 = Rect.new(10,0,10,10)
+		assert(r1.collide_rect?(r2), "r1 should collide with r2")
+		assert(r2.collide_rect?(r1), "r2 should collide with r1")
+	end
+
+	# Test collision between rects touching but not overlapping on Y axis only.
+	def test_collide_rect_nox_touchy
+		r1 = Rect.new(0,0,10,10)
+		r2 = Rect.new(0,10,10,10)
+		assert(r1.collide_rect?(r2), "r1 should collide with r2")
+		assert(r2.collide_rect?(r1), "r2 should collide with r1")
+	end
+
+	# Test collision between rects touching but not overlapping on both axes.
+	# (i.e. corners are touching)
+	def test_collide_rect_touchx_touchy
+		r1 = Rect.new(0,0,10,10)
+		r2 = Rect.new(10,10,10,10)
+		assert(r1.collide_rect?(r2), "r1 should collide with r2")
+		assert(r2.collide_rect?(r1), "r2 should collide with r1")
 	end
 
 end
