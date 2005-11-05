@@ -4,7 +4,7 @@
  *  The Display module is DEPRECATED. Use Rubygame::Screen instead!
  * --
  *  Rubygame -- Ruby code and bindings to SDL to facilitate game creation
- *  Copyright (C) 2004  John 'jacius' Croisant
+ *  Copyright (C) 2004-2005  John 'jacius' Croisant
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,7 @@
 #include "rubygame.h"
 
 /* call-seq:
- *  set_mode(size,depth=0,flags=0)
+ *  set_mode(size,depth=0,flags=[SWSURFACE])
  *
  *  Create a new Rubygame window if there is none, or modify the existing one.
  *  Returns the resulting Surface.
@@ -100,7 +100,7 @@ VALUE rbgm_screen_setmode(int argc, VALUE *argv, VALUE module)
 
   if( screen==NULL )
 	{
-	  rb_raise(eSDLError,"Couldn't set %dx%d %d bpp video mode: %s",
+	  rb_raise(eSDLError,"Couldn't set [%d x %d] %d bpp video mode: %s",
 			   w, h, depth, SDL_GetError());
 	}
   //format = screen->format;
@@ -329,10 +329,10 @@ void Rubygame_Init_Display()
   rb_define_method(cScreen,"flip",rbgm_screen_flip,0);
 
   /* Display module -- deprecated! Use Rubygame::Screen instead! */
-  mDisplay = rb_define_module_under(mRubygame,"Display");
+  //mDisplay = rb_define_module_under(mRubygame,"Display");
   /* Display methods for compatibility -- same as Screen methods */
-  rb_define_module_function(mDisplay,"set_mode",rbgm_screen_setmode, -1);
-  rb_define_module_function(mDisplay,"get_surface", rbgm_screen_getsurface, 0);
-  rb_define_const(mDisplay, "Screen", cScreen);
+  //rb_define_module_function(mDisplay,"set_mode",rbgm_screen_setmode, -1);
+  //rb_define_module_function(mDisplay,"get_surface", rbgm_screen_getsurface, 0);
+  //rb_define_const(mDisplay, "Screen", cScreen);
 
 }

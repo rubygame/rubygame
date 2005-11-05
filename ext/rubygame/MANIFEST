@@ -1,6 +1,5 @@
 MANIFEST
 constants.c
-display.c
 draw.c
 event.c
 extconf.rb
@@ -9,6 +8,7 @@ image.c
 joystick.c
 rubygame.c
 rubygame.h
+screen.c
 surface.c
 symbols.c
 time.c
