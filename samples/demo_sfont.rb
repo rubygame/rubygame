@@ -37,7 +37,7 @@ def main(*args)
 	end
 
 	catch :rubygame_quit do
-		screen = Rubygame::Display.set_mode([700,400])
+		screen = Rubygame::Screen.set_mode([700,400])
 		queue = Rubygame::Queue.instance()
 
 		screen.set_caption("SFont Test (%s)"%args[0])

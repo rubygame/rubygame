@@ -2,6 +2,8 @@
 
 require "rubygame"
 
+Rubygame.init
+
 def wait_for_keypress(queue)
 	catch :keypress do
 		loop do
@@ -18,7 +20,7 @@ def wait_for_keypress(queue)
 	end
 end
 
-screen = Rubygame::Display.set_mode([320,240])
+screen = Rubygame::Screen.set_mode([320,240])
 queue = Rubygame::Queue.instance
 image = Rubygame::Image.load("panda.png")
 puts "Size is: [%s,%s]"%image.size

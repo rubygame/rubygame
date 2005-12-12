@@ -23,7 +23,7 @@ puts "Creating queue and clock..."
 queue = Rubygame::Queue.instance()
 queue.block Rubygame::MouseMotionEvent
 clock = Rubygame::Time::Clock.new()
-#clock.desired_fps = 20
+clock.desired_fps = 100
 
 puts "Transform is usable? %s"%[Rubygame::Transform.usable?]
 puts "Draw is usable? %s"%[Rubygame::Draw.usable?]
@@ -107,7 +107,7 @@ class PandaGroup < Rubygame::Sprite::Group
 end
 
 # Create the SDL window
-screen = Rubygame::Display.set_mode([320,240])
+screen = Rubygame::Screen.set_mode([320,240])
 screen.set_caption("Rubygame test","This is the icon title")
 puts "title: %s   icon title: %s"%screen.caption()
 
@@ -189,52 +189,75 @@ catch(:rubygame_quit) do
 	loop do
 		queue.get().each do |event|
 			case event
-				when Rubygame::MouseDownEvent
-					puts "click: [%d,%d]"%event.pos
-				when Rubygame::JoyDownEvent
-					case event.button
-						when 4; panda1.speed = 80
-						when 5; panda2.speed = 80
-					end
-					#puts "jdown: %d"%[event.button]
-				when Rubygame::JoyUpEvent
-					case event.button
-						when 4; panda1.speed = 40
-						when 5; panda2.speed = 40
-					end
-					#puts "jup: %d"%[event.button]
-				when Rubygame::JoyAxisEvent
-					# max = 32767
-					case(event.axis)
-						when 0; panda1.vx = event.value / 32767.0
-						when 1; panda1.vy = event.value / 32767.0
-						when 2; panda2.vx = event.value / 32767.0
-						when 3; panda2.vy = event.value / 32767.0
-					end
-					#puts "jaxis: %d %d"%[event.axis,event.value]
-				when Rubygame::JoyHatEvent
-					puts "jhat: %d %d"%[event.hat,event.value]
-				when Rubygame::KeyDownEvent
-					if [Rubygame::K_ESCAPE,Rubygame::K_Q].include? event.key
-						throw :rubygame_quit 
-					end
-					print "%s"%[event.string]
-					#puts "Keydown: [%s, %d]"%[event.string,event.key]
-				when Rubygame::QuitEvent
-					puts "Quitting!"
-					throw :rubygame_quit
+			when Rubygame::MouseDownEvent
+				puts "click: [%d,%d]"%event.pos
+			when Rubygame::JoyDownEvent
+				case event.button
+				when 4; panda1.speed = 80
+				when 5; panda2.speed = 80
+				end
+				#puts "jdown: %d"%[event.button]
+			when Rubygame::JoyUpEvent
+				case event.button
+				when 4; panda1.speed = 40
+				when 5; panda2.speed = 40
+				end
+				#puts "jup: %d"%[event.button]
+			when Rubygame::JoyAxisEvent
+				# max = 32767
+				case(event.axis)
+				when 0; panda1.vx = event.value / 32767.0
+				when 1; panda1.vy = event.value / 32767.0
+				when 2; panda2.vx = event.value / 32767.0
+				when 3; panda2.vy = event.value / 32767.0
+				end
+				#puts "jaxis: %d %d"%[event.axis,event.value]
+			when Rubygame::JoyHatEvent
+				puts "jhat: %d %d"%[event.hat,event.value]
+			when Rubygame::KeyDownEvent
+				case event.key
+				when Rubygame::K_ESCAPE
+					throw :rubygame_quit 
+				when Rubygame::K_Q
+					throw :rubygame_quit 
+				when Rubygame::K_UP
+					panda1.vy = -1
+				when Rubygame::K_DOWN
+					panda1.vy = 1
+				when Rubygame::K_LEFT
+					panda1.vx = -1
+				when Rubygame::K_RIGHT
+					panda1.vx = 1
+				end
+			when Rubygame::KeyUpEvent
+				case event.key
+				when Rubygame::K_UP
+					panda1.vy = 0
+				when Rubygame::K_DOWN
+					panda1.vy = 0
+				when Rubygame::K_LEFT
+					panda1.vx = 0
+				when Rubygame::K_RIGHT
+					panda1.vx = 0
+				end
+				print "%s"%[event.string]
+				#puts "Keydown: [%s, %d]"%[event.string,event.key]
+			when Rubygame::QuitEvent
+				puts "Quitting!"
+				throw :rubygame_quit
 			end
 		end
 		pandas.undraw(screen,background)
 		pandas.update(update_time)
-#		Rubygame::Draw.aaline(screen,panda1.rect.center, panda2.rect.center,[200,200,200])
+		# Rubygame::Draw.aaline(screen,panda1.rect.center, panda2.rect.center,[200,200,200])
 		pandas.draw(screen)
 		screen.update()
 		update_time = clock.tick()
+		# update_time = Rubygame::Time.delay(10)
 		unless fps == clock.fps
 			fps = clock.fps
 			screen.set_caption("Rubygame test [%d fps]"%fps)
-			#puts "tick: %d  fps: %d"%[update_time,fps]
+			# puts "tick: %d  fps: %d"%[update_time,fps]
 		end
 	end
 end

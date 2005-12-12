@@ -162,7 +162,7 @@ end
 
 def main
 	catch :rubygame_quit do
-		screen = Rubygame::Display.set_mode([300,300])
+		screen = Rubygame::Screen.set_mode([300,300])
 		queue = Rubygame::Queue.instance()
 		queue.allowed = Rubygame::QuitEvent,Rubygame::KeyDownEvent
 
