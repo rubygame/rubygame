@@ -168,6 +168,16 @@ Rubygame::Draw.filled_circle(background,[260,220],4,[200,50,10])
 Rubygame::Draw.filled_ellipse(background,[200,150],[30,25],[250,250,250])
 Rubygame::Draw.aaellipse(background,[200,150],[30,25],[250,250,250])
 
+# Let's make some labels
+sfont = Rubygame::Font::SFont.new("term16.png")
+sfont.render("Love pandas forever! <3").blit(background,[100,10])
+
+Rubygame::Font::TTF.setup()
+ttfont = Rubygame::Font::TTF.new("freesansbold.ttf",11)
+ttfrndr = ttfont.render("(this is a pizza?!?) -->",true,[250,250,250],[0,0,0])
+ttfrndr.blit(background,[100,200])
+
+
 # Create another surface to test transparency blitting
 b = Rubygame::Surface.new([200,50])
 b.fill([150,20,40])

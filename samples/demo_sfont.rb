@@ -33,6 +33,8 @@ def main(*args)
 		puts "   http://user.cs.tu-berlin.de/~karlb/sfont/fonts.html) and pass"
 		puts "   it as the first argument, e.g. './demo_sfont.rb my_font.png'"
 		puts
+		puts "   An example SFont-compatible font (term16.png) is included"
+		puts "   in this directory for your convenience."
 		return
 	end
 
