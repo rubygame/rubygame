@@ -261,17 +261,14 @@ module Rubygame
 			else
 				allow = @@allowed
 			end
-			#puts "Going to update pending..."
 			update_pending()
-			#puts "Updated pending."
 			get = @@pending.delete_if{|event| not allow.include? event.class}
 			@@pending -= get
 			return get
 		end
 
 		def post(*events)
-			# so posted events will appear after SDL events
-			update_pending()
+			update_pending() # so posted events will appear after SDL events
 			not_added = []
 			for event in events.flatten()
 				if event.kind_of? Event
@@ -283,29 +280,39 @@ module Rubygame
 		end
 
 		def update_pending
-			#puts "Going to get SDL events..."
 			@@pending += get_sdl()
-			#puts "Got SDL events."
 		end
 		private :update_pending
 
-		def wait( *types )
+		# Wait until an event of the given class(es) is generated, then return
+		# that event. All other types of events will be discarded in the meantime.
+		# 
+		# +*klasses+ is the event classes which will trigger the method to return.
+		# If this argument is omitted, ALL event classes will trigger return.
+		# 
+		# All classes which are not allowed by the Queue and/or are not
+		# Rubygame-generated hardware events (i.e. not custom events) will be
+		# stripped from +klasses+.
+		# 
+		# If +klasses+ is given, but does not contain any valid classes,
+		# this method immediately returns +nil+.
+		def wait( *klasses )
+			klasses.flatten!
+			if klasses.length < 1 # no args
+				klasses = Rubygame::ALL_EVENT_CLASSES
+			end
+			# eliminate invalid args
+			klasses = klasses.delete_if{ |klass| 
+				!(Rubygame::ALL_EVENT_CLASSES.include?(klass) and\
+					@@allowed.include?(klass))
+			}
+			if klasses.length < 1 # no _valid_ args
+				return nil
+			end
 			loop do
-				if types.length < 1 # no args
-					types = Rubygame::ALL_EVENT_CLASSES
-				else
-					# eliminate invalid args
-					types = types.flatten.delete_if{ |type| 
-						not Rubygame::ALL_EVENT_CLASSES.include? type
-					}
-					if types.length < 1 # no _valid_ args
-						return nil
-					end
-				end
-				event = _wait()
-				if types.include? event.class
-					return event
-				end
+				self.get().each { |event|
+					return event if klasses.include? event.class
+				}
 			end
 		end
 
