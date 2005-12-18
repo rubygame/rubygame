@@ -1,26 +1,85 @@
-Rubygame TODO:
+Rubygame TODO
+
+(I hope the contents of this file are at least partially-legible to English
+ readers. No promises, though.)
 
 Features:
-	- Clock class:
-		- Rubygame apps freeze when limiting FPS, esp. if window loses focus
-	- Draw module:
-		- maybe add bezier curve
-	- Sound/music playback (SDL_Sound, OpenAL?)
-		- use rbopenal for good sound, also allow mixer for beeps and boops
-	- Transform module:
-		- hq2x, hq3x, hq4x -- http://www.hiend3d.com/hq3x.html
-	- CD playback
+  - All these features are for later (post-1.0) versions
 
-Internal:
-	- use -Wall or be smote!
-	- C equivalent of rect_from_object (see rect.rb) (better than rect_entry)
-		- Screen#update (cannot pass object with rect attribute)
-		- Screen#update_rects (same as above)
-	- More argument checking! Make sure arguments are the right type.
-		- NUM2INT, etc. check if it is a Numeric? Works with Floats?
-		- make sure color values are between 0 and 255?
-	- Surface#blit should return affected area: Rect [dst_x,dst_y,src_w,src_h]
-	- UpdateGroup union highly-overlapping rectangles to be more efficient.
-	- LimitGroup#add could be more efficient (remove multiple, use super)
-	- Better support for non-US keyboards, particularly generating strings for
-	  keypresses. (EURO, WORLD)
+  - OpenGL (add a GL module with a few methods, ruby-opengl does the rest?)
+    - swap_buffers --> SDL_GL_SwapBuffers()
+    - set_attribute --> SDL_GL_SetAttribute()
+    - get_attribute --> SDL_GL_GetAttribute()
+
+  - Draw module: 
+    - add bezier curve
+
+  - Sound/music playback (SDL_Sound, OpenAL?)
+    - SDL sound & mixer bindings first, then consider OpenAL also.
+    - Add CD playback? Maybe, but not a priority.
+
+  - Transform module:
+    - add hq2x, hq3x, hq4x -- http://www.hiend3d.com/hq3x.html
+    - image flipping with rotozoom -1 scale does not work. My fault or GFX's?
+
+
+API:
+  - Add Queue#each (iterator, not returning an Array like #get)
+  - Rename Queue#get to #get_all ?
+  - Should Queue just be a module, and not a class?  (yes)
+
+  - Screen#set_caption and #caption should be split into functions for
+    title and iconized, style of 'title='
+
+  - Should module checking (Draw, Transform, etc.) use a variable instead
+    of the function "usable?()"?  (yes)
+
+  - Should Draw module be Surface#methods instead?
+
+  - Drop most cases of "you can pass N values or an Array or ...".
+    Convenience for the user is one thing, but it's not that hard to expand
+    an Array into multiple values [hint: method(*myarray)] and supporting
+    multiple ways of giving arguments muddies the code too much.
+    - Rect.new_from_object() should stay, though. It's supposed to be that way.
+    - There should be a consistent rule across the API.
+      Proposed rule:
+      - If the method ONLY takes the Array/values (e.g. Rect#inflate), it
+        should take only the separate values (many parameters).
+      - If the method takes the Array/values AND other arguments (e.g. 
+        Surface.new), it should take only the Array (single parameter).
+    
+
+
+Implementation:
+  - Framerate limiting with Clock#tick is unacceptably inaccurate.
+
+  - Rect needs cleaned up and fixed.
+    - Some algorithms may be INCORRECT! (union, normalize, others?)
+    - 'test/test_rect.rb' doesn't test most methods!!
+    - It's pretty lame to make e.g. Rect#union just call union! on a dup.
+      Or is it...? Is this a matter of style, or efficiency? DRY?
+
+  - Code (especially C code) really needs to be cleaned up. Recommend making a
+    "clean" branch, fixing code module by module, then re-merge.
+
+    ############################
+  - # More argument checking!! #   (Make sure arguments are the right type.)
+    ############################
+    - Passing an optional argument to a C function as nil _IS NOT_ the same
+          as not passing it at all -- it is counted in number of arguments!
+    - Do NUM2INT, etc. check if it is a Numeric? Do they work with Floats?
+    - Do we need to make sure color values are between 0 and 255 before
+      we pass them to SDL functions?
+
+  - C equivalent of Rect.new_from_object (see rect.rb)
+    - Screen#update (cannot pass object with rect attribute)
+    - Screen#update_rects (same as above)
+
+  - Should UpdateGroup union highly-overlapping rectangles for efficiency?
+
+  - LimitGroup#add could be more efficient (replace many sprites at the
+    same time, rather than doing it one by one.)
+
+  - Better support for non-US keyboards, particularly generating strings for
+    keypresses. (EURO, WORLD*) Will need someone with a non-US keyboard to
+    test this.
