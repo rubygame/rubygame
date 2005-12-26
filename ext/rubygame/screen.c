@@ -1,7 +1,6 @@
 /*
  *  Screen -- Rubygame-bound SDL display window
  *
- *  The Display module is DEPRECATED. Use Rubygame::Screen instead!
  * --
  *  Rubygame -- Ruby code and bindings to SDL to facilitate game creation
  *  Copyright (C) 2004-2005  John 'jacius' Croisant
@@ -25,48 +24,48 @@
 #include "rubygame.h"
 
 /* call-seq:
- *  set_mode(size,depth=0,flags=[SWSURFACE])
+ *  set_mode(size, depth=0, flags=[SWSURFACE])
  *
  *  Create a new Rubygame window if there is none, or modify the existing one.
  *  Returns the resulting Surface.
  *
  *  This method takes these arguments:
- *  +size+::  requested window size (in pixels), in the form +[width,height]+
- *  +depth+:: requested color depth (in bits per pixel). If 0 (default), the
- *            current system color depth.
- *  +flags+:: an Array of one or more of the following flags (located under the
- *            Rubygame module). If omitted, defaults to +[SWSURFACE]+.
- *
- *            +SWSURFACE+::  Create the video surface in system memory.
- *            +HWSURFACE+::  Create the video surface in video memory.
- *            +ASYNCBLIT+::  Enables the use of asynchronous updates of the 
- *                           display surface. This will usually slow down 
- *                           blitting on single CPU machines, but may provide a
- *                           speed increase on SMP systems.
- *            +ANYFORMAT+::  Normally, if a video surface of the requested 
- *                           bits-per-pixel (bpp) is not available, Rubygame
- *                           will emulate one with a shadow surface. Passing 
- *                           +ANYFORMAT+ prevents this and causes Rubygame to
- *                           use the video surface regardless of its depth.
- *            +DOUBLEBUF+::  Enable hardware double buffering; only valid with 
- *                           +HWSURFACE+. Calling Screen#flip will flip the
- *                           buffers and update the screen. All drawing will
- *                           take place on the surface that is not displayed at
- *                           the moment. If double buffering could not be 
- *                           enabled then Screen#flip will just update the
- *                           entire screen.
- *            +FULLSCREEN+:: Rubygame will attempt to use a fullscreen mode. If
- *                           a hardware resolution change is not possible (for 
- *                           whatever reason), the next higher resolution will
- *                           be used and the display window centered on a black
- *                           background.
- *            +RESIZABLE+::  Create a resizable window. When the window is 
- *                           resized by the user, a VideoResizeEvent is
- *                           generated and set_mode() can be called again
- *                           with the new size.
- *            +NOFRAME+::    If possible, create a window with no title bar or
- *                           frame decoration.
- *                           Fullscreen modes automatically have this flag set.
+ *  size::  requested window size (in pixels), in the form [width,height]
+ *  depth:: requested color depth (in bits per pixel). If 0 (default), the
+ *          current system color depth.
+ *  flags:: an Array of one or more of the following flags (located under the
+ *          Rubygame module).
+ *          
+ *          SWSURFACE::  Create the video surface in system memory.
+ *          HWSURFACE::  Create the video surface in video memory.
+ *          ASYNCBLIT::  Enables the use of asynchronous updates of the 
+ *                       display surface. This will usually slow down 
+ *                       blitting on single CPU machines, but may provide a
+ *                       speed increase on SMP systems.
+ *          ANYFORMAT::  Normally, if a video surface of the requested 
+ *                       bits-per-pixel (bpp) is not available, Rubygame
+ *                       will emulate one with a shadow surface. Passing 
+ *                       +ANYFORMAT+ prevents this and causes Rubygame to
+ *                       use the video surface regardless of its depth.
+ *          DOUBLEBUF::  Enable hardware double buffering; only valid with 
+ *                       +HWSURFACE+. Calling #flip will flip the
+ *                       buffers and update the screen. All drawing will
+ *                       take place on the surface that is not displayed at
+ *                       the moment. If double buffering could not be 
+ *                       enabled then #flip will just update the
+ *                       entire screen.
+ *          FULLSCREEN:: Rubygame will attempt to use a fullscreen mode. If
+ *                       a hardware resolution change is not possible (for 
+ *                       whatever reason), the next higher resolution will
+ *                       be used and the display window centered on a black
+ *                       background.
+ *          RESIZABLE::  Create a resizable window. When the window is 
+ *                       resized by the user, a VideoResizeEvent is
+ *                       generated and #set_mode can be called again
+ *                       with the new size.
+ *          NOFRAME::    If possible, create a window with no title bar or
+ *                       frame decoration.
+ *                       Fullscreen modes automatically have this flag set.
  */
 VALUE rbgm_screen_setmode(int argc, VALUE *argv, VALUE module)
 {
@@ -129,18 +128,22 @@ VALUE rbgm_screen_getsurface(VALUE module)
 */
 
 /*  call-seq:
- *     new()
+ *     new
  *
  *  A dummy function which will raise StandardError!
- *  You must use Screen.set_mode() to create or change the Screen!
+ *  You must instead use Screen.set_mode() to create or change the Screen mode!
  *
  *  Screen is a Singleton-style class, which means that only one may exist at a
  *  time (per application). You can create a Screen or change the existing one
  *  using Screen.set_mode, and get a reference to an existing Screen with 
  *  Screen.get_surface
  *
- *  A Screen.new() method implies that more than one could be created, so to
- *  avoid confusion Screen has no meaningful new() method.
+ *  A Screen.new method would imply that more than one could be created, so to
+ *  avoid confusion Screen has no such method.
+ *
+ *  (But, this annoying behavior feels like a really bad wart, so in the 
+ *  future, Screen.new will probably be an alias to #set_mode. Let me know what
+ *  you think about this.)
  */
 VALUE rbgm_screen_new(VALUE class)
 {
@@ -166,19 +169,19 @@ VALUE rbgm_screen_getcaption(VALUE module)
   return rb_ary_new3( 2,rb_str_new2(title),rb_str_new2(icon) );
 }
 /*  call-seq:
- *    set_caption(title,icon_cap=nil)
+ *    set_caption(title, icon_cap=nil)
  *
  *  Sets the window title and icon caption for the Screen.
  *
  *  This method takes these arguments:
- *  +title+::    a String, (usually) displayed at the top of the Rubygame
- *               window (when not in fullscreen mode). If omitted or +nil+,
- *               +title+ will be an empty string.
- *               How this string is displayed (if at all) is system-dependent.
- *  +icon_cap+:: a String, (usually) displayed when the window is iconized
- *               (minimized), for example to the taskbar. If omitted on +nil+,
- *               +icon_cap+ will be the same as +title+.
- *               How this string is displayed (if at all) is system-dependent.
+ *  title::    a String, (usually) displayed at the top of the Rubygame
+ *             window (when not in fullscreen mode). If omitted or +nil+,
+ *             +title+ will be an empty string.
+ *             How this string is displayed (if at all) is system-dependent.
+ *  icon_cap:: a String, (usually) displayed when the window is iconized
+ *             (minimized), for example to the taskbar. If omitted on +nil+,
+ *             +icon_cap+ will be the same as +title+.
+ *             How this string is displayed (if at all) is system-dependent.
  */
 VALUE rbgm_screen_setcaption(int argc, VALUE *argv, VALUE self)
 {
@@ -209,9 +212,9 @@ VALUE rbgm_screen_setcaption(int argc, VALUE *argv, VALUE self)
  *  Screen#flip instead.
  *
  *  This method takes these arguments:
- *  +rect+:: a Rubygame::Rect representing the area of the screen to update.
- *           Can also be an length-4 Array, or given as 4 separate arguments.
- *           If omitted or nil, the entire screen is updated.
+ *  rect:: a Rubygame::Rect representing the area of the screen to update.
+ *         Can also be an length-4 Array, or given as 4 separate arguments.
+ *         If omitted or nil, the entire screen is updated.
  */
 VALUE rbgm_screen_update(int argc, VALUE *argv, VALUE self)
 {
@@ -256,8 +259,8 @@ VALUE rbgm_screen_update(int argc, VALUE *argv, VALUE self)
  *  Updates (as Screen#update does) several areas of the screen.
  *
  *  This method takes these arguments:
- *  +rects+:: an Array containing any number of Rubygame::Rect objects, each
- *            rect representing a portion of the screen to update.
+ *  rects:: an Array containing any number of Rect objects, each
+ *          rect representing a portion of the screen to update.
  */
 VALUE rbgm_screen_updaterects(VALUE self, VALUE array_rects)
 {
@@ -291,7 +294,7 @@ VALUE rbgm_screen_updaterects(VALUE self, VALUE array_rects)
 /*  call-seq:
  *     flip()
  *
- *  If the Rubygame display is double-buffered (see set_mode()), flips
+ *  If the Rubygame display is double-buffered (see #set_mode), flips
  *  the buffers and updates the whole screen. Otherwise, just updates the
  *  whole screen.
  */
@@ -303,7 +306,29 @@ VALUE rbgm_screen_flip(VALUE self)
   return self;
 }
 
-void Rubygame_Init_Display()
+/*
+ *  Document-class: Rubygame::Screen
+ *
+ *  Screen represents the display window for the game. The Screen is a
+ *  special Surface that is displayed to the user. By changing and then 
+ *  updating the Screen many times per second, we can create the illusion
+ *  of continous motion.
+ *
+ *  Screen inherits most of the Surface methods, and can be passed to methods
+ *  which expect a Surface, including Surface#blit and the Draw functions.
+ *  However, the Screen cannot have a colorkey or an alpha channel, so
+ *  Surface#set_colorkey and Surface#set_alpha are not inherited.
+ *
+ *  Please note that only *one* Screen can exist, per application, at a time;
+ *  this is a limitation of SDL. You *must* use Screen.set_mode to create the
+ *  Screen or modify its properties.
+ *
+ *  Also note that no changes to the Screen will be seen until it is refreshed.
+ *  See #update, #update_rects, and #flip for ways to refresh all or part of
+ *  the Screen.
+ *
+ */
+void Rubygame_Init_Screen()
 {
 
 #if 0
@@ -312,7 +337,7 @@ void Rubygame_Init_Display()
 #endif
 
   /* Screen class */
-  cScreen = rb_define_class_under(mRubygame,"Screen",cSurface);
+  cScreen = rb_define_class_under(mRubygame,"Screen",cSurface); // in surface.c
   rb_define_singleton_method(cScreen,"new",rbgm_screen_new,0); /* dummy func */
   rb_define_singleton_method(cScreen,"set_mode",rbgm_screen_setmode, -1);
   rb_define_singleton_method(cScreen,"get_surface",rbgm_screen_getsurface, 0);
@@ -327,12 +352,4 @@ void Rubygame_Init_Display()
   rb_define_method(cScreen,"update",rbgm_screen_update,-1);
   rb_define_method(cScreen,"update_rects",rbgm_screen_updaterects,1);
   rb_define_method(cScreen,"flip",rbgm_screen_flip,0);
-
-  /* Display module -- deprecated! Use Rubygame::Screen instead! */
-  //mDisplay = rb_define_module_under(mRubygame,"Display");
-  /* Display methods for compatibility -- same as Screen methods */
-  //rb_define_module_function(mDisplay,"set_mode",rbgm_screen_setmode, -1);
-  //rb_define_module_function(mDisplay,"get_surface", rbgm_screen_getsurface, 0);
-  //rb_define_const(mDisplay, "Screen", cScreen);
-
 }
