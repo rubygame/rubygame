@@ -30,11 +30,27 @@ SDL_Rect *make_rect(int x, int y, int w, int h)
 	return rect;
 }
 
+/* 
+ *  call-seq:
+ *     usable? -> true or false
+ *
+ *  Returns +true+ if the feature(s) associated with this module/class are
+ *  available for use. This means that Rubygame was compiled and linked
+ *  against the C library which provides the feature, i.e. SDL_gfx, SDL_image,
+ *  or SDL_ttf.
+ *
+ *  If the features are not available (for example, if the libraries were not
+ *  installed or detected when Rubygame was compiled), returns +false+.
+ */
 VALUE rbgm_usable(VALUE mod)
 {
   return Qtrue;
 }
 
+/* --
+ * Same docs as rbgm_usable. Which function to use is decided at compile time.
+ * ++
+ */
 VALUE rbgm_unusable(VALUE mod)
 {
   return Qfalse;
@@ -47,7 +63,7 @@ VALUE rbgm_dummy(int argc, VALUE *argv, VALUE classmod)
 
 /*
  *  call-seq:
- *     init()  =>  nil
+ *     init  ->  nil
  *
  *  Initialize Rubygame. This should be called soon after you +require+
  *  Rubygame, so that everything will work properly.
@@ -65,7 +81,7 @@ VALUE rbgm_init(VALUE module)
 	}
 }
 
-/* Wrap it all together into one module: */
+
 void Init_rubygame()
 {
 	mRubygame = rb_define_module("Rubygame");
@@ -80,11 +96,11 @@ void Init_rubygame()
 
 	Rubygame_Init_Time();
 	Rubygame_Init_Surface();
-	Rubygame_Init_Display();
+	Rubygame_Init_Screen();
 	Rubygame_Init_Event();
 	Rubygame_Init_Image();
 	Rubygame_Init_Draw();
 	Rubygame_Init_Transform();
 	Rubygame_Init_Joystick();
-	Rubygame_Init_Font();
+	Rubygame_Init_TTF();
 }

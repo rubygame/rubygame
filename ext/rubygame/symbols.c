@@ -20,27 +20,31 @@
 #include <rubygame.h>
 
 /*
- * This file contains all the C symbols used in Rubygame.
- * This should (in theory) allow it to cleanly compile on MacOSX.
- * I really don't like it though... it's hopelessly redundant.
+ *  This file exists because, at one point, I was under the impression that it
+ *  would allow Rubygame to compile on MacOSX. But there has to be a much
+ *  better way! This file could be a textbook example of a wart, and should
+ *  be removed as soon as possible, if not sooner!
  */
 
 /* General */
 VALUE mRubygame;
 VALUE eSDLError;
 VALUE cRect;
+VALUE cSFont;
 VALUE mKey;
 VALUE mMouse;
 VALUE rbgm_init(VALUE);
 SDL_Rect *make_rect(int x, int y, int w, int h);
+VALUE rbgm_usable(VALUE);
+VALUE rbgm_unusable(VALUE);
+VALUE rbgm_dummy(int, VALUE*, VALUE);
 void Define_Rubygame_Constants();
 
-/* Display */
-VALUE mDisplay;
+/* Screen */
 VALUE cScreen;
-void Rubygame_Init_Display();
-VALUE rbgm_display_setmode(int, VALUE*, VALUE);
-VALUE rbgm_display_getsurface(VALUE);
+void Rubygame_Init_Screen();
+VALUE rbgm_screen_setmode(int, VALUE*, VALUE);
+VALUE rbgm_screen_getsurface(VALUE);
 VALUE rbgm_screen_new(VALUE); /* dummy function */
 VALUE rbgm_screen_getcaption(VALUE);
 VALUE rbgm_screen_setcaption(int, VALUE*, VALUE);
@@ -51,8 +55,6 @@ VALUE rbgm_screen_flip(VALUE);
 /* Draw */
 VALUE mDraw;
 void Rubygame_Init_Draw();
-VALUE rbgm_draw_loadedp(VALUE);
-#ifdef HAVE_SDL_GFXPRIMITIVES_H
 void draw_line(VALUE, VALUE, VALUE, VALUE, int);
 VALUE rbgm_draw_line(VALUE, VALUE, VALUE, VALUE, VALUE);
 VALUE rbgm_draw_aaline(VALUE, VALUE, VALUE, VALUE, VALUE);
@@ -74,12 +76,8 @@ void draw_polygon(VALUE, VALUE, VALUE, int, int);
 VALUE rbgm_draw_polygon(VALUE, VALUE, VALUE, VALUE);
 VALUE rbgm_draw_aapolygon(VALUE, VALUE, VALUE, VALUE);
 VALUE rbgm_draw_fillpolygon(VALUE, VALUE, VALUE, VALUE);
-#else /* HAVE_SDL_GFXPRIMITIVES_H */
-VALUE rbgm_draw_notloaded(int, VALUE*, VALUE);
-#endif /* HAVE_SDL_GFXPRIMITIVES_H */
 
 /* Event */
-VALUE mEvent;
 VALUE cEvent;
 VALUE cQueue;
 VALUE cActiveEvent;
@@ -103,15 +101,12 @@ VALUE convert_mousebuttons(Uint8);
 VALUE rbgm_convert_sdlevent(SDL_Event);
 VALUE rbgm_queue_getsdl(VALUE);
 
-/* Font */
-VALUE mFont;
+/* TTF */
 VALUE cTTF;
-VALUE cSFont;
-void Rubygame_Init_Font();
-VALUE rbgm_font_loadedp(VALUE);
-#ifdef HAVE_SDL_TTF_H
-VALUE rbgm_font_init(VALUE);
-VALUE rbgm_font_quit(VALUE);
+void Rubygame_Init_TTF();
+VALUE rbgm_ttf_version(VALUE);
+VALUE rbgm_ttf_init(VALUE);
+VALUE rbgm_ttf_quit(VALUE);
 VALUE rbgm_ttf_new(int, VALUE*, VALUE);
 VALUE rbgm_ttf_getbold(VALUE);
 VALUE rbgm_ttf_setbold(VALUE, VALUE);
@@ -124,24 +119,16 @@ VALUE rbgm_ttf_ascent(VALUE);
 VALUE rbgm_ttf_descent(VALUE);
 VALUE rbgm_ttf_lineskip(VALUE);
 VALUE rbgm_ttf_render(int, VALUE*, VALUE);
-#else /* HAVE_SDL_TTF_H */
-VALUE rbgm_image_notloaded(int, VALUE*, VALUE);
-#endif /* HAVE_SDL_TTF_H */
 
 /* Image */
 VALUE mImage;
 void Rubygame_Init_Image();
-VALUE rbgm_image_loadedp(VALUE);
-#ifdef HAVE_SDL_IMAGE_H
+VALUE rbgm_image_version(VALUE);
 VALUE rbgm_image_load(VALUE, VALUE);
 VALUE rbgm_image_savebmp(VALUE, VALUE, VALUE);
-#else /* HAVE_SDL_IMAGE_H */
-VALUE rbgm_image_notloaded(int, VALUE*, VALUE);
-#endif /* HAVE_SDL_IMAGE_H */
 
 /* Joy */
-VALUE mJoy;
-VALUE cJoystick;
+VALUE cJoy;
 void Rubygame_Init_Joystick();
 VALUE rbgm_joy_numjoysticks(VALUE);
 VALUE rbgm_joy_getname(VALUE, VALUE);
@@ -181,12 +168,7 @@ VALUE rbgm_time_getticks(VALUE);
 /* Transform */
 VALUE mTrans;
 void Rubygame_Init_Transform();
-VALUE rbgm_font_loadedp(VALUE);
-#ifdef HAVE_SDL_ROTOZOOM_H
 VALUE rbgm_transform_rotozoom(int, VALUE*, VALUE);
 VALUE rbgm_transform_rotozoomsize(int, VALUE*, VALUE);
 VALUE rbgm_transform_zoom(int, VALUE*, VALUE);
 VALUE rbgm_transform_zoomsize(int, VALUE*, VALUE);
-#else /* HAVE_SDL_ROTOZOOM_H */
-VALUE rbgm_trans_notloaded(int, VALUE*, VALUE);
-#endif /* HAVE_SDL_ROTOZOOM_H */

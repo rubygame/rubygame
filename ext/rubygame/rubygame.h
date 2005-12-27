@@ -32,6 +32,7 @@
 extern VALUE mRubygame;
 extern VALUE eSDLError;
 extern VALUE cRect;
+extern VALUE cSFont;
 extern VALUE mKey;
 extern VALUE mMouse;
 extern VALUE rbgm_init(VALUE);
@@ -44,7 +45,7 @@ extern void Define_Rubygame_Constants();
 /* Display */
 extern VALUE mDisplay;
 extern VALUE cScreen;
-extern void Rubygame_Init_Display();
+extern void Rubygame_Init_Screen();
 extern VALUE rbgm_screen_setmode(int, VALUE*, VALUE);
 extern VALUE rbgm_screen_getsurface(VALUE);
 extern VALUE rbgm_screen_new(VALUE); /* dummy function */
@@ -81,7 +82,6 @@ extern VALUE rbgm_draw_aapolygon(VALUE, VALUE, VALUE, VALUE);
 extern VALUE rbgm_draw_fillpolygon(VALUE, VALUE, VALUE, VALUE);
 
 /* Event */
-extern VALUE mEvent;
 extern VALUE cEvent;
 extern VALUE cQueue;
 extern VALUE cActiveEvent;
@@ -106,13 +106,11 @@ extern VALUE rbgm_convert_sdlevent(SDL_Event);
 extern VALUE rbgm_queue_getsdl(VALUE);
 
 /* Font */
-extern VALUE mFont;
 extern VALUE cTTF;
-extern VALUE cSFont;
-extern void Rubygame_Init_Font();
-extern VALUE rbgm_font_version(VALUE);
-extern VALUE rbgm_font_init(VALUE);
-extern VALUE rbgm_font_quit(VALUE);
+extern void Rubygame_Init_TTF();
+extern VALUE rbgm_ttf_version(VALUE);
+extern VALUE rbgm_ttf_init(VALUE);
+extern VALUE rbgm_ttf_quit(VALUE);
 extern VALUE rbgm_ttf_new(int, VALUE*, VALUE);
 extern VALUE rbgm_ttf_getbold(VALUE);
 extern VALUE rbgm_ttf_setbold(VALUE, VALUE);
@@ -134,8 +132,7 @@ extern VALUE rbgm_image_load(VALUE, VALUE);
 extern VALUE rbgm_image_savebmp(VALUE, VALUE, VALUE);
 
 /* Joy */
-extern VALUE mJoy;
-extern VALUE cJoystick;
+extern VALUE cJoy;
 extern void Rubygame_Init_Joystick();
 extern VALUE rbgm_joy_numjoysticks(VALUE);
 extern VALUE rbgm_joy_getname(VALUE, VALUE);
