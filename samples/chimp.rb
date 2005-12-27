@@ -46,7 +46,7 @@
 require "rubygame"
 
 puts 'Warning, images disabled' unless ($image_ok = Rubygame::Image.usable?)
-puts 'Warning, font disabled' unless ($font_ok = Rubygame::Font::TTF.usable?)
+puts 'Warning, font disabled' unless ($font_ok = Rubygame::TTF.usable?)
 
 #functions to create our resources
 def load_image(name, colorkey=nil)
@@ -214,13 +214,13 @@ def main
 	# $font_ok was set at the very top. It tells us if it's ok to use TTF.
 	if $font_ok
 		# We have to setup the TTF class before we can make TTF objects
-		Rubygame::Font::TTF.setup()
+		Rubygame::TTF.setup()
 
 		# Rubygame has no default font, so we must specify freesansbold.ttf
 		# 
 		# 25 is more or less the actual font size in the pygame example,
 		# based on scaling factor (0.6875) pygame applies to its default font.
-		font = Rubygame::Font::TTF.new("freesansbold.ttf",25)
+		font = Rubygame::TTF.new("freesansbold.ttf",25)
 		text = font.render("Pummel The Chimp, And Win $$$", true, [10,10,10])
 		textpos = Rubygame::Rect.new(0,0,*text.size)
 		textpos.centerx = background.width/2
