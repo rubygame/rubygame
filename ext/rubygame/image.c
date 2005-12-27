@@ -45,16 +45,15 @@
 
 /*
  *  call-seq:
- *     version  =>  [major, minor, patch]
+ *    version  ->  [Integer, Integer, Integer]
  *
- *  Return the major, minor, and patch numbers for the version of 
- *  SDL_image that Rubygame was compiled with. This is intended to
- *  allow games to detect which drawing operations are permitted and decide
- *  whether the SDL_image version is Good Enough to play the game
- *  (perhaps without certain "optional" features).
+ *  Return the major, minor, and patch numbers for the version of SDL_image 
+ *  that Rubygame was compiled with. If Rubygame was not compiled with
+ *  SDL_image, all version numbers will be 0 (zero), and you should not attempt
+ *  to use #load.
  *
- *  More sophisticated methods of detecting which operations are permitted are
- *  planned for future versions.
+ *  This allows for more flexible detection of the capabilities of the
+ *  base library, SDL_image. See also #usable?.
  */
 VALUE rbgm_image_version(VALUE module)
 { 
@@ -68,9 +67,10 @@ VALUE rbgm_image_version(VALUE module)
 
 /* 
  *  call-seq:
- *     savebmp( surface, filename )  =>  nil
+ *    savebmp( surface, filename )  ->  nil
  *
  *  Save the Surface as a Windows Bitmap (BMP) file with the given filename.
+ *  This method does not require Rubygame to be compiled with SDL_gfx.
  */
 VALUE rbgm_image_savebmp( VALUE module, VALUE surface, VALUE filename )
 {
@@ -94,19 +94,22 @@ VALUE rbgm_image_savebmp( VALUE module, VALUE surface, VALUE filename )
 
 /*
  *  call-seq:
- *     load( filename )  =>  Surface
+ *    load( filename )  ->  Surface
  *
  *  Load an image file from the disk to a Surface. If the image has an alpha
  *  channel (e.g. PNG with transparency), the Surface will as well. If the
  *  image cannot be loaded (for example if the image format is unsupported),
  *  will raise SDLError.
  *
+ *  This method is only usable if Rubygame was compiled with the SDL_image
+ *  library. You may test if this feature is available with the #usable?
+ *  method. If you need more flexibility, you can check the library version
+ *  that Rubygame was compiled against with the #version method.
+ *
  *  This method takes this argument:
  *  filename:: a string containing the relative or absolute path to the
- *             image file. You should use construct the path with 
- *             File.join("path","to","file") to be sure it will work properly
- *             on all operating systems. The file must have a proper extension,
- *             as the file extension is used to determine image format.
+ *             image file. The file must have the proper file extension,
+ *             as it is used to determine image format.
  *
  *  These formats may be supported, but some may not be available on a
  *  particular system.
@@ -138,6 +141,21 @@ VALUE rbgm_image_load( VALUE module, VALUE filename )
 
 #endif /* HAVE_SDL_IMAGE_H */
 
+/*  
+ *  Document-module: Rubygame::Image
+ *
+ *  The Image module contains methods for saving and loading image files
+ *  to Surfaces.
+ *
+ *  The #load method is only usable if Rubygame was compiled with the SDL_image
+ *  library. You may test if this feature is available with the #usable?
+ *  method. If you need more flexibility, you can check the library version
+ *  that Rubygame was compiled against with the #version method.
+ *  
+ *  At this time, no method is available to load BMP files without SDL_image,
+ *  so it must be present to do any sort of image file loading. This will be
+ *  remedied in the future.
+ */
 void Rubygame_Init_Image()
 {
 #if 0
@@ -147,20 +165,23 @@ void Rubygame_Init_Image()
 
 	/* Image module -- exists regardless of SDL_image presence*/
 	mImage = rb_define_module_under(mRubygame,"Image");
+	rb_define_module_function(mImage,"version",rbgm_image_version,0);
 
 	/* This one doesn't actually need SDL_image, only vanilla SDL */
 	rb_define_module_function(mImage,"savebmp",rbgm_image_savebmp,2);
 
 #ifdef HAVE_SDL_IMAGE_H
+
 	/* Image methods */
-	rb_define_module_function(mImage,"usable?",rbgm_usable,0);
+	rb_define_module_function(mImage,"usable?",rbgm_usable,0); // in rubygame.c
 	rb_define_module_function(mImage,"load",rbgm_image_load,1);
 
-#else /* HAVE_SDL_IMAGE_H */
+#else
 
 	/* Dummy methods */
 	rb_define_module_function(mImage,"usable?",rbgm_unusable,0);
 	rb_define_module_function(mImage,"load",rbgm_dummy,-1);
 
-#endif /* HAVE_SDL_IMAGE_H */
+#endif
+
 }
