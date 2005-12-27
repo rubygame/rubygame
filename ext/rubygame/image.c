@@ -26,8 +26,10 @@
 #include "SDL_image.h"
 #endif
 
-/* Always try to define these if they aren't already.
+/*--
+ * Always try to define these if they aren't already.
  * Image.version() will return [0,0,0] if SDL_image is not present.
+ *++
  */
 #ifndef SDL_IMAGE_MAJOR_VERSION
 #define SDL_IMAGE_MAJOR_VERSION 0
@@ -129,7 +131,7 @@ VALUE rbgm_image_load( VALUE module, VALUE filename )
 	surf = IMG_Load( name );
 	if(surf == NULL)
 	{
-		rb_raise(eSDLError,"Couldn't load image: %s",IMG_GetError());
+		rb_raise(eSDLError,"Couldn't load image `%s': %s", name, IMG_GetError());
 	}
 	return Data_Wrap_Struct( cSurface,0,SDL_FreeSurface,surf );
 }
