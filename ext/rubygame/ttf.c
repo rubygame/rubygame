@@ -1,6 +1,6 @@
 /*
 	Rubygame -- Ruby code and bindings to SDL to facilitate game creation
-	Copyright (C) 2004  John 'jacius' Croisant
+	Copyright (C) 2004-2005  John 'jacius' Croisant
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@
 
 #ifdef HAVE_SDL_TTF_H
 #include "SDL_ttf.h"
+#endif
 
 #ifndef SDL_TTF_MAJOR_VERSION
 #define SDL_TTF_MAJOR_VERSION 0
@@ -36,12 +37,15 @@
 
 /*
  *  call-seq:
- *     Rubygame::TTF.version  =>  [major,minor,patch]
+ *    version  ->  [Integer, Integer, Integer]
  *
  *  Return the major, minor, and patch numbers for the version of SDL_ttf 
  *  that Rubygame was compiled with. If Rubygame was not compiled with SDL_ttf,
- *  all version numbers will be +0+ (zero), and you should not attempt to use
+ *  all version numbers will be 0 (zero), and you should not attempt to use
  *  the TTF class.
+ *
+ *  This allows for more flexible detection of the capabilities of the TTF
+ *  class' base library, SDL_ttf. See also #usable?.
  */
 VALUE rbgm_ttf_version(VALUE module)
 { 
@@ -51,12 +55,14 @@ VALUE rbgm_ttf_version(VALUE module)
 					 INT2NUM(SDL_TTF_PATCHLEVEL));
 }
 
+#ifdef HAVE_SDL_TTF_H
+
 /*
  *  call-seq:
- *     Rubygame::TTF.setup  =>  nil
+ *    setup  ->  nil
  *
  *  Attempt to setup the TTF class for use by initializing SDL_ttf.
- *  This _must_ be called before the TTF class can be used.
+ *  This *must* be called before the TTF class can be used.
  *  Raises SDLError if there is a problem initializing SDL_ttf.
  */
 VALUE rbgm_ttf_setup(VALUE module)
@@ -68,7 +74,7 @@ VALUE rbgm_ttf_setup(VALUE module)
 
 /*
  *  call-seq:
- *     Rubygame::TTF.quit  =>  nil
+ *    quit  ->  nil
  *
  *  Clean up and quit SDL_ttf, making the TTF class unusable as a result
  *  (until it is setup again). This does not need to be called before Rubygame
@@ -83,16 +89,16 @@ VALUE rbgm_ttf_quit(VALUE module)
 
 /*
  *  call-seq:
- *     Rubygame::TTF.new( file, size )  =>  TTF
+ *    new( file, size )  ->  TTF
  *
  *  Create a new TTF object, which can render text to a Surface with a
  *  particular font style and size.
  *
  *  This function takes these arguments:
- *  - file:: filename of the TrueType font to use. Should be a +.TTF+ or 
- *           +.FON+ file.
- *  - size:: point size (based on 72DPI). Or, the height in pixels from the
- *           bottom of the descent to the top of the ascent.
+ *  file:: filename of the TrueType font to use. Should be a +TTF+ or 
+ *         +FON+ file.
+ *  size:: point size (based on 72DPI). Or, the height in pixels from the
+ *         bottom of the descent to the top of the ascent.
  */
 VALUE rbgm_ttf_new(int argc, VALUE *argv, VALUE class)
 {
@@ -116,7 +122,7 @@ VALUE rbgm_ttf_initialize(int argc, VALUE *argv, VALUE self)
 }
 
 /*  call-seq:
- *     TTF#bold  =>  value
+ *    bold  ->  Bool
  *
  *  True if bolding is enabled for the font.
  */
@@ -134,7 +140,7 @@ VALUE rbgm_ttf_getbold(VALUE self)
 }
 
 /*  call-seq:
- *     TTF#bold = value  =>  old_value
+ *    bold = value  ->  Bool
  *
  *  Set whether bolding is enabled for this font. Returns the old value.
  */
@@ -163,7 +169,7 @@ VALUE rbgm_ttf_setbold(VALUE self,VALUE bold)
 }
 
 /*  call-seq:
- *     TTF#italic  =>  value
+ *    italic  ->  Bool
  *
  *  True if italicizing is enabled for the font.
  */
@@ -181,7 +187,7 @@ VALUE rbgm_ttf_getitalic(VALUE self)
 }
 
 /*  call-seq:
- *     TTF#italic = value  =>  old_value
+ *    italic = value  ->  Bool
  *
  *  Set whether italicizing is enabled for this font. Returns the old value.
  */
@@ -210,7 +216,7 @@ VALUE rbgm_ttf_setitalic(VALUE self,VALUE italic)
 }
 
 /*  call-seq:
- *     TTF#underline  =>  value
+ *    underline  ->  Bool
  *
  *  True if underlining is enabled for the font.
  */
@@ -228,7 +234,7 @@ VALUE rbgm_ttf_getunderline(VALUE self)
 }
 
 /*  call-seq:
- *     TTF#underline = value  =>  old_value
+ *    underline = value  ->  Bool
  *
  *  Set whether underlining is enabled for this font. Returns the old value.
  */
@@ -257,7 +263,7 @@ VALUE rbgm_ttf_setunderline(VALUE self,VALUE underline)
 }
 
 /*  call-seq:
- *     TTF#height  =>  value
+ *    height  ->  Integer
  *
  *  Return the biggest height (bottom to top; in pixels) of all glyphs in the 
  *  font.
@@ -270,7 +276,7 @@ VALUE rbgm_ttf_height(VALUE self)
 }
 
 /*  call-seq:
- *     TTF#ascent  =>  value
+ *    ascent  ->  Integer
  *
  *  Return the biggest ascent (baseline to top; in pixels) of all glyphs in 
  *  the font.
@@ -283,7 +289,7 @@ VALUE rbgm_ttf_ascent(VALUE self)
 }
 
 /*  call-seq:
- *     TTF#descent  =>  value
+ *    descent  ->  Integer
  *
  *  Return the biggest descent (baseline to bottom; in pixels) of all glyphs in
  *  the font.
@@ -296,10 +302,10 @@ VALUE rbgm_ttf_descent(VALUE self)
 }
 
 /*  call-seq:
- *     TTF#lineskip  =>  value
+ *    lineskip  ->  Integer
  *
- *  Return the recommended distance from a point on a line of text to the
- *  same point on the line of text below it.
+ *  Return the recommended distance (in pixels) from a point on a line of text
+ *  to the same point on the line of text below it.
  */
 VALUE rbgm_ttf_lineskip(VALUE self)
 {
@@ -309,17 +315,17 @@ VALUE rbgm_ttf_lineskip(VALUE self)
 }
 
 /*  call-seq:
- *     TTF#render(string, aa, fg, bg)  =>  Surface
+ *    render(string, aa, fg, bg)  ->  Surface
  *
  *  Renders a string to a Surface with the font's style and the given color(s).
  *
  *  This method takes these arguments:
- *  - string:: the text string to render
- *  - aa::     whether or not to anti-aliasing. Enabling this makes the text
- *             look much nicer (smooth curves), but is much slower.
- *  - fg::     the color to render the text as, in the form +[r,g,b]+
- *  - bg::     the color to use as a background for the text. This option can
- *             be omitted to have a transparent background.
+ *  string:: the text string to render
+ *  aa::     Use anti-aliasing if true. Enabling this makes the text
+ *           look much nicer (smooth curves), but is much slower.
+ *  fg::     the color to render the text, in the form [r,g,b]
+ *  bg::     the color to use as a background for the text. This option can
+ *           be omitted to have a transparent background.
  */
 VALUE rbgm_ttf_render(int argc, VALUE *argv, VALUE self)
 {
@@ -372,15 +378,37 @@ VALUE rbgm_ttf_render(int argc, VALUE *argv, VALUE self)
 		rb_raise(eSDLError,"could not render font object: %s",TTF_GetError());
 	return Data_Wrap_Struct(cSurface,0,SDL_FreeSurface,surf);
 }
+#endif /* HAVE_SDL_TTF_H */
 
-void Rubygame_Init_Font()
+/* 
+ *  Document-class: Rubygame::TTF
+ *
+ *  TTF provides an interface to SDL_ttf, allowing TrueType Font files to be
+ *  loaded and used to render text to Surfaces.
+ *
+ *  The TTF class *must* be initialized with the #setup method before any
+ *  TTF objects can be created or used.
+ *
+ *  This class is only usable if Rubygame was compiled with the SDL_ttf
+ *  library. You may test if this feature is available with the #usable?
+ *  method. If you need more flexibility, you can check the library version
+ *  that Rubygame was compiled against with the #version method.
+ */
+void Rubygame_Init_TTF()
 {
-	mFont = rb_define_module_under(mRubygame,"Font");
+#if 0
+	/* Pretend to define Rubygame module, so RDoc knows about it: */
+	mRubygame = rb_define_module("Rubygame");
+#endif
 
-	cTTF = rb_define_class_under(mFont,"TTF",rb_cObject);
-	rb_define_singleton_method(cTTF,"new",rbgm_ttf_new,-1);
-	rb_define_singleton_method(cTTF,"usable?",rbgm_usable,0);
+	cTTF = rb_define_class_under(mRubygame,"TTF",rb_cObject);
 	rb_define_singleton_method(cTTF,"version",rbgm_ttf_version,0);
+
+#ifdef HAVE_SDL_TTF_H
+
+	/* SDL_TTF is available, so we will provide the real functions. */
+	rb_define_singleton_method(cTTF,"new",rbgm_ttf_new,-1);
+	rb_define_singleton_method(cTTF,"usable?",rbgm_usable,0); // in rubygame.c
 	rb_define_singleton_method(cTTF,"setup",rbgm_ttf_setup,0);
 	rb_define_singleton_method(cTTF,"quit",rbgm_ttf_quit,0);
 
@@ -402,34 +430,18 @@ void Rubygame_Init_Font()
 	rb_define_method(cTTF,"descent",rbgm_ttf_descent,0);
 	rb_define_method(cTTF,"line_skip",rbgm_ttf_lineskip,0);
 	rb_define_method(cTTF,"render",rbgm_ttf_render,-1);
-}
 
-/* -- */
+#else
 
-#else /* HAVE_SDL_TTF_H */
-
-/* We don't have SDL_ttf, so the "version" is [0,0,0] */
-VALUE rbgm_font_version(VALUE module)
-{ 
-  return rb_ary_new3(3,
-					 INT2NUM(0),
-					 INT2NUM(0),
-					 INT2NUM(0));
-}
-
-void Rubygame_Init_Font()
-{
-	mFont = rb_define_module_under(mRubygame,"Font");
-
-	cTTF = rb_define_class_under(mFont,"TTF",rb_cObject);
+	/* SDL_TTF is NOT available, so we will provide dummy functions. */
 	rb_define_singleton_method(cTTF,"new",rbgm_dummy,-1);
 	rb_define_singleton_method(cTTF,"usable?",rbgm_unusable,0);
-	rb_define_singleton_method(cTTF,"version",rbgm_font_version,0);
 	rb_define_singleton_method(cTTF,"setup",rbgm_dummy,-1);
 	rb_define_singleton_method(cTTF,"quit",rbgm_dummy,-1);
 
 	rb_define_method(cTTF,"initialize",rbgm_dummy,-1);
-	/* No TTF objects can be made, so the other funcs are unneeded. Maybe. */
-}
+  /* We can skip the rest, because no TTF instances will ever be created. */
 
-#endif /* HAVE_SDL_TTF_H */
+#endif
+
+}
