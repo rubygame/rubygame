@@ -75,7 +75,7 @@ VALUE rbgm_joystick_new( int argc, VALUE *argv, VALUE module)
 		rb_raise(eSDLError,"Could not open joystick %d: %s",\
 			index,SDL_GetError());
 	}
-	self = Data_Wrap_Struct(cJoystick, 0,SDL_JoystickClose, joy);
+	self = Data_Wrap_Struct(cJoy, 0,SDL_JoystickClose, joy);
 	rb_obj_call_init(self,argc,argv);
 	return self;
 }
