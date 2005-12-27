@@ -172,6 +172,7 @@ extern VALUE rbgm_time_getticks(VALUE);
 /* Transform */
 extern VALUE mTrans;
 extern void Rubygame_Init_Transform();
+extern VALUE rbgm_transform_version(VALUE);
 extern VALUE rbgm_transform_rotozoom(int, VALUE*, VALUE);
 extern VALUE rbgm_transform_rotozoomsize(int, VALUE*, VALUE);
 extern VALUE rbgm_transform_zoom(int, VALUE*, VALUE);
