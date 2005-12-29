@@ -1,4 +1,8 @@
-/* --
+/*
+ *  Functions for getting the time since initialization and delaying execution
+ *  for a specified amounts of time.
+ *
+ * --
  *
  *  Rubygame -- Ruby code and bindings to SDL to facilitate game creation
  *  Copyright (C) 2004  John 'jacius' Croisant
@@ -18,9 +22,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * ++
- *
- *  Functions for getting the time since initialization and delaying execution
- *  for a certain amount of time.
  */
 
 #include "rubygame.h"
@@ -34,27 +35,27 @@
 
 /*
  *  call-seq:
- *    wait( ms )  =>  Numeric
+ *    wait( time )  ->  Integer
  *
  *  Wait approximately the given time (the accuracy depends upon processor 
  *  scheduling, but 10ms is common). Returns the actual delay time, in 
- *  milliseconds. This uses less CPU time than Time.delay, but is
- *  less accurate. 
+ *  milliseconds. This method is less CPU-intensive than #delay, but is
+ *  slightly less accurate.
  *
  *  The Rubygame timer system will be initialized when you call this function,
  *  if it has not been already.
  *
  *  This function takes this argument:
- *  - ms:: the time in milliseconds (thousandths of a second) to wait.
+ *  time:: the time in milliseconds to wait.
  */
 VALUE rbgm_time_wait(VALUE module, VALUE milliseconds)
 {
   Uint32 start, delay;
 
   if(!SDL_WasInit(SDL_INIT_TIMER))
-	if(SDL_InitSubSystem(SDL_INIT_TIMER))
-	  rb_raise(eSDLError,"Could not initialize timer system: %s",\
-			   SDL_GetError());
+    if(SDL_InitSubSystem(SDL_INIT_TIMER))
+      rb_raise(eSDLError,"Could not initialize timer system: %s",\
+               SDL_GetError());
 
   delay = NUM2UINT(milliseconds);
   start = SDL_GetTicks();
@@ -62,9 +63,11 @@ VALUE rbgm_time_wait(VALUE module, VALUE milliseconds)
   return INT2NUM(SDL_GetTicks() - start);
 }
 
-/* From pygame, with a few modifications:
- * - takes 'accuracy' argument
- * - ruby syntax for raising exceptions
+/*--
+ *  From pygame code, with a few modifications:
+ *    - takes 'accuracy' argument
+ *    - ruby syntax for raising exceptions
+ *++
  */
 static int accurate_delay(int ticks,int accuracy)
 {
@@ -91,7 +94,7 @@ static int accurate_delay(int ticks,int accuracy)
 		}
 	}
   do{
-	delay = ticks - (SDL_GetTicks() - funcstart);	
+    delay = ticks - (SDL_GetTicks() - funcstart);	
   }while(delay > 0);
 	
   return SDL_GetTicks() - funcstart;	
@@ -99,47 +102,46 @@ static int accurate_delay(int ticks,int accuracy)
 
 /*
  *  call-seq:
- *    delay( ms, ac=12 )  =>  Numeric
+ *    delay( time, gran=12 )  ->  Integer
  *
  *  Use the CPU to more accurately wait for the given period. Returns the
  *  actual delay time, in milliseconds. This function is more accurate than 
- *  Time.wait, but is also more CPU-intensive.
+ *  #wait, but is also more CPU-intensive.
  *
  *  The Rubygame timer system will be initialized when you call this function,
  *  if it has not been already.
  *
- *  This function takes this argument:
- *  - ms:: the time in milliseconds (thousandths of a second) to delay.
- *  - ac:: the accuracy, in milliseconds, to assume for the system. A smaller
- *         value will use less CPU time, but if it's lower than the actual
- *         accuracy, this function might wait too long. The default, 12, has a
- *         fairly low risk of over-waiting.
+ *  This function takes these arguments:
+ *  time:: the time in milliseconds to delay.
+ *  gran:: the granularity (in milliseconds) to assume for the system. A
+ *         smaller value should use less CPU time, but if it's lower than the
+ *         actual system granularity, this function might wait too long. The
+ *         default, 12 ms, has a fairly low risk of over-waiting for many
+ *         systems.
  */
 VALUE rbgm_time_delay(int argc, VALUE *argv, VALUE module)
 {
   int ticks, goal, accuracy;
 
   if (argc < 1)
-	rb_raise(rb_eArgError,"wrong number of arguments (%d for 1)", argc);
+    rb_raise(rb_eArgError,"wrong number of arguments (%d for 1)", argc);
   goal = NUM2INT(argv[0]);
   if(goal < 0)
-	goal = 0;
+    goal = 0;
 
   if(argc > 1 && argv[1] != Qnil)
-	accuracy = NUM2INT(argv[1]);
+    accuracy = NUM2INT(argv[1]);
   else
-	accuracy = WORST_CLOCK_ACCURACY;
+    accuracy = WORST_CLOCK_ACCURACY;
 
   ticks = accurate_delay(goal,accuracy);
-  if(ticks == -1)
-	return Qnil;
 
   return INT2NUM(ticks);
 }
 
 /*
  *  call-seq:
- *    get_ticks()  =>  Numeric
+ *    get_ticks  ->  Integer
  *
  *  Return the number of milliseconds since the Rubygame timer system
  *  was initialized.
@@ -156,9 +158,24 @@ VALUE rbgm_time_getticks( VALUE module )
   return INT2NUM(SDL_GetTicks());
 }
 
-/* Rubification: */
+/* 
+ *  Document-module: Rubygame::Time
+ *
+ *  The Time module provides methods for tracking running time and delaying
+ *  execution of the program for specified time periods. This is used to
+ *  provide a consistent framerate, prevent the program from gluttonizing
+ *  all the resources of the computer,  etc.
+ *
+ *  See also the Clock class, which uses these methods to provide a convenient
+ *  way to monitor and and limit application framerate.
+ */
 void Rubygame_Init_Time()
 {
+#if 0
+	/* Pretend to define Rubygame module, so RDoc knows about it: */
+	mRubygame = rb_define_module("Rubygame");
+#endif
+
   /* Time module */
   mTime = rb_define_module_under(mRubygame,"Time");
   /* Time methods */
