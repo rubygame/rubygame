@@ -1,6 +1,6 @@
-#
+#--
 #	Rubygame -- Ruby bindings to SDL to facilitate game creation
-#	Copyright (C) 2004  John 'jacius' Croisant
+#	Copyright (C) 2004-2005  John 'jacius' Croisant
 #
 #	This library is free software; you can redistribute it and/or
 #	modify it under the terms of the GNU Lesser General Public
@@ -15,16 +15,20 @@
 #	You should have received a copy of the GNU Lesser General Public
 #	License along with this library; if not, write to the Free Software
 #	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
+#++
 
 module Rubygame
 
-	# List of all event classes.
+	# List of all Rubygame hardware event classes. *Do not modify!*
 	ALL_EVENT_CLASSES = [ActiveEvent, KeyDownEvent, KeyUpEvent,\
 		MouseMotionEvent,MouseDownEvent,MouseUpEvent,JoyAxisEvent,\
 		JoyBallEvent, JoyHatEvent,JoyDownEvent, JoyUpEvent,\
 		ResizeEvent, QuitEvent]
 
+	# Converts a keyboard symbol (keysym) into a human-readable text string.
+	# If either Shift key was being pressed, alphanumeric or punctuation keys 
+	# will be made uppercase or alternate, based on U.S. keyboard layout.
+	# E.g. "a" becomes "A", "1" becomes "!", and "/" becomes "?".
 	def Rubygame.key2str( sym, mods )
 		if (mods.include? K_LSHIFT) or (mods.include? K_RSHIFT)
 			return (Rubygame::Key::KEY2UPPER[sym]\
@@ -35,19 +39,61 @@ module Rubygame
 		end
 	end
 
+	# The parent class for all event classes. The Queue will reject all
+	# objects who do not have this class as a parent!
 	class Event
 	end
 
+	# Indicates that the Rubygame window has gained or lost focus from the
+	# window manager.
+	# 
+	# This event has these attributes:
+	# gain::  true if the window gained focus, and false if it lost focus.
+	# state:: string indicating what type of focus was gained or lost: 
+	#         "mouse"::    the mouse entered/exited the window
+	#         "keyboard":: the window gained or lost input focus
+	#         "active"::   the window was minimized/iconified.
 	class ActiveEvent < Event
 		attr_accessor :gain, :state
 		def initialize(gain,state)
 			@gain = gain
-			@state = state #"mouse", "keyboard", or "active"
+			@state = state 
 		end
 	end
 
+	# Indicates that a keyboard key was pressed.
+	# 
+	# This event has these attributes:
+	# string:: a human-readable string telling what key was pressed, or nil.
+	#          See #key2str.
+	# key::    the integer keysym for the key. These can be compared with the
+	#          K_* constants in the Rubygame module, e.g. Rubygame::K_A.
+	# mods::   an Array of zero or more keysyms indicating which modifier keys
+	#          were being pressed when the key was pressed. You can compare
+	#          with these constants in the Rubygame module:
+	#          K_RSHIFT::    shift key (right side)
+	#          K_LSHIFT::    shift key (left side)
+	#          K_RCTRL::     ctrl key (right side)
+	#          K_LCTRL::     ctrl key (left side)
+	#          K_RALT::      alt key (right side)
+	#          K_LALT::      alt key (left side)
+	#          K_RMETA::     meta key (right side)
+	#          K_LMETA::     meta key (left side)
+	#          K_RSUPER::    super key, aka. Windows key (right side)
+	#          K_LSUPER::    super key, aka. Windows key (left side)
+	#          K_RALT::      alt key (right side)
+	#          K_NUMLOCK::   num lock
+	#          K_CAPSLOCK::  caps lock
+	#          K_MODE::      mode key
+	#          
+	#          
 	class KeyDownEvent < Event
 		attr_accessor :string,:key,:mods
+
+		# Create a new KeyDownEvent.
+		# 
+		# key::  either an integer keysym (e.g. Rubygame::K_A) or string (e.g. "a")
+		# mods:: array of modifier keysyms
 		def initialize(key,mods)
 			if key.kind_of? Integer
 				@key = key
@@ -64,6 +110,9 @@ module Rubygame
 		end
 	end
 
+	# Indicates that a keyboard key was released.
+	# 
+	# See KeyDownEvent.
 	class KeyUpEvent < Event
 		attr_accessor :string,:key,:mods
 		def initialize(key,mods)
@@ -82,6 +131,17 @@ module Rubygame
 		end
 	end
 
+	# Indicates that the mouse cursor moved.
+	# 
+	# This event has these attributes:
+	# pos::     the new position of the cursor, in the form [x,y].
+	# rel::     the relative movement of the cursor since the last update, [x,y].
+	# buttons:: the mouse buttons that were being held during the movement,
+	#           an Array of zero or more of these constants in module Rubygame
+	#           (or the corresponding button number):
+	#           MOUSE_LEFT::   1; left mouse button
+	#           MOUSE_MIDDLE:: 2; middle mouse button
+	#           MOUSE_RIGHT::  3; right mouse button
 	class MouseMotionEvent < Event
 		attr_accessor :pos,:rel,:buttons
 		def initialize(pos,rel,buttons)
@@ -89,6 +149,18 @@ module Rubygame
 		end
 	end
 
+	# Indicates that a mouse button was pressed.
+	# 
+	# This event has these attributes:
+	# string:: string indicating the button that was pressed ("left","middle", or
+	#          "right").
+	# pos::    the position of the mouse cursor when the button was pressed,
+	#          in the form [x,y].
+	# button:: the mouse button that was pressed; one of these constants in
+	#          module Rubygame (or the corresponding button number):
+	#          MOUSE_LEFT::   1; left mouse button
+	#          MOUSE_MIDDLE:: 2; middle mouse button
+	#          MOUSE_RIGHT::  3; right mouse button
 	class MouseDownEvent < Event
 		attr_accessor :string,:pos,:button
 		def initialize(pos,button)
@@ -107,6 +179,9 @@ module Rubygame
 		end
 	end
 
+	# Indicates that a mouse button was released.
+	# 
+	# See MouseDownEvent.
 	class MouseUpEvent < Event
 		attr_accessor :string,:pos,:button
 		def initialize(pos,button)
@@ -125,6 +200,12 @@ module Rubygame
 		end
 	end
 
+	# Indicates that a Joystick axis was moved.
+	# 
+	# This event has these attributes:
+	# joynum:: the identifier number of the affected Joystick.
+	# axis::   the identifier number of the axis.
+	# value::  the new value of the axis, between -32768 and 32767
 	class JoyAxisEvent < Event
 		attr_accessor :joynum,:axis,:value
 		def initialize(joy,axis,value)
@@ -135,6 +216,12 @@ module Rubygame
 		end
 	end
 
+	# Indicates that a Joystick trackball was moved.
+	# 
+	# This event has these attributes:
+	# joynum:: the identifier number of the affected Joystick.
+	# ball::   the identifier number of the trackball.
+	# rel::    the relative movement of the trackball, [x,y].
 	class JoyBallEvent < Event
 		attr_accessor :joynum,:ball,:rel
 		def initialize(joy,ball,rel)
@@ -145,6 +232,22 @@ module Rubygame
 		end
 	end
 
+	# Indicates that a Joystick POV hat was moved.
+	# 
+	# This event has these attributes:
+	# joynum:: the identifier number of the affected Joystick.
+	# hat::    the identifier number of the hat.
+	# value::  the new direction of the hat, one of these constants in module
+	#          Rubygame (or the corresponding number):
+	#          HAT_CENTERED::   0
+	#          HAT_UP::         1 
+	#          HAT_RIGHT::      2
+	#          HAT_RIGHTUP::    3
+	#          HAT_DOWN::       4 
+	#          HAT_RIGHTDOWN::  6
+	#          HAT_LEFTUP::     7
+	#          HAT_LEFT::       8
+	#          HAT_LEFTDOWN::   12
 	class JoyHatEvent < Event
 		attr_accessor :joynum,:hat,:value
 		def initialize(joy,hat,value)
@@ -155,6 +258,11 @@ module Rubygame
 		end
 	end
 
+	# Indicates that a Joystick button was pressed.
+	# 
+	# This event has these attributes:
+	# joynum:: the identifier number of the affected Joystick.
+	# hat::    the identifier number of the button.
 	class JoyDownEvent < Event
 		attr_accessor :joynum, :button
 		def initialize(joy,button)
@@ -165,6 +273,9 @@ module Rubygame
 		end
 	end
 
+	# Indicates that a Joystick button was released.
+	# 
+	# See JoyDownEvent.
 	class JoyUpEvent < Event
 		attr_accessor :joynum, :button
 		def initialize(joy,button)
@@ -175,6 +286,12 @@ module Rubygame
 		end
 	end
 
+	# Indicates that the application window was resized. (After this event
+	# occurs, you should use Screen#set_mode to change the display surface to
+	# the new size.)
+	# 
+	# This event has these attributes:
+	# size:: the new size of the window, in pixels [w,h].
 	class ResizeEvent < Event
 		attr_accessor :size
 		def initialize(new_size)
@@ -182,140 +299,8 @@ module Rubygame
 		end
 	end
 	
+	# Indicates that the application has been signaled to quit. (E.g. the user
+	# pressed the close button.)
 	class QuitEvent < Event
 	end
-
-#------------------------------
-
-	require "singleton"
-
-	class Queue
-		include Singleton
-		def initialize()
-			@@pending = []
-			@@allowed = Rubygame::ALL_EVENT_CLASSES
-		end
-
-		def allow(*types)
-			added = (Rubygame::ALL_EVENT_CLASSES - types.flatten()) & @@allowed
-			for type in types.flatten()
-				if type.kind_of? Class
-					if not @@allowed.include? type
-						@@allowed.push(type)
-					end
-				elsif type.kind_of? Event
-					@@allowed.push(type.class)
-				end
-			end
-			return added
-		end
-
-		def allowed
-			return @@allowed.dup
-		end
-
-		def allowed=(*types)
-			added = Rubygame::ALL_EVENT_CLASSES - (types.flatten() & @@allowed)
-			@@allowed = []
-			self.allow(types)
-			return added
-		end
-
-		def block(*types)
-			removed = @@allowed & types.flatten()
-			for type in types.flatten()
-				if type.kind_of? Class
-					if @@allowed.include? type
-						@@allowed.delete(type)
-					end
-				elsif type.kind_of? Event
-					@allowed.delete(type.class)
-				end
-			end
-			return blocked
-		end
-
-		def blocked
-			return Rubygame::ALL_EVENT_CLASSES - @@allowed.dup
-		end
-
-		def blocked=(*types)
-			removed = types.flatten() & @@allowed
-			@@allowed = Rubygame.ALL_EVENT_CLASSES
-			self.block(types)
-			return removed
-		end
-
-		def get(*types)
-			allow = []
-			if types.length > 0
-				for type in types.flatten()
-					if type.kind_of? Class
-						if not allow.include? type
-							allow.push(type)
-						end
-					elsif type.kind_of? Event
-						allow.push(type.class)
-					end
-				end
-			else
-				allow = @@allowed
-			end
-			update_pending()
-			get = @@pending.delete_if{|event| not allow.include? event.class}
-			@@pending -= get
-			return get
-		end
-
-		def post(*events)
-			update_pending() # so posted events will appear after SDL events
-			not_added = []
-			for event in events.flatten()
-				if event.kind_of? Event
-					@@pending.push(event)
-				else not_added.push(event)
-				end
-			end
-			return not_added
-		end
-
-		def update_pending
-			@@pending += get_sdl()
-		end
-		private :update_pending
-
-		# Wait until an event of the given class(es) is generated, then return
-		# that event. All other types of events will be discarded in the meantime.
-		# 
-		# +*klasses+ is the event classes which will trigger the method to return.
-		# If this argument is omitted, ALL event classes will trigger return.
-		# 
-		# All classes which are not allowed by the Queue and/or are not
-		# Rubygame-generated hardware events (i.e. not custom events) will be
-		# stripped from +klasses+.
-		# 
-		# If +klasses+ is given, but does not contain any valid classes,
-		# this method immediately returns +nil+.
-		def wait( *klasses )
-			klasses.flatten!
-			if klasses.length < 1 # no args
-				klasses = Rubygame::ALL_EVENT_CLASSES
-			end
-			# eliminate invalid args
-			klasses = klasses.delete_if{ |klass| 
-				!(Rubygame::ALL_EVENT_CLASSES.include?(klass) and\
-					@@allowed.include?(klass))
-			}
-			if klasses.length < 1 # no _valid_ args
-				return nil
-			end
-			loop do
-				self.get().each { |event|
-					return event if klasses.include? event.class
-				}
-			end
-		end
-
-	end # class Queue
-
 end # module Rubygame

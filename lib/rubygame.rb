@@ -1,6 +1,6 @@
 #--
 #  Rubygame -- Ruby bindings to SDL to facilitate game creation
-#  Copyright (C) 2004  John 'jacius' Croisant
+#  Copyright (C) 2004-2005  John 'jacius' Croisant
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@ require "rubygame.%s"%[Config::CONFIG["DLEXT"]]
 
 require "rubygame/constants"
 require "rubygame/event"
+require "rubygame/queue"
 require "rubygame/rect"
 require "rubygame/sprite"
 require "rubygame/clock"
