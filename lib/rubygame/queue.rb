@@ -21,13 +21,49 @@ require "singleton"
 require "event"
 
 module Rubygame
+
+	# (Note: I'm not putting much effort into documenting the current Queue
+	# class, because it is going to be changing substantially in the next
+	# version. It is mostly usable for now, but neither elegant nor fun to use.
+	# Frankly, I think it's an abomination, and it took all my willpower to
+	# put off rewriting it until next version.)
+	# 
+	# Queue provides an interface to SDL's events, allowing the
+	# application to detect keyboard presses, mouse movements and clicks,
+	# joystick movement, etc.
+	# 
+	# The full list of default events is:
+	# - Event (base class, not useful by itself)
+	# - ActiveEvent
+	# - JoyAxisEvent
+	# - JoyBallEvent
+	# - JoyDownEvent
+	# - JoyHatEvent
+	# - JoyUpEvent
+	# - KeyDownEvent
+	# - KeyUpEvent
+	# - MouseDownEvent
+	# - MouseMotionEvent
+	# - MouseUpEvent
+	# - QuitEvent
+	# - ResizeEvent
+	#
+	# You are allowed to create new child classes of Event and post them to
+	# the Queue, but for now you would probably be better off using some other
+	# data structure to hold your own events. I recommend checking out the queue
+	# class in Ruby's stardard library.
+	# 
+	# P.S. Queue is a singleton, so you must use Queue.instance, not Queue.new.
+	# 
 	class Queue
 		include Singleton
-		def initialize()
+		def initialize()						# :nodoc:
 			@@pending = []
 			@@allowed = Rubygame::ALL_EVENT_CLASSES
 		end
 
+		# Allow the given event classes. Returns all event classes that had
+		# previously been disallowed, but are now allowed.
 		def allow(*types)
 			added = (Rubygame::ALL_EVENT_CLASSES - types.flatten()) & @@allowed
 			for type in types.flatten()
@@ -42,10 +78,13 @@ module Rubygame
 			return added
 		end
 
+		# Returns all event classes which are allowed.
 		def allowed
 			return @@allowed.dup
 		end
 
+		# Allow ONLY the given event classes. Returns all event classes that had
+		# previously been disallowed, but are now allowed.
 		def allowed=(*types)
 			added = Rubygame::ALL_EVENT_CLASSES - (types.flatten() & @@allowed)
 			@@allowed = []
@@ -53,6 +92,8 @@ module Rubygame
 			return added
 		end
 
+		# Disallow the given event classes from being posted. Returns all classes
+		# which had previously been allowed, but are now disallowed.
 		def block(*types)
 			removed = @@allowed & types.flatten()
 			for type in types.flatten()
@@ -67,10 +108,15 @@ module Rubygame
 			return blocked
 		end
 
+		# Return all default Rubygame event classes which are disallowed
+		# by the Queue.
 		def blocked
 			return Rubygame::ALL_EVENT_CLASSES - @@allowed.dup
 		end
 
+		# Cause the Queue to allow ONLY all default Rubygame event classes EXCEPT
+		# the given classes. Returns all classes which had previously been allowed,
+		# but are now disallowed.
 		def blocked=(*types)
 			removed = types.flatten() & @@allowed
 			@@allowed = Rubygame.ALL_EVENT_CLASSES
@@ -78,6 +124,15 @@ module Rubygame
 			return removed
 		end
 
+		# call-seq: get( *klasses )  ->  Array
+		# 
+		# Get all events currently in the Queue which match the classes in the
+		# Array +klasses+, and return them in an Array. If +klasses+ is omitted,
+		# returns all 
+		# 
+		# Events which did not match will remain on the Queue, so make sure you
+		# eventually #get every class of events that is #allowed, or they might
+		# build up in the Queue.)
 		def get(*types)
 			allow = []
 			if types.length > 0
@@ -99,11 +154,19 @@ module Rubygame
 			return get
 		end
 
+		# call-seq: post( *events )  ->  Array
+		# 
+		# Post one or more events to the Queue. Only events which meet these
+		# criteria will be posted:
+		# - its class is a child class of Event.
+		# - its class is allowed by the Queue.
+		# 
+		# Returns all the given events which were not posted.
 		def post(*events)
 			update_pending() # so posted events will appear after SDL events
 			not_added = []
 			for event in events.flatten()
-				if event.kind_of? Event
+				if event.kind_of? Event and @@allowed.include?(event.class)
 					@@pending.push(event)
 				else not_added.push(event)
 				end
@@ -111,23 +174,29 @@ module Rubygame
 			return not_added
 		end
 
-		def update_pending
+		# Adds SDL hardware events to the Queue's list of pending events.
+		def update_pending					# :nodoc:
 			@@pending += get_sdl()
 		end
 		private :update_pending
 
-		# Wait until an event of the given class(es) is generated, then return
-		# that event. All other types of events will be discarded in the meantime.
+		# call-seq: wait( *klasses )  ->  Event
 		# 
-		# +*klasses+ is the event classes which will trigger the method to return.
-		# If this argument is omitted, ALL event classes will trigger return.
+		# Waits until an event matching the classes in Array +klasses+ occurs,
+		# then return that event. All non-matching events will be *discarded* in
+		# the meantime.
 		# 
-		# All classes which are not allowed by the Queue and/or are not
-		# Rubygame-generated hardware events (i.e. not custom events) will be
-		# stripped from +klasses+.
+		# If +klasses+ is omitted, ANY event class allowed by the Queue will
+		# trigger return. (Important: omitting +klasses+ is not the same as 
+		# giving +nil+.)
+		# 
+		# +klasses+ is an Array of the Event classes which will trigger this method
+		# to return. Any classes which are blocked by the Queue or are 
+		# not Rubygame-generated hardware events will be stripped from +klasses+.
 		# 
 		# If +klasses+ is given, but does not contain any valid classes,
-		# this method immediately returns +nil+.
+		# this method will immediately return +nil+.
+		# 
 		def wait( *klasses )
 			klasses.flatten!
 			if klasses.length < 1 # no args
