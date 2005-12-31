@@ -29,7 +29,7 @@ puts "Transform is usable? %s"%[Rubygame::Transform.usable?]
 puts "Draw is usable? %s"%[Rubygame::Draw.usable?]
 
 class Panda
-	include Rubygame::Sprite::Sprite
+	include Rubygame::Sprites::Sprite
 	@@pandapic = Rubygame::Image.load("panda.png")
 	@@pandapic.set_colorkey(@@pandapic.get_at([0,0]))
 	attr_accessor :vx, :vy, :speed
@@ -102,8 +102,8 @@ class WobblyPanda < Panda
 	end
 end
 
-class PandaGroup < Rubygame::Sprite::Group
-	include Rubygame::Sprite::UpdateGroup
+class PandaGroup < Rubygame::Sprites::Group
+	include Rubygame::Sprites::UpdateGroup
 end
 
 # Create the SDL window

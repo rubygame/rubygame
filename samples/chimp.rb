@@ -67,7 +67,7 @@ end
 # The fist object, which follows the mouse and punches on mouseclick
 class Fist
 	# It's a sprite (an image with location data).
-	include Rubygame::Sprite::Sprite
+	include Rubygame::Sprites::Sprite
 
 	# Create and set up a new Fist object
 	def initialize
@@ -116,7 +116,7 @@ end
 # A chimpanzee which moves across the screen and spins when punched.
 class Chimp
 	# It's a sprite (an image with location data).
-	include Rubygame::Sprite::Sprite
+	include Rubygame::Sprites::Sprite
 
 	# Create and set up a new Chimp object
 	def initialize
@@ -248,7 +248,7 @@ def main
 	#punch_sound = load_sound('punch.wav')
 	chimp = Chimp.new()
 	fist = Fist.new()
-	allsprites = Rubygame::Sprite::Group.new()
+	allsprites = Rubygame::Sprites::Group.new()
 	allsprites.push(fist, chimp)
 	
 	#Main Loop
