@@ -23,7 +23,7 @@
 
 /* 
  *  call-seq:
- *     new(size, flags=0) => Surface
+ *     new(size, flags=0)  ->  Surface
  *
  *  Create and initialize a new Surface object. 
  *
@@ -37,7 +37,7 @@
  *  this method can be used.
  *
  *  This function takes these arguments:
- *  size::  requested surface size; an array of the form +[width, height]+.
+ *  size::  requested surface size; an array of the form [width, height].
  *  flags:: a bitwise OR'd ( | ) list of zero or more of the following flags
  *          (located in the Rubygame module, e.g. Rubygame::SWSURFACE).
  *          This argument may be omitted, in which case the Surface 
@@ -156,7 +156,7 @@ VALUE rbgm_surface_get_h(VALUE self)
 }
 
 /*  call-seq:
- *    size => [w,h]
+ *    size  ->  [w,h]
  *
  *  Return the surface's width and height (in pixels) in an Array.
  */
@@ -193,9 +193,9 @@ VALUE rbgm_surface_get_flags(VALUE self)
 
 /* 
  *  call-seq:
- *    masks => [r,g,b,a]
+ *    masks  ->  [r,g,b,a]
  *
- *  Return the color masks +[r,g,b,a]+ of the surface. Almost everyone can
+ *  Return the color masks [r,g,b,a] of the surface. Almost everyone can
  *  ignore this function. Color masks are used to separate an
  *  integer representation of a color into its seperate channels.
  */
@@ -236,7 +236,7 @@ VALUE rbgm_surface_get_alpha(VALUE self)
  *  This function takes these arguments:
  *  alpha:: requested opacity of the surface. Alpha must be from 0 
  *          (fully transparent) to 255 (fully opaque).
- *  flags:: +0+ or Rubygame::SRC_ALPHA (default). Most people will want the
+ *  flags:: 0 or Rubygame::SRC_ALPHA (default). Most people will want the
  *          default, in which case this argument can be omitted. For advanced
  *          users: this flag affects the surface as described in the docs for
  *          the SDL C function, SDL_SetAlpha.
@@ -271,9 +271,9 @@ VALUE rbgm_surface_set_alpha(int argc, VALUE *argv, VALUE self)
 
 /*
  *  call-seq:
- *     Rubygame::Surface#colorkey => [r,g,b] or nil
+ *     Rubygame::Surface#colorkey  ->  [r,g,b]  or  nil
  *
- *  Return the colorkey of the surface in the form +[r,g,b]+ (or +nil+ if there
+ *  Return the colorkey of the surface in the form [r,g,b] (or +nil+ if there
  *  is no key). The colorkey of a surface is the exact color which will be
  *  ignored when the surface is blitted, effectively turning that color
  *  transparent. This is often used to make a blue (for example) background
@@ -301,9 +301,9 @@ VALUE rbgm_surface_get_colorkey( VALUE self )
  *  of colorkeys.
  *
  *  This method takes these arguments:
- *  color:: color to use as the key, in the form +[r,g,b]+. Can be +nil+ to
+ *  color:: color to use as the key, in the form [r,g,b]. Can be +nil+ to
  *          un-set the colorkey.
- *  flags:: +0+ or Rubygame::SRC_COLORKEY (default) or 
+ *  flags:: 0 or Rubygame::SRC_COLORKEY (default) or 
  *          Rubygame::SRC_COLORKEY|Rubygame::SDL_RLEACCEL. Most people will 
  *          want the default, in which case this argument can be omitted. For
  *          advanced users: this flag affects the surface as described in the
@@ -351,7 +351,7 @@ static inline int min(int a, int b) {
 
 /* 
  *  call-seq:
- *     blit(target,dest,source=nil) => Rect
+ *     blit(target,dest,source=nil)  ->  Rect
  *
  *  Blit (copy) all or part of the surface's image to another surface,
  *  at a given position. Returns a Rect representing the area of 
@@ -500,7 +500,7 @@ VALUE rbgm_surface_fill( int argc, VALUE *argv, VALUE self )
  *     get_at(pos)
  *     get_at(x,y)
  *
- *  Return the color (+[r,g,b,a]+) of the pixel at the given coordinate. 
+ *  Return the color [r,g,b,a] of the pixel at the given coordinate. 
  *
  *  This method takes these argument:
  *  - pos:: the coordinate of the pixel to get the color of.
