@@ -18,7 +18,7 @@
 #++
 
 require "singleton"
-require "event"
+require "rubygame/event"
 
 module Rubygame
 
