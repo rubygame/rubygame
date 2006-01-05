@@ -322,24 +322,24 @@ rb_define_const(mRubygame,"K_LAST",INT2NUM(SDLK_LAST));
 
 #if 0	
 /* key mods */
-rb_define_const(mRubygame,"K_MOD_NONE",INT2NUM(KMOD_NONE));
-rb_define_const(mRubygame,"K_MOD_LSHIFT",INT2NUM(KMOD_LSHIFT));
-rb_define_const(mRubygame,"K_MOD_RSHIFT",INT2NUM(KMOD_RSHIFT));
-rb_define_const(mRubygame,"K_MOD_LCTRL",INT2NUM(KMOD_LCTRL));
-rb_define_const(mRubygame,"K_MOD_RCTRL",INT2NUM(KMOD_RCTRL));
-rb_define_const(mRubygame,"K_MOD_LALT",INT2NUM(KMOD_LALT));
-rb_define_const(mRubygame,"K_MOD_RALT",INT2NUM(KMOD_RALT));
-rb_define_const(mRubygame,"K_MOD_LMETA",INT2NUM(KMOD_LMETA));
-rb_define_const(mRubygame,"K_MOD_RMETA",INT2NUM(KMOD_RMETA));
-rb_define_const(mRubygame,"K_MOD_NUM",INT2NUM(KMOD_NUM));
-rb_define_const(mRubygame,"K_MOD_CAPS",INT2NUM(KMOD_CAPS));
-rb_define_const(mRubygame,"K_MOD_MODE",INT2NUM(KMOD_MODE));
-rb_define_const(mRubygame,"K_MOD_RESERVED",INT2NUM(KMOD_RESERVED));
+/* rb_define_const(mRubygame,"K_MOD_NONE",INT2NUM(KMOD_NONE)); */
+/* rb_define_const(mRubygame,"K_MOD_LSHIFT",INT2NUM(KMOD_LSHIFT)); */
+/* rb_define_const(mRubygame,"K_MOD_RSHIFT",INT2NUM(KMOD_RSHIFT)); */
+/* rb_define_const(mRubygame,"K_MOD_LCTRL",INT2NUM(KMOD_LCTRL)); */
+/* rb_define_const(mRubygame,"K_MOD_RCTRL",INT2NUM(KMOD_RCTRL)); */
+/* rb_define_const(mRubygame,"K_MOD_LALT",INT2NUM(KMOD_LALT)); */
+/* rb_define_const(mRubygame,"K_MOD_RALT",INT2NUM(KMOD_RALT)); */
+/* rb_define_const(mRubygame,"K_MOD_LMETA",INT2NUM(KMOD_LMETA)); */
+/* rb_define_const(mRubygame,"K_MOD_RMETA",INT2NUM(KMOD_RMETA)); */
+/* rb_define_const(mRubygame,"K_MOD_NUM",INT2NUM(KMOD_NUM)); */
+/* rb_define_const(mRubygame,"K_MOD_CAPS",INT2NUM(KMOD_CAPS)); */
+/* rb_define_const(mRubygame,"K_MOD_MODE",INT2NUM(KMOD_MODE)); */
+/* rb_define_const(mRubygame,"K_MOD_RESERVED",INT2NUM(KMOD_RESERVED)); */
 
-rb_define_const(mRubygame,"K_MOD_CTRL",INT2NUM(KMOD_CTRL));
-rb_define_const(mRubygame,"K_MOD_SHIFT",INT2NUM(KMOD_SHIFT));
-rb_define_const(mRubygame,"K_MOD_ALT",INT2NUM(KMOD_ALT));
-rb_define_const(mRubygame,"K_MOD_META",INT2NUM(KMOD_META));
+/* rb_define_const(mRubygame,"K_MOD_CTRL",INT2NUM(KMOD_CTRL)); */
+/* rb_define_const(mRubygame,"K_MOD_SHIFT",INT2NUM(KMOD_SHIFT)); */
+/* rb_define_const(mRubygame,"K_MOD_ALT",INT2NUM(KMOD_ALT)); */
+/* rb_define_const(mRubygame,"K_MOD_META",INT2NUM(KMOD_META)); */
 #endif
 
 

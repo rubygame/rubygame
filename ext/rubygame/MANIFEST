@@ -3,7 +3,6 @@ constants.c
 draw.c
 event.c
 extconf.rb
-font.c
 image.c
 joystick.c
 rubygame.c
@@ -13,3 +12,4 @@ surface.c
 symbols.c
 time.c
 transform.c
+ttf.c

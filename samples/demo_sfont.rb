@@ -43,7 +43,7 @@ def main(*args)
 		queue = Rubygame::Queue.instance()
 
 		screen.set_caption("SFont Test (%s)"%args[0])
-		font = Rubygame::Font::SFont.new(args[0])
+		font = Rubygame::SFont.new(args[0])
 		renders = []
 		renders << font.render("This is: %s"%args[0])
 		renders << font.render("I say, \"I love pie!\"")

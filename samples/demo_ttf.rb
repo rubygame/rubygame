@@ -167,11 +167,11 @@ def main
 		queue.allowed = Rubygame::QuitEvent,Rubygame::KeyDownEvent
 
 
-		unless Rubygame::Font::TTF.usable?()
+		unless Rubygame::TTF.usable?()
 			raise "TTF is not usable. Bailing out."
 		end
-		Rubygame::Font::TTF.setup()
-		font = Rubygame::Font::TTF.new("freesansbold.ttf",30)
+		Rubygame::TTF.setup()
+		font = Rubygame::TTF.new("freesansbold.ttf",30)
 
 		skip = font.line_skip()
 
