@@ -51,6 +51,8 @@ VALUE rbgm_screen_setcaption(int, VALUE*, VALUE);
 VALUE rbgm_screen_update(int, VALUE*, VALUE);
 VALUE rbgm_screen_updaterects(VALUE, VALUE);
 VALUE rbgm_screen_flip(VALUE);
+VALUE rbgm_screen_getshowcursor(VALUE);
+VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
 
 /* Draw */
 VALUE mDraw;

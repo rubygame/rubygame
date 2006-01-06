@@ -110,6 +110,8 @@ end
 screen = Rubygame::Screen.set_mode([320,240])
 screen.set_caption("Rubygame test","This is the icon title")
 puts "title: %s   icon title: %s"%screen.caption()
+screen.show_cursor = false;
+puts "cursor enabled?: %s"%screen.show_cursor?
 
 # Create the very cute panda objects!
 panda1 = SpinnyPanda.new(100,50)

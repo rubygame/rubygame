@@ -306,6 +306,35 @@ VALUE rbgm_screen_flip(VALUE self)
   return self;
 }
 
+/*  call-seq: 
+ *    show_cursor? ->  true or false
+ *
+ *  Returns true if the mouse cursor is shown, or false if hidden. See also 
+ *  #show_cursor=
+ */
+VALUE rbgm_screen_getshowcursor(VALUE self)
+{
+  return SDL_ShowCursor(SDL_QUERY);
+}
+
+/*  call-seq: 
+ *    show_cursor = value  ->  true or false or nil
+ *
+ *  Set whether the mouse cursor is displayed or not. If +value+ is true,
+ *  the cursor will be shown; if false, it will be hidden. See also 
+ *  #show_cursor?
+ */
+VALUE rbgm_screen_setshowcursor(VALUE self, VALUE val)
+{
+  int state;
+
+  if(val == Qtrue) { state = SDL_ENABLE; }
+  else if(val == Qfalse || val == Qnil) { state = SDL_DISABLE; }
+  else { return Qnil; }
+
+  return SDL_ShowCursor(state);
+}
+
 /*
  *  Document-class: Rubygame::Screen
  *
@@ -352,4 +381,6 @@ void Rubygame_Init_Screen()
   rb_define_method(cScreen,"update",rbgm_screen_update,-1);
   rb_define_method(cScreen,"update_rects",rbgm_screen_updaterects,1);
   rb_define_method(cScreen,"flip",rbgm_screen_flip,0);
+  rb_define_method(cScreen,"show_cursor?",rbgm_screen_getshowcursor,0);
+  rb_define_method(cScreen,"show_cursor=",rbgm_screen_setshowcursor,1);
 }

@@ -54,6 +54,8 @@ extern VALUE rbgm_screen_setcaption(int, VALUE*, VALUE);
 extern VALUE rbgm_screen_update(int, VALUE*, VALUE);
 extern VALUE rbgm_screen_updaterects(VALUE, VALUE);
 extern VALUE rbgm_screen_flip(VALUE);
+extern VALUE rbgm_screen_getshowcursor(VALUE);
+extern VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
 
 /* Draw */
 extern VALUE mDraw;
