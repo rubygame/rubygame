@@ -298,6 +298,12 @@ module Rubygame
 			@size = new_size
 		end
 	end
+
+	# Indicates that part of the application window was exposed or otherwise
+	# changed, and perhaps the window needs to be refreshed. This event occurs,
+	# for example, when an OpenGL display should be updated.
+	class ExposeEvent < Event
+	end
 	
 	# Indicates that the application has been signaled to quit. (E.g. the user
 	# pressed the close button.)

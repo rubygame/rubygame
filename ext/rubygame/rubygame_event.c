@@ -155,7 +155,7 @@ VALUE rbgm_convert_sdlevent( SDL_Event ev )
         ev.active.gain, convert_active(ev.active.state));
       break;
     case SDL_KEYDOWN:
-      /* KeyDown.new(keysym,[mods,...]) */
+      /* KeyDownEvent.new(keysym,[mods,...]) */
       return rb_funcall(cKeyDownEvent,new,2,\
         /* keysym, string version is set in new()*/
         INT2NUM(ev.key.keysym.sym),\
@@ -164,14 +164,14 @@ VALUE rbgm_convert_sdlevent( SDL_Event ev )
         );
       break;
     case SDL_KEYUP: /* Same as SDL_KEYDOWN */
-      /* KeyUp.new(keysym,[mods,...]) */
+      /* KeyUpEvent.new(keysym,[mods,...]) */
       return rb_funcall(cKeyUpEvent,new,2,\
         INT2NUM(ev.key.keysym.sym),\
         convert_keymod(ev.key.keysym.mod));
       break;
     case SDL_MOUSEMOTION:;
 
-      /* MouseMotion.new([x,y],[xrel,yrel],[buttons,...]) */
+      /* MouseMotionEvent.new([x,y],[xrel,yrel],[buttons,...]) */
       return rb_funcall(cMouseMotionEvent,new,3,\
         rb_ary_new3(2,INT2NUM(ev.motion.x),INT2NUM(ev.motion.y)),\
         rb_ary_new3(2,INT2NUM(ev.motion.xrel),\
@@ -180,40 +180,40 @@ VALUE rbgm_convert_sdlevent( SDL_Event ev )
         convert_mousebuttons(ev.motion.state));
       break;
     case SDL_MOUSEBUTTONDOWN:
-      /* MouseDown.new([x,y],button) */
+      /* MouseDownEvent.new([x,y],button) */
       return rb_funcall(cMouseDownEvent,new,2,\
         rb_ary_new3(2,INT2NUM(ev.button.x),INT2NUM(ev.button.y)),\
         INT2NUM(ev.button.button));
       break;
     case SDL_MOUSEBUTTONUP:
-      /* MouseUp.new([x,y],button) */
+      /* MouseUpEvent.new([x,y],button) */
       return rb_funcall(cMouseUpEvent,new,2,\
         rb_ary_new3(2,INT2NUM(ev.button.x),INT2NUM(ev.button.y)),\
         INT2NUM(ev.button.button));
       break;
     case SDL_JOYAXISMOTION:
-      /* JoyAxis.new(joy,axis,value) */
+      /* JoyAxisEvent.new(joy,axis,value) */
       /* Eventually, joy might be a reference to a Joystick instance? */
       return rb_funcall(cJoyAxisEvent,new,3,\
         INT2NUM(ev.jaxis.which),INT2NUM(ev.jaxis.axis),\
         INT2NUM(ev.jaxis.value));
       break;
     case SDL_JOYBALLMOTION:
-      /* JoyBall.new(joy,ball,) */
+      /* JoyBallEvent.new(joy,ball,) */
       /* Eventually, joy might be a reference to a Joystick instance? */
       return rb_funcall(cJoyBallEvent,new,3,\
         INT2NUM(ev.jball.which),INT2NUM(ev.jball.ball),
         rb_ary_new3(2,INT2NUM(ev.jball.xrel),INT2NUM(ev.jball.yrel)));
       break;
     case SDL_JOYHATMOTION:
-      /* JoyHat.new(joy,hat,value) */
+      /* JoyHatEvent.new(joy,hat,value) */
       /* Eventually, joy might be a reference to a Joystick instance? */
       return rb_funcall(cJoyHatEvent,new,3,\
         INT2NUM(ev.jhat.which),INT2NUM(ev.jhat.hat),\
         INT2NUM(ev.jhat.value));
       break;
     case SDL_JOYBUTTONDOWN:
-      /* JoyDown.new(joy,button) */
+      /* JoyDownEvent.new(joy,button) */
       /* Eventually, joy might be a reference to a Joystick instance? */
       return rb_funcall(cJoyDownEvent,new,2,\
         INT2NUM(ev.jbutton.which),INT2NUM(ev.jbutton.button));
@@ -225,22 +225,20 @@ VALUE rbgm_convert_sdlevent( SDL_Event ev )
         INT2NUM(ev.jbutton.which),INT2NUM(ev.jbutton.button));
       break;
     case SDL_VIDEORESIZE:
-      /* VideoResize.new([w,h]) */
+      /* ResizeEvent.new([w,h]) */
       return rb_funcall(cResizeEvent,new,1,\
         rb_ary_new3(2,INT2NUM(ev.resize.w),INT2NUM(ev.resize.h)));
       break;
-    #if 0
     case SDL_VIDEOEXPOSE:
-      /* QuitEvent.new( ) */
-      return rb_funcall(cVideoExposeEvent,new,0);
+      /* ExposeEvent.new( ) */
+      return rb_funcall(cExposeEvent,new,0);
       break;
-    #endif
     case SDL_QUIT:
       /* QuitEvent.new( ) */
       return rb_funcall(cQuitEvent,new,0);
       break;
     default:
-      rb_warn("Cannot convert unknown event type.");
+      rb_warn("Cannot convert unknown event type (%d).", ev.type);
       return Qnil;
       break;
   }
@@ -306,4 +304,5 @@ void Rubygame_Init_Event()
   cJoyUpEvent =   rb_define_class_under(mRubygame,"JoyUpEvent",cEvent);
   cQuitEvent =    rb_define_class_under(mRubygame,"QuitEvent",cEvent);
   cResizeEvent =  rb_define_class_under(mRubygame,"ResizeEvent",cEvent);
+  cExposeEvent =  rb_define_class_under(mRubygame,"ExposeEvent",cEvent);
 }

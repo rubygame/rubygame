@@ -20,8 +20,10 @@
  */
 
 #include "rubygame.h"
+
 #include "rubygame_draw.h"
 #include "rubygame_event.h"
+#include "rubygame_gl.h"
 #include "rubygame_image.h"
 #include "rubygame_joystick.h"
 #include "rubygame_screen.h"
@@ -114,4 +116,5 @@ void Init_rubygame()
 	Rubygame_Init_Transform();
 	Rubygame_Init_Joystick();
 	Rubygame_Init_TTF();
+  Rubygame_Init_GL();
 }

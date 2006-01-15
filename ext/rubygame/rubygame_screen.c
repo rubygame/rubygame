@@ -35,7 +35,7 @@
  *  size::  requested window size (in pixels), in the form [width,height]
  *  depth:: requested color depth (in bits per pixel). If 0 (default), the
  *          current system color depth.
- *  flags:: an Array of one or more of the following flags (located under the
+ *  flags:: an Array of zero or more of the following flags (located under the
  *          Rubygame module).
  *          
  *          SWSURFACE::  Create the video surface in system memory.
@@ -61,8 +61,13 @@
  *                       whatever reason), the next higher resolution will
  *                       be used and the display window centered on a black
  *                       background.
+ *          OPENGL::     Create an OpenGL rendering context. You must set
+ *                       proper OpenGL video attributes with GL#set_attrib
+ *                       before calling this method with this flag. You can
+ *                       then use separate opengl libraries (for example rbogl)
+ *                       to do all OpenGL-related functions.
  *          RESIZABLE::  Create a resizable window. When the window is 
- *                       resized by the user, a VideoResizeEvent is
+ *                       resized by the user, a ResizeEvent is
  *                       generated and #set_mode can be called again
  *                       with the new size.
  *          NOFRAME::    If possible, create a window with no title bar or
@@ -91,10 +96,19 @@ VALUE rbgm_screen_setmode(int argc, VALUE *argv, VALUE module)
 
   if(argc >= 3 && argv[2] != Qnil)
 	{
-	  for(i=0;  i < RARRAY(argv[2])->len;  i++)
-		{
-		  flags |= NUM2UINT(  rb_ary_entry( argv[2],i )  );
-		}
+    switch( TYPE(argv[2]) ){
+    case T_ARRAY:;
+      for(i=0;  i < RARRAY(argv[2])->len;  i++)
+        {
+          flags |= NUM2UINT(  rb_ary_entry( argv[2],i )  );
+        }
+      break;
+    case T_FIXNUM:;
+      flags = NUM2UINT( argv[2] );
+      break;
+    default:;
+      rb_raise(rb_eArgError,"Wrong type for argument `flags' (wanted Fixnum or Array).");
+    }
 	}
 
   screen = SDL_SetVideoMode( w,h,depth,flags );

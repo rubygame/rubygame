@@ -35,6 +35,7 @@ getopts = GetoptLong.new(
 	['--with-gfx',       GetoptLong::OPTIONAL_ARGUMENT],
 	['--with-image',     GetoptLong::OPTIONAL_ARGUMENT],
 	['--with-ttf',       GetoptLong::OPTIONAL_ARGUMENT],
+  ['--with-opengl',    GetoptLong::OPTIONAL_ARGUMENT],
 	['--library-path',   GetoptLong::REQUIRED_ARGUMENT],
 	['--include-path',   GetoptLong::REQUIRED_ARGUMENT],
 	['--cflags',         GetoptLong::REQUIRED_ARGUMENT],
@@ -45,6 +46,7 @@ OPTS = {
 	:with_gfx      => true,
 	:with_image    => true,
 	:with_ttf      => true,
+	:with_opengl    => true,
 	:library_path  => "",
 	:include_path  => "",
 	:cflags        => "",
@@ -60,6 +62,8 @@ getopts.each do |opt, arg|
 		OPTS[:with_image] = parse_truth(arg, true)
 	when '--with-ttf'
 		OPTS[:with_ttf] = parse_truth(arg, true)
+	when '--with-opengl'
+		OPTS[:with_opengl] = parse_truth(arg, true)
 	when '--library-path'
 		OPTS[:library_path] = arg
 	when '--include-path'
@@ -107,21 +111,10 @@ if OPTS[:with_ttf]
 	$libs = "-lSDL_ttf "+$libs if have_header("SDL_ttf.h")
 end
 
-#if enable_config("opengl",false) then
-#	dir_config('x11','/usr/X11R6')
-#  
-#	$CFLAGS+= " -D DEF_OPENGL "
-#	if arg_config("--linkoglmodule",false) then
-#		$CFLAGS+= " -D INIT_OGLMODULE_FROM_SDL "
-#	end
-#
-#	if /linux/ =~ CONFIG["arch"] then
-#		have_library("GL","glVertex3d")
-#	elsif /mingw32/ =~ CONFIG["arch"] then
-#		have_library("opengl32","glVertex3d")
-#		have_library("glu32","gluGetString")
-#	end
-#end
+if OPTS[:with_opengl]
+  # It might be good to have a test of capabilities here.
+	$defs << " -DHAVE_OPENGL "
+end
 
 puts "CFLAGS: %s"%$CFLAGS.to_s
 puts "INCFLAGS: %s"%$INCFLAGS.to_s
