@@ -39,6 +39,7 @@ VALUE cJoyUpEvent;
 VALUE cQuitEvent;
 VALUE cSysWMEvent;
 VALUE cResizeEvent;
+VALUE cExposeEvent;
 VALUE convert_active(Uint8);
 VALUE convert_keymod(SDLMod);
 VALUE convert_mousebuttons(Uint8);
