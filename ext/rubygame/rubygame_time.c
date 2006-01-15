@@ -25,6 +25,7 @@
  */
 
 #include "rubygame.h"
+#include "rubygame_time.h"
 
 
 /*  NOTICE: if you change this value "officially", don't forget to update the

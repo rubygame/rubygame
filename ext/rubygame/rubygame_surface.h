@@ -18,25 +18,36 @@
  *
  */
 
-#ifndef _RUBYGAME_H
-#define _RUBYGAME_H
 
-#include <SDL.h>
-#include <ruby.h>
-#include <stdio.h>
+#ifndef _RUBYGAME_SURFACE_H
+#define _RUBYGAME_SURFACE_H
 
-/* General */
-VALUE mRubygame;
-VALUE eSDLError;
-VALUE cRect;
-VALUE cSFont;
-VALUE mKey;
-VALUE mMouse;
-VALUE rbgm_init(VALUE);
-SDL_Rect *make_rect(int, int, int, int);
-VALUE rbgm_usable(VALUE);
-VALUE rbgm_unusable(VALUE);
-VALUE rbgm_dummy(int, VALUE*, VALUE);
-void Define_Rubygame_Constants();
+void Rubygame_Init_Surface();
+
+VALUE cSurface;
+
+VALUE rbgm_surface_new(int, VALUE*, VALUE);
+
+VALUE rbgm_surface_get_w(VALUE);
+VALUE rbgm_surface_get_h(VALUE);
+VALUE rbgm_surface_get_size(VALUE);
+
+VALUE rbgm_surface_get_depth(VALUE);
+VALUE rbgm_surface_get_flags(VALUE);
+VALUE rbgm_surface_get_masks(VALUE);
+
+VALUE rbgm_surface_get_alpha(VALUE);
+VALUE rbgm_surface_set_alpha(int, VALUE*, VALUE);
+
+VALUE rbgm_surface_get_colorkey(VALUE);
+VALUE rbgm_surface_set_colorkey(int, VALUE*, VALUE);
+
+VALUE rbgm_surface_blit(int, VALUE*, VALUE);
+
+VALUE rbgm_surface_fill( int, VALUE*, VALUE);
+
+VALUE rbgm_surface_getat( int, VALUE*, VALUE);
+
+
 
 #endif

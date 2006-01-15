@@ -18,25 +18,25 @@
  *
  */
 
-#ifndef _RUBYGAME_H
-#define _RUBYGAME_H
+#ifndef _RUBYGAME_SCREEN_H
+#define _RUBYGAME_SCREEN_H
 
-#include <SDL.h>
-#include <ruby.h>
-#include <stdio.h>
+void Rubygame_Init_Screen();
 
-/* General */
-VALUE mRubygame;
-VALUE eSDLError;
-VALUE cRect;
-VALUE cSFont;
-VALUE mKey;
-VALUE mMouse;
-VALUE rbgm_init(VALUE);
-SDL_Rect *make_rect(int, int, int, int);
-VALUE rbgm_usable(VALUE);
-VALUE rbgm_unusable(VALUE);
-VALUE rbgm_dummy(int, VALUE*, VALUE);
-void Define_Rubygame_Constants();
+VALUE cScreen;
+
+VALUE rbgm_screen_setmode(int, VALUE*, VALUE);
+VALUE rbgm_screen_getsurface(VALUE);
+VALUE rbgm_screen_new(VALUE);
+
+VALUE rbgm_screen_getcaption(VALUE);
+VALUE rbgm_screen_setcaption(int, VALUE*, VALUE);
+
+VALUE rbgm_screen_update(int, VALUE*, VALUE);
+VALUE rbgm_screen_updaterects(VALUE, VALUE);
+VALUE rbgm_screen_flip(VALUE);
+
+VALUE rbgm_screen_getshowcursor(VALUE);
+VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
 
 #endif

@@ -18,25 +18,24 @@
  *
  */
 
-#ifndef _RUBYGAME_H
-#define _RUBYGAME_H
 
-#include <SDL.h>
-#include <ruby.h>
-#include <stdio.h>
+#ifndef _RUBYGAME_JOYSTICK_H
+#define _RUBYGAME_JOYSTICK_H
 
-/* General */
-VALUE mRubygame;
-VALUE eSDLError;
-VALUE cRect;
-VALUE cSFont;
-VALUE mKey;
-VALUE mMouse;
-VALUE rbgm_init(VALUE);
-SDL_Rect *make_rect(int, int, int, int);
-VALUE rbgm_usable(VALUE);
-VALUE rbgm_unusable(VALUE);
-VALUE rbgm_dummy(int, VALUE*, VALUE);
-void Define_Rubygame_Constants();
+void Rubygame_Init_Joystick();
+
+VALUE cJoy;
+
+VALUE rbgm_joy_numjoysticks(VALUE);
+VALUE rbgm_joy_getname(VALUE, VALUE);
+
+VALUE rbgm_joystick_new(int, VALUE*, VALUE);
+
+VALUE rbgm_joystick_index(VALUE);
+VALUE rbgm_joystick_name(VALUE);
+VALUE rbgm_joystick_numaxes(VALUE);
+VALUE rbgm_joystick_numballs(VALUE);
+VALUE rbgm_joystick_numhats(VALUE);
+VALUE rbgm_joystick_numbuttons(VALUE);
 
 #endif

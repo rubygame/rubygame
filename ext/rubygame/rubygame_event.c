@@ -19,6 +19,7 @@
  */
 
 #include "rubygame.h"
+#include "rubygame_event.h"
 
 /*
  *--

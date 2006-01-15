@@ -21,6 +21,8 @@
  */
 
 #include "rubygame.h"
+#include "rubygame_surface.h"
+#include "rubygame_image.h"
 
 #ifdef HAVE_SDL_IMAGE_H
 #include "SDL_image.h"

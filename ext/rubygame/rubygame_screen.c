@@ -3,7 +3,7 @@
  *
  * --
  *  Rubygame -- Ruby code and bindings to SDL to facilitate game creation
- *  Copyright (C) 2004-2005  John 'jacius' Croisant
+ *  Copyright (C) 2004-2006  John 'jacius' Croisant
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,8 @@
  */
 
 #include "rubygame.h"
+#include "rubygame_screen.h"
+#include "rubygame_surface.h"
 
 /* call-seq:
  *  set_mode(size, depth=0, flags=[SWSURFACE])

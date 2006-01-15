@@ -21,6 +21,7 @@
  */
 
 #include "rubygame.h"
+#include "rubygame_joystick.h"
 
 /* 
  *  call-seq:

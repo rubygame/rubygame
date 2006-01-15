@@ -1,6 +1,6 @@
 /*
  *  Rubygame -- Ruby code and bindings to SDL to facilitate game creation
- *  Copyright (C) 2004-2005  John 'jacius' Croisant
+ *  Copyright (C) 2004-2006  John 'jacius' Croisant
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -15,40 +15,12 @@
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
  */
 
 #include "rubygame.h"
-#ifdef HAVE_SDL_GFXPRIMITIVES_H
-#include <SDL_gfxPrimitives.h>
-#endif
+#include "rubygame_draw.h"
 
-#ifndef SDL_GFXPRIMITIVES_MAJOR
-#define SDL_GFXPRIMITEVES_MAJOR 0
-#endif
-
-#ifndef SDL_GFXPRIMITIVES_MINOR
-#define SDL_GFXPRIMITEVES_MINOR 0
-#endif
-
-#ifndef SDL_GFXPRIMITIVES_MICRO
-#define SDL_GFXPRIMITEVES_MICRO 0
-#endif
-
-/* If we have at least version 2.0.12 of SDL_gfxPrimitives, draw_pie calls 
-   filledPieRGBA, otherwise it calls filledpieRGBA (lowercase pie)*/
-#ifndef HAVE_UPPERCASEPIE
-#if ((SDL_GFXPRIMITIVES_MAJOR > 2) || (SDL_GFXPRIMITIVES_MAJOR == 2 && SDL_GFXPRIMITIVES_MINOR > 0) || (SDL_GFXPRIMITIVES_MAJOR == 2 && SDL_GFXPRIMITIVES_MINOR == 0 && SDL_GFXPRIMITIVES_MICRO >= 12))
-#define HAVE_UPPERCASEPIE
-#endif
-#endif
-
-/* Non-filled pie shapes (arcs) were not supported prior to 2.0.11. */
-/* Check if we have at least version 2.0.11 of SDL_gfxPrimitives */
-#ifndef HAVE_NONFILLEDPIE
-#if ((SDL_GFXPRIMITIVES_MAJOR > 2) || (SDL_GFXPRIMITIVES_MAJOR == 2 && SDL_GFXPRIMITIVES_MINOR > 0) || (SDL_GFXPRIMITIVES_MAJOR == 2 && SDL_GFXPRIMITIVES_MINOR == 0 && SDL_GFXPRIMITIVES_MICRO >= 11))
-#define HAVE_NONFILLEDPIE
-#endif
-#endif
 
 /*
  *  call-seq:

@@ -22,32 +22,9 @@
  */
 
 #include "rubygame.h"
+#include "rubygame_surface.h"
+#include "rubygame_transform.h"
 
-#ifdef HAVE_SDL_ROTOZOOM_H
-#include <SDL_rotozoom.h>
-
-/* Separate X/Y rotozoom scaling was not supported prior to 2.0.13. */
-/* Check if we have at least version 2.0.13 of SDL_gfxPrimitives */
-#ifndef HAVE_ROTOZOOMXY
-#include <SDL_gfxPrimitives.h>  /* to get the version numbers */
-#if ((SDL_GFXPRIMITIVES_MAJOR > 2) || (SDL_GFXPRIMITIVES_MAJOR == 2 && SDL_GFXPRIMITIVES_MINOR > 0) || (SDL_GFXPRIMITIVES_MAJOR == 2 && SDL_GFXPRIMITIVES_MINOR == 0 && SDL_GFXPRIMITIVES_MICRO >= 13))
-#define HAVE_ROTOZOOMXY
-#endif
-#endif
-#endif
-
-
-#ifndef SDL_GFXPRIMITIVES_MAJOR
-#define SDL_GFXPRIMITIVES_MAJOR 0
-#endif
-
-#ifndef SDL_GFXPRIMITIVES_MINOR
-#define SDL_GFXPRIMITIVES_MINOR 0
-#endif
-
-#ifndef SDL_GFXPRIMITIVES_MICRO
-#define SDL_GFXPRIMITIVES_MICRO 0
-#endif
 
 /*
  *  call-seq:

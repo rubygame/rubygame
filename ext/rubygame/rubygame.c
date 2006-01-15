@@ -1,23 +1,34 @@
 /*
-	Rubygame -- Ruby code and bindings to SDL to facilitate game creation
-	Copyright (C) 2004  John 'jacius' Croisant
-
-	This library is free software; you can redistribute it and/or
-	modify it under the terms of the GNU Lesser General Public
-	License as published by the Free Software Foundation; either
-	version 2.1 of the License, or (at your option) any later version.
-
-	This library is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-	Lesser General Public License for more details.
-
-	You should have received a copy of the GNU Lesser General Public
-	License along with this library; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ *--
+ * Rubygame -- Ruby code and bindings to SDL to facilitate game creation
+ * Copyright (C) 2004-2006  John 'jacius' Croisant
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *++
+ */
 
 #include "rubygame.h"
+#include "rubygame_draw.h"
+#include "rubygame_event.h"
+#include "rubygame_image.h"
+#include "rubygame_joystick.h"
+#include "rubygame_screen.h"
+#include "rubygame_surface.h"
+#include "rubygame_time.h"
+#include "rubygame_transform.h"
+#include "rubygame_ttf.h"
 
 SDL_Rect *make_rect(int x, int y, int w, int h)
 {
@@ -82,46 +93,6 @@ VALUE rbgm_init(VALUE module)
 }
 
 
-/*
- *  Rubygame is a combination extension and library for the Ruby language,
- *  designed for creating computer games, and having fun creating them.
- *  As an extension, it provides an interface to the Simple DirectMedia Library
- *  (SDL) and its companion libraries SDL_gfx, SDL_image, and SDL_ttf.
- *  As a Ruby library, it provides classes/modules which implement some useful
- *  concepts such as Sprites, Event Queues, and rasterized fonts (SFont)
- *
- *  To get acquainted with Rubygame, first take a look at the fundamental
- *  classes: Screen, Surface, and Rect. 
- *
- *  As a next step, read about the event Queue and the hardware events, which
- *  allow you to take keyboard and mouse input, among other things:
- *  - ActiveEvent
- *  - JoyAxisEvent
- *  - JoyBallEvent
- *  - JoyDownEvent
- *  - JoyHatEvent
- *  - JoyUpEvent
- *  - KeyDownEvent
- *  - KeyUpEvent
- *  - MouseDownEvent
- *  - MouseMotionEvent
- *  - MouseUpEvent
- *  - QuitEvent
- *  - ResizeEvent
- *
- *  Finally, familiarize yourself with the TTF and SFont classes for rendering
- *  text, the Image module for loading and saving image files, the Draw and
- *  Transform modules for "special effects", the Time module for controlling
- *  framerate and delays, and last but by no means least, the Sprites module
- *  for easy-to-use, yet highly flexible on-screen objects!
- *
- *  There are several sample applications in the rubygame/samples/ directory
- *  packaged with Rubygame which can also help you get started.
- *
- *  At this time, Rubygame has no support for loading or playing sound of any
- *  kind, nor any explicit support for 3D graphics (i.e., OpenGL). There has
- *  to be *something* to look forward to, doesn't there?
- */
 void Init_rubygame()
 {
 	mRubygame = rb_define_module("Rubygame");
