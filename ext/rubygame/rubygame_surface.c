@@ -595,6 +595,26 @@ VALUE rbgm_surface_getat( int argc, VALUE *argv, VALUE self )
 	return rb_ary_new3(4,INT2NUM(r),INT2NUM(g),INT2NUM(b),INT2NUM(a));
 }
 
+/*
+ *  call-seq:
+ *    pixels  ->  String
+ *
+ *  Return a string of pixel data for the Surface. Most users will not
+ *  need to use this method. If you want to convert a Surface into an
+ *  OpenGL texture, pass the returned string to the TexImage2D method
+ *  of the ruby-opengl library. (See samples/demo_gl_tex.rb for an example.)
+ *
+ *  (Please note that the dimensions of OpenGL textures must be powers of 2
+ *  (e.g. 64x128, 512x512), so if you want to use a Surface as an OpenGL
+ *  texture, the Surface's dimensions must also be powers of 2!)
+ */
+VALUE rbgm_surface_pixels( VALUE self )
+{
+	SDL_Surface *surf;
+	Data_Get_Struct(self, SDL_Surface, surf);
+	return rb_str_new(surf->pixels, (long)surf->pitch * surf->h);
+}
+
 void Rubygame_Init_Surface()
 {
 
@@ -621,4 +641,5 @@ void Rubygame_Init_Surface()
 	rb_define_method(cSurface,"blit",rbgm_surface_blit,-1);
 	rb_define_method(cSurface,"fill",rbgm_surface_fill,-1);
 	rb_define_method(cSurface,"get_at",rbgm_surface_getat,-1);
+  rb_define_method(cSurface,"pixels",rbgm_surface_pixels,0);
 }
