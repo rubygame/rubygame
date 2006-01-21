@@ -27,6 +27,14 @@
 #include "rubygame.h"
 #include "rubygame_time.h"
 
+void Rubygame_Init_Time();
+
+VALUE mTime;
+
+VALUE rbgm_time_wait(VALUE, VALUE);
+VALUE rbgm_time_delay(int, VALUE*, VALUE);
+VALUE rbgm_time_getticks(VALUE);
+
 
 /*  NOTICE: if you change this value "officially", don't forget to update the
  *  documentation for rbgm_time_delay!!

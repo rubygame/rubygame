@@ -21,12 +21,12 @@
 #ifndef _RUBYGAME_IMAGE_H
 #define _RUBYGAME_IMAGE_H
 
-void Rubygame_Init_Image();
+extern void Rubygame_Init_Image();
 
-VALUE mImage;
+extern VALUE mImage;
 
-VALUE rbgm_image_version(VALUE);
-VALUE rbgm_image_load(VALUE, VALUE);
-VALUE rbgm_image_savebmp(VALUE, VALUE, VALUE);
+extern VALUE rbgm_image_version(VALUE);
+extern VALUE rbgm_image_load(VALUE, VALUE);
+extern VALUE rbgm_image_savebmp(VALUE, VALUE, VALUE);
 
 #endif

@@ -32,6 +32,19 @@
 #include "rubygame_transform.h"
 #include "rubygame_ttf.h"
 
+VALUE mRubygame;
+VALUE eSDLError;
+VALUE cRect;
+VALUE cSFont;
+VALUE mKey;
+VALUE mMouse;
+VALUE rbgm_init(VALUE);
+SDL_Rect *make_rect(int, int, int, int);
+VALUE rbgm_usable(VALUE);
+VALUE rbgm_unusable(VALUE);
+VALUE rbgm_dummy(int, VALUE*, VALUE);
+void Define_Rubygame_Constants();
+
 SDL_Rect *make_rect(int x, int y, int w, int h)
 {
 	SDL_Rect *rect;

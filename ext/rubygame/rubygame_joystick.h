@@ -22,20 +22,20 @@
 #ifndef _RUBYGAME_JOYSTICK_H
 #define _RUBYGAME_JOYSTICK_H
 
-void Rubygame_Init_Joystick();
+extern void Rubygame_Init_Joystick();
 
-VALUE cJoy;
+extern VALUE cJoy;
 
-VALUE rbgm_joy_numjoysticks(VALUE);
-VALUE rbgm_joy_getname(VALUE, VALUE);
+extern VALUE rbgm_joy_numjoysticks(VALUE);
+extern VALUE rbgm_joy_getname(VALUE, VALUE);
 
-VALUE rbgm_joystick_new(int, VALUE*, VALUE);
+extern VALUE rbgm_joystick_new(int, VALUE*, VALUE);
 
-VALUE rbgm_joystick_index(VALUE);
-VALUE rbgm_joystick_name(VALUE);
-VALUE rbgm_joystick_numaxes(VALUE);
-VALUE rbgm_joystick_numballs(VALUE);
-VALUE rbgm_joystick_numhats(VALUE);
-VALUE rbgm_joystick_numbuttons(VALUE);
+extern VALUE rbgm_joystick_index(VALUE);
+extern VALUE rbgm_joystick_name(VALUE);
+extern VALUE rbgm_joystick_numaxes(VALUE);
+extern VALUE rbgm_joystick_numballs(VALUE);
+extern VALUE rbgm_joystick_numhats(VALUE);
+extern VALUE rbgm_joystick_numbuttons(VALUE);
 
 #endif

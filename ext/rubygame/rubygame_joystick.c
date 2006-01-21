@@ -23,6 +23,22 @@
 #include "rubygame.h"
 #include "rubygame_joystick.h"
 
+void Rubygame_Init_Joystick();
+VALUE cJoy;
+
+VALUE rbgm_joy_numjoysticks(VALUE);
+VALUE rbgm_joy_getname(VALUE, VALUE);
+
+VALUE rbgm_joystick_new(int, VALUE*, VALUE);
+
+VALUE rbgm_joystick_index(VALUE);
+VALUE rbgm_joystick_name(VALUE);
+VALUE rbgm_joystick_numaxes(VALUE);
+VALUE rbgm_joystick_numballs(VALUE);
+VALUE rbgm_joystick_numhats(VALUE);
+VALUE rbgm_joystick_numbuttons(VALUE);
+
+
 /* 
  *  call-seq:
  *    num_joysticks  ->  Integer

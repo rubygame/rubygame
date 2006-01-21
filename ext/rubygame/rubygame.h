@@ -26,17 +26,17 @@
 #include <stdio.h>
 
 /* General */
-VALUE mRubygame;
-VALUE eSDLError;
-VALUE cRect;
-VALUE cSFont;
-VALUE mKey;
-VALUE mMouse;
-VALUE rbgm_init(VALUE);
-SDL_Rect *make_rect(int, int, int, int);
-VALUE rbgm_usable(VALUE);
-VALUE rbgm_unusable(VALUE);
-VALUE rbgm_dummy(int, VALUE*, VALUE);
-void Define_Rubygame_Constants();
+extern VALUE mRubygame;
+extern VALUE eSDLError;
+extern VALUE cRect;
+extern VALUE cSFont;
+extern VALUE mKey;
+extern VALUE mMouse;
+extern VALUE rbgm_init(VALUE);
+extern SDL_Rect *make_rect(int, int, int, int);
+extern VALUE rbgm_usable(VALUE);
+extern VALUE rbgm_unusable(VALUE);
+extern VALUE rbgm_dummy(int, VALUE*, VALUE);
+extern void Define_Rubygame_Constants();
 
 #endif

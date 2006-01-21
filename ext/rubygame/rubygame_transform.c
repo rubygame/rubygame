@@ -25,6 +25,13 @@
 #include "rubygame_surface.h"
 #include "rubygame_transform.h"
 
+void Rubygame_Init_Transform();
+
+VALUE mTrans;
+
+VALUE rbgm_transform_version(VALUE);
+
+VALUE rbgm_transform_flip(int, VALUE*, VALUE);
 
 /*
  *  call-seq:
@@ -47,6 +54,12 @@ VALUE rbgm_transform_version(VALUE module)
 }
 
 #ifdef HAVE_SDL_ROTOZOOM_H
+
+VALUE rbgm_transform_rotozoom(int, VALUE*, VALUE);
+VALUE rbgm_transform_rotozoomsize(int, VALUE*, VALUE);
+
+VALUE rbgm_transform_zoom(int, VALUE*, VALUE);
+VALUE rbgm_transform_zoomsize(int, VALUE*, VALUE);
 
 /*
  *  call-seq:

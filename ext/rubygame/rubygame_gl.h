@@ -21,14 +21,12 @@
 #ifndef _RUBYGAME_GL_H
 #define _RUBYGAME_GL_H
 
-VALUE mGL;
+extern VALUE mGL;
+extern void Rubygame_Init_GL();
+extern void Define_GL_Constants();
 
-void Rubygame_Init_GL();
-
-VALUE rbgm_gl_getattrib(VALUE, VALUE);
-VALUE rbgm_gl_setattrib(VALUE,VALUE,VALUE);
-VALUE rbgm_gl_swapbuffers(VALUE);
-
-void Define_GL_Constants();
+extern VALUE rbgm_gl_getattrib(VALUE, VALUE);
+extern VALUE rbgm_gl_setattrib(VALUE,VALUE,VALUE);
+extern VALUE rbgm_gl_swapbuffers(VALUE);
 
 #endif

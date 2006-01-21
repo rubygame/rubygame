@@ -37,30 +37,30 @@
 #define SDL_TTF_PATCHLEVEL 0
 #endif
 
-void Rubygame_Init_TTF();
+extern void Rubygame_Init_TTF();
 
-VALUE cTTF;
+extern VALUE cTTF;
 
-VALUE rbgm_ttf_version(VALUE);
-VALUE rbgm_ttf_setup(VALUE);
-VALUE rbgm_ttf_quit(VALUE);
-VALUE rbgm_ttf_new(int, VALUE*, VALUE);
-VALUE rbgm_ttf_initialize(int, VALUE *, VALUE);
+extern VALUE rbgm_ttf_version(VALUE);
+extern VALUE rbgm_ttf_setup(VALUE);
+extern VALUE rbgm_ttf_quit(VALUE);
+extern VALUE rbgm_ttf_new(int, VALUE*, VALUE);
+extern VALUE rbgm_ttf_initialize(int, VALUE*, VALUE);
 
-VALUE rbgm_ttf_getbold(VALUE);
-VALUE rbgm_ttf_setbold(VALUE, VALUE);
+extern VALUE rbgm_ttf_getbold(VALUE);
+extern VALUE rbgm_ttf_setbold(VALUE, VALUE);
 
-VALUE rbgm_ttf_getitalic(VALUE);
-VALUE rbgm_ttf_setitalic(VALUE, VALUE);
+extern VALUE rbgm_ttf_getitalic(VALUE);
+extern VALUE rbgm_ttf_setitalic(VALUE, VALUE);
 
-VALUE rbgm_ttf_getunderline(VALUE);
-VALUE rbgm_ttf_setunderline(VALUE, VALUE);
+extern VALUE rbgm_ttf_getunderline(VALUE);
+extern VALUE rbgm_ttf_setunderline(VALUE, VALUE);
 
-VALUE rbgm_ttf_height(VALUE);
-VALUE rbgm_ttf_ascent(VALUE);
-VALUE rbgm_ttf_descent(VALUE);
-VALUE rbgm_ttf_lineskip(VALUE);
+extern VALUE rbgm_ttf_height(VALUE);
+extern VALUE rbgm_ttf_ascent(VALUE);
+extern VALUE rbgm_ttf_descent(VALUE);
+extern VALUE rbgm_ttf_lineskip(VALUE);
 
-VALUE rbgm_ttf_render(int, VALUE*, VALUE);
+extern VALUE rbgm_ttf_render(int, VALUE*, VALUE);
 
 #endif

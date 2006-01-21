@@ -21,22 +21,22 @@
 #ifndef _RUBYGAME_SCREEN_H
 #define _RUBYGAME_SCREEN_H
 
-void Rubygame_Init_Screen();
+extern void Rubygame_Init_Screen();
 
-VALUE cScreen;
+extern VALUE cScreen;
 
-VALUE rbgm_screen_setmode(int, VALUE*, VALUE);
-VALUE rbgm_screen_getsurface(VALUE);
-VALUE rbgm_screen_new(VALUE);
+extern VALUE rbgm_screen_setmode(int, VALUE*, VALUE);
+extern VALUE rbgm_screen_getsurface(VALUE);
+extern VALUE rbgm_screen_new(VALUE);
 
-VALUE rbgm_screen_getcaption(VALUE);
-VALUE rbgm_screen_setcaption(int, VALUE*, VALUE);
+extern VALUE rbgm_screen_getcaption(VALUE);
+extern VALUE rbgm_screen_setcaption(int, VALUE*, VALUE);
 
-VALUE rbgm_screen_update(int, VALUE*, VALUE);
-VALUE rbgm_screen_updaterects(VALUE, VALUE);
-VALUE rbgm_screen_flip(VALUE);
+extern VALUE rbgm_screen_update(int, VALUE*, VALUE);
+extern VALUE rbgm_screen_updaterects(VALUE, VALUE);
+extern VALUE rbgm_screen_flip(VALUE);
 
-VALUE rbgm_screen_getshowcursor(VALUE);
-VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
+extern VALUE rbgm_screen_getshowcursor(VALUE);
+extern VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
 
 #endif

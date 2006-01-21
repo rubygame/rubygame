@@ -47,18 +47,18 @@
 #define SDL_GFXPRIMITIVES_MICRO 0
 #endif
 
-void Rubygame_Init_Transform();
+extern void Rubygame_Init_Transform();
 
-VALUE mTrans;
+extern VALUE mTrans;
 
-VALUE rbgm_transform_version(VALUE);
+extern VALUE rbgm_transform_version(VALUE);
 
-VALUE rbgm_transform_rotozoom(int, VALUE*, VALUE);
-VALUE rbgm_transform_rotozoomsize(int, VALUE*, VALUE);
+extern VALUE rbgm_transform_rotozoom(int, VALUE*, VALUE);
+extern VALUE rbgm_transform_rotozoomsize(int, VALUE*, VALUE);
 
-VALUE rbgm_transform_zoom(int, VALUE*, VALUE);
-VALUE rbgm_transform_zoomsize(int, VALUE*, VALUE);
+extern VALUE rbgm_transform_zoom(int, VALUE*, VALUE);
+extern VALUE rbgm_transform_zoomsize(int, VALUE*, VALUE);
 
-VALUE rbgm_transform_flip(int, VALUE*, VALUE);
+extern VALUE rbgm_transform_flip(int, VALUE*, VALUE);
 
 #endif

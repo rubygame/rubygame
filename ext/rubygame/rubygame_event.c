@@ -21,6 +21,30 @@
 #include "rubygame.h"
 #include "rubygame_event.h"
 
+void Rubygame_Init_Event();
+VALUE cEvent;
+VALUE cQueue;
+VALUE cActiveEvent;
+VALUE cKeyDownEvent;
+VALUE cKeyUpEvent;
+VALUE cMouseMotionEvent;
+VALUE cMouseDownEvent;
+VALUE cMouseUpEvent;
+VALUE cJoyAxisEvent;
+VALUE cJoyBallEvent;
+VALUE cJoyHatEvent;
+VALUE cJoyDownEvent;
+VALUE cJoyUpEvent;
+VALUE cQuitEvent;
+VALUE cSysWMEvent;
+VALUE cResizeEvent;
+VALUE cExposeEvent;
+VALUE convert_active(Uint8);
+VALUE convert_keymod(SDLMod);
+VALUE convert_mousebuttons(Uint8);
+VALUE rbgm_convert_sdlevent(SDL_Event);
+VALUE rbgm_queue_getsdl(VALUE);
+
 /*
  *--
  *

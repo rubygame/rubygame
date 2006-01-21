@@ -22,28 +22,28 @@
 #ifndef _RUBYGAME_EVENT_H
 #define _RUBYGAME_EVENT_H
 
-void Rubygame_Init_Event();
-VALUE cEvent;
-VALUE cQueue;
-VALUE cActiveEvent;
-VALUE cKeyDownEvent;
-VALUE cKeyUpEvent;
-VALUE cMouseMotionEvent;
-VALUE cMouseDownEvent;
-VALUE cMouseUpEvent;
-VALUE cJoyAxisEvent;
-VALUE cJoyBallEvent;
-VALUE cJoyHatEvent;
-VALUE cJoyDownEvent;
-VALUE cJoyUpEvent;
-VALUE cQuitEvent;
-VALUE cSysWMEvent;
-VALUE cResizeEvent;
-VALUE cExposeEvent;
-VALUE convert_active(Uint8);
-VALUE convert_keymod(SDLMod);
-VALUE convert_mousebuttons(Uint8);
-VALUE rbgm_convert_sdlevent(SDL_Event);
-VALUE rbgm_queue_getsdl(VALUE);
+extern void Rubygame_Init_Event();
+extern VALUE cEvent;
+extern VALUE cQueue;
+extern VALUE cActiveEvent;
+extern VALUE cKeyDownEvent;
+extern VALUE cKeyUpEvent;
+extern VALUE cMouseMotionEvent;
+extern VALUE cMouseDownEvent;
+extern VALUE cMouseUpEvent;
+extern VALUE cJoyAxisEvent;
+extern VALUE cJoyBallEvent;
+extern VALUE cJoyHatEvent;
+extern VALUE cJoyDownEvent;
+extern VALUE cJoyUpEvent;
+extern VALUE cQuitEvent;
+extern VALUE cSysWMEvent;
+extern VALUE cResizeEvent;
+extern VALUE cExposeEvent;
+extern VALUE convert_active(Uint8);
+extern VALUE convert_keymod(SDLMod);
+extern VALUE convert_mousebuttons(Uint8);
+extern VALUE rbgm_convert_sdlevent(SDL_Event);
+extern VALUE rbgm_queue_getsdl(VALUE);
 
 #endif

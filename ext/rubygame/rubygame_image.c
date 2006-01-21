@@ -24,8 +24,14 @@
 #include "rubygame_surface.h"
 #include "rubygame_image.h"
 
+void Rubygame_Init_Image();
+VALUE mImage;
+VALUE rbgm_image_version(VALUE);
+VALUE rbgm_image_savebmp(VALUE, VALUE, VALUE);
+
 #ifdef HAVE_SDL_IMAGE_H
 #include "SDL_image.h"
+VALUE rbgm_image_load(VALUE, VALUE);
 #endif
 
 /*--

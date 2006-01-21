@@ -30,7 +30,15 @@
  * ++
  */
 
+VALUE mGL;
+void Rubygame_Init_GL();
+void Define_GL_Constants();
+
 #ifdef HAVE_OPENGL
+
+VALUE rbgm_gl_getattrib(VALUE, VALUE);
+VALUE rbgm_gl_setattrib(VALUE,VALUE,VALUE);
+VALUE rbgm_gl_swapbuffers(VALUE);
 
 /*  call-seq:
  *    get_attrib( attrib )  ->  Integer

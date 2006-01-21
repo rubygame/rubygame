@@ -21,6 +21,12 @@
 #include "rubygame_ttf.h"
 #include "rubygame_surface.h"
 
+void Rubygame_Init_TTF();
+
+VALUE cTTF;
+
+VALUE rbgm_ttf_version(VALUE);
+
 /*
  *  call-seq:
  *    version  ->  [Integer, Integer, Integer]
@@ -42,6 +48,27 @@ VALUE rbgm_ttf_version(VALUE module)
 }
 
 #ifdef HAVE_SDL_TTF_H
+
+VALUE rbgm_ttf_setup(VALUE);
+VALUE rbgm_ttf_quit(VALUE);
+VALUE rbgm_ttf_new(int, VALUE*, VALUE);
+VALUE rbgm_ttf_initialize(int, VALUE *, VALUE);
+
+VALUE rbgm_ttf_getbold(VALUE);
+VALUE rbgm_ttf_setbold(VALUE, VALUE);
+
+VALUE rbgm_ttf_getitalic(VALUE);
+VALUE rbgm_ttf_setitalic(VALUE, VALUE);
+
+VALUE rbgm_ttf_getunderline(VALUE);
+VALUE rbgm_ttf_setunderline(VALUE, VALUE);
+
+VALUE rbgm_ttf_height(VALUE);
+VALUE rbgm_ttf_ascent(VALUE);
+VALUE rbgm_ttf_descent(VALUE);
+VALUE rbgm_ttf_lineskip(VALUE);
+
+VALUE rbgm_ttf_render(int, VALUE*, VALUE);
 
 /*
  *  call-seq:

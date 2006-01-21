@@ -22,32 +22,32 @@
 #ifndef _RUBYGAME_SURFACE_H
 #define _RUBYGAME_SURFACE_H
 
-void Rubygame_Init_Surface();
+extern void Rubygame_Init_Surface();
 
-VALUE cSurface;
+extern VALUE cSurface;
 
-VALUE rbgm_surface_new(int, VALUE*, VALUE);
+extern VALUE rbgm_surface_new(int, VALUE*, VALUE);
 
-VALUE rbgm_surface_get_w(VALUE);
-VALUE rbgm_surface_get_h(VALUE);
-VALUE rbgm_surface_get_size(VALUE);
+extern VALUE rbgm_surface_get_w(VALUE);
+extern VALUE rbgm_surface_get_h(VALUE);
+extern VALUE rbgm_surface_get_size(VALUE);
 
-VALUE rbgm_surface_get_depth(VALUE);
-VALUE rbgm_surface_get_flags(VALUE);
-VALUE rbgm_surface_get_masks(VALUE);
+extern VALUE rbgm_surface_get_depth(VALUE);
+extern VALUE rbgm_surface_get_flags(VALUE);
+extern VALUE rbgm_surface_get_masks(VALUE);
 
-VALUE rbgm_surface_get_alpha(VALUE);
-VALUE rbgm_surface_set_alpha(int, VALUE*, VALUE);
+extern VALUE rbgm_surface_get_alpha(VALUE);
+extern VALUE rbgm_surface_set_alpha(int, VALUE*, VALUE);
 
-VALUE rbgm_surface_get_colorkey(VALUE);
-VALUE rbgm_surface_set_colorkey(int, VALUE*, VALUE);
+extern VALUE rbgm_surface_get_colorkey(VALUE);
+extern VALUE rbgm_surface_set_colorkey(int, VALUE*, VALUE);
 
-VALUE rbgm_surface_blit(int, VALUE*, VALUE);
+extern VALUE rbgm_surface_blit(int, VALUE*, VALUE);
 
-VALUE rbgm_surface_fill( int, VALUE*, VALUE);
+extern VALUE rbgm_surface_fill(int, VALUE*, VALUE);
 
-VALUE rbgm_surface_getat( int, VALUE*, VALUE);
+extern VALUE rbgm_surface_getat(int, VALUE*, VALUE);
 
-
+extern VALUE rbgm_surface_pixels(VALUE);
 
 #endif

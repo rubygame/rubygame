@@ -25,6 +25,25 @@
 #include "rubygame_screen.h"
 #include "rubygame_surface.h"
 
+void Rubygame_Init_Screen();
+
+VALUE cScreen;
+
+VALUE rbgm_screen_setmode(int, VALUE*, VALUE);
+VALUE rbgm_screen_getsurface(VALUE);
+VALUE rbgm_screen_new(VALUE);
+
+VALUE rbgm_screen_getcaption(VALUE);
+VALUE rbgm_screen_setcaption(int, VALUE*, VALUE);
+
+VALUE rbgm_screen_update(int, VALUE*, VALUE);
+VALUE rbgm_screen_updaterects(VALUE, VALUE);
+VALUE rbgm_screen_flip(VALUE);
+
+VALUE rbgm_screen_getshowcursor(VALUE);
+VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
+
+
 /* call-seq:
  *  set_mode(size, depth=0, flags=[SWSURFACE])
  *
