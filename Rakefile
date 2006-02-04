@@ -6,26 +6,26 @@ require 'rake/gempackagetask'
 require 'rake/rdoctask'
 
 spec = Gem::Specification.new do |s|
-	s.name     = "rubygame"
-	s.version  = "1.0.1"
-	s.author   = "John Croisant"
-	s.email    = "rubygame@seul.org"
-	s.homepage = "http://rubygame.seul.org/"
-	s.platform = Gem::Platform::LINUX_586
-	s.summary  = "pygame-like game development library and extension"
-	s.has_rdoc = true
+  s.name     = "rubygame"
+  s.version  = "1.1.0"
+  s.author   = "John Croisant"
+  s.email    = "rubygame@seul.org"
+  s.homepage = "http://rubygame.seul.org/"
+  s.platform = Gem::Platform::LINUX_586
+  s.summary  = "pygame-like game development library and extension"
+  s.has_rdoc = true
 
-	candidates = Dir.glob("{lib,ext,samples,doc}/**/*")
-	s.files    = candidates.delete_if do |item|
-		item.include?("svn")
-	end
+  candidates = Dir.glob("{lib,ext,samples,doc}/**/*")
+  s.files    = candidates.delete_if do |item|
+    item.include?("svn")
+  end
 
-	s.require_paths = ["lib","ext"]
-	s.autorequire = "rubygame.rb"	# not to be confused with rubygame.so
+  s.require_paths = ["lib","ext"]
+  s.autorequire = "rubygame.rb"
+  s.extensions = ["ext/rubygame/extconf.rb"]
 
-	s.extensions = ["ext/rubygame/extconf.rb"]
-
-	s.extra_rdoc_files = ["./README", "./LICENSE", "./TODO"]
+  s.extra_rdoc_files = ["./README", "./LICENSE", "./TODO",\
+    "./doc/getting_started.rdoc"]
 end
 
 Rake::GemPackageTask.new(spec) do |pkg| 
@@ -37,7 +37,7 @@ Rake::RDocTask.new do |rd|
   rd.main = "Rubygame"
   rd.title = "Rubygame Documentation"
   rd.rdoc_files.include("lib/rubygame/*.rb",\
-												"ext/rubygame/*.c",\
+                        "ext/rubygame/*.c",\
                         "ext/rubygame/extconf.rb",\
                         "doc/*.rdoc")
 end
@@ -50,7 +50,7 @@ end
 mf = File.join("ext", "rubygame", "Makefile")
 
 file mf do
- Rake::Task[:config].invoke
+  Rake::Task[:config].invoke
 end
 
 desc "Compile extension."
