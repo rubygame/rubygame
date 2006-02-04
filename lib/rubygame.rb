@@ -20,6 +20,8 @@
 # This is the file that should be imported, it in turn imports rubygame.so
 # (which has all of the C code for rubygame) and all the other rubygame modules
 
+require "rbconfig"
+
 require "rubygame.%s"%[Config::CONFIG["DLEXT"]]
 
 require "rubygame/constants"

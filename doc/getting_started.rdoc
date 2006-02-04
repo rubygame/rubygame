@@ -1,0 +1,51 @@
+= Getting Started with rubygame
+
+== About rubygame
+
+Rubygame is a combination extension and library for the Ruby language,
+designed for creating computer games, and having fun creating them.
+As an extension, it provides an interface to the Simple DirectMedia Library
+(SDL) and its companion libraries SDL_gfx, SDL_image, and SDL_ttf.
+As a Ruby library, it provides classes/modules which implement some useful
+concepts such as Sprites, Event Queues, and rasterized fonts (SFont).
+However, at this time, rubygame has no support for loading or playing sound of
+any kind. There has to be *something* to look forward to, doesn't there?
+
+== Suggested Reading
+
+To get acquainted with rubygame, first take a look at the fundamental
+classes: 
+- Rubygame::Screen
+- Rubygame::Surface
+- Rubygame::Rect
+
+As a next step, read about the event Queue and the hardware events, which
+allow you to take keyboard and mouse input, among other things. The most
+commonly used ones are:
+- Rubygame::JoyAxisEvent
+- Rubygame::JoyBallEvent
+- Rubygame::JoyDownEvent
+- Rubygame::JoyHatEvent
+- Rubygame::JoyUpEvent
+- Rubygame::KeyDownEvent
+- Rubygame::KeyUpEvent
+- Rubygame::MouseDownEvent
+- Rubygame::MouseMotionEvent
+- Rubygame::MouseUpEvent
+- Rubygame::QuitEvent
+
+You will also want to acquaint yourself with these more minor event types:
+- Rubygame::ActiveEvent
+- Rubygame::ResizeEvent
+- Rubygame::ExposeEvent
+
+Finally, familiarize yourself with:
+- Rubygame::TTF and Rubygame::SFont classes for rendering text
+- Rubygame::Image module for loading and saving image files
+- Rubygame::Draw and Rubygame::Transform modules for "special effects"
+- Rubygame::Time module for controlling framerate and pausing program execution
+- Rubygame::Sprites module for easy-to-use, yet highly flexible on-screen objects
+- Rubygame::GL module for hardware-accelerated 3D graphics with OpenGL.
+
+There are several sample applications in the rubygame/samples/ directory
+packaged with Rubygame which can also help you get started.

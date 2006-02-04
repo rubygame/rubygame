@@ -10,26 +10,28 @@
 
  Rubygame was born out of a need (specifically, MY need) for a clean, 
  convenient Ruby-to-SDL binding (for more information, see the FAQ on the
- webpage: http://rubygame.seul.org/faq.html). If Rubygame isn't your cup of
+ webpage: http://rubygame.seul.org/faq.html). If rubygame isn't your cup of
  tea, you might try two other Ruby-to-SDL bindings, Ruby/SDL and RUDL.
 
  Many of the tutorials and examples for pygame will work with 
- Rubygame, after some minor modification, so I encourage you to 
- consult those as well.
+ rubygame (after some minor modification) so I encourage you to 
+ consult those as well. Pygame's 'chimp' tutorial example has been
+ translated to rubygame, with differences noted in the comments. See
+ 'chimp.rb' in the samples directory packaged with rubygame.
 
  Rubygame is being programmed to be modular, meaning you can pick
  and choose which parts to use. For example, if you don't need
- TrueType font support, SDL_ttf is not required to compile Rubygame.
+ TrueType font support, SDL_ttf is not required to compile rubygame.
  Additionally, it is possible for a game to detect at run-time which
  features are present, and behave differently (for example, disabling
  optional features).
 
- Further, Rubygame is (or will be) multi-tiered, meaning that you can
- access Rubygame's functionality on a number of levels, each level
- being built on the level below it. At the lowest level, Rubygame is
- essentially a Ruby interface to SDL. At higher levels, Rubygame 
+ Further, rubygame is (or will be) multi-tiered, meaning that you can
+ access rubygame's functionality on a number of levels, each level
+ being built on the level below it. At the lowest level, rubygame is
+ essentially a Ruby interface to SDL. At higher levels, rubygame 
  provides sprite classes, event queues, etc. At still higher levels,
- Rubygame might (in the future) provide features like a simple physics
+ rubygame might (in the future) provide features like a simple physics
  model or animation classes. Each higher level is closer to a complete
  game, but is also less flexible.
 
@@ -41,7 +43,7 @@
  affect the API will be marked by a patch version number increment (e.g.
  1.0 to 1.0.1).
 
- If you would like to help make Rubygame better, please send me comments via
+ If you would like to help make rubygame better, please send me comments via
  email (address at bottom of file)!
 
  === Links
@@ -70,9 +72,9 @@
  (i.e. not Gentoo or LFS) you will also need the "dev" packages
  of ruby, SDL, SDL_gfx, SDL_image, and SDL_ttf.
 
- At this time, Rubygame is only known to work on GNU/Linux.
+ At this time, rubygame is only known to work on GNU/Linux.
  MacOSX and (eventually) Windows ports are likely. If you want to use
- Rubygame on either of those platforms, please send me an email (address
+ rubygame on either of those platforms, please send me an email (address
  at bottom of file) and tell me, so I can guage interest!
 
  == Install
@@ -118,18 +120,18 @@
  During the 'config' phase, you can pass any of these additional arguments
  like so: "ruby setup.rb config -- --arg val --arg val"
 
- --with-gfx::      (bool, default: yes)
-                   Compile Rubygame with SDL_gfx support? This is required for
-                   'Draw' and 'Transform' modules to work (with the exception
-                   of the Transform.flip method, which does not require it.)
 
- --with-image::    (bool, default: yes)
-                   Compile Rubygame with SDL_image support? This is required
-                   for the Image.load() method to work.
+ --cflags::        (string, default: "-Wall")
+                   Specify flags to pass to the C compiler when compiling
+                   the source. If you use --no-sdl-config, you will probably
+                   have to use this flag.
 
- --with-ttf::      (bool, default: yes)
-                   Compile Rubygame with SDL_ttf support? This is required
-                   for the TTF class to work.
+ --enable-opengl:: (bool, default: yes)
+                   Compile the GL module to allow rubygame to work alongside
+                   OpenGL to provide hardware-accelerated three-dimensional
+                   graphics. Please note that rubygame does not provide any
+                   OpenGL functionality, it merely allows the Screen to work
+                   as OpenGL's framebuffer.
 
  --include-path::  (path)
                    A colon-separated list of directory paths to check for C 
@@ -143,10 +145,33 @@
                    `sdl-config --libs`. Use this to help the compiler find
                    libraries installed in unusual places.
 
+ --libs::          (string)
+                   Specify flags to pass to the C linker when linking compiled
+                   source. If you use --no-sdl-config, you will probably
+                   have to use this flag.
+
  --no-sdl-config:: (bool, default: no)
                    Skip invoking `sdl-config` to get compiler flags or 
                    include/library paths. Only use this if you know what you're
                    doing!
+
+ --sdl-config::    (string, default: "sdl-config")
+                   Specify an alternate command to use when trying to find
+                   compiler and linker flags.
+
+ --with-gfx::      (bool, default: yes)
+                   Compile Rubygame with SDL_gfx support? This is required for
+                   'Draw' and 'Transform' modules to work (with the exception
+                   of the Transform.flip method, which does not require it.)
+
+ --with-image::    (bool, default: yes)
+                   Compile Rubygame with SDL_image support? This is required
+                   for the Image.load() method to work.
+
+ --with-ttf::      (bool, default: yes)
+                   Compile Rubygame with SDL_ttf support? This is required
+                   for the TTF class to work.
+
 
  == Usage
  
