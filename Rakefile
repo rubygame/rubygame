@@ -17,7 +17,7 @@ spec = Gem::Specification.new do |s|
 
 	candidates = Dir.glob("{lib,ext,samples,doc}/**/*")
 	s.files    = candidates.delete_if do |item|
-		item.include?("svn") || item.include?("rdoc")
+		item.include?("svn")
 	end
 
 	s.require_paths = ["lib","ext"]
@@ -37,7 +37,9 @@ Rake::RDocTask.new do |rd|
   rd.main = "Rubygame"
   rd.title = "Rubygame Documentation"
   rd.rdoc_files.include("lib/rubygame/*.rb",\
-												"ext/rubygame/*.c")
+												"ext/rubygame/*.c",\
+                        "ext/rubygame/extconf.rb",\
+                        "doc/*.rdoc")
 end
 
 desc "Configure the extension for compilation."
