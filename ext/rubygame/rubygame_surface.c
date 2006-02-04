@@ -283,13 +283,15 @@ VALUE rbgm_surface_set_alpha(int argc, VALUE *argv, VALUE self)
 	{
 		case 2: flags = NUM2INT(argv[1]);
 			/* no break */
-		case 1:;
+		case 1: 
+      {
 			int temp;
 			temp = NUM2INT(argv[0]);
 			if(temp<0) alpha = 0;
 			else if(temp>255) alpha = 255;
 			else alpha = (Uint8) temp;
 			break;
+      }
 		default:
 			rb_raise(rb_eArgError,\
 				"Wrong number of args to set mode (%d for 1)",argc);
@@ -374,12 +376,19 @@ VALUE rbgm_surface_set_colorkey( int argc, VALUE *argv, VALUE self)
 	return self;
 }
 
+/* Apparently it is not desirable to define these functions when
+ * using Micrsoft Visual C.
+ */
+#ifndef _MSC_VER
+
 static inline int max(int a, int b) {
   return a > b ? a : b;
 }
 static inline int min(int a, int b) {
   return a > b ? b : a;
 }
+
+#endif
 
 /* 
  *  call-seq:
@@ -401,9 +410,6 @@ static inline int min(int a, int b) {
  */
 VALUE rbgm_surface_blit(int argc, VALUE *argv, VALUE self)
 {
-	if(argc < 2 || argc > 3)
-		rb_raise( rb_eArgError,"Wrong number of arguments to blit (%d for 2)",argc);
-
 	int left, top, right, bottom;
 	int blit_x,blit_y,blit_w,blit_h;
 	//int dest_x,dest_y,dest_w,dest_h;
@@ -411,6 +417,11 @@ VALUE rbgm_surface_blit(int argc, VALUE *argv, VALUE self)
 	VALUE returnrect;
 	SDL_Surface *src, *dest;
 	SDL_Rect *src_rect, *blit_rect;
+
+	if(argc < 2 || argc > 3)
+		rb_raise( rb_eArgError,"Wrong number of arguments to blit (%d for 2)",argc);
+
+
 	Data_Get_Struct(self, SDL_Surface, src);
 	Data_Get_Struct(argv[0], SDL_Surface, dest);
 

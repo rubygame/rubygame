@@ -586,10 +586,12 @@ void draw_polygon(VALUE target, VALUE points, VALUE rgba, int aa, int fill)
   VALUE each_point;
   int length,loop;
   Uint8 r,g,b,a;
+  Sint16 *x, *y;
 
   /* separate points into arrays of x and y values */
   length = RARRAY(points)->len;
-  Sint16 x[ length ], y[ length ];
+  x = alloca(sizeof (Sint16) * length);
+  y = alloca(sizeof (Sint16) * length);
 
   for(loop=0;loop<length;loop++)
   {

@@ -376,9 +376,8 @@ VALUE rbgm_ttf_render(int argc, VALUE *argv, VALUE self)
 		if(argc>3) /* background color provided */	
 		{
 			/* remove colorkey, set color index 0 to background color */
-			SDL_Color colors[] = {back};
 			surf = TTF_RenderText_Solid(font,StringValuePtr(argv[0]),fore);
-			SDL_SetColors(surf,colors,0,1);
+			SDL_SetColors(surf,&back,0,1);
 			SDL_SetColorKey(surf,0,0);
 		}
 		else /* no background color */

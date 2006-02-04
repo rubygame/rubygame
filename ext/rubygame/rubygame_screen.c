@@ -302,13 +302,14 @@ VALUE rbgm_screen_updaterects(VALUE self, VALUE array_rects)
   int i, num_rects;
   VALUE each_rect;
   SDL_Surface *screen;
+  SDL_Rect **rects;
 
   /* unwrap the Screen instance from self (VALUE) */
   Data_Get_Struct(self,SDL_Surface,screen);
 
   /* prepare an (uninitialized) array of Rects */
   num_rects = RARRAY(array_rects)->len;
-  SDL_Rect *rects[num_rects];
+  rects = alloca(sizeof (SDL_Rect*) * num_rects);
 
   /* initialize the array of Rects from array_rects */
   for( i=0; i < num_rects; i++ )
