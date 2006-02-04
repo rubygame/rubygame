@@ -1,7 +1,20 @@
 #!/usr/bin/env ruby
 
+# This demonstrates the use of ruby-opengl alongside rubygame to produce
+# hardware-accelerated three-dimensional graphics. 
+#
+# Please note that rubygame itself does not perform any OpenGL functions,
+# it only allows ruby-opengl to use the Screen as its viewport. You MUST
+# have ruby-opengl installed to run this demo!
+
 require 'rubygame'
-require__ 'opengl'
+
+begin
+  require 'opengl'
+rescue LoadError
+  puts "ATTENTION: This demo requires the opengl extension for ruby."
+  raise
+end
 
 WIDE = 640
 HIGH = 480
@@ -109,11 +122,10 @@ catch(:rubygame_quit) do
 					throw :rubygame_quit 
 				when Rubygame::K_Q
 					throw :rubygame_quit 
-				when Rubygame::QuitEvent
-					puts "Quitting!"
-					throw :rubygame_quit
-				end
-			end
+        end
+      when Rubygame::QuitEvent
+        throw :rubygame_quit
+      end
 		end
 
     GL.ClearColor(0.0, 0.0, 0.0, 1.0);
