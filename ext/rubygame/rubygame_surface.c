@@ -305,7 +305,7 @@ VALUE rbgm_surface_set_alpha(int argc, VALUE *argv, VALUE self)
 
 /*
  *  call-seq:
- *     Rubygame::Surface#colorkey  ->  [r,g,b]  or  nil
+ *     colorkey  ->  [r,g,b]  or  nil
  *
  *  Return the colorkey of the surface in the form [r,g,b] (or +nil+ if there
  *  is no key). The colorkey of a surface is the exact color which will be
