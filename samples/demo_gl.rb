@@ -28,7 +28,7 @@ Rubygame::GL.set_attrib(Rubygame::GL::DEPTH_SIZE, 16)
 Rubygame::GL.set_attrib(Rubygame::GL::DOUBLEBUFFER, 1)
 
 Rubygame::Screen.set_mode([WIDE,HIGH], 16, [Rubygame::OPENGL])
-queue = Rubygame::Queue.instance
+queue = Rubygame::EventQueue.new()
 clock = Rubygame::Time::Clock.new(60)
 
 ObjectSpace.garbage_collect
@@ -114,7 +114,7 @@ angle = 0
 
 catch(:rubygame_quit) do
 	loop do
-		queue.get().each do |event|
+		queue.each do |event|
 			case event
 			when Rubygame::KeyDownEvent
 				case event.key
