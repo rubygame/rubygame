@@ -24,7 +24,6 @@
 
 extern void Rubygame_Init_Event();
 extern VALUE cEvent;
-extern VALUE cQueue;
 extern VALUE cActiveEvent;
 extern VALUE cKeyDownEvent;
 extern VALUE cKeyUpEvent;
@@ -44,6 +43,6 @@ extern VALUE convert_active(Uint8);
 extern VALUE convert_keymod(SDLMod);
 extern VALUE convert_mousebuttons(Uint8);
 extern VALUE rbgm_convert_sdlevent(SDL_Event);
-extern VALUE rbgm_queue_getsdl(VALUE);
+extern VALUE rbgm_fetchevents(VALUE);
 
 #endif

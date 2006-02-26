@@ -23,7 +23,6 @@
 
 void Rubygame_Init_Event();
 VALUE cEvent;
-VALUE cQueue;
 VALUE cActiveEvent;
 VALUE cKeyDownEvent;
 VALUE cKeyUpEvent;
@@ -271,16 +270,21 @@ VALUE rbgm_convert_sdlevent( SDL_Event ev )
 
 /* 
  *  call-seq:
- *    get_sdl -> [Event, ...]
+ *    fetch_sdl_events -> [Event, ...]
  *
- *  (This private method is intended for internal use, but you might need
- *  to worry about it if you extend Queue.)
- *
- *  Retrieves all pending events from SDL's event buffer and converts them
+ *  Retrieves all pending events from SDL's event stack and converts them
  *  into Rubygame Event objects. Returns an Array of all the events, in
  *  the order they were read.
+ *
+ *  This method is used by the EventQueue class, so don't call it if you are
+ *  using EventQueue for event management! If you do, the EventQueue will not
+ *  receive all the events, because they will have been removed from SDL's
+ *  event stack by this method.
+ *
+ *  However, if you aren't using EventQueue, you can safely use this method
+ *  to make your own event management system.
  */
-VALUE rbgm_queue_getsdl(VALUE self)
+VALUE rbgm_fetchevents(VALUE self)
 {
   SDL_Event event;
   VALUE event_array;
@@ -296,7 +300,7 @@ VALUE rbgm_queue_getsdl(VALUE self)
 }
 
 /*--
- *  The event module documentation is in rubygame/lib/rubygame/event.rb
+ *  The event documentation is in rubygame/lib/rubygame/event.rb
  *++
  */
 void Rubygame_Init_Event()
@@ -306,11 +310,7 @@ void Rubygame_Init_Event()
   mRubygame = rb_define_module("Rubygame");
 #endif
 
-
-  /* Define the Queue class and the get_sdl method */
-  /* The rest of the methods are defined in event.rb */
-  cQueue = rb_define_class_under(mRubygame,"Queue",rb_cObject);
-  rb_define_private_method(cQueue,"get_sdl",rbgm_queue_getsdl,0);
+  rb_define_singleton_method(mRubygame, "fetch_sdl_events",rbgm_fetchevents,0);
 
   /* Define a plethora of event types! */
   cEvent =        rb_define_class_under(mRubygame,"Event",rb_cObject);

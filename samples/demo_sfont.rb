@@ -6,25 +6,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 require "rubygame"
-
-def wait_for_keypress(queue)
-    catch :keypress do
-        loop do
-            queue.get.each do |event|
-                case(event)
-                    when Rubygame::QuitEvent
-                        throw :rubygame_quit
-                    when Rubygame::KeyDownEvent
-                        if event.key == Rubygame::K_ESCAPE
-                            throw :rubygame_quit
-                        else
-                            throw :keypress
-                        end
-                end
-            end
-        end
-    end
-end
+include Rubygame
 
 def main(*args)
 	if args.length < 1
@@ -39,11 +21,13 @@ def main(*args)
 	end
 
 	catch :rubygame_quit do
-		screen = Rubygame::Screen.set_mode([700,400])
-		queue = Rubygame::Queue.instance()
+		screen = Screen.set_mode([700,400])
+		queue = EventQueue.new()
+    queue.filter = [ActiveEvent,MouseMotionEvent,MouseUpEvent,MouseDownEvent]
+
 
 		screen.set_caption("SFont Test (%s)"%args[0])
-		font = Rubygame::SFont.new(args[0])
+		font = SFont.new(args[0])
 		renders = []
 		renders << font.render("This is: %s"%args[0])
 		renders << font.render("I say, \"I love pie!\"")
@@ -58,7 +42,7 @@ def main(*args)
 		end
 		screen.update()
 
-		wait_for_keypress(queue)
+		queue.wait()
 	end
 end
 

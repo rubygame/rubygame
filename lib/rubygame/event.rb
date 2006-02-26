@@ -20,10 +20,12 @@
 module Rubygame
 
 	# List of all Rubygame hardware event classes. *Do not modify!*
-	ALL_EVENT_CLASSES = [ActiveEvent, KeyDownEvent, KeyUpEvent,\
+	SDL_EVENTS = [ActiveEvent, KeyDownEvent, KeyUpEvent,\
 		MouseMotionEvent,MouseDownEvent,MouseUpEvent,JoyAxisEvent,\
 		JoyBallEvent, JoyHatEvent,JoyDownEvent, JoyUpEvent,\
 		ResizeEvent, QuitEvent]
+  
+  ALL_RUBYGAME_EVENTS = SDL_EVENTS # backwards compat, for now.
 
 	# Converts a keyboard symbol (keysym) into a human-readable text string.
 	# If either Shift key was being pressed, alphanumeric or punctuation keys 
@@ -39,8 +41,9 @@ module Rubygame
 		end
 	end
 
-	# The parent class for all event classes. The Queue will reject all
-	# objects who do not have this class as a parent!
+	# The parent class for all event classes. You can make custom event classes,
+  # if desired; inheriting this class is not necessary, but makes it easier
+  # to check if an object is an event or not.
 	class Event
 	end
 
