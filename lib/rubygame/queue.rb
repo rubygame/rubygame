@@ -1,6 +1,6 @@
 #--
 #	Rubygame -- Ruby bindings to SDL to facilitate game creation
-#	Copyright (C) 2004-2005  John 'jacius' Croisant
+#	Copyright (C) 2004-2006  John 'jacius' Croisant
 #
 #	This library is free software; you can redistribute it and/or
 #	modify it under the terms of the GNU Lesser General Public
@@ -159,5 +159,133 @@ module Rubygame
     end
 
 	end # class EventQueue
+
+
+  # A mixin module to extend EventQueue with the ability to 'deliver' specific
+  # types of events to subscribed objects, a la a mailing list. Each object
+  # must be subscribed for the types (classes) of events it wishes to receive;
+  # then, when the ForwardingQueue receives an event of that type, it will
+  # push it onto the subscriber objects. See #subscribe for more information.
+  # 
+  # Please note that if you extend an already-existing EventQueue object
+  # with this mixin module (rather than including it in a class), you must
+  # call #setup before using the object. This will create the necessary
+  # internal variables for the MailQueue.
+  # 
+  module MailQueue
+    attr_accessor :autodeliver
+
+    # Create a new MailQueue object. If +autodeliver+ is true, the queue
+    # will automatically deliver events after #push; otherwise, you must
+    # call #deliver to deliver all events on the queue.
+    def initialize(autodeliver=true,*args)
+      setup(autodeliver)
+      super(*args)
+    end
+
+    # Create the necessary internal variables for 
+    def setup(autodeliver=true)
+      @subscribe = Hash.new
+      @autodeliver = autodeliver
+    end
+
+    # Returns an Array of all event classes which have at least one subscribeed
+    # client object.
+    def list
+      @subscribe.collect { |k, v|  
+        (v.length > 0) ? k : nil  rescue NoMethodError nil
+      }.compact
+    end
+
+    # Subscribe +client+ to receive events that match +klass+.
+    # 
+    # After the client object has been subscribed, the MailQueue will
+    # push along any event for which "klass === event" is true. This usually
+    # means that the event is an instance of klass or one of klass's child
+    # classes; however, note that klass may have changed its own #=== operator
+    # to have different behavior, so this is not always the case.
+    #
+    # Important: the MailQueue uses the client's #push method to deliver
+    # events! If the client does not have such a method, MailQueue will
+    # silently catch the error and move on to the next client.
+    # 
+    # A client object may be subscribed for many different types of events
+    # simultaneously, and more than one client object may be subscribed to
+    # any type of event (in which case each object will receive the event).
+    # A client may also be subscribed multiple times for the same type (in
+    # which case it will receive duplicate events). Likewise, the client will
+    # receive duplicates if it is subscribed to multiple classes which share
+    # ancestry, for example Numeric and Float.
+    # 
+    # If a client wishes to receive ALL types of events, it can subscribe to
+    # Object, which is a parent class of all objects.
+    # 
+    # If the queue's @autodeliver is true, it will deliver events to
+    # subscribers immediately after they are posted, rather than waiting for
+    # #deliver to be called.
+    def subscribe(client,klass)
+      @subscribe[klass] << client
+    rescue NoMethodError
+      @subscribe[klass] = [client] if @subscribe[klass].nil?
+    ensure
+      return  
+    end
+
+    # Returns true if +client+ is currently subscribed to receive events
+    # of type +klass+.
+    def subscribed?(client,klass)
+      return true if @subscribe[klass].include?(client)  rescue NoMethodError
+      return false
+    end
+
+    # Unsubscribes the client to stop receiving events of type +klass+.
+    # It is safe (no effect) to unsubscribe for an event type you are not
+    # subscribeed to receive.
+    def unsubscribe(client,klass)
+      @subscribe[klass] -= [client]  rescue NoMethodError
+    ensure
+      return
+    end
+
+    # This private method is used by #deliver to do the real work.
+    def deliver_event(event)
+      @subscribe.each_pair { |klass,clients|
+        begin
+          if klass === event
+            clients.each { |client|
+              client.push(event) rescue NoMethodError
+            } 
+          end
+        rescue NoMethodError
+        end
+      }
+    end
+    private :deliver_event
+
+    # Deliver each pending event to objects which are subscribed to its
+    # type of event. Every client object MUST have a #push method, or
+    # events can't be delivered to it, and it will become very lonely!
+    # 
+    # The queue will be cleared of all events after all deliveries are done.
+    def deliver()
+      each() { |event|  deliver_event(event) }
+      clear()
+    end
+
+    # Append events to the queue. If @autodeliver is enabled, all events
+    # on the queue will be delivered to subscribed client objects afterwards.
+    def push(*args)
+      # Temporarily disable autofetch to avoid infinite loop
+      a, @autofetch = @autofetch, false
+      # Fetch once to emulate autofetch, if it was enabled before
+      fetch_sdl_events() if a
+
+      super
+      deliver() if @autodeliver
+
+      @autofetch = a
+      return
+    end
+  end
 
 end # module Rubygame
