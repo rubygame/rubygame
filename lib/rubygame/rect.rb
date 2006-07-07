@@ -456,7 +456,7 @@ class Rect < Array
 	# the *index* of the first element which is a Rect that collides with
 	# the caller.
 	def collide_array(array_rects)
-		for i in 0..(array_rects.length)
+		for i in (0...(array_rects.length))
 			if array_rects[i].collide_rect?(self)
 				return i
 			end
@@ -469,7 +469,7 @@ class Rect < Array
 	# that collides with the caller.
 	def collide_array_all(array_rects)
 		indexes = []
-		for i in (0..(array_rects.length))
+		for i in (0...(array_rects.length))
 			if array_rects[i].collide_rect?(self)
 				indexes += [i]
 			end
@@ -593,10 +593,10 @@ class Rect < Array
 		left, top, right, bottom = self.normalize
 		rect = Rect.new_from_object(rect).normalize
 
-		left = min(left,rect.left)
-		top = min(top,rect.top)
-		right = max(right,rect.right)
-		bottom = max(bottom,rect.bottom)
+		left = [left,rect.left].min
+		top = [top,rect.top].min
+		right = [right,rect.right].max
+		bottom = [bottom,rect.bottom].max
 
 		self[0..3] = left, top, right - left, bottom-top
 		return self
@@ -612,10 +612,10 @@ class Rect < Array
 		left, top, right, bottom = self.normalize
 		array_rects.each do |r|
 			r = Rect.new_from_object(r).normalize
-			left = min(left,r.left)
-			top = min(top,r.top)
-			right = max(right,r.right)
-			bottom = max(bottom,r.bottom)
+			left = [left,r.left].min
+			top = [top,r.top].min
+			right = [right,r.right].max
+			bottom = [bottom,r.bottom].max
 		end
 		self[0..3] = left, top, right - left, bottom-top
 		return self
