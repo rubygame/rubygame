@@ -655,6 +655,70 @@ VALUE rbgm_surface_pixels( VALUE self )
 	return rb_str_new(surf->pixels, (long)surf->pitch * surf->h);
 }
 
+/*
+ *  call-seq:
+ *    clip  ->  Rect
+ *
+ *  Return the clipping area for this Surface. See also #cliprect=.
+ *
+ *  The clipping area of a Surface is the only part which can be drawn upon
+ *  by other Surface's #blits. By default, the clipping area is the entire area
+ *  of the Surface.
+ */
+VALUE rbgm_surface_get_clip( VALUE self )
+{
+  SDL_Rect rect;
+	SDL_Surface *surf;
+	Data_Get_Struct(self, SDL_Surface, surf);
+
+  SDL_GetClipRect(surf, &rect);
+
+	return rb_funcall(cRect,rb_intern("new"),4,
+                    INT2NUM(rect.x),INT2NUM(rect.y),
+                    INT2NUM(rect.w),INT2NUM(rect.h));
+}
+
+/*
+ *  call-seq:
+ *    clip = Rect or nil
+ *
+ *  Set the current clipping area of the Surface. See also #cliprect.
+ *
+ *  The clipping area of a Surface is the only part which can be drawn upon
+ *  by other Surface's #blits. The clipping area will be clipped to the edges
+ *  of the surface so that the clipping area for a Surface can never fall
+ *  outside the edges of the Surface.
+ *
+ *  By default, the clipping area is the entire area of the Surface.
+ *  You may set clip to +nil+, which will reset the clipping area to cover
+ *  the entire Surface.
+ */
+VALUE rbgm_surface_set_clip( VALUE self, VALUE clip )
+{
+  SDL_Rect *rect;
+	SDL_Surface *surf;
+	Data_Get_Struct(self, SDL_Surface, surf);
+
+
+  if(clip == Qnil)
+  {
+    SDL_SetClipRect(surf,NULL);
+  }
+  else
+  { 
+    rect = make_rect(\
+                     NUM2INT(rb_ary_entry(clip,0)),\
+                     NUM2INT(rb_ary_entry(clip,1)),\
+                     NUM2INT(rb_ary_entry(clip,2)),\
+                     NUM2INT(rb_ary_entry(clip,3))\
+                     );
+
+    SDL_SetClipRect(surf,rect);
+  }
+
+  return self;
+}
+
 void Rubygame_Init_Surface()
 {
 
@@ -682,4 +746,6 @@ void Rubygame_Init_Surface()
 	rb_define_method(cSurface,"fill",rbgm_surface_fill,-1);
 	rb_define_method(cSurface,"get_at",rbgm_surface_getat,-1);
   rb_define_method(cSurface,"pixels",rbgm_surface_pixels,0);
+  rb_define_method(cSurface,"clip",rbgm_surface_get_clip,0);
+  rb_define_method(cSurface,"clip=",rbgm_surface_set_clip,1);
 }
