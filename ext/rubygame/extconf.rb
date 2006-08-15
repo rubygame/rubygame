@@ -16,7 +16,8 @@ require 'getoptlong'
 # --cflags          string    Supplementary flags to pass to C compiler.
 # --libs            string    Supplementary flags to pass to C linker.
 # --sdl-config      string    Command to use as 'sdl-config' (see below).
-# --no-sdl-config   bool      Do not attempt to use 'sdl-config'.
+# --no-sdl-config   none      Do not attempt to use 'sdl-config'.
+# --debug           none      Compile rubygame core with debugging symbols.
 #
 # Bool args can be t/true/y/yes to enable, or f/false/n/no to disable.
 # Except for --no-sdl-config, all bools default to true if the flag is not
@@ -74,7 +75,8 @@ getopts = GetoptLong.new(
   ['--cflags',         GetoptLong::REQUIRED_ARGUMENT],
   ['--libs',           GetoptLong::REQUIRED_ARGUMENT],
   ['--sdl-config',     GetoptLong::REQUIRED_ARGUMENT],
-  ['--no-sdl-config',  GetoptLong::NO_ARGUMENT] 
+  ['--no-sdl-config',  GetoptLong::NO_ARGUMENT],
+  ['--debug',          GetoptLong::NO_ARGUMENT]
 )
 
 # Option default values
@@ -88,7 +90,8 @@ OPTS = {
   :cflags        => "-Wall",
   :libs          => "",
   :no_sdl_config => false,
-  :sdl_config    => "sdl-config"
+  :sdl_config    => "sdl-config",
+  :debug         => false
 }
 
 # Parse options
@@ -114,11 +117,17 @@ getopts.each do |opt, arg|
 		OPTS[:no_sdl_config] = parse_truth(arg, true)
 	when '--sdl-config'
 		OPTS[:sdl_config] = arg
+  when '--debug'
+    OPTS[:debug] = true
 	end
 end
 
 $CFLAGS += " %s "%[OPTS[:cflags]]
 $LOCAL_LIBS += " %s "%[OPTS[:libs]]
+
+if OPTS[:debug]
+  $CFLAGS += " -g "
+end
 
 if PLATFORM =~ /win32/i
   have_library(SDL)
