@@ -26,50 +26,9 @@
 
 void Rubygame_Init_Image();
 VALUE mImage;
-VALUE rbgm_image_version(VALUE);
 VALUE rbgm_image_savebmp(VALUE, VALUE, VALUE);
 
-#ifdef HAVE_SDL_IMAGE_H
-#include "SDL_image.h"
 VALUE rbgm_image_load(VALUE, VALUE);
-#endif
-
-/*--
- * Always try to define these if they aren't already.
- * Image.version() will return [0,0,0] if SDL_image is not present.
- *++
- */
-#ifndef SDL_IMAGE_MAJOR_VERSION
-#define SDL_IMAGE_MAJOR_VERSION 0
-#endif
-
-#ifndef SDL_IMAGE_MINOR_VERSION
-#define SDL_IMAGE_MINOR_VERSION 0
-#endif
-
-#ifndef SDL_IMAGE_PATCHLEVEL
-#define SDL_IMAGE_PATCHLEVEL 0
-#endif
-
-/*
- *  call-seq:
- *    version  ->  [Integer, Integer, Integer]
- *
- *  Return the major, minor, and patch numbers for the version of SDL_image 
- *  that Rubygame was compiled with. If Rubygame was not compiled with
- *  SDL_image, all version numbers will be 0 (zero), and you should not attempt
- *  to use #load.
- *
- *  This allows for more flexible detection of the capabilities of the
- *  base library, SDL_image. See also #usable?.
- */
-VALUE rbgm_image_version(VALUE module)
-{ 
-  return rb_ary_new3(3,
-					 INT2NUM(SDL_IMAGE_MAJOR_VERSION),
-					 INT2NUM(SDL_IMAGE_MINOR_VERSION),
-					 INT2NUM(SDL_IMAGE_PATCHLEVEL));
-}
 
 /* Vanilla SDL function, doesn't need SDL_image. */
 
@@ -171,25 +130,22 @@ void Rubygame_Init_Image()
 	mRubygame = rb_define_module("Rubygame");
 #endif
 
-	/* Image module -- exists regardless of SDL_image presence*/
 	mImage = rb_define_module_under(mRubygame,"Image");
-	rb_define_module_function(mImage,"version",rbgm_image_version,0);
 
 	/* This one doesn't actually need SDL_image, only vanilla SDL */
 	rb_define_module_function(mImage,"savebmp",rbgm_image_savebmp,2);
 
 #ifdef HAVE_SDL_IMAGE_H
 
+  rb_hash_aset(rb_ivar_get(mRubygame,rb_intern("VERSIONS")),
+               ID2SYM(rb_intern("sdl_image")),
+               rb_ary_new3(3,
+                           INT2NUM(SDL_IMAGE_MAJOR_VERSION),
+                           INT2NUM(SDL_IMAGE_MINOR_VERSION),
+                           INT2NUM(SDL_IMAGE_PATCHLEVEL)));
+
 	/* Image methods */
-	rb_define_module_function(mImage,"usable?",rbgm_usable,0); // in rubygame.c
 	rb_define_module_function(mImage,"load",rbgm_image_load,1);
 
-#else
-
-	/* Dummy methods */
-	rb_define_module_function(mImage,"usable?",rbgm_unusable,0);
-	rb_define_module_function(mImage,"load",rbgm_dummy,-1);
-
 #endif
-
 }

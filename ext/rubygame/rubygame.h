@@ -25,6 +25,10 @@
 #include <ruby.h>
 #include <stdio.h>
 
+#define RUBYGAME_MAJOR_VERSION 2
+#define RUBYGAME_MINOR_VERSION 0
+#define RUBYGAME_PATCHLEVEL 0
+
 /* General */
 extern VALUE mRubygame;
 extern VALUE eSDLError;

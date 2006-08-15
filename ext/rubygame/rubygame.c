@@ -117,6 +117,20 @@ void Init_rubygame()
 	cRect = rb_define_class_under(mRubygame,"Rect",rb_cArray);
 	eSDLError = rb_define_class_under(mRubygame,"SDLError",rb_eStandardError);
 
+  rb_define_const(mRubygame,"VERSIONS",rb_hash_new());
+  rb_hash_aset(rb_ivar_get(mRubygame,rb_intern("VERSIONS")),
+               ID2SYM(rb_intern("rubygame")),
+               rb_ary_new3(3,
+                           INT2NUM(RUBYGAME_MAJOR_VERSION),
+                           INT2NUM(RUBYGAME_MINOR_VERSION),
+                           INT2NUM(RUBYGAME_PATCHLEVEL)));
+  rb_hash_aset(rb_ivar_get(mRubygame,rb_intern("VERSIONS")),
+               ID2SYM(rb_intern("sdl")),
+               rb_ary_new3(3,
+                           INT2NUM(SDL_MAJOR_VERSION),
+                           INT2NUM(SDL_MINOR_VERSION),
+                           INT2NUM(SDL_PATCHLEVEL)));
+
 	//mKey = rb_define_module_under(mRubygame,"Key");
 	//mMouse = rb_define_module_under(mRubygame,"Mouse");
 

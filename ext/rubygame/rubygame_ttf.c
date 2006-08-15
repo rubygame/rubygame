@@ -22,30 +22,7 @@
 #include "rubygame_surface.h"
 
 void Rubygame_Init_TTF();
-
 VALUE cTTF;
-
-VALUE rbgm_ttf_version(VALUE);
-
-/*
- *  call-seq:
- *    version  ->  [Integer, Integer, Integer]
- *
- *  Return the major, minor, and patch numbers for the version of SDL_ttf 
- *  that Rubygame was compiled with. If Rubygame was not compiled with SDL_ttf,
- *  all version numbers will be 0 (zero), and you should not attempt to use
- *  the TTF class.
- *
- *  This allows for more flexible detection of the capabilities of the TTF
- *  class' base library, SDL_ttf. See also #usable?.
- */
-VALUE rbgm_ttf_version(VALUE module)
-{ 
-  return rb_ary_new3(3,
-					 INT2NUM(SDL_TTF_MAJOR_VERSION),
-					 INT2NUM(SDL_TTF_MINOR_VERSION),
-					 INT2NUM(SDL_TTF_PATCHLEVEL));
-}
 
 #ifdef HAVE_SDL_TTF_H
 
@@ -413,14 +390,19 @@ void Rubygame_Init_TTF()
 	mRubygame = rb_define_module("Rubygame");
 #endif
 
-	cTTF = rb_define_class_under(mRubygame,"TTF",rb_cObject);
-	rb_define_singleton_method(cTTF,"version",rbgm_ttf_version,0);
-
 #ifdef HAVE_SDL_TTF_H
 
-	/* SDL_TTF is available, so we will provide the real functions. */
+  rb_hash_aset(rb_ivar_get(mRubygame,rb_intern("VERSIONS")),
+               ID2SYM(rb_intern("sdl_ttf")),
+               rb_ary_new3(3,
+                           INT2NUM(SDL_TTF_MAJOR_VERSION),
+                           INT2NUM(SDL_TTF_MINOR_VERSION),
+                           INT2NUM(SDL_TTF_PATCHLEVEL)));
+
+
+	cTTF = rb_define_class_under(mRubygame,"TTF",rb_cObject);
+
 	rb_define_singleton_method(cTTF,"new",rbgm_ttf_new,-1);
-	rb_define_singleton_method(cTTF,"usable?",rbgm_usable,0); // in rubygame.c
 	rb_define_singleton_method(cTTF,"setup",rbgm_ttf_setup,0);
 	rb_define_singleton_method(cTTF,"quit",rbgm_ttf_quit,0);
 
@@ -442,17 +424,6 @@ void Rubygame_Init_TTF()
 	rb_define_method(cTTF,"descent",rbgm_ttf_descent,0);
 	rb_define_method(cTTF,"line_skip",rbgm_ttf_lineskip,0);
 	rb_define_method(cTTF,"render",rbgm_ttf_render,-1);
-
-#else
-
-	/* SDL_TTF is NOT available, so we will provide dummy functions. */
-	rb_define_singleton_method(cTTF,"new",rbgm_dummy,-1);
-	rb_define_singleton_method(cTTF,"usable?",rbgm_unusable,0);
-	rb_define_singleton_method(cTTF,"setup",rbgm_dummy,-1);
-	rb_define_singleton_method(cTTF,"quit",rbgm_dummy,-1);
-
-	rb_define_method(cTTF,"initialize",rbgm_dummy,-1);
-  /* We can skip the rest, because no TTF instances will ever be created. */
 
 #endif
 

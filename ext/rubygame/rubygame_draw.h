@@ -59,8 +59,6 @@ extern void Rubygame_Init_Draw();
 
 extern VALUE mDraw;
 
-extern VALUE rbgm_draw_version(VALUE);
-
 extern void draw_line(VALUE, VALUE, VALUE, VALUE, int);
 extern VALUE rbgm_draw_line(VALUE, VALUE, VALUE, VALUE, VALUE);
 extern VALUE rbgm_draw_aaline(VALUE, VALUE, VALUE, VALUE, VALUE);

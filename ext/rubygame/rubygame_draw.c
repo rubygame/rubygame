@@ -23,27 +23,6 @@
 
 void Rubygame_Init_Draw();
 VALUE mDraw;
-VALUE rbgm_draw_version(VALUE);
-
-/*
- *  call-seq:
- *    version  ->  [Integer, Integer, Integer]
- *
- *  Return the major, minor, and patch numbers for the version of SDL_gfx 
- *  that Rubygame was compiled with. If Rubygame was not compiled with SDL_gfx,
- *  all version numbers will be 0 (zero), and you should not attempt to use
- *  the Draw module.
- *
- *  This allows for more flexible detection of the capabilities of the Draw
- *  module's base library, SDL_gfx. See also #usable?.
- */
-VALUE rbgm_draw_version(VALUE module)
-{ 
-  return rb_ary_new3(3,
-           INT2NUM(SDL_GFXPRIMITIVES_MAJOR),
-           INT2NUM(SDL_GFXPRIMITIVES_MINOR),
-           INT2NUM(SDL_GFXPRIMITIVES_MICRO));
-}
 
 #ifdef HAVE_SDL_GFXPRIMITIVES_H
 
@@ -720,15 +699,18 @@ void Rubygame_Init_Draw()
 	mRubygame = rb_define_module("Rubygame");
 #endif
 
+#ifdef HAVE_SDL_GFXPRIMITIVES_H
+
+  rb_hash_aset(rb_ivar_get(mRubygame,rb_intern("VERSIONS")),
+               ID2SYM(rb_intern("sdl_gfx")),
+               rb_ary_new3(3,
+                           INT2NUM(SDL_GFXPRIMITIVES_MAJOR),
+                           INT2NUM(SDL_GFXPRIMITIVES_MINOR),
+                           INT2NUM(SDL_GFXPRIMITIVES_MICRO)));
+
   /* Draw module */
   mDraw = rb_define_module_under(mRubygame,"Draw");
 
-  rb_define_module_function(mDraw,"version",rbgm_draw_version,0);
-
-#ifdef HAVE_SDL_GFXPRIMITIVES_H
-
-  /* SDL_gfx is available, so we will provide the real functions. */
-  rb_define_module_function(mDraw,"usable?",rbgm_usable,0); // in rubygame.c
   rb_define_module_function(mDraw,"line",rbgm_draw_line,4);
   rb_define_module_function(mDraw,"aaline",rbgm_draw_aaline,4);
   rb_define_module_function(mDraw,"box",rbgm_draw_rect,4);
@@ -744,26 +726,6 @@ void Rubygame_Init_Draw()
   rb_define_module_function(mDraw,"polygon",rbgm_draw_polygon,3);
   rb_define_module_function(mDraw,"aapolygon",rbgm_draw_aapolygon,3);
   rb_define_module_function(mDraw,"filled_polygon",rbgm_draw_fillpolygon,3);
-
-#else
-
-  /* SDL_gfx is NOT available, so we will provide dummy functions. */
-  rb_define_module_function(mDraw,"usable?",rbgm_unusable,0);
-  rb_define_module_function(mDraw,"line",rbgm_dummy,-1);
-  rb_define_module_function(mDraw,"aaline",rbgm_dummy,-1);
-  rb_define_module_function(mDraw,"box",rbgm_dummy,-1);
-  rb_define_module_function(mDraw,"filled_box",rbgm_dummy,-1);
-  rb_define_module_function(mDraw,"circle",rbgm_dummy,-1);
-  rb_define_module_function(mDraw,"aacircle",rbgm_dummy,-1);
-  rb_define_module_function(mDraw,"filled_circle",rbgm_dummy,-1);
-  rb_define_module_function(mDraw,"ellipse",rbgm_dummy,-1);
-  rb_define_module_function(mDraw,"aaellipse",rbgm_dummy,-1);
-  rb_define_module_function(mDraw,"filled_ellipse",rbgm_dummy,-1);
-  rb_define_module_function(mDraw,"pie",rbgm_dummy,-1);
-  rb_define_module_function(mDraw,"filled_pie",rbgm_dummy,-1);
-  rb_define_module_function(mDraw,"polygon",rbgm_dummy,-1);
-  rb_define_module_function(mDraw,"aapolygon",rbgm_dummy,-1);
-  rb_define_module_function(mDraw,"filled_polygon",rbgm_dummy,-1);
 
 #endif
 

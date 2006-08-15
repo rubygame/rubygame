@@ -21,11 +21,26 @@
 #ifndef _RUBYGAME_IMAGE_H
 #define _RUBYGAME_IMAGE_H
 
+#ifdef HAVE_SDL_IMAGE_H
+#include "SDL_image.h"
+#endif
+
+#ifndef SDL_IMAGE_MAJOR_VERSION
+#define SDL_IMAGE_MAJOR_VERSION 0
+#endif
+
+#ifndef SDL_IMAGE_MINOR_VERSION
+#define SDL_IMAGE_MINOR_VERSION 0
+#endif
+
+#ifndef SDL_IMAGE_PATCHLEVEL
+#define SDL_IMAGE_PATCHLEVEL 0
+#endif
+
 extern void Rubygame_Init_Image();
 
 extern VALUE mImage;
 
-extern VALUE rbgm_image_version(VALUE);
 extern VALUE rbgm_image_load(VALUE, VALUE);
 extern VALUE rbgm_image_savebmp(VALUE, VALUE, VALUE);
 

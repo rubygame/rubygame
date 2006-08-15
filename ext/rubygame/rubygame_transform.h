@@ -51,8 +51,6 @@ extern void Rubygame_Init_Transform();
 
 extern VALUE mTrans;
 
-extern VALUE rbgm_transform_version(VALUE);
-
 extern VALUE rbgm_transform_rotozoom(int, VALUE*, VALUE);
 extern VALUE rbgm_transform_rotozoomsize(int, VALUE*, VALUE);
 

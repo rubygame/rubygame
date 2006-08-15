@@ -29,29 +29,7 @@ void Rubygame_Init_Transform();
 
 VALUE mTrans;
 
-VALUE rbgm_transform_version(VALUE);
-
 VALUE rbgm_transform_flip(int, VALUE*, VALUE);
-
-/*
- *  call-seq:
- *    version  ->  [Integer, Integer, Integer]
- *
- *  Return the major, minor, and micro numbers for the version of SDL_gfx 
- *  that Rubygame was compiled with. If Rubygame was not compiled with SDL_gfx,
- *  all version numbers will be 0 (zero), and you should not attempt to use
- *  the Transform module.
- *
- *  This allows for more flexible detection of the capabilities of the 
- *  Transform module's base library, SDL_gfx. See also #usable?.
- */
-VALUE rbgm_transform_version(VALUE module)
-{ 
-  return rb_ary_new3(3,
-                     INT2NUM(SDL_GFXPRIMITIVES_MAJOR),
-                     INT2NUM(SDL_GFXPRIMITIVES_MINOR),
-                     INT2NUM(SDL_GFXPRIMITIVES_MICRO));
-}
 
 #ifdef HAVE_SDL_ROTOZOOM_H
 
@@ -496,27 +474,15 @@ void Rubygame_Init_Transform()
 
   mTrans = rb_define_module_under(mRubygame,"Transform");
   rb_define_module_function(mTrans,"flip",rbgm_transform_flip,-1);
-  rb_define_module_function(mTrans,"version",rbgm_transform_version,0);
 
 #ifdef HAVE_SDL_ROTOZOOM_H
-
-  rb_define_module_function(mTrans,"usable?",rbgm_usable,0); // in rubygame.c
 
   rb_define_module_function(mTrans,"rotozoom",rbgm_transform_rotozoom,-1);
   rb_define_module_function(mTrans,"rotozoom_size",rbgm_transform_rzsize,-1);
   rb_define_module_function(mTrans,"zoom",rbgm_transform_zoom,-1);
   rb_define_module_function(mTrans,"zoom_size",rbgm_transform_zoomsize,-1);
 
-#else /* HAVE_SDL_ROTOZOOM_H */
-
-  /* SDL_TTF is NOT available, so we will provide dummy functions. */
-  rb_define_module_function(mTrans,"usable?",rbgm_unusable,0);
-
-  rb_define_module_function(mTrans,"rotozoom",rbgm_dummy,-1);
-  rb_define_module_function(mTrans,"rotozoom_size",rbgm_dummy,-1);
-  rb_define_module_function(mTrans,"zoom",rbgm_dummy,-1);
-  rb_define_module_function(mTrans,"zoom_size",rbgm_dummy,-1);
-#endif /* HAVE_SDL_ROTOZOOM_H */
+#endif
 }
 
 

@@ -41,7 +41,6 @@ extern void Rubygame_Init_TTF();
 
 extern VALUE cTTF;
 
-extern VALUE rbgm_ttf_version(VALUE);
 extern VALUE rbgm_ttf_setup(VALUE);
 extern VALUE rbgm_ttf_quit(VALUE);
 extern VALUE rbgm_ttf_new(int, VALUE*, VALUE);
