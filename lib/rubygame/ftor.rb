@@ -18,6 +18,8 @@
 #	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #++
 
+module Rubygame
+
 # Ftor ("Fake vecTOR"), a vector-like class for 2D position/movement.
 # 
 # (NB: See #angle for an important note about why angles appear to be the
@@ -356,4 +358,5 @@ class Ftor
 		@unit = nil
 		return self
 	end
+end
 end
