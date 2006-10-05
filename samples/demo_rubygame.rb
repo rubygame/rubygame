@@ -13,10 +13,7 @@ include Rubygame
 
 $stdout.sync = true
 
-puts "Rubygame.Init()..."
 Rubygame.init()
-#puts "Rubygame::Time.Init()..."
-#Rubygame::Time.init()
 
 puts "Creating queue and clock..."
 queue = EventQueue.new() # new EventQueue with autofetch
@@ -24,8 +21,9 @@ queue.filter = [MouseMotionEvent, ActiveEvent]
 clock = Rubygame::Time::Clock.new()
 clock.desired_fps = 100
 
-puts "Transform is usable? %s"%[Transform.usable?]
-puts "Draw is usable? %s"%[Draw.usable?]
+unless ($gfx_ok = (VERSIONS[:sdl_gfx] != nil))
+  raise "SDL_gfx is not available. Bailing out." 
+end
 
 class Panda
 	include Sprites::Sprite
@@ -101,24 +99,20 @@ class WobblyPanda < Panda
 	end
 end
 
-class PandaGroup < Sprites::Group
-	include Sprites::UpdateGroup
-end
+pandas = Sprites::Group.new
+pandas.extend(Sprites::UpdateGroup)
 
 # Create the SDL window
 screen = Screen.set_mode([320,240])
 screen.set_caption("Rubygame test","This is the icon title")
-puts "title: %s   icon title: %s"%screen.caption()
 screen.show_cursor = false;
-puts "cursor enabled?: %s"%screen.show_cursor?
 
 # Create the very cute panda objects!
 panda1 = SpinnyPanda.new(100,50)
 panda2 = ExpandaPanda.new(150,50)
 panda3 = WobblyPanda.new(200,50,0.5)
 
-# Put the pandas in a group
-pandas = PandaGroup.new
+# Put the pandas in a sprite group
 pandas.push(panda1,panda2,panda3)
 puts "pandas: %s"%pandas.inspect
 
@@ -132,7 +126,7 @@ print "Surf(a): %dx%d, "%a.size
 print "%d bpp. Flags: %d "%[a.depth,a.flags]
 print "Masks: [%d, %d, %d, %d]\n"%a.masks
 
-# Draw a bunch of shapes on it to test the drawing module
+# Draw a bunch of shapes on the new surface to try out the drawing module
 a.fill([70,70,255])
 rect1 = Rect.new([3,3,94,94])
 a.fill([40,40,1500],rect1)
@@ -171,12 +165,12 @@ Draw.aaellipse(background,[200,150],[30,25],[250,250,250])
 
 # Let's make some labels
 sfont = SFont.new("term16.png")
-sfont.render("Love pandas forever! <3").blit(background,[100,10])
+sfont.render("Love Pandas forever! <3").blit(background,[100,10])
 
 TTF.setup()
 ttfont = TTF.new("freesansbold.ttf",11)
-ttfrndr = ttfont.render("(this is a pizza?!?) -->",true,[250,250,250],[0,0,0])
-ttfrndr.blit(background,[100,200])
+ttfrndr = ttfont.render("(you call this a pizza?!?) -->",true,[250,250,250])
+ttfrndr.blit(background,[70,200])
 
 
 # Create another surface to test transparency blitting
