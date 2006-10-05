@@ -183,13 +183,13 @@ module Rubygame
       super(*args)
     end
 
-    # Create the necessary internal variables for 
+    # Create the necessary internal variables for the MailQueue.
     def setup(autodeliver=true)
       @subscribe = Hash.new
       @autodeliver = autodeliver
     end
 
-    # Returns an Array of all event classes which have at least one subscribeed
+    # Returns an Array of all event classes which have at least one subscribed
     # client object.
     def list
       @subscribe.collect { |k, v|  
@@ -240,7 +240,7 @@ module Rubygame
 
     # Unsubscribes the client to stop receiving events of type +klass+.
     # It is safe (no effect) to unsubscribe for an event type you are not
-    # subscribeed to receive.
+    # subscribed to receive.
     def unsubscribe(client,klass)
       @subscribe[klass] -= [client]  rescue NoMethodError
     ensure
@@ -287,5 +287,73 @@ module Rubygame
       return
     end
   end
+
+#   # Rewrite this blurb.
+#   # 
+#   # Like a MailQueue, but in addition to filtering by event class,
+#   # it can filter by value of event attributes. Essentially, this shifts
+#   # more of the work away from the object, and onto the queue.
+#   # 
+#   # E.g. an object might subscribe to receive KeyDownEvents whose
+#   # :key attribute == K_A, and would then be notified when the A key is
+#   # pressed, but not other keys.
+#   module SmartQueue
+#     include MailQueue
+
+#     def subscribe(client,klass,hash=nil)
+#       @subscribe[klass] << [client,hash]
+#     rescue NoMethodError
+#       @subscribe[klass] = [[client,nil]] if @subscribe[klass].nil?
+#     ensure
+#       return
+#     end
+
+#     # Returns true if +client+ is currently subscribed to receive events
+#     # of type +klass+.
+#     def subscribed?(client,klass,hash=nil)
+#       return true if @subscribe[klass].select { |pair|
+#         pair[0] == client and pair[1] == hash
+#       }.length > 0
+#     rescue NoMethodError
+#       return false
+#     end
+
+#     # Unsubscribes the client to stop receiving events of type +klass+.
+#     # It is safe (no effect) to unsubscribe for an event type you are not
+#     # subscribed to receive.
+#     def unsubscribe(client,klass,hash=nil)
+#       @subscribe[klass].reject! { |pair|
+#         pair[0] == client and pair[1] == hash
+#       } rescue NoMethodError
+#     ensure
+#       return
+#     end
+
+#     def deliver_event(event)
+#       begin
+#         e = event.dup
+#       rescue TypeError
+#         e = event
+#       end
+#       @subscribe.each_pair { |klass,clients|
+#         begin
+#           if klass === e
+#             clients.each_pair { |client,hash|
+#               good = true
+#               unless hash.nil?
+#                 hash.each_pair { |attribute, val|
+#                   good = false unless e.send(attribute) == val
+#                 }
+#               end
+#               if good
+#                 client.push(event) rescue NoMethodError
+#               end
+#             } 
+#           end
+#         rescue NoMethodError
+#         end
+#       }
+#     end
+#   end
 
 end # module Rubygame
