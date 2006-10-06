@@ -1,85 +1,81 @@
-Rubygame TODO
+See the most up-to-date version of this list at: 
+    http://rubygame.infogami.com/todo
 
-(I hope the contents of this file are at least partially-legible to English
- readers. No promises, though.)
+Notes to myself about rubygame work that I need to do. I hope it is somewhat intelligible to other people, but make no promises.
 
-Features:
-  - All these features are for later (post-1.0) versions
+---
 
-  - OpenGL (add a GL module with a few methods, ruby-opengl does the rest?)
-    - swap_buffers --> SDL_GL_SwapBuffers()
-    - set_attribute --> SDL_GL_SetAttribute()
-    - get_attribute --> SDL_GL_GetAttribute()
+### On the chopping block:
 
-  - Draw module: 
-    - add bezier curve
+- Next version (2.0.0) will break backwards API compatibility. Make the most of it.
 
-  - Sound/music playback (SDL_Sound, OpenAL?)
-    - SDL sound & mixer bindings first, then consider OpenAL also.
-    - Add CD playback? Maybe, but not a priority.
+- Screen#new will be an alias for #set_mode. Convenience trumps senseless pedanticism.
 
-  - Transform module:
-    - add hq2x, hq3x, hq4x -- http://www.hiend3d.com/hq3x.html
-    - image flipping with rotozoom -1 scale does not work. My fault or GFX's?
+- Draw, Transform, and Image module methods should be Surface methods. Draw, Transform, and Image modules to be removed.
 
+- Drop most cases of "you can pass N values or an Array or ...".
+  Convenience for the user is one thing, but it's not that hard to expand
+  an Array into multiple values [hint: method(*myarray)] and supporting
+  multiple ways of giving arguments muddies the code too much.
+  - Rect.new_from_object() should remain, though. It's supposed to be that way.
+  - There should be a consistent rule across the API. Proposed rule:
+    - If the method's only arguments are the values (e.g. Rect#inflate), it
+      should take only the separate values (many parameters).
+    - If the method has other arguments besides the values(e.g. Surface.new), 
+      it should take the values as an Array only (single parameter).
 
-API:
-  - Add Queue#each (iterator, not returning an Array like #get)
-  - Rename Queue#get to #get_all ?
-  - Should Queue just be a module, and not a class?  (yes)
+- Screen#set_caption and #caption should be split into functions for
+  title and iconized, style of 'title='
 
-  - Screen#set_caption and #caption should be split into functions for
-    title and iconized, style of 'title='
+### On the shelf:
 
-  - Should module checking (Draw, Transform, etc.) use a variable instead
-    of the function "usable?()"?  (yes)
+#### Features
 
-  - Should Draw module be Surface#methods instead?
+- **Sound/music playback** <-- in rubygame 2.1.0, maybe.
+  - SDL sound & mixer bindings first. Consider additional OpenAL support later.
+  - Add CD playback? Maybe, but not a priority.
 
-  - Drop most cases of "you can pass N values or an Array or ...".
-    Convenience for the user is one thing, but it's not that hard to expand
-    an Array into multiple values [hint: method(*myarray)] and supporting
-    multiple ways of giving arguments muddies the code too much.
-    - Rect.new_from_object() should stay, though. It's supposed to be that way.
-    - There should be a consistent rule across the API.
-      Proposed rule:
-      - If the method ONLY takes the Array/values (e.g. Rect#inflate), it
-        should take only the separate values (many parameters).
-      - If the method takes the Array/values AND other arguments (e.g. 
-        Surface.new), it should take only the Array (single parameter).
+- Draw module: 
+  - add bezier curve
+  - <del>Consider replacements for SDL_gfx? How does SGE feel?</del>
+
+- Transform module:
+  - add hq2x, hq3x, hq4x -- http://www.hiend3d.com/hq3x.html
+  - image flipping by rotozoom -1 scale does not work. My fault or GFX's?
+
+#### API
     
+#### Implementation
 
+- Framerate limiting with Clock#tick is unacceptably inaccurate.
 
-Implementation:
-  - Framerate limiting with Clock#tick is unacceptably inaccurate.
+- Rect needs cleaned up and fixed.
+  - Some algorithms may be flat-out INCORRECT! (union, normalize, others?)
+  - 'test/test_rect.rb' doesn't test most methods yet!
+  - It's pretty lame to make e.g. Rect#union just call union! on a dup.
+    Or is it...? Is this a matter of style, or efficiency? D.R.Y.?
 
-  - Rect needs cleaned up and fixed.
-    - Some algorithms may be INCORRECT! (union, normalize, others?)
-    - 'test/test_rect.rb' doesn't test most methods!!
-    - It's pretty lame to make e.g. Rect#union just call union! on a dup.
-      Or is it...? Is this a matter of style, or efficiency? DRY?
+- Code (especially C code) really needs to be cleaned up. Make a
+  "clean" branch, fix code module by module, then re-merge? (Maybe)
+  - Move all Rubygame_*_Initialize methods into rubygame.c?
 
-  - Code (especially C code) really needs to be cleaned up. Recommend making a
-    "clean" branch, fixing code module by module, then re-merge.
+- **More argument checking!!**    (Make sure arguments are the right type.)
+  - Passing an optional argument to a C function as nil _IS NOT_ the same
+    as not passing it at all - it _is_ counted in number of arguments!
+  - Do NUM2INT, etc. check if it is a Numeric? Do they work with Floats?
+  - Do we need to make sure color values are between 0 and 255 before
+    we pass them to SDL functions?
 
-    ############################
-  - # More argument checking!! #   (Make sure arguments are the right type.)
-    ############################
-    - Passing an optional argument to a C function as nil _IS NOT_ the same
-          as not passing it at all -- it is counted in number of arguments!
-    - Do NUM2INT, etc. check if it is a Numeric? Do they work with Floats?
-    - Do we need to make sure color values are between 0 and 255 before
-      we pass them to SDL functions?
+- C equivalent of Rect.new_from_object (see rect.rb)
+  - Screen#update (cannot pass object with rect attribute)
+  - Screen#update_rects (same as above)
+  - Why not just call the ruby function from within C?
 
-  - C equivalent of Rect.new_from_object (see rect.rb)
-    - Screen#update (cannot pass object with rect attribute)
-    - Screen#update_rects (same as above)
+- Should UpdateGroup union highly-overlapping rectangles for efficiency? (non-unioning may be a desirable behavior)
 
-  - Should UpdateGroup union highly-overlapping rectangles for efficiency?
+- LimitGroup#add could be more efficient (replace many sprites at the
+  same time, rather than doing it one by one.)
 
-  - LimitGroup#add could be more efficient (replace many sprites at the
-    same time, rather than doing it one by one.)
-
-  - Better support for non-US keyboards, particularly generating strings for
-    keypresses. (EURO, WORLD*) Will need someone with a non-US keyboard to
-    test this.
+- Better support for non-US keyboards, particularly generating strings for
+  keypresses: (EURO, WORLD*). Will need someone with a non-US keyboard to
+  test this.
