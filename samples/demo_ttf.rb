@@ -147,7 +147,7 @@ def main
   queue.filter = SDL_EVENTS - [QuitEvent, KeyDownEvent]
 
 
-  unless TTF.usable?()
+  unless VERSIONS[:sdl_ttf]
     raise "TTF is not usable. Bailing out."
   end
   TTF.setup()
