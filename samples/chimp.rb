@@ -25,7 +25,7 @@
 
 
 # This is a shameless rip-off of an example application from
-# pygame (http://www.pygame.org), translated to Rubygame.
+# pygame (http://www.pygame.org), translated to rubygame.
 # The original application had this to say:
 # 
 #   This simple example is used for the line-by-line tutorial
@@ -40,15 +40,17 @@
 # As much as possible, this is a straight port of the pygame example,
 # without any real improvements in style. Significant deviations are
 # noted in comments. As such, this might serve as something of a
-# Rosetta Stone for a pygame user switching to Rubygame, but is not to
-# be taken as recommended Rubygame program layout or style.
+# Rosetta Stone for a pygame user switching to rubygame, but is not to
+# be taken as recommended rubygame program layout or style.
 
 require "rubygame"
 
-puts 'Warning, images disabled' unless ($image_ok = Rubygame::Image.usable?)
-puts 'Warning, font disabled' unless ($font_ok = Rubygame::TTF.usable?)
+puts 'Warning, images disabled' unless 
+  ($image_ok = (Rubygame::VERSIONS[:sdl_image] != nil))
+puts 'Warning, font disabled' unless 
+  ($font_ok = (Rubygame::VERSIONS[:sdl_ttf] != nil))
 
-#functions to create our resources
+# Functions to create our resources:
 def load_image(name, colorkey=nil)
 	image = Rubygame::Image.load(name)
 	if colorkey != nil
@@ -60,9 +62,9 @@ def load_image(name, colorkey=nil)
 	return image, Rubygame::Rect.new(0,0,*image.size)
 end
 
-# load_sound would go here, but Rubygame can't do sound yet :(
+# load_sound would go here, but rubygame can't do sound yet :(
 
-#classes for our game objects
+# Classes for our game objects:
 
 # The fist object, which follows the mouse and punches on mouseclick
 class Fist
@@ -77,9 +79,9 @@ class Fist
 		@mpos = [0,0]			# mouse curson position
 	end
 
-	# This is a small departure from the Pygame example. Instead
-	# of polling the mouse for cursor position etc. (which Rubygame
-	# doesn't do, as of October 2005), we receive notification
+	# This is a small departure from the pygame example. Instead
+	# of polling the mouse for cursor position etc. (which rubygame
+	# doesn't do, as of February 2006), we receive notification
 	# of mouse movements from a global event queue and store it
 	# in @mpos for later use in Fist#update().
 	def tell(ev)
@@ -201,16 +203,15 @@ def main
 	Rubygame.init()
 	screen = Rubygame::Screen.set_mode([468, 60])
 	screen.set_caption('Monkey Fever')
-	# (can't make mouse invisible yet)
-	# Rubygame makes an event Queue object, pygame just uses a function
-	# It's a Singleton, so there's only one instance
-	queue = Rubygame::Queue.instance()
+	screen.show_cursor = false;
+	# In rubygame, you make an EventQueue object; pygame just uses functions
+	queue = Rubygame::EventQueue.new()
 
 	# Create The Background
 	background = Rubygame::Surface.new(screen.size)
 	background.fill([250,250,250])
 	
-	#Put Text On The Background, Centered
+	# Put Text On The Background, Centered
 	# $font_ok was set at the very top. It tells us if it's ok to use TTF.
 	if $font_ok
 		# We have to setup the TTF class before we can make TTF objects
@@ -226,7 +227,7 @@ def main
 		textpos.centerx = background.width/2
 		# ATTENTION: Note that the "actor" is reversed from the pygame usage.
 		# In pygame, a surface "pulls" another surface's data onto itself.
-		# In Rubygame, a surface "pushes" its own data onto another surface.
+		# In rubygame, a surface "pushes" its own data onto another surface.
 		text.blit(background,textpos)
 	end
 
@@ -257,7 +258,7 @@ def main
 		
 		#Handle Input Events
 		# Iterate through all the events the Queue has caught
-		queue.get().each do |event|
+		queue.each do |event|
 			# Python doesn't have a case statement like Ruby does! :)
 			# Here, we implicitly "switch" based on the event's class.
 			# Unlike in pygame, each event is detected by class, not
