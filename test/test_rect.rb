@@ -727,4 +727,41 @@ class TC_Rect < Test::Unit::TestCase
 		assert(r2.collide_rect?(r1), "r2 should collide with r1")
 	end
 
+	# --
+	# UNION
+	# ++
+
+  # Test union between two non-overlapping rects.
+  def test_union_separate
+    r1 = Rect.new([0,0,10,10])
+    r2 = Rect.new([20,20,10,10])
+    assert_equal([0,0,30,30], r1.union(r2))
+    assert_equal([0,0,30,30], r2.union(r1))
+    assert_equal(r1.union(r2), r2.union(r1))
+  end
+
+  # Test union between two overlapping rects.
+  def test_union_overlap
+    r1 = Rect.new([0,0,10,10])
+    r2 = Rect.new([5,5,10,10])
+    assert_equal([0,0,15,15], r1.union(r2))
+    assert_equal([0,0,15,15], r2.union(r1))
+  end
+
+  # Test union between a rect and another rect which it contains.
+  def test_union_contained
+    r1 = Rect.new([0,0,20,20])
+    r2 = Rect.new([5,5,10,10])
+    assert_equal([0,0,20,20], r1.union(r2))
+    assert_equal([0,0,20,20], r2.union(r1))
+  end
+
+  # Test union between two identical rects.
+  def test_union_identical
+    r1 = Rect.new([0,0,20,20])
+    r2 = Rect.new([0,0,20,20])
+    assert_equal([0,0,20,20], r1.union(r2))
+    assert_equal([0,0,20,20], r2.union(r1))
+  end
+
 end

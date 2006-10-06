@@ -590,15 +590,17 @@ class Rect < Array
 	# rectangle, so it may also cover areas that neither of the original
 	# Rects did, for example areas between the two Rects.
 	def union!(rect)
-		left, top, right, bottom = self.normalize
-		rect = Rect.new_from_object(rect).normalize
+		self.normalize!
+    rleft, rtop = self.topleft
+    rright, rbottom = self.bottomright
+		r2 = Rect.new_from_object(rect).normalize
 
-		left = [left,rect.left].min
-		top = [top,rect.top].min
-		right = [right,rect.right].max
-		bottom = [bottom,rect.bottom].max
+		rleft = [rleft, r2.left].min
+		rtop = [rtop, r2.top].min
+		rright = [rright, r2.right].max
+		rbottom = [rbottom, r2.bottom].max
 
-		self[0..3] = left, top, right - left, bottom-top
+		self[0..3] = rleft, rtop, rright - rleft, rbottom - rtop
 		return self
 	end
 
@@ -609,15 +611,9 @@ class Rect < Array
 
 	# Expand the caller to cover all of the given Rects. See also #union!
 	def union_all!(array_rects)
-		left, top, right, bottom = self.normalize
 		array_rects.each do |r|
-			r = Rect.new_from_object(r).normalize
-			left = [left,r.left].min
-			top = [top,r.top].min
-			right = [right,r.right].max
-			bottom = [bottom,r.bottom].max
+      self.union!(r)
 		end
-		self[0..3] = left, top, right - left, bottom-top
 		return self
 	end
 
