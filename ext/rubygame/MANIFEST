@@ -11,6 +11,8 @@ rubygame_image.c
 rubygame_image.h
 rubygame_joystick.c
 rubygame_joystick.h
+rubygame_mixer.c
+rubygame_mixer.h
 rubygame_screen.c
 rubygame_screen.h
 rubygame_surface.c
