@@ -22,14 +22,28 @@
 #include "rubygame_mixer.h"
 
 void Rubygame_Init_Mixer();
-VALUE mMixer;
 
+VALUE mMixer;
+VALUE rbgm_mixer_openaudio(VALUE, VALUE, VALUE, VALUE, VALUE);
+VALUE rbgm_mixer_closeaudio(VALUE);
+VALUE rbgm_mixer_getmixchans();
+VALUE rbgm_mixer_setmixchans(VALUE, VALUE);
+
+VALUE cSample;
+VALUE rbgm_sample_new(VALUE, VALUE);
+
+VALUE rbgm_mixchan_play( VALUE, VALUE, VALUE, VALUE );
+VALUE rbgm_mixchan_stop( VALUE, VALUE );
+VALUE rbgm_mixchan_pause( VALUE, VALUE );
+VALUE rbgm_mixchan_resume( VALUE, VALUE );
 
 /* call-seq:
- *  open_audio( frequency, format, channels, chunksize)
+ *  open_audio( frequency, format, channels, samplesize)
  *  
  *  Initializes the audio device. You must call this before using the other
- *  mixer functions.
+ *  mixer functions. See also #close_audio().
+ *
+ *  Returns nil. May raise an SDLError if initialization fails.
  *  
  *  This method takes these arguments:
  *  frequency::  output sampling frequency in samples per second (Hz).
@@ -38,20 +52,21 @@ VALUE mMixer;
  *  format::     output sample format.
  *  channels::   output sound channels. Use 2 for stereo, 1 for mono.
  *               (this option does not affect number of mixing channels)
- *  chunksize::  bytes per output sample.
+ *  samplesize:: bytes per output sample.
+ *
  */
-VALUE rbgm_mixer_openaudio(VALUE module, VALUE freq, VALUE form, 
-                           VALUE chans, VALUE chunk)
+VALUE rbgm_mixer_openaudio(VALUE module, VALUE frequencyv, VALUE formatv, 
+                           VALUE channelsv, VALUE samplesizev)
 {
-  int frequency, channels, chunksize;
+  int frequency, channels, samplesize;
   Uint16 format;
   
-  frequency = NUM2INT(freq);
-  format = NUM2UINT(freq);
-  channels = NUM2INT(chans);
-  chunksize = NUM2INT(chunk);
+  frequency = NUM2INT(frequencyv);
+  format = NUM2UINT(formatv);
+  channels = NUM2INT(channelsv);
+  samplesize = NUM2INT(samplesizev);
 
-  if ( Mix_OpenAudio(frequency, format, channels, chunksize) < 0 )
+  if ( Mix_OpenAudio(frequency, format, channels, samplesize) < 0 )
   {
     rb_raise(eSDLError, "Error initializing SDL_mixer: %s", Mix_GetError());
   }
@@ -64,14 +79,164 @@ VALUE rbgm_mixer_openaudio(VALUE module, VALUE freq, VALUE form,
  *  
  *  Close the audio device being used by the mixer. You should not use any
  *  mixer functions after this function, unless you use #open_audio() to
- *  re-open the audio device. Returns nil.
+ *  re-open the audio device. See also #open_audio().
+ *
+ *  Returns nil.
  */
 VALUE rbgm_mixer_closeaudio(VALUE module)
 {
-  MixCloseAudio();
+  Mix_CloseAudio();
   return Qnil;
 }
 
+/* call-seq:
+ *  #mix_channels()  ->  integer
+ *
+ *  Returns the number of mixing channels currently allocated.
+ *  See also #mix_channels=().
+ */
+VALUE rbgm_mixer_getmixchans(VALUE module)
+{
+  int result;
+  result = Mix_AllocateChannels(-1);
+
+  return INT2NUM(result);
+}
+
+/* call-seq:
+ *  #mix_channels = num_channels 
+ *
+ *  Set the number of mixer channels, allocating or deallocating channels as
+ *  needed. This can be called many times, even during audio playback. If this
+ *  call reduces the number of channels allocated, the excess channels will
+ *  be stopped automatically. See also #mix_channels()
+ *
+ *  Returns the number of mixing channels allocated.
+ *
+ *  Note that 8 mixing channels are allocated when #open_audio() is called.
+ *  This method only needs to be called if you want a different number (either
+ *  greater or fewer) of mixing channels.
+ *  
+ *  This method takes this argument:
+ *  num_channels::  desired number of mixing channels, an integer. 
+ *                  Negative values will cause this method to behave as
+ *                  #mix_channels(), returning the number of channels currently
+ *                  allocated, without changing it.
+ */
+VALUE rbgm_mixer_setmixchans(VALUE module, VALUE channelsv)
+{
+  int desired;
+  int allocated;
+
+  desired = NUM2INT(channelsv);
+  allocated = Mix_AllocateChannels(desired);
+
+  return INT2NUM(allocated);
+}
+
+/* call-seq:
+ *  new( filename )  ->  Sample
+ *
+ *  Load an audio sample (aka chunk) from a file.
+ *
+ *  May raise SDLError if the sample could not be loaded.
+ */
+VALUE rbgm_sample_new(VALUE class, VALUE filev)
+{
+  VALUE self;
+  Mix_Chunk* sample;
+
+  sample = Mix_LoadWAV( StringValuePtr(filev) );
+
+  if( sample == NULL )
+  { 
+    rb_raise(eSDLError, "Error loading audio Sample from file `%s': %s",
+             StringValuePtr(filev), Mix_GetError());
+  }
+	self = Data_Wrap_Struct( cSample, 0, Mix_FreeChunk, sample );
+
+	//rb_obj_call_init(self,argc,argv);
+
+  return self;
+}
+
+/* call-seq:
+ *  play(sample, repeats, channel_num )  ->  integer
+ *
+ *  Play the given audio sample on the given mixing channel, repeating the
+ *  given number of times. Returns the number of the channel the sample
+ *  will be played on.
+ *
+ *  May raise SDLError
+ *  
+ *  This method takes these arguments:
+ *  sample::      Sample to play
+ *  repeats::     number of times after the first to repeat the sample.
+ *                So, the sample will play +repeats+ + 1 times total.
+ *                Can be -1 to repeat forever until it is stopped.
+ *  channel_num:: number of the mixing channel to play the sample on.
+ *                Use -1 to play on the first unreserved channel.
+ */
+VALUE rbgm_mixchan_play( VALUE self, VALUE samplev, VALUE loopsv, VALUE chanv )
+{
+  Mix_Chunk* sample;
+  int loops, channel, result;
+
+  channel = NUM2INT(chanv);
+  Data_Get_Struct( samplev, Mix_Chunk, sample );
+  loops = NUM2INT(loopsv);
+  
+  result = Mix_PlayChannel(channel, sample, loops);
+
+  if ( result < 0 )
+  {
+    rb_raise(eSDLError, "Error playing sample on channel %d: %s", 
+             channel, Mix_GetError());
+  }
+
+  return INT2NUM( result );
+}
+
+
+/* call-seq:
+ *  stop( channel_num )
+ *
+ *  Stop playback of a playing or paused mixing channel.
+ *  Unlike #pause, playback cannot be resumed from the current point.
+ *  See also #play.
+ */
+VALUE rbgm_mixchan_stop( VALUE self, VALUE chanv )
+{
+  Mix_HaltChannel(NUM2INT(chanv));
+  return Qnil;
+}
+
+/* call-seq:
+ *  pause( channel_num )
+ *
+ *  Pause playback of a currently-playing mixing channel.
+ *  Playback can be resumed from the current point with #resume.
+ *  See also #stop.
+ */
+VALUE rbgm_mixchan_pause( VALUE self, VALUE chanv )
+{
+  Mix_Pause(NUM2INT(chanv));
+  return Qnil;
+}
+
+/* call-seq:
+ *  resume( channel_num )
+ *
+ *  Resume playback of a paused mixing channel. The channel must have been
+ *  paused (via the #pause method) for this to have any effect. Playback will
+ *  resume from the point where the channel was paused.
+ *  
+ */
+VALUE rbgm_mixchan_resume( VALUE self, VALUE chanv )
+{
+  Mix_Resume(NUM2INT(chanv));
+  return Qnil;
+}
 
 /*
  *  Document-module: Rubygame::Mixer
@@ -79,7 +244,7 @@ VALUE rbgm_mixer_closeaudio(VALUE module)
  *  The Mixer module provides access to the SDL_mixer library for audio
  *  playback and mixing. 
  */
-Rubygame_Init_Mixer()
+void Rubygame_Init_Mixer()
 {
 
 #if 0
@@ -96,5 +261,14 @@ Rubygame_Init_Mixer()
 
   rb_define_module_function(mMixer,"open_audio",rbgm_mixer_openaudio, 4);
   rb_define_module_function(mMixer,"close_audio",rbgm_mixer_closeaudio, 0);
+  rb_define_module_function(mMixer,"mix_channels",rbgm_mixer_getmixchans, 0);
+  rb_define_module_function(mMixer,"mix_channels=",rbgm_mixer_setmixchans, 1);
 
+  cSample = rb_define_class_under(mMixer, "Sample", rb_cObject);
+  rb_define_singleton_method(cSample, "new", rbgm_sample_new, 1);
+
+  rb_define_module_function(mMixer,"play", rbgm_mixchan_play, 3);
+  rb_define_module_function(mMixer,"stop", rbgm_mixchan_stop, 1);
+  rb_define_module_function(mMixer,"pause", rbgm_mixchan_pause, 1);
+  rb_define_module_function(mMixer,"resume", rbgm_mixchan_resume, 1);
 }

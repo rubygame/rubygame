@@ -10,6 +10,7 @@ require 'getoptlong'
 # --with-gfx        bool      Compile Rubygame with SDL_gfx library.
 # --with-image      bool      Compile Rubygame with SDL_image library.
 # --with-ttf        bool      Compile Rubygame with SDL_ttf library.
+# --with-mixer      bool      Compile Rubygame with SDL_mixer library.
 # --enable-opengl   bool      Enable OpenGL support.
 # --library-path    path      Supplementary paths to check for libraries.
 # --include-path    path      Supplementary paths to check for headers.
@@ -69,6 +70,7 @@ getopts = GetoptLong.new(
   ['--with-gfx',       GetoptLong::OPTIONAL_ARGUMENT], 
   ['--with-image',     GetoptLong::OPTIONAL_ARGUMENT], 
   ['--with-ttf',       GetoptLong::OPTIONAL_ARGUMENT], 
+  ['--with-mixer',       GetoptLong::OPTIONAL_ARGUMENT], 
   ['--enable-opengl',  GetoptLong::OPTIONAL_ARGUMENT],
   ['--library-path',   GetoptLong::REQUIRED_ARGUMENT],
   ['--include-path',   GetoptLong::REQUIRED_ARGUMENT],
@@ -84,6 +86,7 @@ OPTS = {
   :with_gfx      => true,
   :with_image    => true,
   :with_ttf      => true,
+  :with_mixer    => true,
   :with_opengl   => true,
   :library_path  => nil,
   :include_path  => nil,
@@ -103,6 +106,8 @@ getopts.each do |opt, arg|
 		OPTS[:with_image] = parse_truth(arg, true)
 	when '--with-ttf'
 		OPTS[:with_ttf] = parse_truth(arg, true)
+	when '--with-mixer'
+		OPTS[:with_mixer] = parse_truth(arg, true)
 	when '--with-opengl'
 		OPTS[:with_opengl] = parse_truth(arg, true)
 	when '--library-path'
@@ -156,6 +161,10 @@ end
 
 if OPTS[:with_ttf]
   have_library("SDL_ttf") and have_header("SDL_ttf.h")
+end
+
+if OPTS[:with_mixer]
+  have_library("SDL_mixer") and have_header("SDL_mixer.h")
 end
 
 if OPTS[:with_opengl]

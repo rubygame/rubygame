@@ -31,6 +31,7 @@
 #include "rubygame_time.h"
 #include "rubygame_transform.h"
 #include "rubygame_ttf.h"
+#include "rubygame_mixer.h"
 
 VALUE mRubygame;
 VALUE eSDLError;
@@ -144,4 +145,5 @@ void Init_rubygame()
 	Rubygame_Init_Joystick();
 	Rubygame_Init_TTF();
   Rubygame_Init_GL();
+  Rubygame_Init_Mixer();
 }
