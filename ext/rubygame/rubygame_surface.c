@@ -52,6 +52,10 @@ VALUE rbgm_surface_getat(int, VALUE*, VALUE);
 
 VALUE rbgm_surface_pixels(VALUE);
 
+VALUE rbgm_surface_get_cliprect(VALUE);
+VALUE rbgm_surface_set_cliprect(VALUE, VALUE);
+
+
 
 /* 
  *  call-seq:
