@@ -49,6 +49,11 @@ puts 'Warning, images disabled' unless
   ($image_ok = (Rubygame::VERSIONS[:sdl_image] != nil))
 puts 'Warning, font disabled' unless 
   ($font_ok = (Rubygame::VERSIONS[:sdl_ttf] != nil))
+  
+# Right now, Rubygame::VERSIONS doesn't seem to have a mixer
+# version in it
+#puts 'Warning, sound disabled' unless
+#  ($sound_ok = (Rubygame::VERSIONS[:sdl_mixer] != nil))
 
 # Functions to create our resources:
 def load_image(name, colorkey=nil)
@@ -62,7 +67,16 @@ def load_image(name, colorkey=nil)
 	return image, Rubygame::Rect.new(0,0,*image.size)
 end
 
-# load_sound would go here, but rubygame can't do sound yet :(
+def load_sound(name)
+    #return nil unless $sound_ok
+    begin
+        sound = Rubygame::Mixer::Sample.new(name)
+        return sound
+    rescue Rubygame::SDLError
+        puts "Cannot load sound " + name
+        exit
+    end
+end
 
 # Classes for our game objects:
 
@@ -207,6 +221,25 @@ def main
 	# In rubygame, you make an EventQueue object; pygame just uses functions
 	queue = Rubygame::EventQueue.new()
 
+    # Not in the pygame version - for Rubygame, we need to 
+    # explicitly open the audio device.
+    # Args are:
+    #   Frequency - Sampling frequency in samples per second (Hz).
+    #               22050 is recommended for most games; 44100 is
+    #               CD audio rate. The larger the value, the more
+    #               processing required.
+    #   Format - Output sample format.  This is one of the
+    #            AUDIO_* constants in Rubygame::Mixer
+    #   Channels -output sound channels. Use 2 for stereo,
+    #             1 for mono. (this option does not affect number
+    #             of mixing channels) 
+    #   Samplesize - Bytes per output sample. Specifically, this
+    #                determines the size of the buffer that the
+    #                sounds will be mixed in.
+    Rubygame::Mixer::open_audio( 22050, 
+                                 Rubygame::Mixer::AUDIO_U8,
+                                 2,
+                                 1024 )
 	# Create The Background
 	background = Rubygame::Surface.new(screen.size)
 	background.fill([250,250,250])
@@ -245,8 +278,8 @@ def main
 	# Please note that at the moment, framerate limiting is not very accurate.
 	clock = Rubygame::Time::Clock.new(30)
 
-	#whiff_sound = load_sound('whiff.wav')
-	#punch_sound = load_sound('punch.wav')
+	whiff_sound = load_sound('whiff.wav')
+	punch_sound = load_sound('punch.wav')
 	chimp = Chimp.new()
 	fist = Fist.new()
 	allsprites = Rubygame::Sprites::Group.new()
@@ -278,10 +311,10 @@ def main
 			when Rubygame::MouseDownEvent
 				# can't play sound yet, we'll have to commentate
 				if fist.punch(chimp)
-					puts "Hit!"
+					Rubygame::Mixer::play(punch_sound,0,-1)
 					chimp.punched()
 				else
-					puts "Miss!"
+				    Rubygame::Mixer::play(whiff_sound, 0,-1)
 				end
 			when Rubygame::MouseUpEvent
 				fist.unpunch()
