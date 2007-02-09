@@ -22,8 +22,10 @@
 #include "rubygame_mixer.h"
 
 void Rubygame_Init_Mixer();
-
 VALUE mMixer;
+
+#ifdef HAVE_SDL_MIXER_H
+
 VALUE rbgm_mixer_openaudio(VALUE, VALUE, VALUE, VALUE, VALUE);
 VALUE rbgm_mixer_closeaudio(VALUE);
 VALUE rbgm_mixer_getmixchans();
@@ -238,6 +240,8 @@ VALUE rbgm_mixchan_resume( VALUE self, VALUE chanv )
   return Qnil;
 }
 
+#endif /* HAVE_SDL_MIXER_H */
+
 /*
  *  Document-module: Rubygame::Mixer
  *
@@ -251,6 +255,15 @@ void Rubygame_Init_Mixer()
   /* Pretend to define Rubygame module, so RDoc knows about it: */
   mRubygame = rb_define_module("Rubygame");
 #endif
+
+#ifdef HAVE_SDL_MIXER_H
+
+  rb_hash_aset(rb_ivar_get(mRubygame,rb_intern("VERSIONS")),
+               ID2SYM(rb_intern("sdl_mixer")),
+               rb_ary_new3(3,
+                           INT2NUM(SDL_MIXER_MAJOR_VERSION),
+                           INT2NUM(SDL_MIXER_MINOR_VERSION),
+                           INT2NUM(SDL_MIXER_PATCHLEVEL)));
 
   mMixer = rb_define_module_under(mRubygame, "Mixer");
 
@@ -271,4 +284,6 @@ void Rubygame_Init_Mixer()
   rb_define_module_function(mMixer,"stop", rbgm_mixchan_stop, 1);
   rb_define_module_function(mMixer,"pause", rbgm_mixchan_pause, 1);
   rb_define_module_function(mMixer,"resume", rbgm_mixchan_resume, 1);
+
+#endif
 }

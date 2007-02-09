@@ -21,23 +21,31 @@
 #ifndef _RUBYGAME_MIXER_H
 #define _RUBYGAME_MIXER_H
 
-#include "SDL_audio.h"
-
 #ifdef HAVE_SDL_MIXER_H
+
+#include "SDL_audio.h"
 #include "SDL_mixer.h"
+
 #endif
 
 extern void Rubygame_Init_Mixer();
 extern VALUE mMixer;
+
+#ifdef HAVE_SDL_MIXER_H
+
 extern VALUE rbgm_mixer_openaudio(VALUE, VALUE, VALUE, VALUE, VALUE);
 extern VALUE rbgm_mixer_closeaudio(VALUE);
 extern VALUE rbgm_mixer_getmixchans();
 extern VALUE rbgm_mixer_setmixchans(VALUE, VALUE);
+
 extern VALUE cSample;
 extern VALUE rbgm_sample_new(VALUE, VALUE);
+
 extern VALUE rbgm_mixchan_play( VALUE, VALUE, VALUE, VALUE );
 extern VALUE rbgm_mixchan_stop( VALUE, VALUE );
 extern VALUE rbgm_mixchan_pause( VALUE, VALUE );
 extern VALUE rbgm_mixchan_resume( VALUE, VALUE );
+
+#endif /* HAVE_SDL_MIXER_H */
 
 #endif
