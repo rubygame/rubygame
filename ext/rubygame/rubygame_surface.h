@@ -53,4 +53,8 @@ extern VALUE rbgm_surface_pixels(VALUE);
 extern VALUE rbgm_surface_get_cliprect(VALUE);
 extern VALUE rbgm_surface_set_cliprect(VALUE, VALUE);
 
+extern VALUE rbgm_surface_convert(int, VALUE*, VALUE);
+extern VALUE rbgm_surface_displayformat(VALUE);
+extern VALUE rbgm_surface_displayformatalpha(VALUE);
+
 #endif

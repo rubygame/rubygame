@@ -55,6 +55,9 @@ VALUE rbgm_surface_pixels(VALUE);
 VALUE rbgm_surface_get_cliprect(VALUE);
 VALUE rbgm_surface_set_cliprect(VALUE, VALUE);
 
+VALUE rbgm_surface_convert(int, VALUE*, VALUE);
+VALUE rbgm_surface_displayformat(VALUE);
+VALUE rbgm_surface_displayformatalpha(VALUE);
 
 /* 
  *  call-seq:
@@ -743,6 +746,117 @@ VALUE rbgm_surface_set_clip( VALUE self, VALUE clip )
 	return self;
 }
 
+/* 
+ *  call-seq:
+ *    convert( other=nil, flags=nil )  ->  Surface
+ *
+ *  Copies the Surface to a new Surface with the pixel format of another
+ *  Surface, for fast blitting. May raise SDLError if a problem occurs.
+ *
+ *  This method takes these arguments:
+ *  - other::  The Surface to match pixel format against. If +nil+, the
+ *             display surface (i.e. Screen) is used, if available; if no
+ *             display surface is available, raises SDLError.
+ *  - flags::  An array of flags to pass when the new Surface is created.
+ *             See Surface#new.
+ *
+ */
+VALUE rbgm_surface_convert(int argc, VALUE *argv, VALUE self)
+{
+	SDL_Surface *surf, *othersurf, *newsurf;
+  Uint32 flags = 0;
+
+	Data_Get_Struct(self, SDL_Surface, surf);
+
+	if(argc>0 && argv[0]!=Qnil)
+  {
+    Data_Get_Struct(argv[0], SDL_Surface, othersurf);
+  }
+  else
+  {
+    othersurf = SDL_GetVideoSurface();
+    if( othersurf == NULL )
+    {
+      rb_raise(eSDLError, "Cannot convert Surface with no target given and no Screen made: %s", SDL_GetError());
+    }
+  }
+
+	if(argc>1 && argv[1]!=Qnil)
+  {
+    flags = NUM2UINT(argv[1]);
+  }
+
+  newsurf = SDL_ConvertSurface( surf, othersurf->format, flags );
+
+  if( newsurf == NULL )
+  {
+    rb_raise(eSDLError,\
+             "Could not convert the Surface: %s",\
+             SDL_GetError());
+  }
+
+  return Data_Wrap_Struct( cSurface,0,SDL_FreeSurface,newsurf );  
+}
+
+/* 
+ *  call-seq: 
+ *    to_display()  ->  Surface
+ *
+ *  Copies the Surface to a new Surface with the pixel format of the display,
+ *  suitable for fast blitting to the display surface (i.e. Screen).
+ *  May raise SDLError if a problem occurs.
+ *
+ *  If you want to take advantage of hardware colorkey or alpha blit
+ *  acceleration, you should set the colorkey and alpha value before calling
+ *  this function. 
+ *
+ */
+VALUE rbgm_surface_dispform(VALUE self)
+{
+	SDL_Surface *surf, *newsurf;
+	Data_Get_Struct(self, SDL_Surface, surf);
+
+  newsurf = SDL_DisplayFormat( surf );
+
+  if( newsurf == NULL )
+  {
+    rb_raise(eSDLError,\
+             "Could not convert the Surface to display format: %s",\
+             SDL_GetError());
+  }
+
+  return Data_Wrap_Struct( cSurface,0,SDL_FreeSurface,newsurf );  
+}
+
+/* 
+ *  call-seq: 
+ *    to_display_alpha()  ->  Surface
+ *
+ *  Like #to_display except the Surface has an extra channel for alpha (i.e.
+ *  opacity). May raise SDLError if a problem occurs.
+ *
+ *  This function can be used to convert a colorkey to an alpha channel, if the
+ *  SRCCOLORKEY flag is set on the surface. The generated surface will then be
+ *  transparent (alpha=0) where the pixels match the colorkey, and opaque
+ *  (alpha=255) elsewhere. 
+ */
+VALUE rbgm_surface_dispformalpha(VALUE self)
+{
+	SDL_Surface *surf, *newsurf;
+	Data_Get_Struct(self, SDL_Surface, surf);
+
+  newsurf = SDL_DisplayFormatAlpha( surf );
+
+  if( newsurf == NULL )
+  {
+    rb_raise(eSDLError,\
+             "Could not convert the Surface to display format with alpha channel: %s",\
+             SDL_GetError());
+  }
+
+  return Data_Wrap_Struct( cSurface,0,SDL_FreeSurface,newsurf );  
+}
+
 void Rubygame_Init_Surface()
 {
 
@@ -772,4 +886,7 @@ void Rubygame_Init_Surface()
 	rb_define_method(cSurface,"pixels",rbgm_surface_pixels,0);
 	rb_define_method(cSurface,"clip",rbgm_surface_get_clip,0);
 	rb_define_method(cSurface,"clip=",rbgm_surface_set_clip,1);
+	rb_define_method(cSurface,"convert",rbgm_surface_convert,-1);
+	rb_define_method(cSurface,"to_display",rbgm_surface_dispform,0);
+	rb_define_method(cSurface,"to_display_alpha",rbgm_surface_dispformalpha,0);
 }
