@@ -1,9 +1,9 @@
 /*
- *  Surface -- Rubygame-bound SDL Surface class
+ *  Surface -- rubygame binding to SDL Surface class
  *
  * --
- *  Rubygame -- Ruby code and bindings to SDL to facilitate game creation
- *  Copyright (C) 2004-2005  John 'jacius' Croisant
+ *  rubygame -- ruby library to make game programming fun.
+ *  Copyright (C) 2004-2007  John Croisant
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -56,10 +56,9 @@ VALUE rbgm_surface_get_cliprect(VALUE);
 VALUE rbgm_surface_set_cliprect(VALUE, VALUE);
 
 
-
 /* 
  *  call-seq:
- *     new(size, flags=0)  ->  Surface
+ *     new(size, depth=0, flags=0)  ->  Surface
  *
  *  Create and initialize a new Surface object. 
  *
@@ -68,14 +67,20 @@ VALUE rbgm_surface_set_cliprect(VALUE, VALUE);
  *  class), Surfaces can be blit to the screen; this is the most common way
  *  to display images on the screen.
  *
- *  The new surface retrieves the pixel format of the display window to use
- *  as its own. Because of this, the display window must be created before
- *  this method can be used.
+ *  Currently, you must create a display window (see Screen#set_mode) before
+ *  creating a new Surface.
  *
  *  This function takes these arguments:
  *  size::  requested surface size; an array of the form [width, height].
- *  flags:: a bitwise OR'd ( | ) list of zero or more of the following flags
- *          (located in the Rubygame module, e.g. Rubygame::SWSURFACE).
+ *  depth:: requested color depth (in bits per pixel). If depth is 0 (default),
+ *          use the color depth of the current Screen mode.
+ *--
+ *          automatically choose a color depth: either the depth of the Screen
+ *          mode (if one has been set), or the greatest color depth available
+ *          on the system.
+ *++
+ *  flags:: an Array or Bitwise-OR'd list of zero or more of the following 
+ *          flags (located in the Rubygame module, e.g. Rubygame::SWSURFACE).
  *          This argument may be omitted, in which case the Surface 
  *          will be a normal software surface (this is not necessarily a bad
  *          thing).
@@ -83,8 +88,8 @@ VALUE rbgm_surface_set_cliprect(VALUE, VALUE);
  *          HWSURFACE::   request a hardware-accelerated surface (using a 
  *                        graphics card), if available. Creates a software
  *                        surface if hardware surfaces are not available.
- *          SRCCOLORKEY:: request a colorkeyed surface. #set_colorkey
- *                        will enable colorkey as needed. For a description
+ *          SRCCOLORKEY:: request a colorkeyed surface. #set_colorkey will
+ *                        also enable colorkey as needed. For a description
  *                        of colorkeys, see #set_colorkey.
  *          SRCALPHA::    request an alpha channel. #set_alpha will
  *                        also enable alpha. as needed. For a description
@@ -93,31 +98,39 @@ VALUE rbgm_surface_set_cliprect(VALUE, VALUE);
 VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 {
 	VALUE self;
-	SDL_Surface *self_surf, *screen;
-	SDL_PixelFormat *format;
+	SDL_Surface *self_surf;
+	SDL_PixelFormat* pixformat;
 	Uint32 flags, Rmask, Gmask, Bmask, Amask;
-	int w, h, depth;
+	int w, h, depth, counter;
 	
-  flags = Rmask = Gmask = Bmask = Amask = w = h = depth = 0;
 
-  /* Pixel format is retrieved from the video surface. */
-  screen = SDL_GetVideoSurface();
+	if( SDL_GetVideoSurface() )
+	{
+		/* Pixel format is retrieved from the video surface. */
+		pixformat = (SDL_GetVideoSurface())->format;
+	}
+	else
+	{
+		rb_raise(eSDLError,"Cannot create Surface before the Screen mode is set!");
+		/* The following code causes an inexplicable segfault? :(  -j */
+		/* pixformat = SDL_GetVideoInfo()->vfmt; */ 
+	}
 
-  if( screen == NULL )
-    {
-      rb_raise(eSDLError,\
-               "Could not create new Surface: a display window must be created before using this method, but none was found: %s",\
-               SDL_GetError());
-    }
+	Rmask = pixformat->Rmask;
+	Gmask = pixformat->Gmask;
+	Bmask = pixformat->Bmask;
+	Amask = pixformat->Amask;
 
-  format = screen->format;
-      
-  depth = format->BitsPerPixel;
-  Rmask = format->Rmask;
-  Gmask = format->Gmask;
-  Bmask = format->Bmask;
-  Amask = format->Amask;
-    
+	if( (argc > 1) && (argv[1] != Qnil) && (argv[1] != 0) )
+	{
+		/* TODO: We might want to check that the requested depth makes sense. */
+		depth = NUM2INT(argv[1]);
+	}
+	else
+	{
+		depth = pixformat->BitsPerPixel;
+	}
+		
 
 	/* Get width and height for new surface from argv[0] */
 	Check_Type(argv[0],T_ARRAY);
@@ -129,20 +142,27 @@ VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 	}
 	else
 		rb_raise(rb_eArgError,"wrong dimensions for Surface size (%d for 2)",\
-             RARRAY(argv[0])->len);
+			RARRAY(argv[0])->len);
 	
 
+	if(argc > 2 && argv[2] != Qnil)
+	{
+		switch( TYPE(argv[2]) ){
+			case T_ARRAY:;
+				for(counter=0;  counter < RARRAY(argv[2])->len; counter += 1)
+		    {
+		      flags |= NUM2UINT(  rb_ary_entry( argv[2],counter )  );
+		    }
+				break;
+			case T_FIXNUM:;
+				flags = NUM2UINT( argv[2] );
+				break;
+			default:;
+				rb_raise(rb_eArgError,"Wrong type for argument `flags' (wanted Fixnum or Array).");
+		}
+	}
 
-	/* Get flags from user, or default to 0.
-   * Eventually we should accept an Array of flags.
-   * Bitwise-OR is /so/ 1979. */
-	if(argc > 1 && argv[1] != Qnil)
-		flags = NUM2UINT(argv[1]);
-	else
-		flags = 0;
-
-
-  /* Finally, we can create the new Surface! Or try, anyway... */
+	/* Finally, we can create the new Surface! Or try, anyway... */
 	self_surf = SDL_CreateRGBSurface(flags,w,h,depth,Rmask,Gmask,Bmask,Amask);
 
 	if( self_surf == NULL )
@@ -288,14 +308,14 @@ VALUE rbgm_surface_set_alpha(int argc, VALUE *argv, VALUE self)
 		case 2: flags = NUM2INT(argv[1]);
 			/* no break */
 		case 1: 
-      {
+		  {
 			int temp;
 			temp = NUM2INT(argv[0]);
 			if(temp<0) alpha = 0;
 			else if(temp>255) alpha = 255;
 			else alpha = (Uint8) temp;
 			break;
-      }
+		  }
 		default:
 			rb_raise(rb_eArgError,\
 				"Wrong number of args to set mode (%d for 1)",argc);
@@ -386,10 +406,10 @@ VALUE rbgm_surface_set_colorkey( int argc, VALUE *argv, VALUE self)
 #ifndef _MSC_VER
 
 static inline int max(int a, int b) {
-  return a > b ? a : b;
+	return a > b ? a : b;
 }
 static inline int min(int a, int b) {
-  return a > b ? b : a;
+	return a > b ? b : a;
 }
 
 #endif
@@ -472,8 +492,8 @@ VALUE rbgm_surface_blit(int argc, VALUE *argv, VALUE self)
 	SDL_BlitSurface(src,src_rect,dest,blit_rect);
 
 	returnrect = rb_funcall(cRect,rb_intern("new"),4,
-		INT2NUM(left),INT2NUM(top),\
-		INT2NUM(blit_w),INT2NUM(blit_h));
+	                        INT2NUM(left),INT2NUM(top),\
+	                        INT2NUM(blit_w),INT2NUM(blit_h));
 
 	free(blit_rect);
 	free(src_rect);
@@ -527,11 +547,11 @@ VALUE rbgm_surface_fill( int argc, VALUE *argv, VALUE self )
 			break;
 		case 2: /* fill a given rect */
 			rect = make_rect(\
-				NUM2INT(rb_ary_entry(argv[1],0)),\
-				NUM2INT(rb_ary_entry(argv[1],1)),\
-				NUM2INT(rb_ary_entry(argv[1],2)),\
-				NUM2INT(rb_ary_entry(argv[1],3))\
-			);
+			                 NUM2INT(rb_ary_entry(argv[1],0)),\
+			                 NUM2INT(rb_ary_entry(argv[1],1)),\
+			                 NUM2INT(rb_ary_entry(argv[1],2)),\
+			                 NUM2INT(rb_ary_entry(argv[1],3))\
+			                 );
 			SDL_FillRect(surf,rect,color);
 			free(rect);
 			break;
@@ -599,25 +619,25 @@ VALUE rbgm_surface_getat( int argc, VALUE *argv, VALUE self )
 /* borrowed from pygame */
 	pixels = (Uint8 *) surf->pixels;
 
-    switch(surf->format->BytesPerPixel)
-    {
-        case 1:
-            color = (Uint32)*((Uint8 *)(pixels + y * surf->pitch) + x);
-            break;
-        case 2:
-            color = (Uint32)*((Uint16 *)(pixels + y * surf->pitch) + x);
-            break;
-        case 3:
-            pix = ((Uint8 *)(pixels + y * surf->pitch) + x * 3);
+	switch(surf->format->BytesPerPixel)
+	{
+		case 1:
+			color = (Uint32)*((Uint8 *)(pixels + y * surf->pitch) + x);
+			break;
+		case 2:
+			color = (Uint32)*((Uint16 *)(pixels + y * surf->pitch) + x);
+			break;
+		case 3:
+			pix = ((Uint8 *)(pixels + y * surf->pitch) + x * 3);
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
-            color = (pix[0]) + (pix[1]<<8) + (pix[2]<<16);
+			color = (pix[0]) + (pix[1]<<8) + (pix[2]<<16);
 #else
-            color = (pix[2]) + (pix[1]<<8) + (pix[0]<<16);
+			color = (pix[2]) + (pix[1]<<8) + (pix[0]<<16);
 #endif
-            break;
-        default: /*case 4:*/
-            color = *((Uint32*)(pixels + y * surf->pitch) + x);
-            break;
+			break;
+		default: /*case 4:*/
+			color = *((Uint32*)(pixels + y * surf->pitch) + x);
+			break;
 	}
 
 /* end borrowed from pygame */
@@ -671,15 +691,15 @@ VALUE rbgm_surface_pixels( VALUE self )
  */
 VALUE rbgm_surface_get_clip( VALUE self )
 {
-  SDL_Rect rect;
+	SDL_Rect rect;
 	SDL_Surface *surf;
 	Data_Get_Struct(self, SDL_Surface, surf);
 
-  SDL_GetClipRect(surf, &rect);
+	SDL_GetClipRect(surf, &rect);
 
 	return rb_funcall(cRect,rb_intern("new"),4,
-                    INT2NUM(rect.x),INT2NUM(rect.y),
-                    INT2NUM(rect.w),INT2NUM(rect.h));
+	                  INT2NUM(rect.x),INT2NUM(rect.y),
+	                  INT2NUM(rect.w),INT2NUM(rect.h));
 }
 
 /*
@@ -699,28 +719,28 @@ VALUE rbgm_surface_get_clip( VALUE self )
  */
 VALUE rbgm_surface_set_clip( VALUE self, VALUE clip )
 {
-  SDL_Rect *rect;
+	SDL_Rect *rect;
 	SDL_Surface *surf;
 	Data_Get_Struct(self, SDL_Surface, surf);
 
 
-  if(clip == Qnil)
-  {
-    SDL_SetClipRect(surf,NULL);
-  }
-  else
-  { 
-    rect = make_rect(\
-                     NUM2INT(rb_ary_entry(clip,0)),\
-                     NUM2INT(rb_ary_entry(clip,1)),\
-                     NUM2INT(rb_ary_entry(clip,2)),\
-                     NUM2INT(rb_ary_entry(clip,3))\
-                     );
+	if(clip == Qnil)
+	{
+		SDL_SetClipRect(surf,NULL);
+	}
+	else
+	{ 
+		rect = make_rect(\
+		                 NUM2INT(rb_ary_entry(clip,0)),\
+		                 NUM2INT(rb_ary_entry(clip,1)),\
+		                 NUM2INT(rb_ary_entry(clip,2)),\
+		                 NUM2INT(rb_ary_entry(clip,3))\
+		                 );
 
-    SDL_SetClipRect(surf,rect);
-  }
+		SDL_SetClipRect(surf,rect);
+	}
 
-  return self;
+	return self;
 }
 
 void Rubygame_Init_Surface()
@@ -749,7 +769,7 @@ void Rubygame_Init_Surface()
 	rb_define_method(cSurface,"blit",rbgm_surface_blit,-1);
 	rb_define_method(cSurface,"fill",rbgm_surface_fill,-1);
 	rb_define_method(cSurface,"get_at",rbgm_surface_getat,-1);
-  rb_define_method(cSurface,"pixels",rbgm_surface_pixels,0);
-  rb_define_method(cSurface,"clip",rbgm_surface_get_clip,0);
-  rb_define_method(cSurface,"clip=",rbgm_surface_set_clip,1);
+	rb_define_method(cSurface,"pixels",rbgm_surface_pixels,0);
+	rb_define_method(cSurface,"clip",rbgm_surface_get_clip,0);
+	rb_define_method(cSurface,"clip=",rbgm_surface_set_clip,1);
 }
