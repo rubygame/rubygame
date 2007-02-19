@@ -26,7 +26,7 @@
 
 void Rubygame_Init_Image();
 VALUE mImage;
-VALUE rbgm_image_savebmp(VALUE, VALUE, VALUE);
+VALUE rbgm_image_savebmp(VALUE, VALUE);
 
 VALUE rbgm_image_load(VALUE, VALUE);
 
@@ -34,18 +34,17 @@ VALUE rbgm_image_load(VALUE, VALUE);
 
 /* 
  *  call-seq:
- *    savebmp( surface, filename )  ->  nil
+ *    savebmp( filename )  ->  nil
  *
  *  Save the Surface as a Windows Bitmap (BMP) file with the given filename.
- *  This method does not require Rubygame to be compiled with SDL_gfx.
  */
-VALUE rbgm_image_savebmp( VALUE module, VALUE surface, VALUE filename )
+VALUE rbgm_image_savebmp( VALUE self, VALUE filename )
 {
 	char *name;
 	SDL_Surface *surf;
 
 	name = StringValuePtr(filename);
-	Data_Get_Struct(surface,SDL_Surface,surf);
+	Data_Get_Struct(self,SDL_Surface,surf);
 	if(SDL_SaveBMP(surf,name)!=0)
 	{
 		rb_raise(eSDLError,\
@@ -61,7 +60,7 @@ VALUE rbgm_image_savebmp( VALUE module, VALUE surface, VALUE filename )
 
 /*
  *  call-seq:
- *    load( filename )  ->  Surface
+ *    Surface.load_image( filename )  ->  Surface
  *
  *  Load an image file from the disk to a Surface. If the image has an alpha
  *  channel (e.g. PNG with transparency), the Surface will as well. If the
@@ -69,9 +68,7 @@ VALUE rbgm_image_savebmp( VALUE module, VALUE surface, VALUE filename )
  *  will raise SDLError.
  *
  *  This method is only usable if Rubygame was compiled with the SDL_image
- *  library. You may test if this feature is available with the #usable?
- *  method. If you need more flexibility, you can check the library version
- *  that Rubygame was compiled against with the #version method.
+ *  library; you can check Rubygame::VERSIONS[:sdl_image] to see if it was.
  *
  *  This method takes this argument:
  *  filename:: a string containing the relative or absolute path to the
@@ -92,7 +89,7 @@ VALUE rbgm_image_savebmp( VALUE module, VALUE surface, VALUE filename )
  *  XCF:: "eXperimental Computing Facility" (GIMP native format).
  *  XPM:: "XPixMap" format.
  */
-VALUE rbgm_image_load( VALUE module, VALUE filename )
+VALUE rbgm_image_load( VALUE class, VALUE filename )
 {
 	char *name;
 	SDL_Surface *surf;
@@ -126,14 +123,15 @@ VALUE rbgm_image_load( VALUE module, VALUE filename )
 void Rubygame_Init_Image()
 {
 #if 0
-	/* Pretend to define Rubygame module, so RDoc knows about it: */
+	/* Pretend to define Rubygame and Surface, so RDoc knows about them: */
 	mRubygame = rb_define_module("Rubygame");
+	cSurface = rb_define_class_under(mRubygame,"Surface",rb_cObject);
 #endif
 
-	mImage = rb_define_module_under(mRubygame,"Image");
+	/*	mImage = rb_define_module_under(mRubygame,"Image"); */
 
 	/* This one doesn't actually need SDL_image, only vanilla SDL */
-	rb_define_module_function(mImage,"savebmp",rbgm_image_savebmp,2);
+	rb_define_method(cSurface,"savebmp",rbgm_image_savebmp,2);
 
 #ifdef HAVE_SDL_IMAGE_H
 
@@ -145,7 +143,7 @@ void Rubygame_Init_Image()
                            INT2NUM(SDL_IMAGE_PATCHLEVEL)));
 
 	/* Image methods */
-	rb_define_module_function(mImage,"load",rbgm_image_load,1);
+	rb_define_singleton_method(cSurface,"load_image",rbgm_image_load,1);
 
 #endif
 }

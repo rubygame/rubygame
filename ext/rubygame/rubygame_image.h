@@ -42,6 +42,6 @@ extern void Rubygame_Init_Image();
 extern VALUE mImage;
 
 extern VALUE rbgm_image_load(VALUE, VALUE);
-extern VALUE rbgm_image_savebmp(VALUE, VALUE, VALUE);
+extern VALUE rbgm_image_savebmp(VALUE, VALUE);
 
 #endif
