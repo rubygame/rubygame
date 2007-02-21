@@ -49,15 +49,13 @@ puts 'Warning, images disabled' unless
   ($image_ok = (Rubygame::VERSIONS[:sdl_image] != nil))
 puts 'Warning, font disabled' unless 
   ($font_ok = (Rubygame::VERSIONS[:sdl_ttf] != nil))
-  
-# Right now, Rubygame::VERSIONS doesn't seem to have a mixer
-# version in it
-#puts 'Warning, sound disabled' unless
-#  ($sound_ok = (Rubygame::VERSIONS[:sdl_mixer] != nil))
+puts 'Warning, sound disabled' unless
+  ($sound_ok = (Rubygame::VERSIONS[:sdl_mixer] != nil))
 
 # Functions to create our resources:
 def load_image(name, colorkey=nil)
-	image = Rubygame::Image.load(name)
+    # Rubygame::Image.load has been replaced with Surface
+	image = Rubygame::Surface.load_image(name)
 	if colorkey != nil
 		if colorkey == -1
 			colorkey = image.get_at([0,0])
@@ -68,7 +66,7 @@ def load_image(name, colorkey=nil)
 end
 
 def load_sound(name)
-    #return nil unless $sound_ok
+    return nil unless $sound_ok
     begin
         sound = Rubygame::Mixer::Sample.new(name)
         return sound
