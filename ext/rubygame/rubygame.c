@@ -108,6 +108,21 @@ VALUE rbgm_init(VALUE module)
 	}
 }
 
+/*
+ *  call-seq:
+ *     quit  ->  nil
+ *
+ *  Quit Rubygame. This should be used before your program terminates,
+ *  especially if you have been using a fullscreen Screen! (Otherwise,
+ *  the desktop resolution might not revert to its previous setting on
+ *  some platforms, and your users will be frustrated and confused!)
+ */
+VALUE rbgm_quit(VALUE module)
+{
+	SDL_Quit();
+	return Qnil;
+}
+
 
 void Init_rubygame()
 {
@@ -115,6 +130,7 @@ void Init_rubygame()
 	Define_Rubygame_Constants();
 
 	rb_define_module_function(mRubygame,"init",rbgm_init,0);
+	rb_define_module_function(mRubygame,"quit",rbgm_quit,0);
 	cRect = rb_define_class_under(mRubygame,"Rect",rb_cArray);
 	eSDLError = rb_define_class_under(mRubygame,"SDLError",rb_eStandardError);
 

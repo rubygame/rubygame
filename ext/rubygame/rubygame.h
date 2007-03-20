@@ -37,6 +37,7 @@ extern VALUE cSFont;
 extern VALUE mKey;
 extern VALUE mMouse;
 extern VALUE rbgm_init(VALUE);
+extern VALUE rbgm_quit(VALUE);
 extern SDL_Rect *make_rect(int, int, int, int);
 extern VALUE rbgm_usable(VALUE);
 extern VALUE rbgm_unusable(VALUE);
