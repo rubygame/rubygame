@@ -27,7 +27,7 @@ end
 
 class Panda
 	include Sprites::Sprite
-	@@pandapic = Image.load("panda.png")
+	@@pandapic = Surface.load_image("panda.png")
 	@@pandapic.set_colorkey(@@pandapic.get_at([0,0]))
 	attr_accessor :vx, :vy, :speed
 	def initialize(x,y)
