@@ -85,7 +85,7 @@ module Rubygame
       # load the surface containing all the glyphs
       surface = nil
       if filename.is_a? String
-        surface = Rubygame::Image.load(filename)
+        surface = Surface.load_image(filename)
       elsif filename.is_a? Surface
         surface = filename
       end
@@ -120,7 +120,7 @@ module Rubygame
           raise(ArgumentError,"spacew must be Numeric, String, \
 or nil (got %s)"%[spacew.class])
         end
-        @glyphs[" "] = Rubygame::Surface.new([spacew,@height])
+        @glyphs[" "] = Surface.new([spacew,@height])
       end
     end
 
@@ -167,8 +167,8 @@ or nil (got %s)"%[spacew.class])
       end
 
       # make a new surface for the glyph and blit the image onto it
-      rect = Rubygame::Rect.new(start_x, 0, end_x-start_x, surface.h)
-      @glyphs[glyph] = Rubygame::Surface.new(rect.size)
+      rect = Rect.new(start_x, 0, end_x-start_x, surface.h)
+      @glyphs[glyph] = Surface.new(rect.size)
       surface.blit(@glyphs[glyph],[0,0],rect)
       
       return end_x+1
@@ -207,7 +207,7 @@ or nil (got %s)"%[spacew.class])
     # string:: the text string to render.
     def render(string)
       size = [self.string_width(string),self.height]
-      render = Rubygame::Surface.new(size)
+      render = Surface.new(size)
       x = 0
       string.each_byte { |glyph| 
         blit_glyph("%c"%[glyph],render,[x,0])
