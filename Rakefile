@@ -5,14 +5,19 @@ require 'rake'
 require 'rake/gempackagetask'
 require 'rake/rdoctask'
 
+require "rbconfig"
+include Config
+OBJEXT = CONFIG["OBJEXT"]
+DLEXT = CONFIG["DLEXT"]
+
 spec = Gem::Specification.new do |s|
   s.name     = "rubygame"
-  s.version  = "1.1.0"
+  s.version  = "2.0.0"
   s.author   = "John Croisant"
-  s.email    = "rubygame@seul.org"
-  s.homepage = "http://rubygame.seul.org/"
+  s.email    = "jacius@users.sourceforge.net"
+  s.homepage = "http://rubygame.sourceforge.net/"
   s.platform = Gem::Platform::LINUX_586
-  s.summary  = "pygame-like game development library and extension"
+  s.summary  = "Clean and powerful library for game programming"
   s.has_rdoc = true
 
   candidates = Dir.glob("{lib,ext,samples,doc}/**/*")
@@ -22,7 +27,7 @@ spec = Gem::Specification.new do |s|
 
   s.require_paths = ["lib","ext"]
   s.autorequire = "rubygame.rb"
-  s.extensions = ["ext/rubygame/extconf.rb"]
+#  s.extensions = ["ext/rubygame/extconf.rb"]
 
   s.extra_rdoc_files = ["./README", "./LICENSE", "./TODO",\
     "./doc/getting_started.rdoc"]
@@ -38,38 +43,208 @@ Rake::RDocTask.new do |rd|
   rd.title = "Rubygame Documentation"
   rd.rdoc_files.include("lib/rubygame/*.rb",\
                         "ext/rubygame/*.c",\
-                        "ext/rubygame/extconf.rb",\
                         "doc/*.rdoc")
 end
 
-desc "Configure the extension for compilation."
-task :config do
-  sh "ruby setup.rb config"
-end
+task :default => [:build]
+desc "Compile the C portion of rubygame from source."
+task :build
 
-mf = File.join("ext", "rubygame", "Makefile")
-
-file mf do
-  Rake::Task[:config].invoke
-end
-
-desc "Compile extension."
-task :build => [mf] do
-  sh "ruby setup.rb setup"
-end
-
-desc "Install extension and library to system."
-task :install => [:build] do
-  sh "ruby setup.rb install"
-end
-
-task :clean do
-  sh "ruby setup.rb clean"
-end
+EXTDIR = File.join('.', 'ext', 'rubygame', '')
 
 require 'rake/clean'
+CLEAN.include("#{EXTDIR}*.#{OBJEXT}")
+CLOBBER.include("#{EXTDIR}*.#{DLEXT}")
 
-CLEAN.include(File.join("ext", "rubygame", "Makefile"),
-              File.join("ext", "rubygame", "mkmf.log"))
+# Options
 
-task :default => [:build]
+require 'ostruct'
+options = OpenStruct.new(:gfx         => true,
+                         :image       => true,
+                         :ttf         => true,
+                         :mixer       => true,
+                         :opengl      => true,
+                         :cflags      => "-Wall",
+                         :lflags      => "",
+                         :sdl_config  => true,
+                         :debug       => false,
+                         :verbose     => false,
+                         :sitearchdir => CONFIG["sitearchdir"],
+                         :sitelibdir  => CONFIG["sitelibdir"]
+                         )
+require 'optparse'
+optparse = OptionParser.new
+
+optparse.banner = "Configure the rubygame build/install tasks."
+
+optparse.on("-g", "--debug", 
+            "Compile rubygame.#{DLEXT} with debug symbols.") do |val|
+  options.debug = val
+end
+optparse.on("-v", "--verbose", "Display compiler commands when building.") do |val|
+  options.verbose = val
+end
+optparse.on("--[no-]gfx", "Compile with SDL_gfx support or not.") do |val|
+  options.gfx = val
+end
+optparse.on("--[no-]image", "Compile with SDL_image support or not.") do |val|
+  options.image = val
+end
+optparse.on("--[no-]ttf", "Compile with SDL_ttf support or not.") do |val|
+  options.ttf = val
+end
+optparse.on("--[no-]mixer", "Compile with SDL_mixer support or not.") do |val|
+  options.mixer = val
+end
+optparse.on("--[no-]opengl", "Enable OpenGL support.") do |val|
+  options.mixer = val
+end
+optparse.on("--cflags FLAGS", "Pass these FLAGS to the C compiler.") do |val|
+  options.cflags = val
+end
+optparse.on("--lflags FLAGS", "Pass these FLAGS to the C linker.") do |val|
+  options.lflags = val
+end
+optparse.on("--[no-]sdl-config",
+            "Feed results from `sdl-config' to \\",
+            "\tthe compiler and linker or not.") do |val|
+  options.sdl_config = val
+end
+optparse.on("--sitearchdir PATH",
+            "Install rubygame.#{DLEXT} into this PATH \\",
+            "\tinstead of the usual sitearchdir.") do |val|
+  options.sitearchdir = val
+end
+optparse.on("--sitelibdir PATH",
+            "Install lib into this PATH \\",
+            "\tinstead of the usual sitelibdir.") do |val|
+  options.sitelibdir = val
+end
+
+# Rake is not very nice about letting us specify custom flags, so
+# we'll go around it in this way.
+optparse.parse( (ENV["RUBYGAME_CONFIG"] or "").split(" ") )
+
+
+CFLAGS = [CONFIG["CFLAGS"],
+          ENV["CFLAGS"],
+          `sdl-config --cflags`.chomp,
+          "-I. -I#{CONFIG["topdir"]}",
+         ("-g" if options.debug) ].join(" ")
+
+LINK_FLAGS = [CONFIG["LIBRUBYARG_SHARED"],
+              ENV["LINK_FLAGS"],
+              `sdl-config --libs`.chomp].join(" ")
+
+LIBFLAG = " -l%s " # compiler flag for giving linked libraries
+
+# Optional libraries
+def optlib(lib, *inc)
+  LINK_FLAGS << LIBFLAG%lib
+  CFLAGS << inc.map { |header|
+    " -DHAVE_#{header.upcase.gsub('.','_')} " }.join("")
+end
+
+# TODO: We should check if the libraries exist?
+
+optlib('SDL_gfx',   'SDL_gfxPrimitives.h', 'SDL_rotozoom.h') if(options.gfx)
+optlib('SDL_image', 'SDL_image.h') if(options.image)
+optlib('SDL_mixer', 'SDL_mixer.h') if(options.mixer)
+optlib('SDL_ttf',   'SDL_ttf.h') if(options.ttf)
+CFLAGS << " -DHAVE_OPENGL " if(options.opengl)
+
+DL_PREREQS = {
+  'rubygame' => ['rubygame',
+                'constants', 
+                'rubygame_draw',
+                'rubygame_event',
+                'rubygame_gl',
+                'rubygame_image',
+                'rubygame_joystick',
+                'rubygame_mixer',
+                'rubygame_screen',
+                'rubygame_surface',
+                'rubygame_time',
+                'rubygame_ttf',
+                'rubygame_transform']
+}
+
+# Extracts the names of all the headers that the C file depends on.
+def depends_headers( filename )
+  depends = []
+  File.open(filename, "r") do |file|
+    file.each_line do |line|
+      if /#include\s+"(\w+\.h)"/ =~ line
+        depends << EXTDIR+$1
+      end
+    end
+  end
+  return depends
+end
+
+begin
+  # A rule for object files (".o" on linux).
+  # This won't work for rake < 0.7.2, because the proc returns an Array.
+  # If it raises an exception, we'll try a more compatible way.
+  rule /#{EXTDIR}.+\.#{OBJEXT}$/ =>
+    [
+     # Generate dependencies for this .o file
+     proc do |objfile|
+       source = objfile.sub(".#{OBJEXT}", ".c") # the .c file
+       [source] + depends_headers( source ) # Array of .c + .h dependencies
+     end
+    ]\
+  do |t|
+    compile_command = "#{CONFIG["CC"]} -c #{CFLAGS} #{t.source} -o #{t.name}"
+    if( options.verbose )
+      sh compile_command
+    else
+      puts "Compiling #{t.source}"
+      `#{compile_command}`
+    end
+  end
+rescue
+  # Generate a .o rule for each .c file in the directory.
+  FileList.new("#{EXTDIR}*.c").each do |source|
+    object = source.sub(".c", ".#{OBJEXT}")
+    file object => ([source] + depends_headers( source )) do |t|
+      compile_command = "#{CONFIG["CC"]} -c #{CFLAGS} #{source} -o #{t.name}"
+      if( options.verbose )
+        sh compile_command
+      else
+        puts "Compiling #{source}"
+        `#{compile_command}`
+      end
+    end
+  end
+end
+
+# Create a file task for each dynamic library (.so) we want to generate.
+DL_PREREQS.each_pair do |key, value|
+  dynlib  = "#{EXTDIR}#{key}.#{DLEXT}"
+  objects = value.collect { |v| "#{EXTDIR}#{v}.#{OBJEXT}" }
+
+  file dynlib => objects do |task|
+    link_command = "#{CONFIG["LDSHARED"]} #{LINK_FLAGS} -o #{task.name} #{task.prerequisites.join(' ')}"
+    if( options.verbose )
+      sh link_command
+    else
+      puts "Linking compiled files to create #{task.name}"
+      `#{link_command}`
+    end
+  end
+
+  task :build => [dynlib] # Add the dynlib as a prereq of the build task
+  task :install_ext => [dynlib] # and the install_ext task
+end
+
+task :install_ext do |task|
+  cp task.prerequisites.to_a, options.sitearchdir
+end
+
+task :install_lib do |task|
+  cp "./lib/rubygame.rb", options.sitelibdir
+  cp FileList.new("./lib/rubygame/*.rb").to_a, options.sitelibdir+"/rubygame/"
+end
+
+task :install => [:install_ext, :install_lib]

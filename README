@@ -43,39 +43,37 @@
  affect the API will be marked by a patch version number increment (e.g.
  1.0 to 1.0.1).
 
- If you would like to help make rubygame better, please send me comments via
- email (address at bottom of file)!
-
  === Links
- 1. Pygame: http://www.pygame.org
- 2. SDL: http://www.libsdl.org
- 3. Ruby/SDL: http://www.kmc.gr.jp/~ohai/rubysdl.en.html
- 4. RUDL: http://rudl.sourceforge.net
+ 1. Rubygame: http://rubygame.sourceforge.net
+ 2. Pygame: http://www.pygame.org
+ 3. SDL: http://www.libsdl.org
+ 4. Ruby/SDL: http://www.kmc.gr.jp/~ohai/rubysdl.en.html
+ 5. RUDL: http://rudl.sourceforge.net
 
  == Requirements
 
- Rubygame has been tested (and was developed) on the following,
- although older or newer versions may work:
+ You will definitely need these software packages to compile rubygame:
+
  * ruby        >= 1.8 
  * SDL         >= 1.2.7
- * SDL_gfx     >= 2.0.10   (for Draw/Transform modules)
- * SDL_image   >= 1.2.3    (for Image.load() method)
- * SDL_ttf     >= 2.0.6    (for TTF class)
+ * rake        >= 0.7.0    (for build/install system)
 
+ It's highly recommended that you have these packages as well, or some features
+ must be disabled. If you don't have them, you must give some flags to the 
+ build task. See the "Advanced Install" section below.
+
+ * SDL_gfx     >= 2.0.10
+ * SDL_image   >= 1.2.3
+ * SDL_ttf     >= 2.0.6
+
+ If you are compiling source on a binary-based Linux ditribution,
+ you will also need the "dev" packages of ruby, SDL, SDL_gfx, SDL_image,
+ 
  If you are compiling source, you will obviously need a C compiler
  as well. These versions of gcc worked fine for me:
 
  * gcc         >= 3.3.2
  (other compilers might work too)
-
- If you are compiling source on a binary-based ditribution
- (i.e. not Gentoo or LFS) you will also need the "dev" packages
- of ruby, SDL, SDL_gfx, SDL_image, and SDL_ttf.
-
- At this time, rubygame is only known to work on GNU/Linux.
- MacOSX and (eventually) Windows ports are likely. If you want to use
- rubygame on either of those platforms, please send me an email (address
- at bottom of file) and tell me, so I can guage interest!
 
  == Install
 
@@ -84,7 +82,6 @@
  Decompress archive and enter its top directory.
  Then run ($ indicates as user, # as root):
 
-  $ rake config
   $ rake build
   # rake install
 
@@ -92,90 +89,37 @@
 
   # rake install
 
- The 'config' and 'build' steps will happen automatically.
-
- You can also build HTML documentation into the 'html' directory:
-
-  # rake rdoc
+ (The 'build' task will happen automatically.)
 
  === Advanced Install
 
- The 'Basic Install' instructions are easy, but don't allow for tweaking
- to fit your system. You can do that by manually invoking the setup.rb file
- in the toplevel rubygame directory, and passing arguments to it.
+ You can provide flags to configure how the build and install tasks run.
+ Flags should be provided in an environmental variable, RUBYGAME_CONFIG.
 
- setup.rb has several steps that correspond to the rake steps above:
+ Try this command to see all the accepted flags:
 
-  $ ruby setup.rb config
-  $ ruby setup.rb setup        ## corresponds to 'rake build'
-  # ruby setup.rb install
+  $ RUBYGAME_CONFIG="--help" rake
 
- or just:
+ In particular, if you are missing an optional SDL_* library, you must
+ specify a "--no-*" flag for that library. E.g. if we didn't have SDL_gfx:
 
-  # ruby setup.rb all
+  $ RUBYGAME_CONFIG="--no-gfx" rake
 
- You can install files into a different directory by giving some options.
- See "ruby setup.rb --help".
+ If you don't do this, the compiler will likely not be able to find the headers
+ or dynamic libraries required. (The build system is not smart enough to
+ automatically disable missing features.)
 
- During the 'config' phase, you can pass any of these additional arguments
- like so: "ruby setup.rb config -- --arg val --arg val"
+ === Generating documentation
 
+ You can generate documentation for rubygame's API by running:
 
- --cflags::        (string, default: "-Wall")
-                   Specify flags to pass to the C compiler when compiling
-                   the source. If you use --no-sdl-config, you will probably
-                   have to use this flag.
+  # rake rdoc
 
- --enable-opengl:: (bool, default: yes)
-                   Compile the GL module to allow rubygame to work alongside
-                   OpenGL to provide hardware-accelerated three-dimensional
-                   graphics. Please note that rubygame does not provide any
-                   OpenGL functionality, it merely allows the Screen to work
-                   as OpenGL's framebuffer.
-
- --include-path::  (path)
-                   A colon-separated list of directory paths to check for C 
-                   headers, supplementing the directory given by 
-                   `sdl-config --cflags`. Use this to help the compiler find
-                   headers installed in unusual places.
-
- --library-path::  (path)
-                   A colon-separated list of directory paths to check for
-                   libraries, supplementing the directory given by 
-                   `sdl-config --libs`. Use this to help the compiler find
-                   libraries installed in unusual places.
-
- --libs::          (string)
-                   Specify flags to pass to the C linker when linking compiled
-                   source. If you use --no-sdl-config, you will probably
-                   have to use this flag.
-
- --no-sdl-config:: (bool, default: no)
-                   Skip invoking `sdl-config` to get compiler flags or 
-                   include/library paths. Only use this if you know what you're
-                   doing!
-
- --sdl-config::    (string, default: "sdl-config")
-                   Specify an alternate command to use when trying to find
-                   compiler and linker flags.
-
- --with-gfx::      (bool, default: yes)
-                   Compile Rubygame with SDL_gfx support? This is required for
-                   'Draw' and 'Transform' modules to work (with the exception
-                   of the Transform.flip method, which does not require it.)
-
- --with-image::    (bool, default: yes)
-                   Compile Rubygame with SDL_image support? This is required
-                   for the Image.load() method to work.
-
- --with-ttf::      (bool, default: yes)
-                   Compile Rubygame with SDL_ttf support? This is required
-                   for the TTF class to work.
-
+ Documentation will be generated as HTML in the 'html' directory.
+ View 'html/index.html' in a web browser.
 
  == Usage
  
-
  To use Rubygame in an application, do:
 
    require 'rubygame'
@@ -186,14 +130,14 @@
    queue = Rubygame::Queue.instance()
 
  For more information, see the documentation (online at 
- http://rubygame.seul.org).
+ http://rubygame.sourceforge.net).
 
  == License
 
  Rubygame is distributed under the terms of the GNU Lesser GPL.
  See LICENSE for more details.
 
- Some sample files may be distributed under different licenses than
- the GNU Lesser GPL. See 'samples/README' and 'samples/GPL' for more details.
+ Some sample files are be distributed under licenses other than the
+ GNU Lesser GPL. See 'samples/README' and 'samples/GPL' for more details.
 
- John 'jacius' Croisant  (rubygame at seul dot org)
+ John Croisant (jacius at users.sourceforge.net)
