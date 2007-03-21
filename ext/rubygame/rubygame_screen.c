@@ -31,7 +31,6 @@ VALUE cScreen;
 
 VALUE rbgm_screen_setmode(int, VALUE*, VALUE);
 VALUE rbgm_screen_getsurface(VALUE);
-VALUE rbgm_screen_new(VALUE);
 
 VALUE rbgm_screen_getcaption(VALUE);
 VALUE rbgm_screen_setcaption(int, VALUE*, VALUE);
@@ -45,10 +44,12 @@ VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
 
 
 /* call-seq:
- *  set_mode(size, depth=0, flags=[SWSURFACE])
+ *  new(size, depth=0, flags=[SWSURFACE])  ->  Screen
+ *  set_mode(size, depth=0, flags=[SWSURFACE])  ->  Screen
  *
  *  Create a new Rubygame window if there is none, or modify the existing one.
- *  Returns the resulting Surface.
+ *  Returns the resulting Screen. You cannot create more than one Screen
+ *  object.
  *
  *  This method takes these arguments:
  *  size::  requested window size (in pixels), in the form [width,height]
@@ -158,33 +159,6 @@ VALUE rbgm_screen_getsurface(VALUE module)
 }
 
 /* Screen methods: */
-
-/*
-*/
-
-/*  call-seq:
- *     new
- *
- *  A dummy function which will raise StandardError!
- *  You must instead use Screen.set_mode() to create or change the Screen mode!
- *
- *  Screen is a Singleton-style class, which means that only one may exist at a
- *  time (per application). You can create a Screen or change the existing one
- *  using Screen.set_mode, and get a reference to an existing Screen with 
- *  Screen.get_surface
- *
- *  A Screen.new method would imply that more than one could be created, so to
- *  avoid confusion Screen has no such method.
- *
- *  (But, this annoying behavior feels like a really bad wart, so in the 
- *  future, Screen.new will probably be an alias to #set_mode. Let me know what
- *  you think about this.)
- */
-VALUE rbgm_screen_new(VALUE class)
-{
-  rb_raise(rb_eStandardError,"Use Screen.set_mode() to create instance of Singleton class Screen.");
-  return Qnil; /* should never get here */
-}
 
 /*  call-seq:
  *     caption
@@ -403,7 +377,7 @@ void Rubygame_Init_Screen()
 
   /* Screen class */
   cScreen = rb_define_class_under(mRubygame,"Screen",cSurface); // in surface.c
-  rb_define_singleton_method(cScreen,"new",rbgm_screen_new,0); /* dummy func */
+  rb_define_singleton_method(cScreen,"new",rbgm_screen_setmode, -1);
   rb_define_singleton_method(cScreen,"set_mode",rbgm_screen_setmode, -1);
   rb_define_singleton_method(cScreen,"get_surface",rbgm_screen_getsurface, 0);
 
