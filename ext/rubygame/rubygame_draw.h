@@ -57,33 +57,31 @@
 
 extern void Rubygame_Init_Draw();
 
-extern VALUE mDraw;
-
 extern void draw_line(VALUE, VALUE, VALUE, VALUE, int);
-extern VALUE rbgm_draw_line(VALUE, VALUE, VALUE, VALUE, VALUE);
-extern VALUE rbgm_draw_aaline(VALUE, VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_line(VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_aaline(VALUE, VALUE, VALUE, VALUE);
 
 extern void draw_rect(VALUE, VALUE, VALUE, VALUE, int);
-extern VALUE rbgm_draw_rect(VALUE, VALUE, VALUE, VALUE, VALUE);
-extern VALUE rbgm_draw_fillrect(VALUE, VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_rect(VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_fillrect(VALUE, VALUE, VALUE, VALUE);
 
 extern void draw_circle(VALUE, VALUE, VALUE, VALUE, int, int);
-extern VALUE rbgm_draw_circle(VALUE, VALUE, VALUE, VALUE, VALUE);
-extern VALUE rbgm_draw_aacircle(VALUE, VALUE, VALUE, VALUE, VALUE);
-extern VALUE rbgm_draw_fillcircle(VALUE, VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_circle(VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_aacircle(VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_fillcircle(VALUE, VALUE, VALUE, VALUE);
 
 extern void draw_ellipse(VALUE, VALUE, VALUE, VALUE, int, int);
-extern VALUE rbgm_draw_ellipse(VALUE, VALUE, VALUE, VALUE, VALUE);
-extern VALUE rbgm_draw_aaellipse(VALUE, VALUE, VALUE, VALUE, VALUE);
-extern VALUE rbgm_draw_fillellipse(VALUE, VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_ellipse(VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_aaellipse(VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_fillellipse(VALUE, VALUE, VALUE, VALUE);
 
 extern void draw_pie(VALUE, VALUE, VALUE, VALUE, VALUE, int);
-extern VALUE rbgm_draw_pie(VALUE, VALUE, VALUE, VALUE, VALUE, VALUE);
-extern VALUE rbgm_draw_fillpie(VALUE, VALUE, VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_pie(VALUE, VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_fillpie(VALUE, VALUE, VALUE, VALUE, VALUE);
 
 extern void draw_polygon(VALUE, VALUE, VALUE, int, int);
-extern VALUE rbgm_draw_polygon(VALUE, VALUE, VALUE, VALUE);
-extern VALUE rbgm_draw_aapolygon(VALUE, VALUE, VALUE, VALUE);
-extern VALUE rbgm_draw_fillpolygon(VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_polygon(VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_aapolygon(VALUE, VALUE, VALUE);
+extern VALUE rbgm_draw_fillpolygon(VALUE, VALUE, VALUE);
 
 #endif

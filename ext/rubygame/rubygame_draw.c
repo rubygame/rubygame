@@ -19,39 +19,39 @@
  */
 
 #include "rubygame.h"
+#include "rubygame_surface.h"
 #include "rubygame_draw.h"
 
 void Rubygame_Init_Draw();
-VALUE mDraw;
 
 #ifdef HAVE_SDL_GFXPRIMITIVES_H
 
 void draw_line(VALUE, VALUE, VALUE, VALUE, int);
-VALUE rbgm_draw_line(VALUE, VALUE, VALUE, VALUE, VALUE);
-VALUE rbgm_draw_aaline(VALUE, VALUE, VALUE, VALUE, VALUE);
+VALUE rbgm_draw_line(VALUE, VALUE, VALUE, VALUE);
+VALUE rbgm_draw_aaline(VALUE, VALUE, VALUE, VALUE);
 
 void draw_rect(VALUE, VALUE, VALUE, VALUE, int);
-VALUE rbgm_draw_rect(VALUE, VALUE, VALUE, VALUE, VALUE);
-VALUE rbgm_draw_fillrect(VALUE, VALUE, VALUE, VALUE, VALUE);
+VALUE rbgm_draw_rect(VALUE, VALUE, VALUE, VALUE);
+VALUE rbgm_draw_fillrect(VALUE, VALUE, VALUE, VALUE);
 
 void draw_circle(VALUE, VALUE, VALUE, VALUE, int, int);
-VALUE rbgm_draw_circle(VALUE, VALUE, VALUE, VALUE, VALUE);
-VALUE rbgm_draw_aacircle(VALUE, VALUE, VALUE, VALUE, VALUE);
-VALUE rbgm_draw_fillcircle(VALUE, VALUE, VALUE, VALUE, VALUE);
+VALUE rbgm_draw_circle(VALUE, VALUE, VALUE, VALUE);
+VALUE rbgm_draw_aacircle(VALUE, VALUE, VALUE, VALUE);
+VALUE rbgm_draw_fillcircle(VALUE, VALUE, VALUE, VALUE);
 
 void draw_ellipse(VALUE, VALUE, VALUE, VALUE, int, int);
-VALUE rbgm_draw_ellipse(VALUE, VALUE, VALUE, VALUE, VALUE);
-VALUE rbgm_draw_aaellipse(VALUE, VALUE, VALUE, VALUE, VALUE);
-VALUE rbgm_draw_fillellipse(VALUE, VALUE, VALUE, VALUE, VALUE);
+VALUE rbgm_draw_ellipse(VALUE, VALUE, VALUE, VALUE);
+VALUE rbgm_draw_aaellipse(VALUE, VALUE, VALUE, VALUE);
+VALUE rbgm_draw_fillellipse(VALUE, VALUE, VALUE, VALUE);
 
 void draw_pie(VALUE, VALUE, VALUE, VALUE, VALUE, int);
-VALUE rbgm_draw_pie(VALUE, VALUE, VALUE, VALUE, VALUE, VALUE);
-VALUE rbgm_draw_fillpie(VALUE, VALUE, VALUE, VALUE, VALUE, VALUE);
+VALUE rbgm_draw_pie(VALUE, VALUE, VALUE, VALUE, VALUE);
+VALUE rbgm_draw_fillpie(VALUE, VALUE, VALUE, VALUE, VALUE);
 
 void draw_polygon(VALUE, VALUE, VALUE, int, int);
-VALUE rbgm_draw_polygon(VALUE, VALUE, VALUE, VALUE);
-VALUE rbgm_draw_aapolygon(VALUE, VALUE, VALUE, VALUE);
-VALUE rbgm_draw_fillpolygon(VALUE, VALUE, VALUE, VALUE);
+VALUE rbgm_draw_polygon(VALUE, VALUE, VALUE);
+VALUE rbgm_draw_aapolygon(VALUE, VALUE, VALUE);
+VALUE rbgm_draw_fillpolygon(VALUE, VALUE, VALUE);
 
 
 /*********
@@ -122,28 +122,27 @@ void draw_line(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int aa)
 }
 
 /*  call-seq:
- *    line(surface, point1, point2, color)
+ *    draw_line(point1, point2, color)
  *
- *  Draw a line segment between two points on a surface. See also #aaline.
+ *  Draw a line segment between two points on a surface. See also #draw_aaline.
  *
  *  This method takes these arguments:
- *  surface:: the target surface to draw on.
  *  point1::  the coordinates of one end of the line, in the form [x,y].
  *  point2::  the coordinates of the other end of the line, as above.
  *  color::   the color of the shape, in the form [r,g,b,a]. If alpha
  *            is omitted, it is drawn at full opacity.
  */
-VALUE rbgm_draw_line(VALUE module, VALUE target, VALUE pt1, VALUE pt2, VALUE rgba)
+VALUE rbgm_draw_line(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba)
 {
   draw_line(target,pt1,pt2,rgba,0); /* no anti-aliasing */
   return target;
 }
 /*  call-seq:
- *    aaline(surface, point1, point2, color)
+ *    draw_aaline(point1, point2, color)
  *
- *  As #line, but the line will be anti-aliased.
+ *  As #draw_line, but the line will be anti-aliased.
  */
-VALUE rbgm_draw_aaline(VALUE module, VALUE target, VALUE pt1, VALUE pt2, VALUE rgba)
+VALUE rbgm_draw_aaline(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba)
 {
   draw_line(target,pt1,pt2,rgba,1); /* anti-aliasing */
   return target;
@@ -204,32 +203,31 @@ void draw_rect(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int fill)
   return;
 }
 /*  call-seq:
- *    box(surface, point1, point2, color)
+ *    draw_box(point1, point2, color)
  *
  *  Draw a non-filled box (rectangle) on a surface, given the coordinates of
- *  its top-left corner and bottom-right corner. See also #filled_box.
+ *  its top-left corner and bottom-right corner. See also #draw_filled_box.
  *
  *  This method takes these arguments:
- *  surface:: the target surface to draw on.
  *  point1::  the coordinates of top-left corner, in the form [x,y].
  *  point2::  the coordinates of bottom-right corner, in the form [x,y].
  *  color::   the color of the shape, in the form [r,g,b,a]. If alpha
  *            is omitted, it is drawn at full opacity.
  */
-VALUE rbgm_draw_rect(VALUE module, VALUE target, VALUE pt1, VALUE pt2, VALUE rgba)
+VALUE rbgm_draw_rect(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba)
 {
   draw_rect(target,pt1,pt2,rgba,0); /* no fill */
   return target;
 }
 
 /*  call-seq:
- *    filled_box(surface, point1, point2, color)
+ *    draw_filled_box(point1, point2, color)
  *
- *  As #box, but the shape is solid, not an outline. (You may
- *  find using Surface#fill to be more convenient, and perhaps faster than
+ *  As #draw_box, but the shape is solid, not an outline. (You may
+ *  find using #fill to be more convenient, and perhaps faster than
  *  this method.)
  */
-VALUE rbgm_draw_fillrect(VALUE module, VALUE target, VALUE pt1, VALUE pt2, VALUE rgba)
+VALUE rbgm_draw_fillrect(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba)
 {
   draw_rect(target,pt1,pt2,rgba,1); /* fill */
   return target;
@@ -297,41 +295,40 @@ void draw_circle(VALUE target, VALUE center, VALUE radius, VALUE rgba, int aa, i
 
 /* 
  *  call-seq:
- *    circle(surface, center, radius, color)
+ *    draw_circle(center, radius, color)
  *
  *  Draw an empty circle on a surface, given the coordinates of its center
- *  and its radius. See also #aacircle and #filled_circle.
+ *  and its radius. See also #draw_aacircle and #draw_filled_circle.
  *
  *  This method takes these arguments:
- *  surface:: the target surface to draw on.
  *  center::  the coordinates of circle's center, in the form [x,y].
  *  radius::  the radius (pixels) of the circle.
  *  color::   the color of the shape, in the form [r,g,b,a]. If alpha
  *            is omitted, it is drawn at full opacity.
  */
-VALUE rbgm_draw_circle(VALUE module, VALUE target, VALUE center, VALUE radius, VALUE rgba)
+VALUE rbgm_draw_circle(VALUE target, VALUE center, VALUE radius, VALUE rgba)
 {
   draw_circle(target,center,radius,rgba,0,0); /* no aa, no fill */
   return target;
 }
 /* 
  *  call-seq:
- *    aacircle(surface, center, radius, color)
+ *    draw_aacircle(center, radius, color)
  *
- *  As #circle, but the outline is anti-aliased.
+ *  As #draw_circle, but the outline is anti-aliased.
  */
-VALUE rbgm_draw_aacircle(VALUE module, VALUE target, VALUE center, VALUE radius, VALUE rgba)
+VALUE rbgm_draw_aacircle(VALUE target, VALUE center, VALUE radius, VALUE rgba)
 {
   draw_circle(target,center,radius,rgba,1,0); /* aa, no fill */
   return target;
 }
 /* 
  *  call-seq:
- *    filled_circle(surface, center, radius, color)
+ *    draw_filled_circle(center, radius, color)
  *
- *  As #circle, but the shape is solid, not an outline.
+ *  As #draw_circle, but the shape is solid, not an outline.
  */
-VALUE rbgm_draw_fillcircle(VALUE module, VALUE target, VALUE center, VALUE radius, VALUE rgba)
+VALUE rbgm_draw_fillcircle(VALUE target, VALUE center, VALUE radius, VALUE rgba)
 {
   draw_circle(target,center,radius,rgba,0,1); /* no aa, fill */
   return target;
@@ -402,31 +399,30 @@ void draw_ellipse(VALUE target, VALUE center, VALUE radii, VALUE rgba, int aa, i
 
 /* 
  *  call-seq:
- *    ellipse(surface, center, radius, color)
+ *    draw_ellipse(center, radius, color)
  *
  *  Draw an empty ellipse (i.e. an oval) on a surface, given the 
  *  coordinates of its center and its horizontal and vertical radii.
- *  See also #aaellipse and #filled_ellipse.
+ *  See also #draw_aaellipse and #draw_filled_ellipse.
  *
  *  This method takes these arguments:
- *  surface:: the target surface to draw on.
  *  center::  the coordinates of ellipse's center, in the form [x,y].
  *  radii::   the x and y radii (pixels), in the form [xr,yr].
  *  color::   the color of the shape, in the form [r,g,b,a]. If alpha
  *            is omitted, it is drawn at full opacity.
  */
-VALUE rbgm_draw_ellipse(VALUE module, VALUE target, VALUE center, VALUE radii, VALUE rgba)
+VALUE rbgm_draw_ellipse(VALUE target, VALUE center, VALUE radii, VALUE rgba)
 {
   draw_ellipse(target,center,radii,rgba,0,0); /* no aa, no fill */
   return target;
 }
 /* 
  *  call-seq:
- *    aaellipse(surface, center, radius, color)
+ *    draw_aaellipse(center, radius, color)
  *
- *  As #ellipse, but the ellipse border is anti-aliased.
+ *  As #draw_ellipse, but the ellipse border is anti-aliased.
  */
-VALUE rbgm_draw_aaellipse(VALUE module, VALUE target, VALUE center, VALUE radii, VALUE rgba)
+VALUE rbgm_draw_aaellipse(VALUE target, VALUE center, VALUE radii, VALUE rgba)
 {
   draw_ellipse(target,center,radii,rgba,1,0); /* aa, no fill */
   return target;
@@ -434,11 +430,11 @@ VALUE rbgm_draw_aaellipse(VALUE module, VALUE target, VALUE center, VALUE radii,
 
 /* 
  *  call-seq:
- *    filled_ellipse(surface, center, radius, color)
+ *    draw_filled_ellipse(center, radius, color)
  *
- *  As #ellipse, but the shape is solid, not an outline.
+ *  As #draw_ellipse, but the shape is solid, not an outline.
  */
-VALUE rbgm_draw_fillellipse(VALUE module, VALUE target, VALUE center, VALUE radii, VALUE rgba)
+VALUE rbgm_draw_fillellipse(VALUE target, VALUE center, VALUE radii, VALUE rgba)
 {
   draw_ellipse(target,center,radii,rgba,0,1); /* no aa, fill */
   return target;
@@ -509,19 +505,18 @@ void draw_pie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba
 
 /* 
  *  call-seq:
- *    pie(surface, center, radius, angles, color)
+ *    draw_pie(center, radius, angles, color)
  *
  *  Draw a non-filled pie shape (i.e. an arc), given the coordinates of its
  *  center and its radius, and its starting and ending angles. The shape is
- *  that of a circle with a "slice" removed, as if it were a pie. (Think
- *  P*cm*n.) See also #filled_pie.
+ *  that of a circle with a "slice" removed, as if it were a pie.
+ *  See also #draw_filled_pie.
  *
  *  This function can only be used if Rubygame was compiled with at least 
  *  version 2.0.11 of SDL_gfx. Otherwise, it will issue a warning and
- *  return nil. (#filled_pie does not require version 2.0.11).
+ *  return nil. (But, #draw_filled_pie does not require version 2.0.11).
  *
  *  This method takes these arguments:
- *  surface:: the target surface to draw on.
  *  center::  the coordinates of circle's center, in the form [x,y].
  *  radius::  the radius (pixels) of the circle.
  *  angles::  the start and end angles (in degrees) of the arc, in the form
@@ -530,7 +525,7 @@ void draw_pie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba
  *  color::   the color of the shape, in the form [r,g,b,a]. If alpha
  *            is omitted, it is drawn at full opacity.
  */
-VALUE rbgm_draw_pie(VALUE module, VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba)
+VALUE rbgm_draw_pie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba)
 {
 #ifdef HAVE_NONFILLEDPIE
   draw_pie(target,center,radius,angles,rgba,0); /* no fill */
@@ -543,12 +538,12 @@ VALUE rbgm_draw_pie(VALUE module, VALUE target, VALUE center, VALUE radius, VALU
 
 /* 
  *  call-seq:
- *    filled_pie(surface, center, radius, angles, color)
+ *    draw_filled_pie(center, radius, angles, color)
  *
- *  As #pie, but the shape is solid, not an outline. (This method does not
- *  require SDL_gfx 2.0.11 as #pie does.)
+ *  As #draw_pie, but the shape is solid, not an outline. (This method does
+ *  not require SDL_gfx 2.0.11, but #draw_pie does.)
  */
-VALUE rbgm_draw_fillpie(VALUE module, VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba)
+VALUE rbgm_draw_fillpie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba)
 {
   draw_pie(target,center,radius,angles,rgba,1); /* fill */
   return target;
@@ -622,14 +617,13 @@ void draw_polygon(VALUE target, VALUE points, VALUE rgba, int aa, int fill)
 }
 /* 
  *  call-seq:
- *    polygon(surface, points, color)
+ *    draw_polygon(points, color)
  *
  *  Draw an empty polygon, given the coordinates of its vertices, in the
  *  order that they are connected. This is essentially a series of connected
- *  dots.
+ *  dots. See also #draw_aapolygon and #draw_filled_polygon.
  *
  *  This method takes these arguments:
- *  surface:: the target surface to draw on.
  *  points::  an Array containing the coordinate pairs for each vertex of the
  *            polygon, in the order that they are connected, e.g.
  *            <tt>[ [x1,y1], [x2,y2], ..., [xn,yn] ]</tt>. To draw a closed 
@@ -637,18 +631,18 @@ void draw_polygon(VALUE target, VALUE points, VALUE rgba, int aa, int fill)
  *  color::   the color of the shape, in the form [r,g,b,a]. If alpha
  *            is omitted, it is drawn at full opacity.
  */
-VALUE rbgm_draw_polygon(VALUE module, VALUE target, VALUE points, VALUE rgba)
+VALUE rbgm_draw_polygon(VALUE target, VALUE points, VALUE rgba)
 {
   draw_polygon(target,points,rgba,0,0); /* no aa, no fill */
   return target;
 }
 /* 
  *  call-seq:
- *    aapolygon(surface, points, color)
+ *    draw_aapolygon(points, color)
  *
- *  As #polygon, but the lines are anti-aliased.
+ *  As #draw_polygon, but the lines are anti-aliased.
  */
-VALUE rbgm_draw_aapolygon(VALUE module, VALUE target, VALUE points, VALUE rgba)
+VALUE rbgm_draw_aapolygon(VALUE target, VALUE points, VALUE rgba)
 {
   draw_polygon(target,points,rgba,1,0); /* aa, no fill */
   return target;
@@ -656,11 +650,11 @@ VALUE rbgm_draw_aapolygon(VALUE module, VALUE target, VALUE points, VALUE rgba)
 
 /* 
  *  call-seq:
- *    filled_polygon(surface, points, color)
+ *    draw_filled_polygon(points, color)
  *
- *  As #polygon, but the shape is solid, not an outline.
+ *  As #draw_polygon, but the shape is solid, not an outline.
  */
-VALUE rbgm_draw_fillpolygon(VALUE module, VALUE target, VALUE points, VALUE rgba)
+VALUE rbgm_draw_fillpolygon(VALUE target, VALUE points, VALUE rgba)
 {
   draw_polygon(target,points,rgba,0,1); /* no aa, fill */
   return target;
@@ -670,8 +664,8 @@ VALUE rbgm_draw_fillpolygon(VALUE module, VALUE target, VALUE points, VALUE rgba
 
 
 
-/* 
- *  Document-module: Rubygame::Draw
+/*
+ *
  *
  *  The Draw module provides an interface to SDL_gfx's methods for drawing
  *  geometric primitives and other colored shapes onto Surfaces. Some methods
@@ -695,8 +689,9 @@ VALUE rbgm_draw_fillpolygon(VALUE module, VALUE target, VALUE points, VALUE rgba
 void Rubygame_Init_Draw()
 {
 #if 0
-	/* Pretend to define Rubygame module, so RDoc knows about it: */
+	/* Pretend to define Rubygame and Surface, so RDoc knows about them: */
 	mRubygame = rb_define_module("Rubygame");
+	cSurface = rb_define_class_under(mRubygame,"Surface",rb_cObject);
 #endif
 
 #ifdef HAVE_SDL_GFXPRIMITIVES_H
@@ -708,24 +703,21 @@ void Rubygame_Init_Draw()
                            INT2NUM(SDL_GFXPRIMITIVES_MINOR),
                            INT2NUM(SDL_GFXPRIMITIVES_MICRO)));
 
-  /* Draw module */
-  mDraw = rb_define_module_under(mRubygame,"Draw");
-
-  rb_define_module_function(mDraw,"line",rbgm_draw_line,4);
-  rb_define_module_function(mDraw,"aaline",rbgm_draw_aaline,4);
-  rb_define_module_function(mDraw,"box",rbgm_draw_rect,4);
-  rb_define_module_function(mDraw,"filled_box",rbgm_draw_fillrect,4);
-  rb_define_module_function(mDraw,"circle",rbgm_draw_circle,4);
-  rb_define_module_function(mDraw,"aacircle",rbgm_draw_aacircle,4);
-  rb_define_module_function(mDraw,"filled_circle",rbgm_draw_fillcircle,4);
-  rb_define_module_function(mDraw,"ellipse",rbgm_draw_ellipse,4);
-  rb_define_module_function(mDraw,"aaellipse",rbgm_draw_aaellipse,4);
-  rb_define_module_function(mDraw,"filled_ellipse",rbgm_draw_fillellipse,4);
-  rb_define_module_function(mDraw,"pie",rbgm_draw_pie,5);
-  rb_define_module_function(mDraw,"filled_pie",rbgm_draw_fillpie,5);
-  rb_define_module_function(mDraw,"polygon",rbgm_draw_polygon,3);
-  rb_define_module_function(mDraw,"aapolygon",rbgm_draw_aapolygon,3);
-  rb_define_module_function(mDraw,"filled_polygon",rbgm_draw_fillpolygon,3);
+  rb_define_method(cSurface,"draw_line",rbgm_draw_line,3);
+  rb_define_method(cSurface,"draw_aaline",rbgm_draw_aaline,3);
+  rb_define_method(cSurface,"draw_box",rbgm_draw_rect,3);
+  rb_define_method(cSurface,"draw_filled_box",rbgm_draw_fillrect,3);
+  rb_define_method(cSurface,"draw_circle",rbgm_draw_circle,3);
+  rb_define_method(cSurface,"draw_aacircle",rbgm_draw_aacircle,3);
+  rb_define_method(cSurface,"draw_filled_circle",rbgm_draw_fillcircle,3);
+  rb_define_method(cSurface,"draw_ellipse",rbgm_draw_ellipse,3);
+  rb_define_method(cSurface,"draw_aaellipse",rbgm_draw_aaellipse,3);
+  rb_define_method(cSurface,"draw_filled_ellipse",rbgm_draw_fillellipse,3);
+  rb_define_method(cSurface,"draw_pie",rbgm_draw_pie,4);
+  rb_define_method(cSurface,"draw_filled_pie",rbgm_draw_fillpie,4);
+  rb_define_method(cSurface,"draw_polygon",rbgm_draw_polygon,2);
+  rb_define_method(cSurface,"draw_aapolygon",rbgm_draw_aapolygon,2);
+  rb_define_method(cSurface,"draw_filled_polygon",rbgm_draw_fillpolygon,2);
 
 #endif
 
