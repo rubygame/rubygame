@@ -245,7 +245,7 @@ module Rubygame
 			# so that it can remove this Group from its list of parent Groups.
 			# See also #delete.
 			def clear
-				self.each { |sprite| sprite.remove(self) }
+				self.dup.each { |sprite| sprite.remove(self) }
 			end
 
 			# call-seq: collide_sprite(sprite)  ->  Array
@@ -278,6 +278,8 @@ module Rubygame
 
 			# Remove each sprite in +sprites+ from the Group. Each sprite is notified
 			# so that it can remove this Group from its list of parent Groups.
+			# Note that this will not work correctly if fed a list of its
+			# own sprites (use Array.dup if you want correct behavior)
 			def delete(*sprites)
 				sprites.each { |sprite|
 					if self.include? sprite
