@@ -50,7 +50,7 @@ GL::DepthFunc(GL::LESS)
 
 GL::ShadeModel(GL::FLAT)
 
-surface = Rubygame::Image.load(TEXTURE)
+surface = Rubygame::Surface.load_image(TEXTURE)
 
 tex_id = GL::GenTextures(1)
 GL::BindTexture(GL::TEXTURE_2D, tex_id[0])
