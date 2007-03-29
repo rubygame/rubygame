@@ -44,6 +44,7 @@ VALUE rbgm_ttf_height(VALUE);
 VALUE rbgm_ttf_ascent(VALUE);
 VALUE rbgm_ttf_descent(VALUE);
 VALUE rbgm_ttf_lineskip(VALUE);
+VALUE rbgm_ttf_sizetext(VALUE, VALUE);
 
 VALUE rbgm_ttf_render(int, VALUE*, VALUE);
 
@@ -304,6 +305,31 @@ VALUE rbgm_ttf_lineskip(VALUE self)
 	return INT2NUM(TTF_FontLineSkip(font));
 }
 
+/*
+ * call-seq:
+ *   size_text(text) -> [ width, height ]
+ * 
+ * The width and height the text would be if
+ * it were rendered, without the overhead of
+ * actually rendering it.
+ */
+VALUE rbgm_ttf_sizetext(VALUE self, VALUE string)
+{
+	TTF_Font *font;
+	int w;
+	int h;
+	VALUE result;
+	Data_Get_Struct(self, TTF_Font,font);
+	result = rb_ary_new();
+	
+	TTF_SizeText(font,StringValuePtr(string),&w,&h);
+	
+	rb_ary_push(result, INT2NUM(w));
+	rb_ary_push(result, INT2NUM(h));
+	
+	return result;
+}
+
 /*  call-seq:
  *    render(string, aa, fg, bg)  ->  Surface
  *
@@ -367,6 +393,7 @@ VALUE rbgm_ttf_render(int argc, VALUE *argv, VALUE self)
 		rb_raise(eSDLError,"could not render font object: %s",TTF_GetError());
 	return Data_Wrap_Struct(cSurface,0,SDL_FreeSurface,surf);
 }
+
 #endif /* HAVE_SDL_TTF_H */
 
 /* 
@@ -423,6 +450,7 @@ void Rubygame_Init_TTF()
 	rb_define_method(cTTF,"ascent",rbgm_ttf_ascent,0);
 	rb_define_method(cTTF,"descent",rbgm_ttf_descent,0);
 	rb_define_method(cTTF,"line_skip",rbgm_ttf_lineskip,0);
+	rb_define_method(cTTF,"size_text",rbgm_ttf_sizetext,1);
 	rb_define_method(cTTF,"render",rbgm_ttf_render,-1);
 
 #endif
