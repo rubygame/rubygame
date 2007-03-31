@@ -2,7 +2,7 @@
  *  GL module -- OpenGL attribute methods
  * --
  *  Rubygame -- Ruby classes and bindings to SDL to facilitate game creation
- *  Copyright (C) 2004-2006  John 'jacius' Croisant
+ *  Copyright (C) 2004-2007  John Croisant
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -114,16 +114,16 @@ VALUE rbgm_gl_swapbuffers(VALUE module)
  *  Please note that Rubygame itself does not provide an interface to OpenGL
  *  functions -- only functions which allow Rubygame to work together with
  *  OpenGL. You will need to use another library, for example 
- *  ruby-opengl[http://www2.giganet.net/~yoshi/], to actually create graphics
- *  with OpenGL.
+ *  ruby-opengl[http://ruby-opengl.rubyforge.org/], 
+ *  to actually create graphics with OpenGL.
  *
- *  Users who wish to use Rubygame Surfaces as textures in OpenGL will want
- *  to see also the Surface#pixels method.
+ *  Users who wish to use Rubygame Surfaces as textures in OpenGL should
+ *  see also the Surface#pixels method.
  */
 void Rubygame_Init_GL()
 {
+/* Pretend to define Rubygame module, so RDoc knows about it: */
 #if 0
-	/* Pretend to define Rubygame module, so RDoc knows about it: */
 	mRubygame = rb_define_module("Rubygame");
 #endif
 
@@ -131,15 +131,9 @@ void Rubygame_Init_GL()
   Define_GL_Constants();
 
 #ifdef HAVE_OPENGL
-  rb_define_module_function(mGL,"usable?", rbgm_usable, 0);
   rb_define_module_function(mGL,"get_attrib", rbgm_gl_getattrib, 1);
   rb_define_module_function(mGL,"set_attrib", rbgm_gl_setattrib, 2);
   rb_define_module_function(mGL,"swap_buffers", rbgm_gl_swapbuffers, 0);
-#else
-  rb_define_module_function(mGL,"usable?", rbgm_unusable, 0);
-  rb_define_module_function(mGL,"get_attrib", rbgm_dummy, -1);
-  rb_define_module_function(mGL,"set_attrib", rbgm_dummy, -1);
-  rb_define_module_function(mGL,"swap_buffers", rbgm_dummy, -1);
 #endif
 
 }
