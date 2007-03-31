@@ -27,8 +27,6 @@
 
 void Rubygame_Init_Transform();
 
-VALUE mTrans;
-
 VALUE rbgm_transform_flip(int, VALUE*, VALUE);
 
 #ifdef HAVE_SDL_ROTOZOOM_H
@@ -41,25 +39,29 @@ VALUE rbgm_transform_zoomsize(int, VALUE*, VALUE);
 
 /*
  *  call-seq:
- *    rotozoom( surface, angle, zoom, smooth )  ->  Surface
+ *    rotozoom( angle, zoom, smooth )  ->  Surface
  *
  *  Return a rotated and/or zoomed version of the given surface. Note that
  *  rotating a Surface anything other than a multiple of 90 degrees will 
  *  cause the new surface to be larger than the original to accomodate the
  *  corners (which would otherwise extend beyond the surface).
  *
- *  This function takes these arguments:
- *  surface:: the source surface.
+ *  If Rubygame was compiled with SDL_gfx-2.0.13 or greater, +zoom+ can be
+ *  an Array of 2 Numerics for separate X and Y scaling. Also, it can be
+ *  negative to indicate flipping horizontally or vertically.
+ *
+ *  Will raise SDLError if you attempt to use separate X and Y zoom factors
+ *  or negative zoom factors with an unsupported version of SDL_gfx.
+ *
+ *  This method takes these arguments:
  *  angle::   degrees to rotate counter-clockwise (negative for clockwise).
- *  zoom::    scaling factor. If Rubygame was compiled with SDL_gfx >= 
- *            2.0.13, this can be an Array of 2 Numerics for separate X and Y
- *            scaling, and can be negative to indicate flipping horizontally
- *            or vertically.
+ *  zoom::    scaling factor(s). A single positive Numeric, unless you have
+ *            SDL_gfx-2.0.13 or greater (see above).
  *  smooth::  whether to anti-alias the new surface. This option can be
  *            omitted, in which case the surface will not be anti-aliased.
  *            If true, the new surface will be 32bit RGBA.
  */
-VALUE rbgm_transform_rotozoom(int argc, VALUE *argv, VALUE module)
+VALUE rbgm_transform_rotozoom(int argc, VALUE *argv, VALUE self)
 {
   SDL_Surface *src, *dst;
   double angle, zoomx, zoomy;
@@ -69,39 +71,47 @@ VALUE rbgm_transform_rotozoom(int argc, VALUE *argv, VALUE module)
     rb_raise(rb_eArgError,"wrong number of arguments (%d for 3)",argc);
 
   /* argv[0], the source surface. */
-  Data_Get_Struct(argv[0],SDL_Surface,src);
+  Data_Get_Struct(self,SDL_Surface,src);
 
   /* argv[1], the angle of rotation. */
-  angle = NUM2DBL(argv[1]);
+  angle = NUM2DBL(argv[0]);
 
   /* Parsing of argv[2] is delayed until below, because its type
      affects which function we call. */
 
   /* argv[3] (optional), rotozoom smoothly? */
-  if(argc > 3)
-    smooth = argv[3];
+  if(argc > 2)
+    smooth = argv[2];
 
-  /* argv[2], the zoom factor(s) */
-  if(TYPE(argv[2])==T_ARRAY)
+  /* argv[1], the zoom factor(s) */
+  if(TYPE(argv[1])==T_ARRAY)		/* if we got separate X and Y factors */
   {
-#ifdef HAVE_ROTOZOOMXY    
+
+#ifdef HAVE_ROTOZOOMXY
     /* Do the real function. */
-    zoomx = NUM2DBL(rb_ary_entry(argv[2],0));
-    zoomy = NUM2DBL(rb_ary_entry(argv[2],1));
+    zoomx = NUM2DBL(rb_ary_entry(argv[1],0));
+    zoomy = NUM2DBL(rb_ary_entry(argv[1],1));
     dst = rotozoomSurfaceXY(src, angle, zoomx, zoomy, smooth);
     if(dst == NULL)
       rb_raise(eSDLError,"Could not rotozoom surface: %s",SDL_GetError());
-
 #else
-    /* Warn and return nil. You should have checked first! */
-    rb_warn("Separate X/Y rotozoom scale factors is not supported by your version of SDL_gfx (%d,%d,%d). Please upgrade to 2.0.13 or later.", SDL_GFXPRIMITIVES_MAJOR, SDL_GFXPRIMITIVES_MINOR, SDL_GFXPRIMITIVES_MICRO);
+    /* Raise SDLError. You should have checked first! */
+    rb_raise(eSDLError,"Separate X/Y rotozoom scale factors is not supported by your version of SDL_gfx (%d,%d,%d). Please upgrade to 2.0.13 or later.", SDL_GFXPRIMITIVES_MAJOR, SDL_GFXPRIMITIVES_MINOR, SDL_GFXPRIMITIVES_MICRO);
     return Qnil;
 #endif
 
   }
-  else if(FIXNUM_P(argv[2]) || TYPE(argv[2])==T_FLOAT)
+  /* If we got 1 zoom factor for both X and Y */
+  else if(FIXNUM_P(argv[1]) || TYPE(argv[1])==T_FLOAT)
   {
-    zoomx = NUM2DBL(argv[2]);
+    zoomx = NUM2DBL(argv[1]);
+#ifndef HAVE_ROTOZOOMXY
+    if(zoomx < 0)								/* negative zoom (for flipping) */
+    {
+      /* Raise SDLError. You should have checked first! */
+      rb_raise(eSDLError,"Negative rotozoom scale factor is not supported by your version of SDL_gfx (%d,%d,%d). Please upgrade to 2.0.13 or later.", SDL_GFXPRIMITIVES_MAJOR, SDL_GFXPRIMITIVES_MINOR, SDL_GFXPRIMITIVES_MICRO);
+    }
+#endif
     dst = rotozoomSurface(src, angle, zoomx, smooth);
     if(dst == NULL)
       rb_raise(eSDLError,"Could not rotozoom surface: %s",SDL_GetError());
@@ -114,17 +124,24 @@ VALUE rbgm_transform_rotozoom(int argc, VALUE *argv, VALUE module)
 
 /*
  *  call-seq:
- *    rotozoomsize( size, angle, zoom )  ->  [width, height]
+ *    rotozoom_size( size, angle, zoom )  ->  [width, height] or nil
  *
  *  Return the dimensions of the surface that would be returned if
- *  Transform.rotozoom() were called with a surface of the given size, and
+ *  #rotozoom() were called on a Surface of the given size, with
  *  the same angle and zoom factors.
  *
- *  size::  an Array with the hypothetical surface width and height (pixels)
+ *  If Rubygame was compiled with SDL_gfx-2.0.13 or greater, +zoom+ can be
+ *  an Array of 2 Numerics for separate X and Y scaling. Also, it can be
+ *  negative to indicate flipping horizontally or vertically.
+ *
+ *  Will return +nil+ if you attempt to use separate X and Y zoom factors
+ *  or negative zoom factors with an unsupported version of SDL_gfx.
+ *
+ *  This method takes these arguments:
+ *  size::  an Array with the hypothetical Surface width and height (pixels)
  *  angle:: degrees to rotate counter-clockwise (negative for clockwise).
- *  zoom::  scaling factor. If Rubygame was compiled with SDL_gfx >= 2.0.13,
- *          this can be an Array of 2 Numerics for separate X and Y scaling,
- *          and can be negative to indicate flipping across Y and/or X axes.
+ *  zoom::  scaling factor(s). A single positive Numeric, unless you have
+ *          SDL_gfx-2.0.13 or greater (see above).
  */
 VALUE rbgm_transform_rzsize(int argc, VALUE *argv, VALUE module)
 {
@@ -148,8 +165,7 @@ VALUE rbgm_transform_rzsize(int argc, VALUE *argv, VALUE module)
     rotozoomSurfaceSizeXY(w, h, angle, zoomx, zoomy, &dstw, &dsth);
 
 #else 
-    /* Warn and return nil. You should have checked first! */
-    rb_warn("Separate X/Y rotozoom scale factors is not supported by your version of SDL_gfx (%d,%d,%d). Please upgrade to 2.0.13 or later.", SDL_GFXPRIMITIVES_MAJOR, SDL_GFXPRIMITIVES_MINOR, SDL_GFXPRIMITIVES_MICRO);
+    /* Return nil, because it's not supported. */
     return Qnil;
 #endif
 
@@ -157,6 +173,13 @@ VALUE rbgm_transform_rzsize(int argc, VALUE *argv, VALUE module)
   else if(FIXNUM_P(argv[1]) || TYPE(argv[1])==T_FLOAT)
   {
     zoomx = NUM2DBL(argv[1]);
+#ifndef HAVE_ROTOZOOMXY
+    if(zoomx < 0)								/* negative zoom (for flipping) */
+    {
+			/* Return nil, because it's not supported. */
+			return Qnil;
+    }
+#endif
     rotozoomSurfaceSize(w, h, angle, zoomx, &dstw, &dsth);
   }
   else
@@ -189,43 +212,42 @@ VALUE rbgm_transform_rotozoomsize(int argc, VALUE *argv, VALUE module)
 
 /* 
  *  call-seq:
- *     zoom(surface, zoom, smooth)  ->  Surface
+ *     zoom(zoom, smooth)  ->  Surface
  *
- *  Return a zoomed version of the given Surface.
+ *  Return a zoomed version of the Surface.
  *
- *  This function takes these arguments:
- *  surface:: the surface to zoom
+ *  This method takes these arguments:
  *  zoom::    the factor to scale by in both x and y directions, or an Array
  *            with separate x and y scale factors.
  *  smooth::  whether to anti-alias the new surface. This option can be
  *            omitted, in which case the surface will not be anti-aliased.
  *            If true, the new surface will be 32bit RGBA.
  */
-VALUE rbgm_transform_zoom(int argc, VALUE *argv, VALUE module)
+VALUE rbgm_transform_zoom(int argc, VALUE *argv, VALUE self)
 {
   SDL_Surface *src, *dst;
   double zoomx, zoomy;
   int smooth = 0;
 
-  if(argc < 2)
-    rb_raise(rb_eArgError,"wrong number of arguments (%d for 3)",argc);
-  Data_Get_Struct(argv[0],SDL_Surface,src);
+  if(argc < 2)									/* smooth is optional */
+    rb_raise(rb_eArgError,"wrong number of arguments (%d for 1)",argc);
+  Data_Get_Struct(self,SDL_Surface,src);
 
-  if(TYPE(argv[1])==T_ARRAY)
+  if(TYPE(argv[0])==T_ARRAY)
   {
-    zoomx = NUM2DBL(rb_ary_entry(argv[1],0));
-    zoomy = NUM2DBL(rb_ary_entry(argv[1],1));
+    zoomx = NUM2DBL(rb_ary_entry(argv[0],0));
+    zoomy = NUM2DBL(rb_ary_entry(argv[0],1));
   }
-  else if(FIXNUM_P(argv[1]) || TYPE(argv[1])==T_FLOAT)
+  else if(FIXNUM_P(argv[0]) || TYPE(argv[0])==T_FLOAT)
   {
-    zoomx = NUM2DBL(argv[1]);
+    zoomx = NUM2DBL(argv[0]);
     zoomy = zoomx;
   }
   else
     rb_raise(rb_eArgError,"wrong zoom factor type (expected Array or Numeric)");
 
-  if(argc > 2)
-    smooth = argv[3];
+  if(argc > 1)
+    smooth = argv[1];
 
   dst = zoomSurface(src,zoomx,zoomy,smooth);
   if(dst == NULL)
@@ -238,10 +260,9 @@ VALUE rbgm_transform_zoom(int argc, VALUE *argv, VALUE module)
  *    zoom_size(size, zoom)  ->  [width, height]
  *
  *  Return the dimensions of the surface that would be returned if
- *  Transform.zoom() were called with a surface of the given size, and
- *  the same zoom factors.
+ *  #zoom were called with a surface of the given size and zoom factors.
  *
- *  This function takes these arguments:
+ *  This method takes these arguments:
  *  size:: an Array with the hypothetical surface width and height (pixels)
  *  zoom:: the factor to scale by in both x and y directions, or an Array
  *         with separate x and y scale factors.
@@ -302,20 +323,20 @@ static SDL_Surface* newsurf_fromsurf(SDL_Surface* surf, int width, int height)
 
 /* 
  * call-seq:
- *    flip(surface, flipXp, flipYp)  ->  Surface
+ *    flip(horz, vert)  ->  Surface
  * 
- *  Flips the source surface horizontally (if +flipXp+ is true), vertically
- *  (if +flipYp+ is true), or both (if both are true). This operation is
+ *  Flips the source surface horizontally (if +horz+ is true), vertically
+ *  (if +vert+ is true), or both (if both are true). This operation is
  *  non-destructive; the original image can be perfectly reconstructed by
  *  flipping the resultant image again.
  *
  *  This operation does NOT require SDL_gfx.
  *
  *  A similar effect can (supposedly) be achieved by giving X or Y zoom
- *  factors of -1 to Transform.rotozoom (if compiled with SDL_gfx 2.0.13 or
+ *  factors of -1 to #rotozoom (only if compiled with SDL_gfx 2.0.13 or
  *  greater). Your mileage may vary.
  */
-VALUE rbgm_transform_flip(int argc, VALUE *argv, VALUE module)
+VALUE rbgm_transform_flip(int argc, VALUE *argv, VALUE self)
 {
   SDL_Surface *surf, *newsurf;
   int xaxis, yaxis;
@@ -324,12 +345,12 @@ VALUE rbgm_transform_flip(int argc, VALUE *argv, VALUE module)
   int pixsize, srcpitch, dstpitch;
   Uint8 *srcpix, *dstpix;
 
-  xaxis = argv[1];
-  yaxis = argv[2];
+  xaxis = argv[0];
+  yaxis = argv[1];
 
   if(argc < 2)
-    rb_raise(rb_eArgError,"wrong number of arguments (%d for 3)",argc);
-  Data_Get_Struct(argv[0],SDL_Surface,surf);
+    rb_raise(rb_eArgError,"wrong number of arguments (%d for 2)",argc);
+  Data_Get_Struct(self,SDL_Surface,surf);
 
 
   /* Borrowed from Pygame: */
@@ -444,43 +465,28 @@ VALUE rbgm_transform_flip(int argc, VALUE *argv, VALUE module)
 
 
   if(newsurf == NULL)
-    rb_raise(eSDLError,"Could not rotozoom surface: %s",SDL_GetError());
+    rb_raise(eSDLError,"Could not flip surface: %s",SDL_GetError());
   return Data_Wrap_Struct(cSurface,0,SDL_FreeSurface,newsurf);
 }
 
 
-/* 
- *  Document-module: Rubygame::Transform
- *  
- *  The Transform module provides several methods for rotating, zooming
- *  (scaling), and flipping (mirroring) Surfaces.
- *
- *  <b>NOTICE: Except for #flip, all these methods require Rubygame to
- *  be compiled against the SDL_gfx library!</b>
- *  Furthermore, #rotozoom and #rotozoom_size offer additional functionality if
- *  Rubygame was compiled against SDL_gfx version 2.0.13 or greater.
- *
- *  You can check if Rubygame was compiled against SDL_gfx (of any version)
- *  with the #usable? method, or find the version of SDL_gfx that Rubygame was
- *  compiled against with the #version method.
- *  
- */
 void Rubygame_Init_Transform()
 {
+/* Pretend to define Rubygame and Surface, so RDoc knows about them: */
 #if 0
-  /* Pretend to define Rubygame module, so RDoc knows about it: */
   mRubygame = rb_define_module("Rubygame");
+	cSurface = rb_define_class_under(mRubygame,"Surface",rb_cObject);
 #endif
 
-  mTrans = rb_define_module_under(mRubygame,"Transform");
-  rb_define_module_function(mTrans,"flip",rbgm_transform_flip,-1);
+  rb_define_method(cSurface,"flip",rbgm_transform_flip,-1);
 
 #ifdef HAVE_SDL_ROTOZOOM_H
 
-  rb_define_module_function(mTrans,"rotozoom",rbgm_transform_rotozoom,-1);
-  rb_define_module_function(mTrans,"rotozoom_size",rbgm_transform_rzsize,-1);
-  rb_define_module_function(mTrans,"zoom",rbgm_transform_zoom,-1);
-  rb_define_module_function(mTrans,"zoom_size",rbgm_transform_zoomsize,-1);
+  rb_define_method(cSurface,"rotozoom",rbgm_transform_rotozoom,-1);
+  rb_define_method(cSurface,"zoom",rbgm_transform_zoom,-1);
+
+  rb_define_module_function(cSurface,"rotozoom_size",rbgm_transform_rzsize,-1);
+  rb_define_module_function(cSurface,"zoom_size",rbgm_transform_zoomsize,-1);
 
 #endif
 }
