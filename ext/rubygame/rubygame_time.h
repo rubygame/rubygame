@@ -1,6 +1,6 @@
 /*
  * Rubygame -- Ruby code and bindings to SDL to facilitate game creation
- * Copyright (C) 2004-2006  John 'jacius' Croisant
+ * Copyright (C) 2004-2007  John Croisant
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,7 @@
 
 extern void Rubygame_Init_Time();
 
-extern VALUE mTime;
+extern VALUE cClock;
 
 extern VALUE rbgm_time_wait(VALUE, VALUE);
 extern VALUE rbgm_time_delay(int, VALUE*, VALUE);
