@@ -170,7 +170,7 @@ class Chimp
 		if (@rect.left < @area.left) or (@rect.right > @area.right)
 			@xvel = -@xvel		# reverse direction of movement
 			newpos = @rect.move(@xvel,0) # recalculate with changed velocity
-			@image = Rubygame::Transform.flip(@image, true, false) # flip x
+			@image = @image.flip(true, false) # flip x
 		end
 		@rect = newpos
 	end
@@ -186,7 +186,7 @@ class Chimp
 			# Note that we rotate with @original, not the current @image.
 			# This reduces cumulative blurring from the rotation process,
 			# and is just as efficient as incremental rotations.
-			@image = Rubygame::Transform.rotozoom(@original,@dizzy,1,true)
+			@image = @original.rotozoom(@dizzy,1,true)
 		end
 		@rect = Rubygame::Rect.new(0,0,*@image.size)
 		@rect.center = center # re-center
@@ -274,7 +274,7 @@ def main
 	# when you create it, or afterwards with the desired_fps accessors.
 	# 
 	# Please note that at the moment, framerate limiting is not very accurate.
-	clock = Rubygame::Time::Clock.new(30)
+	clock = Rubygame::Clock.new(30)
 
 	whiff_sound = load_sound('whiff.wav')
 	punch_sound = load_sound('punch.wav')
@@ -301,8 +301,6 @@ def main
 				case event.key 
 				when Rubygame::K_ESCAPE
 					return			# break out of the main function
-				when Rubygame::K_SPACE
-					sleep 1
 				end
 			when Rubygame::MouseMotionEvent
 				fist.tell(event)
@@ -331,6 +329,11 @@ def main
 	end							# end loop
 
 	#Game Over
+ensure
+  # This ensures that we properly close and clean up everything at the end
+  # of the game.
+	Rubygame::Mixer.close_audio()
+	Rubygame.quit()
 end								# end main function
 
 
