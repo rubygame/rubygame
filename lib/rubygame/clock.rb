@@ -18,16 +18,14 @@
 #
 
 module Rubygame
-	module Time
-		# Clock provides an interface to the Time module methods, yielding a
-		# more convenient way to monitor and limit application framerate.
-		# 
+    #  Clock also provides instance methods to make it convenient to
+    #  monitor and limit application framerate.
 		class Clock
 			attr_reader :start,:passed,:raw_passed,:ticks	# :nodoc:
 
 			# call-seq: new(desired_fps=nil)  ->  Clock
 			# 
-			# Create a new Clock.
+			# Create a new Clock instance.
 			# 
 			# This method takes this argument:
 			# desired_fps:: the desired frames per second, used to limit framerate; 
@@ -35,7 +33,7 @@ module Rubygame
 			#               Use the accessor @desired_fps to set or modify this value
 			#               after the Clock has been initialized. See #tick
 			def initialize(desired_fps=nil)
-				@start = Rubygame::Time.get_ticks()
+				@start = Clock.get_ticks()
 				@last_tick = @start	# time that last tick occured
 				@passed = 0		# time (ms) since last tick
 				@raw_passed = 0	# @passed, before applying delay to steady FPS
@@ -107,7 +105,7 @@ module Rubygame
 			# make your code run any faster, only slow it down if it is
 			# running too quickly.)
 			def tick()
-				now = Rubygame::Time.get_ticks() # ms since init'd Rubygame
+				now = Clock.get_ticks() # ms since init'd Rubygame
  				@passed = now - @last_tick # how long since the last tick?
  				@last_tick = now # update last tick time
 				@ticks += 1		# increment ticks
@@ -118,7 +116,7 @@ module Rubygame
 				if @desired_fps and (self.fps() > @desired_fps)
 					goal_delay = (1000.0/@desired_fps) - @passed
 					unless goal_delay < 0 # which would mean we're too slow
-						actual_delay = Rubygame::Time.delay(goal_delay)
+						actual_delay = Clock.delay(goal_delay)
 						@passed += actual_delay	# why @raw_passed is different
 					# else we are running too slow anyway, can't un-delay
 					end
@@ -127,5 +125,4 @@ module Rubygame
 			end
 
 		end # class Clock
-	end # module Time
 end #module Rubygame

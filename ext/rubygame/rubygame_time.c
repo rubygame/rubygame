@@ -5,7 +5,7 @@
  * --
  *
  *  Rubygame -- Ruby code and bindings to SDL to facilitate game creation
- *  Copyright (C) 2004  John 'jacius' Croisant
+ *  Copyright (C) 2004-2007  John Croisant
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@
 
 void Rubygame_Init_Time();
 
-VALUE mTime;
+VALUE cClock;
 
 VALUE rbgm_time_wait(VALUE, VALUE);
 VALUE rbgm_time_delay(int, VALUE*, VALUE);
@@ -168,27 +168,25 @@ VALUE rbgm_time_getticks( VALUE module )
 }
 
 /* 
- *  Document-module: Rubygame::Time
+ *  Document-module: Rubygame::Clock
  *
- *  The Time module provides methods for tracking running time and delaying
+ *  Clock provides class methods for tracking running time and delaying
  *  execution of the program for specified time periods. This is used to
  *  provide a consistent framerate, prevent the program from gluttonizing
  *  all the resources of the computer,  etc.
  *
- *  See also the Clock class, which uses these methods to provide a convenient
- *  way to monitor and and limit application framerate.
  */
 void Rubygame_Init_Time()
 {
+/* Pretend to define Rubygame module, so RDoc knows about it: */
 #if 0
-	/* Pretend to define Rubygame module, so RDoc knows about it: */
 	mRubygame = rb_define_module("Rubygame");
 #endif
 
-  /* Time module */
-  mTime = rb_define_module_under(mRubygame,"Time");
-  /* Time methods */
-  rb_define_module_function(mTime,"wait",rbgm_time_wait,1);
-  rb_define_module_function(mTime,"delay",rbgm_time_delay,-1);
-  rb_define_module_function(mTime,"get_ticks",rbgm_time_getticks,0);
+  /* Clock class */
+  cClock = rb_define_class_under(mRubygame,"Clock",rb_cObject);
+  /* Clock class methods */
+  rb_define_singleton_method(cClock,"wait",rbgm_time_wait,1);
+  rb_define_singleton_method(cClock,"delay",rbgm_time_delay,-1);
+  rb_define_singleton_method(cClock,"get_ticks",rbgm_time_getticks,0);
 }
