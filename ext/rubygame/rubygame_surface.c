@@ -235,19 +235,20 @@ VALUE rbgm_surface_get_depth(VALUE self)
 {
 	SDL_Surface *surf;
 	Data_Get_Struct(self, SDL_Surface, surf);
-	return INT2NUM(surf->format->BitsPerPixel);
+	return UINT2NUM(surf->format->BitsPerPixel);
 }
 
 /*  call-seq:
  *     flags
  *
- *  Return any flags the surface was initialized with.
+ *  Return any flags the surface was initialized with 
+ *  (as a bitwise OR'd integer).
  */
 VALUE rbgm_surface_get_flags(VALUE self)
 {
 	SDL_Surface *surf;
 	Data_Get_Struct(self, SDL_Surface, surf);
-	return INT2NUM(surf->flags);
+	return UINT2NUM(surf->flags);
 }
 
 /* 
@@ -266,10 +267,10 @@ VALUE rbgm_surface_get_masks(VALUE self)
 	Data_Get_Struct(self, SDL_Surface, surf);
 	format = surf->format;
 	return rb_ary_new3(4,\
-		INT2NUM(format->Rmask),\
-		INT2NUM(format->Gmask),\
-		INT2NUM(format->Bmask),\
-		INT2NUM(format->Amask));
+		UINT2NUM(format->Rmask),\
+		UINT2NUM(format->Gmask),\
+		UINT2NUM(format->Bmask),\
+		UINT2NUM(format->Amask));
 }
 
 /* 
@@ -308,7 +309,7 @@ VALUE rbgm_surface_set_alpha(int argc, VALUE *argv, VALUE self)
 
 	switch(argc)
 	{
-		case 2: flags = NUM2INT(argv[1]);
+		case 2: flags = NUM2UINT(argv[1]);
 			/* no break */
 		case 1: 
 		  {
@@ -351,7 +352,7 @@ VALUE rbgm_surface_get_colorkey( VALUE self )
 	if((int *)colorkey == NULL)
 		return Qnil;
 	SDL_GetRGB(colorkey, surf->format, &r, &g, &b);
-	return rb_ary_new3(3,INT2NUM(r),INT2NUM(g),INT2NUM(b));
+	return rb_ary_new3(3,UINT2NUM(r),UINT2NUM(g),UINT2NUM(b));
 }
 
 /*
@@ -386,13 +387,13 @@ VALUE rbgm_surface_set_colorkey( int argc, VALUE *argv, VALUE self)
 	else
 	{
 		if(argc > 1)
-			flag = NUM2INT(argv[1]);
+			flag = NUM2UINT(argv[1]);
 		else
 			flag = SDL_SRCCOLORKEY;
 
-		r = NUM2INT(rb_ary_entry(argv[0],0));
-		g = NUM2INT(rb_ary_entry(argv[0],1));
-		b = NUM2INT(rb_ary_entry(argv[0],2));
+		r = NUM2UINT(rb_ary_entry(argv[0],0));
+		g = NUM2UINT(rb_ary_entry(argv[0],1));
+		b = NUM2UINT(rb_ary_entry(argv[0],2));
 		//printf("RGB: %d,%d,%d  ",r,g,b);
 		color = SDL_MapRGB(surf->format, r,g,b);
 		//printf("colorkey: %d\n", color);
@@ -529,13 +530,13 @@ VALUE rbgm_surface_fill( int argc, VALUE *argv, VALUE self )
 		rb_raise(rb_eArgError,"wrong number of arguments (%d for 1 or 2)",argc);
 	}
 
-	r = FIX2UINT(rb_ary_entry(argv[0],0));
-	g = FIX2UINT(rb_ary_entry(argv[0],1));
-	b = FIX2UINT(rb_ary_entry(argv[0],2));
+	r = NUMUINT(rb_ary_entry(argv[0],0));
+	g = NUM2UINT(rb_ary_entry(argv[0],1));
+	b = NUM2UINT(rb_ary_entry(argv[0],2));
 	/* if the array is larger than [R,G,B], it should be [R,G,B,A] */
 	if(RARRAY(argv[0])->len > 3)
 	{
-		a = FIX2UINT(rb_ary_entry(argv[0],3));
+		a = NUM2UINT(rb_ary_entry(argv[0],3));
 		color = SDL_MapRGBA(surf->format, r,g,b,a);
 	}
 	else
@@ -659,7 +660,7 @@ VALUE rbgm_surface_getat( int argc, VALUE *argv, VALUE self )
 	}
 
 	SDL_GetRGBA(color, surf->format, &r, &g, &b, &a);
-	return rb_ary_new3(4,INT2NUM(r),INT2NUM(g),INT2NUM(b),INT2NUM(a));
+	return rb_ary_new3(4,UINT2NUM(r),UINT2NUM(g),UINT2NUM(b),UINT2NUM(a));
 }
 
 /*
