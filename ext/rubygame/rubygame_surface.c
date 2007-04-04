@@ -530,7 +530,7 @@ VALUE rbgm_surface_fill( int argc, VALUE *argv, VALUE self )
 		rb_raise(rb_eArgError,"wrong number of arguments (%d for 1 or 2)",argc);
 	}
 
-	r = NUMUINT(rb_ary_entry(argv[0],0));
+	r = NUM2UINT(rb_ary_entry(argv[0],0));
 	g = NUM2UINT(rb_ary_entry(argv[0],1));
 	b = NUM2UINT(rb_ary_entry(argv[0],2));
 	/* if the array is larger than [R,G,B], it should be [R,G,B,A] */
