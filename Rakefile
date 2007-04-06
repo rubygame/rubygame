@@ -128,13 +128,13 @@ optparse.parse( (ENV["RUBYGAME_CONFIG"] or "").split(" ") )
 
 CFLAGS = [CONFIG["CFLAGS"],
           ENV["CFLAGS"],
-          `sdl-config --cflags`.chomp,
-          "-I. -I#{CONFIG["topdir"]}",
+          (`sdl-config --cflags`.chomp if options.sdl_config),
+          "-I. -I#{CONFIG['topdir']}",
          ("-g" if options.debug) ].join(" ")
 
 LINK_FLAGS = [CONFIG["LIBRUBYARG_SHARED"],
               ENV["LINK_FLAGS"],
-              `sdl-config --libs`.chomp].join(" ")
+              (`sdl-config --libs`.chomp if options.sdl_config)].join(" ")
 
 LIBFLAG = " -l%s " # compiler flag for giving linked libraries
 
@@ -186,16 +186,16 @@ begin
   # A rule for object files (".o" on linux).
   # This won't work for rake < 0.7.2, because the proc returns an Array.
   # If it raises an exception, we'll try a more compatible way.
-  rule /#{EXTDIR}.+\.#{OBJEXT}$/ =>
+  rule(/#{EXTDIR}.+\.#{OBJEXT}$/ =>
     [
      # Generate dependencies for this .o file
      proc do |objfile|
        source = objfile.sub(".#{OBJEXT}", ".c") # the .c file
        [source] + depends_headers( source ) # Array of .c + .h dependencies
      end
-    ]\
+    ])\
   do |t|
-    compile_command = "#{CONFIG["CC"]} -c #{CFLAGS} #{t.source} -o #{t.name}"
+    compile_command = "#{CONFIG['CC']} -c #{CFLAGS} #{t.source} -o #{t.name}"
     if( options.verbose )
       sh compile_command
     else
@@ -208,7 +208,7 @@ rescue
   FileList.new("#{EXTDIR}*.c").each do |source|
     object = source.sub(".c", ".#{OBJEXT}")
     file object => ([source] + depends_headers( source )) do |t|
-      compile_command = "#{CONFIG["CC"]} -c #{CFLAGS} #{source} -o #{t.name}"
+      compile_command = "#{CONFIG['CC']} -c #{CFLAGS} #{source} -o #{t.name}"
       if( options.verbose )
         sh compile_command
       else
@@ -225,7 +225,7 @@ DL_PREREQS.each_pair do |key, value|
   objects = value.collect { |v| "#{EXTDIR}#{v}.#{OBJEXT}" }
 
   file dynlib => objects do |task|
-    link_command = "#{CONFIG["LDSHARED"]} #{LINK_FLAGS} -o #{task.name} #{task.prerequisites.join(' ')}"
+    link_command = "#{CONFIG['LDSHARED']} #{LINK_FLAGS} -o #{task.name} #{task.prerequisites.join(' ')}"
     if( options.verbose )
       sh link_command
     else
@@ -244,6 +244,7 @@ end
 
 task :install_lib do |task|
   cp "./lib/rubygame.rb", options.sitelibdir
+  mkdir_p options.sitelibdir + "/rubygame/"
   cp FileList.new("./lib/rubygame/*.rb").to_a, options.sitelibdir+"/rubygame/"
 end
 
