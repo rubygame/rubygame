@@ -1,6 +1,8 @@
 /*
+ *  Interface to SDL_mixer library, for audio playback and mixing.
+ *--
  *  Rubygame -- Ruby code and bindings to SDL to facilitate game creation
- *  Copyright (C) 2004-2006  John 'jacius' Croisant
+ *  Copyright (C) 2004-2007  John Croisant
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -15,16 +17,14 @@
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
+ *++
  */
 
-#include "rubygame.h"
+#include "rubygame_shared.h"
 #include "rubygame_mixer.h"
 
-void Rubygame_Init_Mixer();
+void Init_rubygame_mixer();
 VALUE mMixer;
-
-#ifdef HAVE_SDL_MIXER_H
 
 VALUE rbgm_mixer_openaudio(VALUE, VALUE, VALUE, VALUE, VALUE);
 VALUE rbgm_mixer_closeaudio(VALUE);
@@ -240,15 +240,13 @@ VALUE rbgm_mixchan_resume( VALUE self, VALUE chanv )
   return Qnil;
 }
 
-#endif /* HAVE_SDL_MIXER_H */
-
 /*
  *  Document-module: Rubygame::Mixer
  *
  *  The Mixer module provides access to the SDL_mixer library for audio
  *  playback and mixing. 
  */
-void Rubygame_Init_Mixer()
+void Init_rubygame_mixer()
 {
 
 #if 0
@@ -256,7 +254,7 @@ void Rubygame_Init_Mixer()
   mRubygame = rb_define_module("Rubygame");
 #endif
 
-#ifdef HAVE_SDL_MIXER_H
+  Init_rubygame_shared();
 
   rb_hash_aset(rb_ivar_get(mRubygame,rb_intern("VERSIONS")),
                ID2SYM(rb_intern("sdl_mixer")),
@@ -285,5 +283,4 @@ void Rubygame_Init_Mixer()
   rb_define_module_function(mMixer,"pause", rbgm_mixchan_pause, 1);
   rb_define_module_function(mMixer,"resume", rbgm_mixchan_resume, 1);
 
-#endif
 }
