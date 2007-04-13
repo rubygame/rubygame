@@ -19,7 +19,7 @@
 
 /* Thank you, Ruby/SDL, for doing most of this :) */
 
-#include "rubygame.h"
+#include "rubygame_shared.h"
 
 void Define_Rubygame_Constants()
 {

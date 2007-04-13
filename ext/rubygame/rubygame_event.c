@@ -1,6 +1,6 @@
 /*--
  * Rubygame -- Ruby bindings to SDL to facilitate game creation
- * Copyright (C) 2004-2005  John 'jacius' Croisant
+ * Copyright (C) 2004-2007  John Croisant
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@
  *++
  */
 
-#include "rubygame.h"
+#include "rubygame_shared.h"
 #include "rubygame_event.h"
 
 void Rubygame_Init_Event();
@@ -66,14 +66,6 @@ VALUE rbgm_queue_getsdl(VALUE);
  *
  *++
  */
-
-
-/*--
- *
- *  Queue-related functions.
- *
- *++
- * */
 
 /* Convert info about whether the window has mouse/keyboard focus */
 VALUE convert_active( Uint8 state )
@@ -150,6 +142,13 @@ VALUE convert_unicode( Uint16 unicode )
 }
 #endif
 
+
+/*--
+ *
+ *  Queue-related functions.
+ *
+ *++
+ */
 
 /*--
  *
@@ -305,14 +304,13 @@ VALUE rbgm_fetchevents(VALUE self)
  */
 void Rubygame_Init_Event()
 {
+/* Pretend to define Rubygame module, so RDoc knows about it: */
 #if 0
-  /* Pretend to define Rubygame module, so RDoc knows about it: */
   mRubygame = rb_define_module("Rubygame");
 #endif
 
   rb_define_singleton_method(mRubygame, "fetch_sdl_events",rbgm_fetchevents,0);
 
-  /* Define a plethora of event types! */
   cEvent =        rb_define_class_under(mRubygame,"Event",rb_cObject);
   cActiveEvent =  rb_define_class_under(mRubygame,"ActiveEvent",cEvent);
   cKeyDownEvent = rb_define_class_under(mRubygame,"KeyDownEvent",cEvent);

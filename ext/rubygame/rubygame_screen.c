@@ -21,7 +21,7 @@
  * ++
  */
 
-#include "rubygame.h"
+#include "rubygame_shared.h"
 #include "rubygame_screen.h"
 #include "rubygame_surface.h"
 

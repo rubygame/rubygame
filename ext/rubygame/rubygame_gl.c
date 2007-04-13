@@ -1,5 +1,5 @@
 /*
- *  GL module -- OpenGL attribute methods
+ *  OpenGL attribute methods.
  * --
  *  Rubygame -- Ruby classes and bindings to SDL to facilitate game creation
  *  Copyright (C) 2004-2007  John Croisant
@@ -20,7 +20,7 @@
  * ++
  */
 
-#include "rubygame.h"
+#include "rubygame_shared.h"
 #include "rubygame_gl.h"
 
 /* --

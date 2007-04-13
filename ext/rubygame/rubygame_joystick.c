@@ -1,7 +1,7 @@
 /*--
  *
  *	Rubygame -- Ruby code and bindings to SDL to facilitate game creation
- *	Copyright (C) 2004-2005  John 'jacius' Croisant
+ *	Copyright (C) 2004-2007  John Croisant
  *
  *	This library is free software; you can redistribute it and/or
  *	modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,7 @@
  *++
  */
 
-#include "rubygame.h"
+#include "rubygame_shared.h"
 #include "rubygame_joystick.h"
 
 void Rubygame_Init_Joystick();

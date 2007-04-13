@@ -24,7 +24,7 @@
  * ++
  */
 
-#include "rubygame.h"
+#include "rubygame_shared.h"
 #include "rubygame_time.h"
 
 void Rubygame_Init_Time();
