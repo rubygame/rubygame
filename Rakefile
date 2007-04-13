@@ -10,13 +10,14 @@ include Config
 OBJEXT = CONFIG["OBJEXT"]
 DLEXT = CONFIG["DLEXT"]
 
+RUBYGAME_VERSION = "2.0.0"
+
 spec = Gem::Specification.new do |s|
   s.name     = "rubygame"
-  s.version  = "2.0.0"
+  s.version  = RUBYGAME_VERSION
   s.author   = "John Croisant"
   s.email    = "jacius@users.sourceforge.net"
   s.homepage = "http://rubygame.sourceforge.net/"
-  s.platform = Gem::Platform::LINUX_586
   s.summary  = "Clean and powerful library for game programming"
   s.has_rdoc = true
 
@@ -25,28 +26,28 @@ spec = Gem::Specification.new do |s|
     item.include?("svn")
   end
 
-  s.require_paths = ["lib","ext"]
+  s.require_paths = ["lib", "lib/rubygame/", "ext/rubygame/"]
   s.autorequire = "rubygame.rb"
-#  s.extensions = ["ext/rubygame/extconf.rb"]
+  s.extensions = ["Rakefile"]
 
   s.extra_rdoc_files = ["./README", "./LICENSE", "./TODO",\
     "./doc/getting_started.rdoc"]
 end
 
 Rake::GemPackageTask.new(spec) do |pkg| 
-  pkg.need_tar_gz = true
   pkg.need_tar_bz2 = true
 end
 
 Rake::RDocTask.new do |rd|
-  rd.main = "Rubygame"
-  rd.title = "Rubygame Documentation"
-  rd.rdoc_files.include("lib/rubygame/*.rb",\
-                        "ext/rubygame/*.c",\
+  rd.main = "doc/getting_started.rdoc"
+  rd.title = "Rubygame #{RUBYGAME_VERSION} API"
+  rd.rdoc_files.include("ext/rubygame/*.c",\
+                        "lib/rubygame/*.rb",\
                         "doc/*.rdoc")
 end
 
 task :default => [:build]
+task :extension => [:build]
 desc "Compile the C portion of rubygame from source."
 task :build
 
@@ -125,6 +126,15 @@ end
 # we'll go around it in this way.
 optparse.parse( (ENV["RUBYGAME_CONFIG"] or "").split(" ") )
 
+# rubygem passes RUBYARCHDIR=/path/to/some/directory when building extension
+rule( /RUBYARCHDIR/ ) do |t|
+  options.sitearchdir = t.name.split("=")[1]
+end
+
+# rubygem passes RUBYLIBDIR=/path/to/another/directory when building extension
+rule( /RUBYLIBDIR/ ) do |t|
+  options.sitelibdir = t.name.split("=")[1]
+end
 
 CFLAGS = [CONFIG["CFLAGS"],
           ENV["CFLAGS"],
@@ -156,7 +166,6 @@ CFLAGS << " -DHAVE_OPENGL " if(options.opengl)
 DL_PREREQS = {
   'rubygame_core' => ['rubygame_main',
                       'rubygame_shared',
-                      'constants', 
                       'rubygame_event',
                       'rubygame_gl',
                       'rubygame_joystick',
