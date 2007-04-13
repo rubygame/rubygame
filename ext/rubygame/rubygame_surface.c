@@ -1090,4 +1090,22 @@ void Rubygame_Init_Surface()
 	rb_define_method(cSurface,"to_display_alpha",rbgm_surface_dispformalpha,0);
 	rb_define_method(cSurface,"savebmp",rbgm_image_savebmp,2);
 	rb_define_method(cSurface,"flip",rbgm_transform_flip,-1);
+
+	
+	/*++
+	 * Surface initialization flags
+	 *--
+	 */
+	rb_define_const(mRubygame,"SWSURFACE",UINT2NUM(SDL_SWSURFACE));
+	rb_define_const(mRubygame,"HWSURFACE",UINT2NUM(SDL_HWSURFACE));
+	rb_define_const(mRubygame,"ASYNCBLIT",UINT2NUM(SDL_ASYNCBLIT));
+	rb_define_const(mRubygame,"ANYFORMAT",UINT2NUM(SDL_ANYFORMAT));
+	rb_define_const(mRubygame,"HWPALETTE",UINT2NUM(SDL_HWPALETTE));
+	rb_define_const(mRubygame,"HWACCEL",UINT2NUM(SDL_HWACCEL));
+	rb_define_const(mRubygame,"SRCCOLORKEY",UINT2NUM(SDL_SRCCOLORKEY));
+	rb_define_const(mRubygame,"RLEACCELOK",UINT2NUM(SDL_RLEACCELOK));
+	rb_define_const(mRubygame,"RLEACCEL",UINT2NUM(SDL_RLEACCEL));
+	rb_define_const(mRubygame,"SRCALPHA",UINT2NUM(SDL_SRCALPHA));
+	rb_define_const(mRubygame,"PREALLOC",UINT2NUM(SDL_PREALLOC));
+
 }

@@ -393,4 +393,15 @@ void Rubygame_Init_Screen()
   rb_define_method(cScreen,"flip",rbgm_screen_flip,0);
   rb_define_method(cScreen,"show_cursor?",rbgm_screen_getshowcursor,0);
   rb_define_method(cScreen,"show_cursor=",rbgm_screen_setshowcursor,1);
+
+	/*++
+	 * Screen initialization flags
+	 *--
+	 */
+	rb_define_const(mRubygame,"DOUBLEBUF",UINT2NUM(SDL_DOUBLEBUF));
+	rb_define_const(mRubygame,"FULLSCREEN",UINT2NUM(SDL_FULLSCREEN));
+	rb_define_const(mRubygame,"OPENGL",UINT2NUM(SDL_OPENGL));
+	rb_define_const(mRubygame,"OPENGLBLIT",UINT2NUM(SDL_OPENGLBLIT));
+	rb_define_const(mRubygame,"RESIZABLE",UINT2NUM(SDL_RESIZABLE));
+	rb_define_const(mRubygame,"NOFRAME",UINT2NUM(SDL_NOFRAME));
 }
