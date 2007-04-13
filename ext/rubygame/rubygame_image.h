@@ -1,6 +1,6 @@
 /*
  * Rubygame -- Ruby code and bindings to SDL to facilitate game creation
- * Copyright (C) 2004-2006  John 'jacius' Croisant
+ * Copyright (C) 2004-2007  John Croisant
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,11 +37,7 @@
 #define SDL_IMAGE_PATCHLEVEL 0
 #endif
 
-extern void Rubygame_Init_Image();
-
-extern VALUE mImage;
-
+extern void Init_rubygame_image();
 extern VALUE rbgm_image_load(VALUE, VALUE);
-extern VALUE rbgm_image_savebmp(VALUE, VALUE);
 
 #endif

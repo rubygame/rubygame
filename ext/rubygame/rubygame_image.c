@@ -1,8 +1,8 @@
 /*
- *  Image module -- loading and saving image files to/from Surfaces.
- * --
- *  Rubygame -- Ruby classes and bindings to SDL to facilitate game creation
- *  Copyright (C) 2004  John 'jacius' Croisant
+ *  Interface to SDL_image library, for loading image files to Surfaces.
+ *--
+ *  Rubygame -- Ruby code and bindings to SDL to facilitate game creation
+ *  Copyright (C) 2004-2007  John Croisant
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -17,46 +17,15 @@
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- * ++
+ *++
  */
 
-#include "rubygame.h"
+#include "rubygame_shared.h"
 #include "rubygame_surface.h"
 #include "rubygame_image.h"
 
 void Rubygame_Init_Image();
-VALUE mImage;
-VALUE rbgm_image_savebmp(VALUE, VALUE);
-
 VALUE rbgm_image_load(VALUE, VALUE);
-
-/* Vanilla SDL function, doesn't need SDL_image. */
-
-/* 
- *  call-seq:
- *    savebmp( filename )  ->  nil
- *
- *  Save the Surface as a Windows Bitmap (BMP) file with the given filename.
- */
-VALUE rbgm_image_savebmp( VALUE self, VALUE filename )
-{
-	char *name;
-	SDL_Surface *surf;
-
-	name = StringValuePtr(filename);
-	Data_Get_Struct(self,SDL_Surface,surf);
-	if(SDL_SaveBMP(surf,name)!=0)
-	{
-		rb_raise(eSDLError,\
-			"Couldn't save surface to file %s: %s",name,SDL_GetError());
-	}
-	return Qnil;
-}
-
-/* Now for the stuff that really needs SDL_image. */
-#ifdef HAVE_SDL_IMAGE_H
-
-/* Image module functions: */
 
 /*
  *  call-seq:
@@ -103,8 +72,6 @@ VALUE rbgm_image_load( VALUE class, VALUE filename )
 	return Data_Wrap_Struct( cSurface,0,SDL_FreeSurface,surf );
 }
 
-#endif /* HAVE_SDL_IMAGE_H */
-
 /*  
  *  Document-module: Rubygame::Image
  *
@@ -120,20 +87,15 @@ VALUE rbgm_image_load( VALUE class, VALUE filename )
  *  so it must be present to do any sort of image file loading. This will be
  *  remedied in the future.
  */
-void Rubygame_Init_Image()
+void Init_rubygame_image()
 {
+/* Pretend to define Rubygame and Surface, so RDoc knows about them: */
 #if 0
-	/* Pretend to define Rubygame and Surface, so RDoc knows about them: */
 	mRubygame = rb_define_module("Rubygame");
 	cSurface = rb_define_class_under(mRubygame,"Surface",rb_cObject);
 #endif
 
-	/*	mImage = rb_define_module_under(mRubygame,"Image"); */
-
-	/* This one doesn't actually need SDL_image, only vanilla SDL */
-	rb_define_method(cSurface,"savebmp",rbgm_image_savebmp,2);
-
-#ifdef HAVE_SDL_IMAGE_H
+	Init_rubygame_shared();
 
   rb_hash_aset(rb_ivar_get(mRubygame,rb_intern("VERSIONS")),
                ID2SYM(rb_intern("sdl_image")),
@@ -144,6 +106,4 @@ void Rubygame_Init_Image()
 
 	/* Image methods */
 	rb_define_singleton_method(cSurface,"load_image",rbgm_image_load,1);
-
-#endif
 }
