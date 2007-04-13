@@ -154,19 +154,21 @@ optlib('SDL_ttf',   'SDL_ttf.h') if(options.ttf)
 CFLAGS << " -DHAVE_OPENGL " if(options.opengl)
 
 DL_PREREQS = {
-  'rubygame' => ['rubygame',
-                'constants', 
-                'rubygame_draw',
-                'rubygame_event',
-                'rubygame_gl',
-                'rubygame_image',
-                'rubygame_joystick',
-                'rubygame_mixer',
-                'rubygame_screen',
-                'rubygame_surface',
-                'rubygame_time',
-                'rubygame_ttf',
-                'rubygame_transform']
+  'rubygame_core' => ['rubygame_main',
+                      'rubygame_shared',
+                      'constants', 
+                      'rubygame_event',
+                      'rubygame_gl',
+                      'rubygame_joystick',
+                      'rubygame_screen',
+                      'rubygame_surface',
+                      'rubygame_time',
+                     ],
+
+  'rubygame_gfx' =>   ['rubygame_shared', 'rubygame_gfx'],
+  'rubygame_image' => ['rubygame_shared', 'rubygame_image'],
+  'rubygame_ttf' =>   ['rubygame_shared', 'rubygame_ttf'],
+  'rubygame_mixer' => ['rubygame_shared', 'rubygame_mixer']
 }
 
 # Extracts the names of all the headers that the C file depends on.
