@@ -57,4 +57,8 @@ extern VALUE rbgm_surface_convert(int, VALUE*, VALUE);
 extern VALUE rbgm_surface_displayformat(VALUE);
 extern VALUE rbgm_surface_displayformatalpha(VALUE);
 
+extern VALUE rbgm_image_savebmp(VALUE, VALUE);
+
+extern VALUE rbgm_transform_flip(int, VALUE*, VALUE);
+
 #endif

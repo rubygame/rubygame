@@ -1,8 +1,7 @@
 /*
- *  Surface -- rubygame binding to SDL Surface class
- *
- * --
- *  rubygame -- ruby library to make game programming fun.
+ *  Rubygame binding to SDL Surface class.
+ *--
+ *  Rubygame -- Ruby code and bindings to SDL to facilitate game creation
  *  Copyright (C) 2004-2007  John Croisant
  *
  *  This library is free software; you can redistribute it and/or
@@ -18,10 +17,10 @@
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- * ++
+ *++
  */
 
-#include "rubygame.h"
+#include "rubygame_shared.h"
 #include "rubygame_surface.h"
 
 void Rubygame_Init_Surface();
@@ -58,6 +57,10 @@ VALUE rbgm_surface_set_cliprect(VALUE, VALUE);
 VALUE rbgm_surface_convert(int, VALUE*, VALUE);
 VALUE rbgm_surface_displayformat(VALUE);
 VALUE rbgm_surface_displayformatalpha(VALUE);
+
+VALUE rbgm_image_savebmp(VALUE, VALUE);
+
+VALUE rbgm_transform_flip(int, VALUE*, VALUE);
 
 /* 
  *  call-seq:
@@ -858,6 +861,202 @@ VALUE rbgm_surface_dispformalpha(VALUE self)
   return Data_Wrap_Struct( cSurface,0,SDL_FreeSurface,newsurf );  
 }
 
+
+/* 
+ *  call-seq:
+ *    savebmp( filename )  ->  nil
+ *
+ *  Save the Surface as a Windows Bitmap (BMP) file with the given filename.
+ */
+VALUE rbgm_image_savebmp( VALUE self, VALUE filename )
+{
+	char *name;
+	SDL_Surface *surf;
+
+	name = StringValuePtr(filename);
+	Data_Get_Struct(self,SDL_Surface,surf);
+	if(SDL_SaveBMP(surf,name)!=0)
+	{
+		rb_raise(eSDLError,\
+			"Couldn't save surface to file %s: %s",name,SDL_GetError());
+	}
+	return Qnil;
+}
+
+
+/* --
+ * Borrowed from Pygame:
+ * ++
+ */
+static SDL_Surface* newsurf_fromsurf(SDL_Surface* surf, int width, int height)
+{
+  SDL_Surface* newsurf;
+
+  if(surf->format->BytesPerPixel <= 0 || surf->format->BytesPerPixel > 4)
+    rb_raise(eSDLError,"unsupported Surface bit depth for transform");
+
+  newsurf = SDL_CreateRGBSurface(surf->flags, width, height, surf->format->BitsPerPixel,
+        surf->format->Rmask, surf->format->Gmask, surf->format->Bmask, surf->format->Amask);
+  if(!newsurf)
+    rb_raise(eSDLError,"%s",SDL_GetError());
+
+  /* Copy palette, colorkey, etc info */
+  if(surf->format->BytesPerPixel==1 && surf->format->palette)
+    SDL_SetColors(newsurf, surf->format->palette->colors, 0, surf->format->palette->ncolors);
+  if(surf->flags & SDL_SRCCOLORKEY)
+    SDL_SetColorKey(newsurf, (surf->flags&SDL_RLEACCEL)|SDL_SRCCOLORKEY, surf->format->colorkey);
+
+  return newsurf;
+}
+
+/* 
+ * call-seq:
+ *    flip(horz, vert)  ->  Surface
+ * 
+ *  Flips the source surface horizontally (if +horz+ is true), vertically
+ *  (if +vert+ is true), or both (if both are true). This operation is
+ *  non-destructive; the original image can be perfectly reconstructed by
+ *  flipping the resultant image again.
+ *
+ *  This operation does NOT require SDL_gfx.
+ *
+ *  A similar effect can (supposedly) be achieved by giving X or Y zoom
+ *  factors of -1 to #rotozoom (only if compiled with SDL_gfx 2.0.13 or
+ *  greater). Your mileage may vary.
+ */
+VALUE rbgm_transform_flip(int argc, VALUE *argv, VALUE self)
+{
+  SDL_Surface *surf, *newsurf;
+  int xaxis, yaxis;
+
+  int loopx, loopy;
+  int pixsize, srcpitch, dstpitch;
+  Uint8 *srcpix, *dstpix;
+
+  xaxis = argv[0];
+  yaxis = argv[1];
+
+  if(argc < 2)
+    rb_raise(rb_eArgError,"wrong number of arguments (%d for 2)",argc);
+  Data_Get_Struct(self,SDL_Surface,surf);
+
+
+  /* Borrowed from Pygame: */
+  newsurf = newsurf_fromsurf(surf, surf->w, surf->h);
+  if(!newsurf)
+    return Qnil;
+
+  pixsize = surf->format->BytesPerPixel;
+  srcpitch = surf->pitch;
+  dstpitch = newsurf->pitch;
+
+  SDL_LockSurface(newsurf);
+
+  srcpix = (Uint8*)surf->pixels;
+  dstpix = (Uint8*)newsurf->pixels;
+
+  if(!xaxis)
+  {
+    if(!yaxis)
+    {
+      for(loopy = 0; loopy < surf->h; ++loopy)
+        memcpy(dstpix+loopy*dstpitch, srcpix+loopy*srcpitch, surf->w*surf->format->BytesPerPixel);
+    }
+    else
+    {
+      for(loopy = 0; loopy < surf->h; ++loopy)
+        memcpy(dstpix+loopy*dstpitch, srcpix+(surf->h-1-loopy)*srcpitch, surf->w*surf->format->BytesPerPixel);
+    }
+  }
+  else /*if (xaxis)*/
+  {
+    if(yaxis)
+    {
+      switch(surf->format->BytesPerPixel)
+      {
+      case 1:
+        for(loopy = 0; loopy < surf->h; ++loopy) {
+          Uint8* dst = (Uint8*)(dstpix+loopy*dstpitch);
+          Uint8* src = ((Uint8*)(srcpix+(surf->h-1-loopy)*srcpitch)) + surf->w - 1;
+          for(loopx = 0; loopx < surf->w; ++loopx)
+            *dst++ = *src--;
+        }break;
+      case 2:
+        for(loopy = 0; loopy < surf->h; ++loopy) {
+          Uint16* dst = (Uint16*)(dstpix+loopy*dstpitch);
+          Uint16* src = ((Uint16*)(srcpix+(surf->h-1-loopy)*srcpitch)) + surf->w - 1;
+          for(loopx = 0; loopx < surf->w; ++loopx)
+            *dst++ = *src--;
+        }break;
+      case 4:
+        for(loopy = 0; loopy < surf->h; ++loopy) {
+          Uint32* dst = (Uint32*)(dstpix+loopy*dstpitch);
+          Uint32* src = ((Uint32*)(srcpix+(surf->h-1-loopy)*srcpitch)) + surf->w - 1;
+          for(loopx = 0; loopx < surf->w; ++loopx)
+            *dst++ = *src--;
+        }break;
+      case 3:
+        for(loopy = 0; loopy < surf->h; ++loopy) {
+          Uint8* dst = (Uint8*)(dstpix+loopy*dstpitch);
+          Uint8* src = ((Uint8*)(srcpix+(surf->h-1-loopy)*srcpitch)) + surf->w*3 - 3;
+          for(loopx = 0; loopx < surf->w; ++loopx)
+          {
+            dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
+            dst += 3;
+            src -= 3;
+          }
+        }break;
+      }
+    }
+    else
+    {
+      switch(surf->format->BytesPerPixel)
+      {
+      case 1:
+        for(loopy = 0; loopy < surf->h; ++loopy) {
+          Uint8* dst = (Uint8*)(dstpix+loopy*dstpitch);
+          Uint8* src = ((Uint8*)(srcpix+loopy*srcpitch)) + surf->w - 1;
+          for(loopx = 0; loopx < surf->w; ++loopx)
+            *dst++ = *src--;
+        }break;
+      case 2:
+        for(loopy = 0; loopy < surf->h; ++loopy) {
+          Uint16* dst = (Uint16*)(dstpix+loopy*dstpitch);
+          Uint16* src = ((Uint16*)(srcpix+loopy*srcpitch)) + surf->w - 1;
+          for(loopx = 0; loopx < surf->w; ++loopx)
+            *dst++ = *src--;
+        }break;
+      case 4:
+        for(loopy = 0; loopy < surf->h; ++loopy) {
+          Uint32* dst = (Uint32*)(dstpix+loopy*dstpitch);
+          Uint32* src = ((Uint32*)(srcpix+loopy*srcpitch)) + surf->w - 1;
+          for(loopx = 0; loopx < surf->w; ++loopx)
+            *dst++ = *src--;
+        }break;
+      case 3:
+        for(loopy = 0; loopy < surf->h; ++loopy) {
+          Uint8* dst = (Uint8*)(dstpix+loopy*dstpitch);
+          Uint8* src = ((Uint8*)(srcpix+loopy*srcpitch)) + surf->w*3 - 3;
+          for(loopx = 0; loopx < surf->w; ++loopx)
+          {
+            dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
+            dst += 3;
+            src -= 3;
+          }
+        }break;
+      }
+    }
+  }
+
+  SDL_UnlockSurface(newsurf);
+  /* Thanks, Pygame :) */
+
+
+  if(newsurf == NULL)
+    rb_raise(eSDLError,"Could not flip surface: %s",SDL_GetError());
+  return Data_Wrap_Struct(cSurface,0,SDL_FreeSurface,newsurf);
+}
+
 void Rubygame_Init_Surface()
 {
 
@@ -866,7 +1065,6 @@ void Rubygame_Init_Surface()
 	mRubygame = rb_define_module("Rubygame");
 #endif
 
-	cSurface = rb_define_class_under(mRubygame,"Surface",rb_cObject);
 	rb_define_singleton_method(cSurface,"new",rbgm_surface_new,-1);
 	rb_define_method(cSurface,"initialize",rbgm_surface_initialize,-1);
 	rb_define_method(cSurface,"w",rbgm_surface_get_w,0);
@@ -890,4 +1088,6 @@ void Rubygame_Init_Surface()
 	rb_define_method(cSurface,"convert",rbgm_surface_convert,-1);
 	rb_define_method(cSurface,"to_display",rbgm_surface_dispform,0);
 	rb_define_method(cSurface,"to_display_alpha",rbgm_surface_dispformalpha,0);
+	rb_define_method(cSurface,"savebmp",rbgm_image_savebmp,2);
+	rb_define_method(cSurface,"flip",rbgm_transform_flip,-1);
 }
