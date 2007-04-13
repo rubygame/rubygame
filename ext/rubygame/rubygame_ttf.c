@@ -1,23 +1,26 @@
 /*
-	Rubygame -- Ruby code and bindings to SDL to facilitate game creation
-	Copyright (C) 2004-2005  John 'jacius' Croisant
+ *  Interface to SDL_ttf library, for rendering TrueType Fonts to Surfaces.
+ *--
+ *  Rubygame -- Ruby code and bindings to SDL to facilitate game creation
+ *  Copyright (C) 2004-2007  John Croisant
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2.1 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *++
+ */
 
-	This library is free software; you can redistribute it and/or
-	modify it under the terms of the GNU Lesser General Public
-	License as published by the Free Software Foundation; either
-	version 2.1 of the License, or (at your option) any later version.
-
-	This library is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-	Lesser General Public License for more details.
-
-	You should have received a copy of the GNU Lesser General Public
-	License along with this library; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-
-#include "rubygame.h"
+#include "rubygame_shared.h"
 #include "rubygame_ttf.h"
 #include "rubygame_surface.h"
 
@@ -410,7 +413,7 @@ VALUE rbgm_ttf_render(int argc, VALUE *argv, VALUE self)
  *  method. If you need more flexibility, you can check the library version
  *  that Rubygame was compiled against with the #version method.
  */
-void Rubygame_Init_TTF()
+void Init_rubygame_ttf()
 {
 #if 0
 	/* Pretend to define Rubygame module, so RDoc knows about it: */
@@ -418,6 +421,8 @@ void Rubygame_Init_TTF()
 #endif
 
 #ifdef HAVE_SDL_TTF_H
+
+  Init_rubygame_shared();
 
   rb_hash_aset(rb_ivar_get(mRubygame,rb_intern("VERSIONS")),
                ID2SYM(rb_intern("sdl_ttf")),
