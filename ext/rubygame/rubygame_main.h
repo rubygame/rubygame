@@ -1,6 +1,6 @@
 /*
  * Rubygame -- Ruby code and bindings to SDL to facilitate game creation
- * Copyright (C) 2004-2006  John 'jacius' Croisant
+ * Copyright (C) 2004-2007  John Croisant
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,27 +21,12 @@
 #ifndef _RUBYGAME_H
 #define _RUBYGAME_H
 
-#include <SDL.h>
-#include <ruby.h>
-#include <stdio.h>
-
 #define RUBYGAME_MAJOR_VERSION 2
 #define RUBYGAME_MINOR_VERSION 0
 #define RUBYGAME_PATCHLEVEL 0
 
-/* General */
-extern VALUE mRubygame;
-extern VALUE eSDLError;
-extern VALUE cRect;
-extern VALUE cSFont;
-extern VALUE mKey;
-extern VALUE mMouse;
 extern VALUE rbgm_init(VALUE);
 extern VALUE rbgm_quit(VALUE);
-extern SDL_Rect *make_rect(int, int, int, int);
-extern VALUE rbgm_usable(VALUE);
-extern VALUE rbgm_unusable(VALUE);
-extern VALUE rbgm_dummy(int, VALUE*, VALUE);
 extern void Define_Rubygame_Constants();
 
 #endif
