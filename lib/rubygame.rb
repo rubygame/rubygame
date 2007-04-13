@@ -1,6 +1,6 @@
 #--
 #  Rubygame -- Ruby bindings to SDL to facilitate game creation
-#  Copyright (C) 2004-2005  John 'jacius' Croisant
+#  Copyright (C) 2004-2007  John Croisant
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,15 @@
 
 require "rbconfig"
 
-require "rubygame.%s"%[Config::CONFIG["DLEXT"]]
+require "rubygame_core.%s"%[Config::CONFIG["DLEXT"]]
+
+%W{ rubygame_gfx rubygame_image rubygame_ttf rubygame_mixer }.each do |mod|
+  begin
+    require mod
+  rescue LoadError
+    warn( "Warning: Unable to require optional module: #{mod}.") if $VERBOSE
+  end
+end
 
 require "rubygame/constants"
 require "rubygame/event"
@@ -31,4 +39,3 @@ require "rubygame/rect"
 require "rubygame/sprite"
 require "rubygame/clock"
 require "rubygame/sfont"
-require "rubygame/string"
