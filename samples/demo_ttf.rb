@@ -144,7 +144,7 @@ end
 def main
   screen = Screen.set_mode([300,300])
   queue = EventQueue.new()
-  queue.filter = SDL_EVENTS - [QuitEvent, KeyDownEvent]
+  queue.ignore = SDL_EVENTS - [QuitEvent, KeyDownEvent]
 
 
   unless VERSIONS[:sdl_ttf]

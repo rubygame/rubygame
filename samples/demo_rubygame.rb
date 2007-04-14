@@ -17,8 +17,8 @@ Rubygame.init()
 
 puts "Creating queue and clock..."
 queue = EventQueue.new() # new EventQueue with autofetch
-queue.filter = [MouseMotionEvent, ActiveEvent]
-clock = Rubygame::Time::Clock.new()
+queue.ignore = [MouseMotionEvent, ActiveEvent]
+clock = Clock.new()
 clock.desired_fps = 100
 
 unless ($gfx_ok = (VERSIONS[:sdl_gfx] != nil))
@@ -64,7 +64,7 @@ class SpinnyPanda < Panda
 
 	def update_image(time)
 		@angle += (@rate * time) % 360
-		@image = Transform.rotozoom(@@pandapic,@angle,1,true)
+		@image = @@pandapic.rotozoom(@angle,1,false)
 	end
 end
 
@@ -79,7 +79,7 @@ class ExpandaPanda < Panda
 	def update_image(time)
 		@delta = (@delta + time*@rate/36) % (Math::PI*2)
 		zoom = 1 + Math.sin(@delta)/2
-		@image = Transform.rotozoom(@@pandapic,0,zoom,true)
+		@image = @@pandapic.rotozoom(0,zoom,false)
 	end
 end
 
@@ -95,7 +95,7 @@ class WobblyPanda < Panda
 		@delta = (@delta + time*@rate/36) % (Math::PI*2)
 		zoomx = 1.5 + Math.sin(@delta)/6
 		zoomy = 1.5 + Math.cos(@delta)/5
-		@image = Transform.zoom(@@pandapic,[zoomx,zoomy],true)
+		@image = @@pandapic.zoom([zoomx,zoomy],false)
 	end
 end
 
@@ -104,7 +104,7 @@ pandas.extend(Sprites::UpdateGroup)
 
 # Create the SDL window
 screen = Screen.set_mode([320,240])
-screen.set_caption("Rubygame test","This is the icon title")
+screen.title = "Rubygame test"
 screen.show_cursor = false;
 
 # Create the very cute panda objects!
@@ -130,38 +130,38 @@ print "Masks: [%d, %d, %d, %d]\n"%a.masks
 a.fill([70,70,255])
 rect1 = Rect.new([3,3,94,94])
 a.fill([40,40,1500],rect1)
-Draw.filled_box(a,[30,30],[70,70],[0,0,0])
-Draw.box(a,[31,31],[69,69],[255,255,255])
-Draw.filled_circle(a,[50,50],10,[100,150,200])
+a.draw_box_s([30,30],[70,70],[0,0,0])
+a.draw_box([31,31],[69,69],[255,255,255])
+a.draw_circle_s([50,50],10,[100,150,200])
 # Two diagonal white lines, the right anti-aliased, the left not.
-Draw.line(a,[31,69],[49,31],[255,255,255])
-Draw.aaline(a,[49,31],[69,69],[255,255,255])
+a.draw_line([31,69],[49,31],[255,255,255])
+a.draw_line_a([49,31],[69,69],[255,255,255])
 # Finally, copy this interesting surface onto the background image 
 a.blit(background,[50,50],[0,0,90,80])
 
 # Draw some shapes on the background for fun
 # ... a filled pentagon with a lighter border
-Draw.filled_polygon(background,\
+background.draw_polygon_s(\
 	[[50,150],[100,140],[150,160],[120,180],[60,170]],\
 	[100,100,100])
-Draw.aapolygon(background,\
+background.draw_polygon_a(\
 	[[50,150],[100,140],[150,160],[120,180],[60,170]],\
 	[200,200,200])
 # ... a pepperoni pizza!! (if you use your imagination...)
-Draw.filled_pie(background,[250,200],34,[210,150],[180,130,50])
-Draw.filled_pie(background,[250,200],30,[210,150],[230,180,80])
-Draw.filled_circle(background,[240,180],4,[200,50,10])
-Draw.filled_circle(background,[265,185],4,[200,50,10])
-Draw.filled_circle(background,[258,200],4,[200,50,10])
-Draw.filled_circle(background,[240,215],4,[200,50,10])
-Draw.filled_circle(background,[260,220],4,[200,50,10])
+background.draw_arc_s([250,200],34,[210,150],[180,130,50])
+background.draw_arc_s([250,200],30,[210,150],[230,180,80])
+background.draw_circle_s([240,180],4,[200,50,10])
+background.draw_circle_s([265,185],4,[200,50,10])
+background.draw_circle_s([258,200],4,[200,50,10])
+background.draw_circle_s([240,215],4,[200,50,10])
+background.draw_circle_s([260,220],4,[200,50,10])
 
 # _Try_ to make an anti-aliased, filled ellipse, but it doesn't work well.
 # If you look closely at the white ellipse, you can see that it isn't
 # AA on the left and right side, and there are some black specks on the top
 # and bottom where the two ellipses don't quite match.
-Draw.filled_ellipse(background,[200,150],[30,25],[250,250,250])
-Draw.aaellipse(background,[200,150],[30,25],[250,250,250])
+background.draw_ellipse_s([200,150],[30,25],[250,250,250])
+background.draw_ellipse_a([200,150],[30,25],[250,250,250])
 
 # Let's make some labels
 sfont = SFont.new("term16.png")
@@ -253,17 +253,18 @@ catch(:rubygame_quit) do
 		end
 		pandas.undraw(screen,background)
 		pandas.update(update_time)
-		# Draw.aaline(screen,panda1.rect.center, panda2.rect.center,[200,200,200])
+		# screen.draw_line_a(panda1.rect.center, panda2.rect.center,[200,200,200])
 		pandas.draw(screen)
 		screen.update()
 		update_time = clock.tick()
-		# update_time = Time.delay(10)
+		# update_time = Clock.delay(10)
 		unless fps == clock.fps
 			fps = clock.fps
-			screen.set_caption("Rubygame test [%d fps]"%fps)
+			screen.title = "Rubygame test [%d fps]"%fps
 			# puts "tick: %d  fps: %d"%[update_time,fps]
 		end
 	end
 end
 
 puts "Quitting!"
+Rubygame.quit()

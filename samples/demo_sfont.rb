@@ -23,10 +23,10 @@ def main(*args)
 	catch :rubygame_quit do
 		screen = Screen.set_mode([700,400])
 		queue = EventQueue.new()
-    queue.filter = [ActiveEvent,MouseMotionEvent,MouseUpEvent,MouseDownEvent]
+    queue.ignore = [ActiveEvent,MouseMotionEvent,MouseUpEvent,MouseDownEvent]
 
 
-		screen.set_caption("SFont Test (%s)"%args[0])
+		screen.title = "SFont Test (%s)"%args[0]
 		font = SFont.new(args[0])
 		renders = []
 		renders << font.render("This is: %s"%args[0])

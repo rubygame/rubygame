@@ -29,7 +29,7 @@ Rubygame::GL.set_attrib(Rubygame::GL::DOUBLEBUFFER, 1)
 
 Rubygame::Screen.set_mode([WIDE,HIGH], 16, [Rubygame::OPENGL])
 queue = Rubygame::EventQueue.new()
-clock = Rubygame::Time::Clock.new(60)
+clock = Rubygame::Clock.new(60)
 
 ObjectSpace.garbage_collect
 GL::Viewport( 0, 0, WIDE, HIGH )
