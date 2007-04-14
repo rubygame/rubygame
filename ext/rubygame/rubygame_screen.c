@@ -33,7 +33,7 @@ VALUE rbgm_screen_setmode(int, VALUE*, VALUE);
 VALUE rbgm_screen_getsurface(VALUE);
 
 VALUE rbgm_screen_getcaption(VALUE);
-VALUE rbgm_screen_setcaption(int, VALUE*, VALUE);
+VALUE rbgm_screen_setcaption(VALUE, VALUE);
 
 VALUE rbgm_screen_update(int, VALUE*, VALUE);
 VALUE rbgm_screen_updaterects(VALUE, VALUE);
@@ -161,52 +161,40 @@ VALUE rbgm_screen_getsurface(VALUE module)
 /* Screen methods: */
 
 /*  call-seq:
- *     caption
+ *     title  ->  String
  *
- *  Returns the current window title and icon caption for the Screen as an
- *  Array. See #set_caption for a description of the window title/icon
- *  caption. By default, the title and icon caption are empty strings.
+ *  Returns the current window title for the Screen.
+ *  The default is an empty string.
  */
-VALUE rbgm_screen_getcaption(VALUE module)
+VALUE rbgm_screen_getcaption(VALUE self)
 {
   char *title,*icon;
-  SDL_WM_GetCaption( &title,&icon );
+
+  SDL_WM_GetCaption( &title,&icon ); 
   if (title == NULL)
-	title = "\0";
-  if (icon == NULL)
-	icon = "\0";
-  return rb_ary_new3( 2,rb_str_new2(title),rb_str_new2(icon) );
+		title = "\0";
+	/* We don't really care about icon. */
+  return rb_str_new2(title);
 }
+
 /*  call-seq:
- *    set_caption(title, icon_cap=nil)
+ *    title = title
  *
- *  Sets the window title and icon caption for the Screen.
+ *  Sets the window title for the Screen.
  *
- *  This method takes these arguments:
  *  title::    a String, (usually) displayed at the top of the Rubygame
  *             window (when not in fullscreen mode). If omitted or +nil+,
  *             +title+ will be an empty string.
  *             How this string is displayed (if at all) is system-dependent.
- *  icon_cap:: a String, (usually) displayed when the window is iconized
- *             (minimized), for example to the taskbar. If omitted on +nil+,
- *             +icon_cap+ will be the same as +title+.
- *             How this string is displayed (if at all) is system-dependent.
  */
-VALUE rbgm_screen_setcaption(int argc, VALUE *argv, VALUE self)
+VALUE rbgm_screen_setcaption(VALUE self, VALUE title)
 {
-  char *title_str, *icon_str;
-
+  char *title_str;
   title_str = "";				/* default to blank */
 
-  if(argc >= 1 && argv[0] != Qnil)
-	title_str = StringValuePtr(argv[0]);
-
-  if(argc >= 2 && argv[1] != Qnil)
-	icon_str = StringValuePtr(argv[1]);
-  else
-	icon_str = title_str;		/* default to same as title string */
-
-  SDL_WM_SetCaption(title_str,icon_str);
+	if( title != Qnil )
+		title_str = StringValuePtr(title);
+  SDL_WM_SetCaption(title_str,title_str);
   return self;
 }
 
@@ -385,8 +373,8 @@ void Rubygame_Init_Screen()
   rb_undef_method(cScreen,"set_colorkey");
 
   /* Screen methods */
-  rb_define_method(cScreen,"caption",rbgm_screen_getcaption,0);
-  rb_define_method(cScreen,"set_caption",rbgm_screen_setcaption,-1);
+  rb_define_method(cScreen,"title",rbgm_screen_getcaption,0);
+  rb_define_method(cScreen,"title=",rbgm_screen_setcaption,1);
   rb_define_method(cScreen,"update",rbgm_screen_update,-1);
   rb_define_method(cScreen,"update_rects",rbgm_screen_updaterects,1);
   rb_define_method(cScreen,"flip",rbgm_screen_flip,0);

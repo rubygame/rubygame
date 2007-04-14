@@ -29,7 +29,7 @@ extern VALUE rbgm_screen_setmode(int, VALUE*, VALUE);
 extern VALUE rbgm_screen_getsurface(VALUE);
 
 extern VALUE rbgm_screen_getcaption(VALUE);
-extern VALUE rbgm_screen_setcaption(int, VALUE*, VALUE);
+extern VALUE rbgm_screen_setcaption(VALUE, VALUE);
 
 extern VALUE rbgm_screen_update(int, VALUE*, VALUE);
 extern VALUE rbgm_screen_updaterects(VALUE, VALUE);
