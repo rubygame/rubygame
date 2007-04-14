@@ -1,3 +1,4 @@
+# :enddoc:
 module Rubygame
 ALL_KEYS = {\
 K_BACKSPACE => ["\b", "backspace"],\

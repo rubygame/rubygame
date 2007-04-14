@@ -1,6 +1,6 @@
 #--
-#	Rubygame -- Ruby bindings to SDL to facilitate game creation
-#	Copyright (C) 2004  John 'jacius' Croisant
+#	Rubygame -- Ruby code and bindings to SDL to facilitate game creation
+#	Copyright (C) 2004-2007  John Croisant
 #
 #	This library is free software; you can redistribute it and/or
 #	modify it under the terms of the GNU Lesser General Public
