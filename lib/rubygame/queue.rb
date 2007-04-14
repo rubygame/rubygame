@@ -1,6 +1,6 @@
 #--
 #	Rubygame -- Ruby bindings to SDL to facilitate game creation
-#	Copyright (C) 2004-2006  John 'jacius' Croisant
+#	Copyright (C) 2004-2007  John Croisant
 #
 #	This library is free software; you can redistribute it and/or
 #	modify it under the terms of the GNU Lesser General Public
@@ -27,18 +27,20 @@ module Rubygame
   # EventQueue to help manage the game state.
   # 
   # This class replaces the old Rubygame::Queue class, which is no longer
-  # available. While this class serves the same purpose as the old class,
-  # they are significantly different in behavior. Please note that while
+  # available. While EventQueue class serves the same purpose as the old
+  # class, they are somewhat different in behavior. Please note that while
   # the old class was a Singleton, this class is not; you may have as many
   # separate instances of EventQueue as you wish (although it is strongly
   # recommended that only one be used to #fetch_sdl_events).
   # 
-  # For basic usage, enable autofetch (see #initialize), then call
-  # #each once per loop, passing a block which handles events. See the
-  # sample applications for examples of this.
+  # For basic usage, create a #new EventQueue with autofetch, then call the
+  # #each method once per game loop, passing a block which handles events.
+  # See the sample applications for examples of this.
   #
-  # If you wish to ignore certain types of events, append the ignored event
-  # class to the internal variable +@filter+ (accessors are provided).
+  # If you wish to ignore all events of a certain class, append those classes
+  # the instance variable @ignore (accessors are provided). You can ignore as
+  # many classes of events as you want, but make sure you don't ignore ALL
+  # event classes, or the user won't be able to control the game!
   # 
   # If the program has to pause and wait for an event (for example, if the
   # player must press a button to begin playing), you might find the #wait
@@ -62,7 +64,7 @@ module Rubygame
 	# 
 	class EventQueue < Array
     # Array of classes to be ignored by #push.
-    attr_accessor :filter       
+    attr_accessor :ignore
 
     # Whether to fetch SDL events automatically when #each and #wait are used.
     attr_accessor :autofetch    
@@ -77,12 +79,13 @@ module Rubygame
     #             the @autofetch accessors.
     def initialize(autofetch=true)
       @autofetch = autofetch
-      @filter = []
+      @ignore = []
     end
 
-    # Append events to the EventQueue. Filtered events are silently ignored.
+    # Append events to the EventQueue.
+    # Silently ignores events whose class is in @ignore.
     def push(*events)
-      events = events.flatten.delete_if {|e| @filter.include?(e.class)}
+      events = events.flatten.delete_if {|e| @ignore.include?(e.class)}
       events.each do |e|
         super( e )
       end
@@ -113,12 +116,13 @@ module Rubygame
 			self.push(Rubygame.fetch_sdl_events())
 		end
 
-    # Return the first event on the EventQueue, or, if the EventQueue is empty,
-    # wait for an event to be posted, then return that event. Only events
-    # which are not filtered will trigger return.
+    # Wait for an event to be posted, then return that event.
+    # If there is already an event in the queue, this method will immediately
+    # return that event.
+    # Events that are ignored will not trigger the return.
     #
     # This method takes this argument:
-    # time:: the amount of time (milliseconds) to delay between checking for
+    # time:: how long (in milliseconds) to delay between each check for
     #        new events. Defaults to 10 ms.
     #
     # If a block is given to this method, it will be run after each
@@ -132,7 +136,7 @@ module Rubygame
     # cause an infinite loop. Two ways an infinite loop might occur are:
     # 1. Waiting for an SDL event when @autofetch is disabled. (This is
     #    not a problem if the block will post an event.)
-    # 2. Waiting for any event when all possible event types are filtered.
+    # 2. Waiting for any event when all possible event types are ignored.
     #
     def wait(delay=10, &block)
       iterations = 0
@@ -145,7 +149,7 @@ module Rubygame
           end
           yield iterations
           iterations += 1
-          Rubygame::Time.delay(delay)
+          Rubygame::Clock.delay(delay)
         end
       else
         loop do 
@@ -153,7 +157,7 @@ module Rubygame
           s = self.shift
           return s unless s == nil
           iterations += 1
-          Rubygame::Time.delay(delay)
+          Rubygame::Clock.delay(delay)
         end
       end
     end
@@ -164,13 +168,13 @@ module Rubygame
   # A mixin module to extend EventQueue with the ability to 'deliver' specific
   # types of events to subscribed objects, a la a mailing list. Each object
   # must be subscribed for the types (classes) of events it wishes to receive;
-  # then, when the ForwardingQueue receives an event of that type, it will
+  # then, when the MailQueue receives an event of that type, it will
   # push it onto the subscriber objects. See #subscribe for more information.
   # 
   # Please note that if you extend an already-existing EventQueue object
   # with this mixin module (rather than including it in a class), you must
   # call #setup before using the object. This will create the necessary
-  # internal variables for the MailQueue.
+  # internal variables for the MailQueue to work.
   # 
   module MailQueue
     attr_accessor :autodeliver
