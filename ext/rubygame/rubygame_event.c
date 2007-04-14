@@ -298,13 +298,13 @@ VALUE rbgm_fetchevents(VALUE self)
   return event_array;
 }
 
-/*--
+/*
+ *--
  *  The event documentation is in rubygame/lib/rubygame/event.rb
  *++
  */
 void Rubygame_Init_Event()
 {
-/* Pretend to define Rubygame module, so RDoc knows about it: */
 #if 0
   mRubygame = rb_define_module("Rubygame");
 #endif
@@ -328,11 +328,7 @@ void Rubygame_Init_Event()
   cResizeEvent =  rb_define_class_under(mRubygame,"ResizeEvent",cEvent);
   cExposeEvent =  rb_define_class_under(mRubygame,"ExposeEvent",cEvent);
 
-
-	/*--
-	 * Event constants
-	 *++	
-	 */
+	/* Event constants */
 	rb_define_const(mRubygame,"NOEVENT",UINT2NUM(SDL_NOEVENT));
 	rb_define_const(mRubygame,"ACTIVEEVENT",UINT2NUM(SDL_ACTIVEEVENT));
 	rb_define_const(mRubygame,"KEYDOWN",UINT2NUM(SDL_KEYDOWN));
@@ -351,10 +347,7 @@ void Rubygame_Init_Event()
 	rb_define_const(mRubygame,"VIDEOEXPOSE",UINT2NUM(SDL_VIDEOEXPOSE));
 	rb_define_const(mRubygame,"USEREVENT",UINT2NUM(SDL_USEREVENT));
 
-	/*--
-	 * Joystick constants
-	 *++	
-	 */	
+	/* Joystick constants */	
 	rb_define_const(mRubygame,"HAT_CENTERED",UINT2NUM(SDL_HAT_CENTERED));
 	rb_define_const(mRubygame,"HAT_UP",UINT2NUM(SDL_HAT_UP));
 	rb_define_const(mRubygame,"HAT_RIGHT",UINT2NUM(SDL_HAT_RIGHT));
@@ -366,10 +359,7 @@ void Rubygame_Init_Event()
 	rb_define_const(mRubygame,"HAT_LEFTDOWN",UINT2NUM(SDL_HAT_LEFTDOWN));
 
 	
-	/*--
-	 * Mouse constants
-	 *++	
-	 */
+	/* Mouse constants */
 	rb_define_const(mRubygame,"MOUSE_LEFT",UINT2NUM(SDL_BUTTON_LEFT));
 	rb_define_const(mRubygame,"MOUSE_MIDDLE",UINT2NUM(SDL_BUTTON_MIDDLE));
 	rb_define_const(mRubygame,"MOUSE_RIGHT",UINT2NUM(SDL_BUTTON_RIGHT));
@@ -377,10 +367,7 @@ void Rubygame_Init_Event()
 	rb_define_const(mRubygame,"MOUSE_MMASK",UINT2NUM(SDL_BUTTON_MMASK));
 	rb_define_const(mRubygame,"MOUSE_RMASK",UINT2NUM(SDL_BUTTON_RMASK));
 
-	/*--
-	 * ASCII key symbols
-	 *++	
-	 */
+	/* ASCII key symbols */
 	rb_define_const(mRubygame,"K_UNKNOWN",UINT2NUM(SDLK_UNKNOWN));
 	rb_define_const(mRubygame,"K_FIRST",UINT2NUM(SDLK_FIRST));
 	rb_define_const(mRubygame,"K_BACKSPACE",UINT2NUM(SDLK_BACKSPACE));
@@ -456,10 +443,7 @@ void Rubygame_Init_Event()
 	rb_define_const(mRubygame,"K_DELETE",UINT2NUM(SDLK_DELETE));
 
 	
-	/*--
-	 * International keyboard symbols
-	 *++	
-	 */
+	/* International keyboard symbols */
 	rb_define_const(mRubygame,"K_WORLD_0",UINT2NUM(SDLK_WORLD_0));
 	rb_define_const(mRubygame,"K_WORLD_1",UINT2NUM(SDLK_WORLD_1));
 	rb_define_const(mRubygame,"K_WORLD_2",UINT2NUM(SDLK_WORLD_2));
@@ -558,10 +542,7 @@ void Rubygame_Init_Event()
 	rb_define_const(mRubygame,"K_WORLD_95",UINT2NUM(SDLK_WORLD_95));
 
 	
-	/*--
-	 * Numeric keypad symbols
-	 *++	
-	 */
+	/* Numeric keypad symbols */
 	rb_define_const(mRubygame,"K_KP0",UINT2NUM(SDLK_KP0));
 	rb_define_const(mRubygame,"K_KP1",UINT2NUM(SDLK_KP1));
 	rb_define_const(mRubygame,"K_KP2",UINT2NUM(SDLK_KP2));
@@ -581,10 +562,7 @@ void Rubygame_Init_Event()
 	rb_define_const(mRubygame,"K_KP_EQUALS",UINT2NUM(SDLK_KP_EQUALS));
 
 	
-	/*--
-	 * Arrows + Home/End pad
-	 *++	
-	 */
+	/* Arrows + Home/End pad */
 	rb_define_const(mRubygame,"K_UP",UINT2NUM(SDLK_UP));
 	rb_define_const(mRubygame,"K_DOWN",UINT2NUM(SDLK_DOWN));
 	rb_define_const(mRubygame,"K_RIGHT",UINT2NUM(SDLK_RIGHT));
@@ -596,10 +574,7 @@ void Rubygame_Init_Event()
 	rb_define_const(mRubygame,"K_PAGEDOWN",UINT2NUM(SDLK_PAGEDOWN));
 
 	
-	/*--
-	 * Function keys 
-	 *++	
-	 */
+	/* Function keys */
 	rb_define_const(mRubygame,"K_F1",UINT2NUM(SDLK_F1));
 	rb_define_const(mRubygame,"K_F2",UINT2NUM(SDLK_F2));
 	rb_define_const(mRubygame,"K_F3",UINT2NUM(SDLK_F3));
@@ -617,10 +592,7 @@ void Rubygame_Init_Event()
 	rb_define_const(mRubygame,"K_F15",UINT2NUM(SDLK_F15));
 
 	
-	/*--
-	 * Key state modifier keys
-	 *++	
-	 */
+	/* Key state modifier keys */
 	rb_define_const(mRubygame,"K_NUMLOCK",UINT2NUM(SDLK_NUMLOCK));
 	rb_define_const(mRubygame,"K_CAPSLOCK",UINT2NUM(SDLK_CAPSLOCK));
 	rb_define_const(mRubygame,"K_SCROLLOCK",UINT2NUM(SDLK_SCROLLOCK));
@@ -637,10 +609,7 @@ void Rubygame_Init_Event()
 	rb_define_const(mRubygame,"K_MODE",UINT2NUM(SDLK_MODE));
 
 	
-	/*--
-	 * Miscellaneous keys
-	 *++	
-	 */
+	/* Miscellaneous keys */
 	rb_define_const(mRubygame,"K_HELP",UINT2NUM(SDLK_HELP));
 	rb_define_const(mRubygame,"K_PRINT",UINT2NUM(SDLK_PRINT));
 	rb_define_const(mRubygame,"K_SYSREQ",UINT2NUM(SDLK_SYSREQ));
@@ -672,5 +641,4 @@ void Rubygame_Init_Event()
 	/* rb_define_const(mRubygame,"K_MOD_ALT",UINT2NUM(KMOD_ALT)); */
 	/* rb_define_const(mRubygame,"K_MOD_META",UINT2NUM(KMOD_META)); */
 #endif
-
 }

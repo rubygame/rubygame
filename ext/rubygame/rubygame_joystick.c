@@ -230,7 +230,6 @@ VALUE rbgm_joystick_numbuttons( VALUE self )
 void Rubygame_Init_Joystick()
 {
 #if 0
-	/* Pretend to define Rubygame module, so RDoc knows about it: */
 	mRubygame = rb_define_module("Rubygame");
 #endif
 

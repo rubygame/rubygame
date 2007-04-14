@@ -178,7 +178,6 @@ VALUE rbgm_time_getticks( VALUE module )
  */
 void Rubygame_Init_Time()
 {
-/* Pretend to define Rubygame module, so RDoc knows about it: */
 #if 0
 	mRubygame = rb_define_module("Rubygame");
 #endif

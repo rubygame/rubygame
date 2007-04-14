@@ -1057,12 +1057,15 @@ VALUE rbgm_transform_flip(int argc, VALUE *argv, VALUE self)
   return Data_Wrap_Struct(cSurface,0,SDL_FreeSurface,newsurf);
 }
 
+/* 
+ *  Document-class: Rubygame::Surface
+ */
 void Rubygame_Init_Surface()
 {
 
 #if 0
-	/* Pretend to define Rubygame module, so RDoc knows about it: */
 	mRubygame = rb_define_module("Rubygame");
+	cSurface = rb_define_class_under(mRubygame,"Surface",rb_cObject);
 #endif
 
 	rb_define_singleton_method(cSurface,"new",rbgm_surface_new,-1);
@@ -1092,10 +1095,7 @@ void Rubygame_Init_Surface()
 	rb_define_method(cSurface,"flip",rbgm_transform_flip,-1);
 
 	
-	/*++
-	 * Surface initialization flags
-	 *--
-	 */
+	/* Surface initialization flags */
 	rb_define_const(mRubygame,"SWSURFACE",UINT2NUM(SDL_SWSURFACE));
 	rb_define_const(mRubygame,"HWSURFACE",UINT2NUM(SDL_HWSURFACE));
 	rb_define_const(mRubygame,"ASYNCBLIT",UINT2NUM(SDL_ASYNCBLIT));

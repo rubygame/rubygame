@@ -416,7 +416,6 @@ VALUE rbgm_ttf_render(int argc, VALUE *argv, VALUE self)
 void Init_rubygame_ttf()
 {
 #if 0
-	/* Pretend to define Rubygame module, so RDoc knows about it: */
 	mRubygame = rb_define_module("Rubygame");
 #endif
 

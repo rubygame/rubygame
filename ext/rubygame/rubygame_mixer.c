@@ -140,6 +140,7 @@ VALUE rbgm_mixer_setmixchans(VALUE module, VALUE channelsv)
  *  new( filename )  ->  Sample
  *
  *  Load an audio sample (aka chunk) from a file.
+ *  Only WAV files are supported at this time.
  *
  *  May raise SDLError if the sample could not be loaded.
  */
@@ -250,7 +251,6 @@ void Init_rubygame_mixer()
 {
 
 #if 0
-  /* Pretend to define Rubygame module, so RDoc knows about it: */
   mRubygame = rb_define_module("Rubygame");
 #endif
 

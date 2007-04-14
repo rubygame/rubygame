@@ -369,14 +369,13 @@ VALUE rbgm_screen_setshowcursor(VALUE self, VALUE val)
  */
 void Rubygame_Init_Screen()
 {
-
 #if 0
-  /* Pretend to define Rubygame module, so RDoc knows about it: */
   mRubygame = rb_define_module("Rubygame");
+  cSurface = rb_define_class_under(mRubygame,"Surface",rb_cObject);
 #endif
 
   /* Screen class */
-  cScreen = rb_define_class_under(mRubygame,"Screen",cSurface); // in surface.c
+  cScreen = rb_define_class_under(mRubygame,"Screen",cSurface);
   rb_define_singleton_method(cScreen,"new",rbgm_screen_setmode, -1);
   rb_define_singleton_method(cScreen,"set_mode",rbgm_screen_setmode, -1);
   rb_define_singleton_method(cScreen,"get_surface",rbgm_screen_getsurface, 0);
@@ -394,10 +393,7 @@ void Rubygame_Init_Screen()
   rb_define_method(cScreen,"show_cursor?",rbgm_screen_getshowcursor,0);
   rb_define_method(cScreen,"show_cursor=",rbgm_screen_setshowcursor,1);
 
-	/*++
-	 * Screen initialization flags
-	 *--
-	 */
+	/* Screen initialization flags */
 	rb_define_const(mRubygame,"DOUBLEBUF",UINT2NUM(SDL_DOUBLEBUF));
 	rb_define_const(mRubygame,"FULLSCREEN",UINT2NUM(SDL_FULLSCREEN));
 	rb_define_const(mRubygame,"OPENGL",UINT2NUM(SDL_OPENGL));

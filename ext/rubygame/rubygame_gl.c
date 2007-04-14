@@ -122,7 +122,6 @@ VALUE rbgm_gl_swapbuffers(VALUE module)
  */
 void Rubygame_Init_GL()
 {
-/* Pretend to define Rubygame module, so RDoc knows about it: */
 #if 0
 	mRubygame = rb_define_module("Rubygame");
 #endif

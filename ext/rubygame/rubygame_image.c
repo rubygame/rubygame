@@ -89,7 +89,7 @@ VALUE rbgm_image_load( VALUE class, VALUE filename )
  */
 void Init_rubygame_image()
 {
-/* Pretend to define Rubygame and Surface, so RDoc knows about them: */
+
 #if 0
 	mRubygame = rb_define_module("Rubygame");
 	cSurface = rb_define_class_under(mRubygame,"Surface",rb_cObject);

@@ -98,11 +98,7 @@ void Init_rubygame_core()
 	Rubygame_Init_Joystick();
   Rubygame_Init_GL();
 
-
-	/*--
-	 * Flags for subsystem initialization
-	 *++
-	 */
+	/* Flags for subsystem initialization */
 	rb_define_const(mRubygame,"INIT_TIMER",INT2NUM(SDL_INIT_TIMER));
 	rb_define_const(mRubygame,"INIT_AUDIO",INT2NUM(SDL_INIT_AUDIO));
 	rb_define_const(mRubygame,"INIT_VIDEO",INT2NUM(SDL_INIT_VIDEO));
@@ -113,19 +109,13 @@ void Init_rubygame_core()
 	rb_define_const(mRubygame,"INIT_EVERYTHING",UINT2NUM(SDL_INIT_EVERYTHING));
 
 	
-	/*++
-	 * Define fully opaque and full transparent (0 and 255)
-	 *--
-	 */
+	/* Define fully opaque and full transparent (0 and 255) */
 	rb_define_const(mRubygame,"ALPHA_OPAQUE",UINT2NUM(SDL_ALPHA_OPAQUE));
 	rb_define_const(mRubygame,"ALPHA_TRANSPARENT",
-									UINT2NUM(SDL_ALPHA_TRANSPARENT));
+	                UINT2NUM(SDL_ALPHA_TRANSPARENT));
 
-	/*++
-	 * Flags for palettes (?)
-	 *--
-	 */
+
+	/* Flags for palettes (?) */
 	rb_define_const(mRubygame,"LOGPAL",UINT2NUM(SDL_LOGPAL));
 	rb_define_const(mRubygame,"PHYSPAL",UINT2NUM(SDL_PHYSPAL));
-
 }
