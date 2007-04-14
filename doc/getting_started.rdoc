@@ -1,51 +1,47 @@
-= Getting Started with rubygame
+= Getting Started with Rubygame
 
-== About rubygame
+== About Rubygame
 
 Rubygame is a combination extension and library for the Ruby language,
-designed for creating computer games, and having fun creating them.
+designed for creating computer games (and having fun doing it!).
 As an extension, it provides an interface to the Simple DirectMedia Library
-(SDL) and its companion libraries SDL_gfx, SDL_image, and SDL_ttf.
+(SDL) and its companion libraries SDL_gfx, SDL_image, SDL_ttf, and SDL_mixer.
 As a Ruby library, it provides classes/modules which implement some useful
 concepts such as Sprites, Event Queues, and rasterized fonts (SFont).
-However, at this time, rubygame has no support for loading or playing sound of
-any kind. There has to be *something* to look forward to, doesn't there?
 
-== Suggested Reading
+== Suggested Order
 
-To get acquainted with rubygame, first take a look at the fundamental
-classes: 
-- Rubygame::Screen
-- Rubygame::Surface
-- Rubygame::Rect
+To get acquainted with Rubygame, we recommend exploring the available classes
+and modules in this order.
+
+First, take a look at the most fundamental classes: 
+- Rubygame::Screen (the display window, what the user sees)
+- Rubygame::Surface (stores image data which can be copied to the Screen)
+- Rubygame::Rect (stores a rectangular area, like part of the Screen)
 
 As a next step, read about the event Queue and the hardware events, which
-allow you to take keyboard and mouse input, among other things. The most
-commonly used ones are:
-- Rubygame::JoyAxisEvent
-- Rubygame::JoyBallEvent
-- Rubygame::JoyDownEvent
-- Rubygame::JoyHatEvent
-- Rubygame::JoyUpEvent
-- Rubygame::KeyDownEvent
-- Rubygame::KeyUpEvent
-- Rubygame::MouseDownEvent
-- Rubygame::MouseMotionEvent
-- Rubygame::MouseUpEvent
-- Rubygame::QuitEvent
-
-You will also want to acquaint yourself with these more minor event types:
-- Rubygame::ActiveEvent
-- Rubygame::ResizeEvent
-- Rubygame::ExposeEvent
+allow you to take keyboard and mouse input, among other things.
+- Rubygame::EventQueue (stores events for processing)
+- Rubygame::KeyDownEvent (keyboard button is pressed)
+- Rubygame::KeyUpEvent (keyboard button is released)
+- Rubygame::MouseDownEvent (mouse button is clicked)
+- Rubygame::MouseUpEvent (mouse button is released)
+- Rubygame::MouseMotionEvent (mouse cursor is moved)
+- Rubygame::QuitEvent (user tries to close the window)
+- Rubygame::JoyDownEvent (joystick button is pressed)
+- Rubygame::JoyUpEvent (joystick button is released)
+- Rubygame::JoyAxisEvent (joystick axis is moved)
+- Rubygame::JoyBallEvent (joystick trackball is moved)
+- Rubygame::JoyHatEvent (joystick 8-directional hat switch is moved)
+- Rubygame::ActiveEvent (the Screen gets keyboard and/or mouse focus)
+- Rubygame::ResizeEvent (the Screen is resized)
+- Rubygame::ExposeEvent (the Screen is redrawn, mostly for OpenGL)
 
 Finally, familiarize yourself with:
-- Rubygame::TTF and Rubygame::SFont classes for rendering text
-- Rubygame::Image module for loading and saving image files
-- Rubygame::Draw and Rubygame::Transform modules for "special effects"
-- Rubygame::Time module for controlling framerate and pausing program execution
-- Rubygame::Sprites module for easy-to-use, yet highly flexible on-screen objects
-- Rubygame::GL module for hardware-accelerated 3D graphics with OpenGL.
+- Rubygame::Clock for monitoring and controlling framerate to save resources
+- Rubygame::Sprites for an easy-to-use yet flexible on-screen object framework
+- Rubygame::TTF and Rubygame::SFont for rendering text
+- Rubygame::GL for hardware-accelerated 3D graphics with OpenGL
 
 There are several sample applications in the rubygame/samples/ directory
 packaged with Rubygame which can also help you get started.
