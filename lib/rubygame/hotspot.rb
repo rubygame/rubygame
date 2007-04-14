@@ -2,7 +2,7 @@
 # position offsets.
 #--
 #	Rubygame -- Ruby bindings to SDL to facilitate game creation
-#	Copyright (C) 2004-2006  John 'jacius' Croisant
+#	Copyright (C) 2004-2007  John Croisant
 #
 #	This library is free software; you can redistribute it and/or
 #	modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,9 @@
 
 module Rubygame
 
+  # *NOTE*: you must `require "hotspot"' manually to gain access to
+  # Rubygame::Hotspot. It is not imported with Rubygame by default!
+  # 
   # Hotspot is a mixin module to extend an object with "hotspots": custom,
   # named, relative position offsets. Hotspots can be defined relative to the
   # origin, to another hotspot, or to the results of a method (via a 
@@ -47,7 +50,7 @@ module Rubygame
   # changes size, the smartspot will always to evaluate to its true center.
   # See #new_smartspot.
   # 
-  # --
+  #--
   # ((Old documentation/brainstorming))
   # As an example, consider an object which represents a person's face: eyes, 
   # ears, nose, mouth, etc. You might make a face and define several hotspots
@@ -79,9 +82,10 @@ module Rubygame
   # Where do [5,-2], [25,-24], and [20,-9] come from? They are the vector sums
   # of each hotspot in the chain: left_brow, left_eye, nose, and center. See
   # #hotspot for more information.
-  # ++
+  #++
+  # 
   module Hotspot
-    # :call-seq: new_hotspot label => [x,y,parent]
+    # :call-seq: def_hotspot label => [x,y,parent]
     # 
     # Define +label+ as a simple hotspot, a custom reference coordinate 
     # point +x+ pixels to the right and +y+ pixels below the hotspot whose
@@ -89,7 +93,7 @@ module Rubygame
     # You may omit +parent+, in which case the hotspot will evaluate relative
     # to the origin, i.e. the top-left corner of the Screen.
     # 
-    # See also #new_smartspot to create a 'smart hotspot'.
+    # See also #def_smartspot to create a 'smart hotspot'.
     # 
     # +label+ must be usable as a key in a Hash table. Additionally, if you
     # want <code>myobject.{label}</code> to work like 
@@ -97,22 +101,23 @@ module Rubygame
     # 
     # *IMPORTANT*: Do NOT create circular hotspot chains (e.g. a -> b -> a).
     # Doing so will raise SystemStackError when #hotspot is asked to evaluate
-    # any hotspot in that chain.
+    # any hotspot in that chain. Hotspots are not yet smart enough to detect
+    # circular chains.
     # 
-    # Hotspots can be defined in any order, as long as all base hotspots are
-    # defined before the hotspot is evaluated with #hotspot.
+    # Hotspots can be defined in any order, as long as you define all the
+    # hotspots in a chain before that chain is evaluated with #hotspot.
     #
     # You may define multiple hotspots simultaneously by separating the 
     # definitions by commas. For example:
     # 
-    #   new_hotspot label => [x,y,parent], label2 => [x,y,parent]
+    #   def_hotspot label => [x,y,parent], label2 => [x,y,parent]
     # 
     # Users of the Rake library will recognize this style of syntax.
     # It is simply constructing a Hash object and passing it as the
     # only argument to #new_hotspot. The above code is equivalent to:
     # 
-    #   new_hotspot( { label => [x,y,parent], label2 => [x,y,parent] } )
-    def new_hotspot(dfn)
+    #   def_hotspot( { label => [x,y,parent], label2 => [x,y,parent] } )
+    def def_hotspot(dfn)
       @hotspots.update(dfn)
     rescue NoMethodError => e
       unless defined? @hotspots
@@ -123,14 +128,14 @@ module Rubygame
     end
 
     # Remove all simple hotspots whose label is included in +*labels+.
-    def delete_hotspot(*labels)
+    def undef_hotspot(*labels)
       labels.flatten.each do |l|
         @hotspots.delete(l)
       end
     end
 
     # True if +label+ has been defined as a simple hotspot.
-    def have_hotspot?(label)
+    def defined_hotspot?(label)
       @hotspots.include? label
     rescue NoMethodError => e
       unless defined? @hotspots
@@ -159,15 +164,20 @@ module Rubygame
     #   :c => [16,32]
     # 
     # the value returned for +:a+ would be [21,42], i.e. [1+4+16, 2+8+32]
+    #--
+    # The x and y arguments are used for recursive accumulation, although
+    # I suppose you could use them to create a temporary offset by giving
+    # something besides zero when you look up a hotspot.
+    #++
     def hotspot(label,x=0,y=0)
       a = @hotspots[label]
-      if a[2].nil?
+      if a[2].nil?              # has no parent
         [x+a[0],y+a[1]]
-      else
+      else                      # has a parent
         hotspot(a[2],x+a[0],y+a[1])
       end
     rescue NoMethodError => e
-      if (not defined? @hotspots)
+      unless defined? @hotspots
         return nil
       elsif a.nil?
         smartspot(label,x,y)
@@ -183,7 +193,7 @@ module Rubygame
     # 
     # The label must be a :symbol, and it must be identical to the name of the
     # method to be called.
-    def new_smartspot(*labels)
+    def def_smartspot(*labels)
       @smartspots += labels.flatten
       @smartspots.uniq!
     rescue NoMethodError => e
@@ -195,12 +205,12 @@ module Rubygame
     end
 
     # Remove all smartspots whose label is included in +*labels+.
-    def delete_smartspot(*labels)
+    def undef_smartspot(*labels)
       @smartspots -= labels.flatten
     end
 
     # True if +label+ has been defined as a smartspot.
-    def have_smartspot?(label)
+    def defined_smartspot?(label)
       @smartspots.include? label
     rescue NoMethodError => e
       unless defined? @smartspots
@@ -213,6 +223,9 @@ module Rubygame
     # 
     # Evaluate the smartspot +label+, calling the method of the same name as
     # +label+. Will return nil if no such smartspot has been defined.
+    #--
+    # The x and y arguments are used for recursive accumulation.
+    #++
     def smartspot(label,x=0,y=0)
       if @smartspots.include? label
         a = self.send(label)
@@ -227,8 +240,17 @@ module Rubygame
       end
     end
 
-    def set_smartspot(label,x,y)
-    end
+    #--
+    # 
+    # TODO:
+    # Methods for changing the position of the object indirectly, 
+    # by saying where the hotspot should be.
+    # You could do this: my_object.foot = [5,3], and if foot was defined
+    # relative to, say, #center, it would set center = [5-x_offset, 3-y_offset]
+    # 
+    # It should be recursive to work with chains of hotspots too.
+    # 
+    #++ 
 
     alias :old_method_missing :method_missing
 
