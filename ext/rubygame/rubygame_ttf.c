@@ -50,6 +50,8 @@ VALUE rbgm_ttf_lineskip(VALUE);
 VALUE rbgm_ttf_sizetext(VALUE, VALUE);
 
 VALUE rbgm_ttf_render(int, VALUE*, VALUE);
+VALUE rbgm_ttf_render_utf8(int , VALUE*, VALUE);
+VALUE rbgm_ttf_render_unicode(int , VALUE*, VALUE);
 
 /*
  *  call-seq:
@@ -397,6 +399,136 @@ VALUE rbgm_ttf_render(int argc, VALUE *argv, VALUE self)
 	return Data_Wrap_Struct(cSurface,0,SDL_FreeSurface,surf);
 }
 
+ 
+/*  call-seq:
+ *    render_utf8(string, aa, fg, bg)  ->  Surface
+ *
+ *  Renders a string to a Surface with the font's style and the given color(s).
+ *
+ *  This method takes these arguments:
+ *  string:: the text string to render
+ *  aa::     Use anti-aliasing if true. Enabling this makes the text
+ *           look much nicer (smooth curves), but is much slower.
+ *  fg::     the color to render the text, in the form [r,g,b]
+ *  bg::     the color to use as a background for the text. This option can
+ *           be omitted to have a transparent background.
+ */
+VALUE rbgm_ttf_render_utf8(int argc, VALUE *argv, VALUE self)
+{
+ 	SDL_Surface *surf;
+ 	TTF_Font *font;
+ 	int antialias;
+ 	SDL_Color fore, back; /* foreground and background colors */
+ 
+ 	if(argc<3)
+ 		rb_raise(rb_eArgError,"wrong number of arguments (%d for 3)",argc);
+ 
+ 	Data_Get_Struct(self,TTF_Font,font);
+ 
+ 	antialias = argv[1];
+ 	fore.r = NUM2UINT(rb_ary_entry(argv[2],0));
+ 	fore.g = NUM2UINT(rb_ary_entry(argv[2],1));
+ 	fore.b = NUM2UINT(rb_ary_entry(argv[2],2));
+ 
+ 	if(argc>3)
+ 	{
+ 		back.r = NUM2UINT(rb_ary_entry(argv[3],0));
+ 		back.g = NUM2UINT(rb_ary_entry(argv[3],1));
+ 		back.b = NUM2UINT(rb_ary_entry(argv[3],2));
+ 	}
+ 
+ 	if(antialias) /* anti-aliasing enabled */
+ 	{
+ 		if(argc>3) /* background color provided */
+ 			surf = TTF_RenderUTF8_Shaded(font,StringValuePtr(argv[0]),fore,back);
+ 		else /* no background color */
+ 			surf = TTF_RenderUTF8_Blended(font,StringValuePtr(argv[0]),fore);
+ 	}
+ 	else /* anti-aliasing not enabled */
+ 	{
+ 		if(argc>3) /* background color provided */	
+ 		{
+ 			/* remove colorkey, set color index 0 to background color */
+ 			surf = TTF_RenderUTF8_Solid(font,StringValuePtr(argv[0]),fore);
+ 			SDL_SetColors(surf,&back,0,1);
+ 			SDL_SetColorKey(surf,0,0);
+ 		}
+ 		else /* no background color */
+ 		{
+ 			surf = TTF_RenderUTF8_Solid(font,StringValuePtr(argv[0]),fore);
+ 		}
+ 	}
+ 
+ 	if(surf==NULL)
+ 		rb_raise(eSDLError,"could not render font object: %s",TTF_GetError());
+ 	return Data_Wrap_Struct(cSurface,0,SDL_FreeSurface,surf);
+}
+ 
+/*  call-seq:
+ *    render_unicode(string, aa, fg, bg)  ->  Surface
+ *
+ *  Renders a string to a Surface with the font's style and the given color(s).
+ *
+ *  This method takes these arguments:
+ *  string:: the text string to render
+ *  aa::     Use anti-aliasing if true. Enabling this makes the text
+ *           look much nicer (smooth curves), but is much slower.
+ *  fg::     the color to render the text, in the form [r,g,b]
+ *  bg::     the color to use as a background for the text. This option can
+ *           be omitted to have a transparent background.
+ */
+VALUE rbgm_ttf_render_unicode(int argc, VALUE *argv, VALUE self)
+{
+	//TODO:... ->unicode
+ 	SDL_Surface *surf;
+ 	TTF_Font *font;
+ 	int antialias;
+ 	SDL_Color fore, back; /* foreground and background colors */
+ 
+ 	if(argc<3)
+ 		rb_raise(rb_eArgError,"wrong number of arguments (%d for 3)",argc);
+ 
+ 	Data_Get_Struct(self,TTF_Font,font);
+ 
+ 	antialias = argv[1];
+ 	fore.r = NUM2UINT(rb_ary_entry(argv[2],0));
+ 	fore.g = NUM2UINT(rb_ary_entry(argv[2],1));
+ 	fore.b = NUM2UINT(rb_ary_entry(argv[2],2));
+ 
+ 	if(argc>3)
+ 	{
+ 		back.r = NUM2UINT(rb_ary_entry(argv[3],0));
+ 		back.g = NUM2UINT(rb_ary_entry(argv[3],1));
+ 		back.b = NUM2UINT(rb_ary_entry(argv[3],2));
+ 	}
+ 
+ 	if(antialias) /* anti-aliasing enabled */
+ 	{
+ 		if(argc>3) /* background color provided */
+ 			surf = TTF_RenderUNICODE_Shaded(font,StringValuePtr(argv[0]),fore,back);
+ 		else /* no background color */
+ 			surf = TTF_RenderUNICODE_Blended(font,StringValuePtr(argv[0]),fore);
+ 	}
+ 	else /* anti-aliasing not enabled */
+ 	{
+ 		if(argc>3) /* background color provided */	
+ 		{
+ 			/* remove colorkey, set color index 0 to background color */
+ 			surf = TTF_RenderUNICODE_Solid(font,StringValuePtr(argv[0]),fore);
+ 			SDL_SetColors(surf,&back,0,1);
+ 			SDL_SetColorKey(surf,0,0);
+ 		}
+ 		else /* no background color */
+ 		{
+ 			surf = TTF_RenderUNICODE_Solid(font,StringValuePtr(argv[0]),fore);
+ 		}
+ 	}
+ 
+ 	if(surf==NULL)
+ 		rb_raise(eSDLError,"could not render font object: %s",TTF_GetError());
+ 	return Data_Wrap_Struct(cSurface,0,SDL_FreeSurface,surf);
+}
+
 #endif /* HAVE_SDL_TTF_H */
 
 /* 
@@ -456,7 +588,8 @@ void Init_rubygame_ttf()
 	rb_define_method(cTTF,"line_skip",rbgm_ttf_lineskip,0);
 	rb_define_method(cTTF,"size_text",rbgm_ttf_sizetext,1);
 	rb_define_method(cTTF,"render",rbgm_ttf_render,-1);
-
+	rb_define_method(cTTF,"render_utf8",rbgm_ttf_render_utf8,-1);
+	rb_define_method(cTTF,"render_unicode",rbgm_ttf_render_unicode,-1);
 #endif
 
 }
