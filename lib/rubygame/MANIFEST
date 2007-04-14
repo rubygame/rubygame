@@ -1,9 +1,12 @@
-MANIFEST
 clock.rb
 constants.rb
 event.rb
-font.rb
+ftor.rb
+hotspot.rb
 keyconstants.rb
+MANIFEST
+mediabag.rb
+queue.rb
 rect.rb
+sfont.rb
 sprite.rb
-string.rb
