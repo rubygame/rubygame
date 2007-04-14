@@ -1,7 +1,7 @@
 # Ftor ("Fake vecTOR"), a vector-like class for 2D position/movement.
 #--
 #	Rubygame -- Ruby bindings to SDL to facilitate game creation
-#	Copyright (C) 2004-2006  John 'jacius' Croisant
+#	Copyright (C) 2004-2007  John Croisant
 #
 #	This library is free software; you can redistribute it and/or
 #	modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,9 @@
 
 module Rubygame
 
+# *NOTE*: you must `require "ftor"' manually to gain access to
+# Rubygame::Ftor. It is not imported with Rubygame by default!
+# 
 # Ftor ("Fake vecTOR"), a vector-like class for 2D position/movement.
 # 
 # (NB: See #angle for an important note about why angles appear to be the
@@ -76,7 +79,7 @@ class Ftor
 
 	# Create a new Ftor by specifying its #angle (in radians) and #magnitude.
   # See also #new.
-	def Ftor.new_am(a,m)
+	def self.new_am(a,m)
 		v = Ftor.new(1,0)
     v.a, v.m = a, m
 		return v
@@ -88,7 +91,7 @@ class Ftor
   # 
   # In other words, assuming +v+ is the Ftor returned by this function:
   #   p1 + v = p2
-  def Ftor.new_from_to(p1,p2)
+  def self.new_from_to(p1,p2)
     return self.class.new(p2[0]-p1[0],p2[1]-p1[1])
   end
 
@@ -218,11 +221,11 @@ class Ftor
 	# Return the angle (radians) this Ftor forms with the positive X axis.
   # This is the same as the Ftor's angle in a polar coordinate system.
   # 
-  # *IMPORTANT:* Because the positive Y axis on the Rubygame::Screen points
+  # *IMPORTANT*: Because the positive Y axis on the Rubygame::Screen points
   # *downwards*, an angle in the range 0..PI will appear to point *downwards*,
   # rather than upwards!
   # This also means that positive rotation will appear *clockwise*, and
-  # negative rotation will appear *anti-clockwise*!
+  # negative rotation will appear *counterclockwise*!
   # This is the opposite of what you would expect in geometry class!
 	def angle
 		@angle or @angle = Math.atan2(@y,@x)
@@ -284,9 +287,9 @@ class Ftor
   # 
   # In other words, changes the #angle of this Ftor to be the same as the angle
   # of the given Ftor, but this Ftor's #magnitude does not change.
-  # --
+  #--
   # TODO: investigate efficiency of using `self.angle = other.angle` instead
-  # ++
+  #++
 	def unit=(other)
 		set!( *(self.class.new(*other).unit() * magnitude()) )
 	end
@@ -313,7 +316,10 @@ class Ftor
 	end
 
   # Rotate this Ftor in-place by +angle+ (radians). This is the same as
-  # Adding +angle+ to this Ftor's #angle, with one important difference: 
+  # adding +angle+ to this Ftor's #angle.
+  # 
+  #--
+  # , with one important difference: 
   # This method will be much more efficient when rotating at a right angle,
   # i.e.rotating by any multiple of PI/2 radians from -2*PI to 2*PI radians.
   # 
@@ -323,22 +329,23 @@ class Ftor
   # * Ftor::HALF_PI::        PI * 0.5 (or PI/2)
   # * Ftor::THREE_HALF_PI::  PI * 1.5 (or 3*PI/2)
   # * Ftor::TWO_PI::         PI * 2
+  #++
   # 
-  # *IMPORTANT:* Positive rotation will appear *clockwise*, and negative
-  # rotation will appear *anti-clockwise*! See #angle for the reason.
+  # *IMPORTANT*: Positive rotation will appear *clockwise*, and negative
+  # rotation will appear *counterclockwise*! See #angle for the reason.
 	def rotate!(angle)
-		case(angle)
-		when HALF_PI, -THREE_HALF_PI
-			self.set!(@y,-@x)
-		when THREE_HALF_PI, -HALF_PI
-			self.set!(-@y,@x)
-		when PI, -PI
-			self.set!(@y,-@x)
-		when 0, TWO_PI, -TWO_PI
-			self.set!(@y,-@x)
-		else
+# 		case(angle)
+# 		when HALF_PI, -THREE_HALF_PI
+# 			self.set!(@y,-@x)
+# 		when THREE_HALF_PI, -HALF_PI
+# 			self.set!(-@y,@x)
+# 		when PI, -PI
+# 			self.set!(@y,-@x)
+# 		when 0, TWO_PI, -TWO_PI
+# 			self.set!(@y,-@x)
+# 		else
 			self.a += angle
-		end
+# 		end
 		return self
 	end
 
