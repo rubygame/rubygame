@@ -503,22 +503,22 @@ VALUE rbgm_ttf_render_unicode(int argc, VALUE *argv, VALUE self)
  	if(antialias) /* anti-aliasing enabled */
  	{
  		if(argc>3) /* background color provided */
- 			surf = TTF_RenderUNICODE_Shaded(font,StringValuePtr(argv[0]),fore,back);
+ 			surf = TTF_RenderUNICODE_Shaded(font,(Uint16*)StringValuePtr(argv[0]),fore,back);
  		else /* no background color */
- 			surf = TTF_RenderUNICODE_Blended(font,StringValuePtr(argv[0]),fore);
+ 			surf = TTF_RenderUNICODE_Blended(font,(Uint16*)StringValuePtr(argv[0]),fore);
  	}
  	else /* anti-aliasing not enabled */
  	{
  		if(argc>3) /* background color provided */	
  		{
  			/* remove colorkey, set color index 0 to background color */
- 			surf = TTF_RenderUNICODE_Solid(font,StringValuePtr(argv[0]),fore);
+ 			surf = TTF_RenderUNICODE_Solid(font,(Uint16*)StringValuePtr(argv[0]),fore);
  			SDL_SetColors(surf,&back,0,1);
  			SDL_SetColorKey(surf,0,0);
  		}
  		else /* no background color */
  		{
- 			surf = TTF_RenderUNICODE_Solid(font,StringValuePtr(argv[0]),fore);
+ 			surf = TTF_RenderUNICODE_Solid(font,(Uint16*)StringValuePtr(argv[0]),fore);
  		}
  	}
  
