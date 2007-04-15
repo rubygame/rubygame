@@ -21,12 +21,8 @@
 #ifndef _RUBYGAME_MIXER_H
 #define _RUBYGAME_MIXER_H
 
-#ifdef HAVE_SDL_MIXER_H
-
 #include "SDL_audio.h"
 #include "SDL_mixer.h"
-
-#endif
 
 extern void Init_rubygame_mixer();
 extern VALUE mMixer;

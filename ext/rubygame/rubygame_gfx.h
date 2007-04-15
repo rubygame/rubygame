@@ -22,13 +22,8 @@
 #ifndef _RUBYGAME_GFX_H
 #define _RUBYGAME_GFX_H
 
-#ifdef HAVE_SDL_GFXPRIMITIVES_H
 #include <SDL_gfxPrimitives.h>
-#endif
-
-#ifdef HAVE_SDL_ROTOZOOM_H
 #include <SDL_rotozoom.h>
-#endif
 
 #ifndef SDL_GFXPRIMITIVES_MAJOR
 #define SDL_GFXPRIMITIVES_MAJOR 0

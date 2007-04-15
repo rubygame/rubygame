@@ -21,9 +21,7 @@
 #ifndef _RUBYGAME_IMAGE_H
 #define _RUBYGAME_IMAGE_H
 
-#ifdef HAVE_SDL_IMAGE_H
 #include "SDL_image.h"
-#endif
 
 #ifndef SDL_IMAGE_MAJOR_VERSION
 #define SDL_IMAGE_MAJOR_VERSION 0

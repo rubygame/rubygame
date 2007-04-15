@@ -21,9 +21,7 @@
 #ifndef _RUBYGAME_TTF_H
 #define _RUBYGAME_TTF_H
 
-#ifdef HAVE_SDL_TTF_H
 #include "SDL_ttf.h"
-#endif
 
 #ifndef SDL_TTF_MAJOR_VERSION
 #define SDL_TTF_MAJOR_VERSION 0

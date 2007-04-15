@@ -27,8 +27,6 @@
 void Rubygame_Init_TTF();
 VALUE cTTF;
 
-#ifdef HAVE_SDL_TTF_H
-
 VALUE rbgm_ttf_setup(VALUE);
 VALUE rbgm_ttf_quit(VALUE);
 VALUE rbgm_ttf_new(int, VALUE*, VALUE);
@@ -529,8 +527,6 @@ VALUE rbgm_ttf_render_unicode(int argc, VALUE *argv, VALUE self)
  	return Data_Wrap_Struct(cSurface,0,SDL_FreeSurface,surf);
 }
 
-#endif /* HAVE_SDL_TTF_H */
-
 /* 
  *  Document-class: Rubygame::TTF
  *
@@ -550,8 +546,6 @@ void Init_rubygame_ttf()
 #if 0
 	mRubygame = rb_define_module("Rubygame");
 #endif
-
-#ifdef HAVE_SDL_TTF_H
 
   Init_rubygame_shared();
 
@@ -590,6 +584,5 @@ void Init_rubygame_ttf()
 	rb_define_method(cTTF,"render",rbgm_ttf_render,-1);
 	rb_define_method(cTTF,"render_utf8",rbgm_ttf_render_utf8,-1);
 	rb_define_method(cTTF,"render_unicode",rbgm_ttf_render_unicode,-1);
-#endif
 
 }
