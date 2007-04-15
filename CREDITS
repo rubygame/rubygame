@@ -1,0 +1,30 @@
+== Developers
+
+- <b>John Croisant</b> / jacius 
+  Email:: jacius at users.sourceforge.net
+  Role::  Creator; primary developer
+  Date::  2004 - present
+
+- <b>Ash Wilson</b> / smashwilson
+  Email:: smashwilson at gmail.com
+  Role::  Assistant developer
+  Date::  2007 - present
+
+- <b>Roger Ostrander</b> / denor
+  Email:: atiaxi at gmail.com
+  Role::  Assistant developer
+  Date::  2007 - present
+
+== Other Source Contributors
+
+- <b>Randy Eckenrode</b>
+  Email::         randy.eckenrode at gmail.com
+  Contribution::  Patch to improve Win32 compatibility (memory allocation,
+                  extconf.rb improvements, misc. other changes).
+  Date:: received 2006-01-19; applied 2006-02-04 (r143).
+
+- <b>Yun, Jonghyouk</b> / ageldama
+  Email::         ageldama at gmail.com
+  Contribution::  Patch to add TTF#render_utf and TTF#render_unicode methods;
+                  UTF8 demo application.
+  Date:: received 2007-03-04; applied 2007-04-13 (r235).
