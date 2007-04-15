@@ -30,7 +30,7 @@ spec = Gem::Specification.new do |s|
   s.autorequire = "rubygame.rb"
   s.extensions = ["Rakefile"]
 
-  s.extra_rdoc_files = ["./README", "./LICENSE", "./TODO",\
+  s.extra_rdoc_files = ["./README", "./LICENSE", "./CREDITS",\
     "./doc/getting_started.rdoc"]
 end
 
@@ -41,14 +41,17 @@ end
 Rake::RDocTask.new do |rd|
   rd.main = "doc/getting_started.rdoc"
   rd.title = "Rubygame #{RUBYGAME_VERSION} API"
-  rd.rdoc_files.include("ext/rubygame/*.c",\
-                        "lib/rubygame/*.rb",\
-                        "doc/*.rdoc")
+  rd.rdoc_files.include("ext/rubygame/*.c",
+                        "lib/rubygame/*.rb",
+                        "doc/*.rdoc",
+                        "./README",
+                        "./LICENSE",
+                        "./CREDITS")
 end
 
 task :default => [:build]
 task :extension => [:build]
-desc "Compile the C portion of rubygame from source."
+desc "Compile all of the extensions"
 task :build
 
 EXTDIR = File.join('.', 'ext', 'rubygame', '')
@@ -56,6 +59,9 @@ EXTDIR = File.join('.', 'ext', 'rubygame', '')
 require 'rake/clean'
 CLEAN.include("#{EXTDIR}*.#{OBJEXT}")
 CLOBBER.include("#{EXTDIR}*.#{DLEXT}")
+
+task(:clean) { puts "Cleaning out temporary generated files" }
+task(:clobber) { puts "Cleaning out final generated files" }
 
 # Options
 
@@ -177,11 +183,12 @@ class ExtensionModule
       if( $options.verbose )
         sh link_command
       else
-        puts "Linking compiled files to create #{task.name}"
+        puts "Linking compiled files to create #{File.basename(task.name)}"
         `#{link_command}`
       end
     end
-    taskname = 
+    taskname = @dynlib.gsub('rubygame_','').intern
+    desc "Compile the #{@dynlib} extension"
     task  taskname => [dynlib_full]
     task :build => [taskname]   # Add this as a prereq of the build
     task :install_ext => [dynlib_full] # ...and install_ext tasks
@@ -271,7 +278,7 @@ begin
     if( $options.verbose )
       sh compile_command
     else
-      puts "Compiling #{t.source}"
+      puts "Compiling #{File.basename(t.source)}"
       `#{compile_command}`
     end
   end
@@ -284,21 +291,26 @@ rescue
       if( $options.verbose )
         sh compile_command
       else
-        puts "Compiling #{source}"
+        puts "Compiling #{File.basename(source)}"
         `#{compile_command}`
       end
     end
   end
 end
 
+desc "Install only the extensions"
 task :install_ext do |task|
+  puts "Installing extensions to #{$options.sitearchdir}"
   cp task.prerequisites.to_a, $options.sitearchdir
 end
 
+desc "Install only the library"
 task :install_lib do |task|
+  puts "Installing library to #{$options.sitelibdir}"
   cp "./lib/rubygame.rb", $options.sitelibdir
   mkdir_p $options.sitelibdir + "/rubygame/"
   cp FileList.new("./lib/rubygame/*.rb").to_a, $options.sitelibdir+"/rubygame/"
 end
 
+desc "Install both the extensions and the library"
 task :install => [:install_ext, :install_lib]
