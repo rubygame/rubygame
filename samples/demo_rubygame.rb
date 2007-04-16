@@ -19,7 +19,7 @@ puts "Creating queue and clock..."
 queue = EventQueue.new() # new EventQueue with autofetch
 queue.ignore = [MouseMotionEvent, ActiveEvent]
 clock = Clock.new()
-clock.desired_fps = 100
+clock.target_framerate = 50
 
 unless ($gfx_ok = (VERSIONS[:sdl_gfx] != nil))
   raise "SDL_gfx is not available. Bailing out." 
@@ -188,7 +188,7 @@ else
 end
 
 update_time = 0
-fps = 0
+framerate = 0
 
 catch(:rubygame_quit) do
 	loop do
@@ -258,10 +258,10 @@ catch(:rubygame_quit) do
 		screen.update()
 		update_time = clock.tick()
 		# update_time = Clock.delay(10)
-		unless fps == clock.fps
-			fps = clock.fps
-			screen.title = "Rubygame test [%d fps]"%fps
-			# puts "tick: %d  fps: %d"%[update_time,fps]
+		unless framerate == clock.framerate
+			framerate = clock.framerate
+			screen.title = "Rubygame test [%d fps]"%framerate
+			# puts "tick: %d  fps: %d"%[update_time,framerate]
 		end
 	end
 end
