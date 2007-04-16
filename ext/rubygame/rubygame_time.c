@@ -46,6 +46,8 @@ VALUE rbgm_time_getticks(VALUE);
  *  call-seq:
  *    wait( time )  ->  Integer
  *
+ *  time:: how many milliseconds to wait.
+ *
  *  Wait approximately the given time (the accuracy depends upon processor 
  *  scheduling, but 10ms is common). Returns the actual delay time, in 
  *  milliseconds. This method is less CPU-intensive than #delay, but is
@@ -54,8 +56,6 @@ VALUE rbgm_time_getticks(VALUE);
  *  The Rubygame timer system will be initialized when you call this function,
  *  if it has not been already.
  *
- *  This function takes this argument:
- *  time:: the time in milliseconds to wait.
  */
 VALUE rbgm_time_wait(VALUE module, VALUE milliseconds)
 {
@@ -113,20 +113,20 @@ static int accurate_delay(int ticks,int accuracy)
  *  call-seq:
  *    delay( time, gran=12 )  ->  Integer
  *
- *  Use the CPU to more accurately wait for the given period. Returns the
- *  actual delay time, in milliseconds. This function is more accurate than 
- *  #wait, but is also more CPU-intensive.
- *
- *  The Rubygame timer system will be initialized when you call this function,
- *  if it has not been already.
- *
- *  This function takes these arguments:
- *  time:: the time in milliseconds to delay.
+ *  time:: how many milliseconds to delay.
  *  gran:: the granularity (in milliseconds) to assume for the system. A
  *         smaller value should use less CPU time, but if it's lower than the
  *         actual system granularity, this function might wait too long. The
  *         default, 12 ms, has a fairly low risk of over-waiting for many
  *         systems.
+
+ *  Use the CPU to more accurately wait for the given period. Returns the
+ *  actual delay time, in milliseconds. This function is more accurate than 
+ *  #wait, but is also somewhat more CPU-intensive.
+ *
+ *  The Rubygame timer system will be initialized when you call this function,
+ *  if it has not been already.
+ *
  */
 VALUE rbgm_time_delay(int argc, VALUE *argv, VALUE module)
 {
@@ -150,7 +150,7 @@ VALUE rbgm_time_delay(int argc, VALUE *argv, VALUE module)
 
 /*
  *  call-seq:
- *    get_ticks  ->  Integer
+ *    runtime  ->  Integer
  *
  *  Return the number of milliseconds since the Rubygame timer system
  *  was initialized.
@@ -167,15 +167,6 @@ VALUE rbgm_time_getticks( VALUE module )
   return INT2NUM(SDL_GetTicks());
 }
 
-/* 
- *  Document-module: Rubygame::Clock
- *
- *  Clock provides class methods for tracking running time and delaying
- *  execution of the program for specified time periods. This is used to
- *  provide a consistent framerate, prevent the program from gluttonizing
- *  all the resources of the computer,  etc.
- *
- */
 void Rubygame_Init_Time()
 {
 #if 0
@@ -187,5 +178,5 @@ void Rubygame_Init_Time()
   /* Clock class methods */
   rb_define_singleton_method(cClock,"wait",rbgm_time_wait,1);
   rb_define_singleton_method(cClock,"delay",rbgm_time_delay,-1);
-  rb_define_singleton_method(cClock,"get_ticks",rbgm_time_getticks,0);
+  rb_define_singleton_method(cClock,"runtime",rbgm_time_getticks,0);
 }
