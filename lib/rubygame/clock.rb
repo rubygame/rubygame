@@ -18,110 +18,110 @@
 #++
 
 module Rubygame
-    #  Clock also provides instance methods to make it convenient to
-    #  monitor and limit application framerate.
+		#  Clock provides class methods for tracking running time and delaying
+		#  execution of the program for specified time periods. This is used to
+		#  provide a consistent framerate, prevent the program from using
+		#  all the processor time, etc.
+		# 
+		#  Clock also provides instance methods to make it convenient to
+		#  monitor and limit application framerate. See #tick.
 		class Clock
-			attr_reader :start,:passed,:raw_passed,:ticks	# :nodoc:
+			# The runtime when the Clock was initialized.
+			attr_reader :start        
+			# The number of times #tick has been called.
+			attr_reader :ticks        
 
-			# call-seq: new(desired_fps=nil)  ->  Clock
-			# 
 			# Create a new Clock instance.
-			# 
-			# This method takes this argument:
-			# desired_fps:: the desired frames per second, used to limit framerate; 
-			#               if +false+ or +nil+ (default), no limiting will occur.
-			#               Use the accessor @desired_fps to set or modify this value
-			#               after the Clock has been initialized. See #tick
-			def initialize(desired_fps=nil)
-				@start = Clock.get_ticks()
-				@last_tick = @start	# time that last tick occured
-				@passed = 0		# time (ms) since last tick
-				@raw_passed = 0	# @passed, before applying delay to steady FPS
-				@ticks = 0 # incremented every time Clock#tick is called
-				@desired_fps=desired_fps # frames per second to delay for
+			def initialize()
+				@start = Clock.runtime()
+				@last_tick = @start
+				@ticks = 0
+				@target_frametime = nil
+				yield self if block_given?
 			end
 
-			# Access the desired number of frames per second. If this is set,
-			# #tick will add a small delay to each frame to slow down
-			# execution if it is running faster than this value.
-			# If +nil+ or +false+, no slowdown will be made to execution.
-			attr_accessor :desired_fps
+			# The target frametime (milliseconds/frame). See #tick
+			attr_accessor :target_frametime
 
-			# call-seq: desired_mspf()  ->  Numeric
-			#
-			# Return the desired time (milliseconds) per frames. This is the same
-			# as 1000.0/@desired_fps.
-			def desired_mspf
-				@desired_fps and (1000.0/@desired_fps)
+			# Returns the current target framerate (frames/second).
+			# This is an alternate way to access the #target_frametime.
+			# Same as: 1000.0 / #target_frametime
+			def target_framerate
+				if @target_frametime
+					1000.0 / @target_frametime
+				else
+					nil
+				end
+			rescue ZeroDivisionError
+				return nil
 			end
 
-			# call-seq: desired_mspf=(dmspf)  ->  Numeric
-			# 
-			# Set the desired time (milliseconds) per frames. If this is 
-			# set, #tick will add a small delay to each frame to slow 
-			# down execution if the natural delay between frames is too small.
-			# If +nil+ or +false+, no slowdown will be made to execution.
-			# 
-			# This is an alternative to setting @desired_fps directly. You can
-			# get exactly the same effect by setting @desired_fps to 1000.0/dmspf.
-			def desired_mspf=(dmspf)
-				@desired_fps = (dmspf and 1000.0/dmspf)
+			# Sets the target number of frames per second to +framerate+.
+			# This is an alternate way to access the #target_frametime.
+			# Same as: #target_frametime = 1000.0 / framerate
+			def target_framerate=( framerate )
+				if framerate
+					@target_frametime = 1000.0 / framerate
+				else
+					@target_frametime = nil
+				end
+			rescue ZeroDivisionError
+				@target_frametime = nil
 			end
 
- 			# call-seq: time()  ->  Numeric
+			# call-seq: lifetime()  ->  Numeric
 			# 
-			# Returns time in milliseconds since this Clock was initialized
-			def time
+			# Returns time in milliseconds since this Clock instance was created.
+			def lifetime
 				@last_tick - @start
 			end
 
-			# call-seq: fps()  ->  Numeric
+			# call-seq: framerate()  ->  Numeric
 			# 
-			# Return frames per second (fps) recorded by the Clock
-			def fps
-				begin
-					return 1000*@ticks / (@last_tick - @start)
-				rescue ZeroDivisionError
-					return 0
-				end
+			# Return the actual framerate (frames per second) recorded by the Clock.
+			# See #tick.
+			# 
+			# TODO: sample only a few seconds in the past, instead of the
+			# entire lifetime of the Clock. 
+			def framerate
+				# below is same as: return @ticks / (lifetime / 1000.0)
+				return 1000.0 * @ticks / lifetime
+			rescue ZeroDivisionError
+				return 0
 			end
 
-			# call-seq: tick()  ->  Numeric
+			# Returns the number of milliseconds since you last called this method.
 			# 
-			# Call this function once per frame to use framerate tracking.
-			# Returns the number of milliseconds since the last time you
-			# called the function.
+			# You must call this method once per frame (i.e. per iteration of
+			# your main loop) if you want to use the framerate monitoring and/or
+			# framerate limiting features.
 			# 
-			# If @desired_fps is set, this function will delay execution for a
-			# certain amount of time so that (if you call this function once
-			# per frame) the program will run at that framerate.
+			# Framerate monitoring allows you to check the framerate (frames per
+			# second) with the #framerate method.
 			# 
-			# The accuracy of this method is less than perfect (for me, it runs
-			# about 5-15 fps too quickly if the desired fps is less than 100 or so),
-			# but it's still useful.
+			# Framerate limiting allows you to prevent the application from running
+			# too fast (and using 100% of processor time) by pausing the program
+			# very briefly each frame. The pause duration is calculated each frame
+			# to maintain a constant framerate.
+			# 
+			# Framerate limiting is only enabled if you have set the
+			# #target_framerate= or #target_frametime=.
+			# If you have done that, this method will automatically perform the
+			# delay each time you call it.
 			# 
 			# (Please note that no effort is made to correct a framerate
-			# which is *slower* than the desired framerate, i.e. it can't
-			# make your code run any faster, only slow it down if it is
-			# running too quickly.)
+			# which is *slower* than the target framerate. Clock can't
+			# make your code run faster, only slow it down if it is
+			# running too fast.)
 			def tick()
-				now = Clock.get_ticks() # ms since init'd Rubygame
- 				@passed = now - @last_tick # how long since the last tick?
- 				@last_tick = now # update last tick time
-				@ticks += 1		# increment ticks
-				@raw_passed = @passed # save unadjusted @passed
-
-				# Now we manually delay if we are too early, so the 
-				# frames per second stays approx. at the desired rate.
-				if @desired_fps and (self.fps() > @desired_fps)
-					goal_delay = (1000.0/@desired_fps) - @passed
-					unless goal_delay < 0 # which would mean we're too slow
-						actual_delay = Clock.delay(goal_delay)
-						@passed += actual_delay	# why @raw_passed is different
-					# else we are running too slow anyway, can't un-delay
-					end
+				passed = Clock.runtime - @last_tick  # how long since the last tick?
+				if @target_frametime
+					return Clock.delay(@target_frametime - passed) + passed
 				end
-				return @passed
+				return passed
+			ensure
+				@last_tick = Clock.runtime()
+				@ticks += 1
 			end
 
 		end # class Clock
