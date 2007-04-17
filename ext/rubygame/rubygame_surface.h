@@ -24,8 +24,6 @@
 
 extern void Rubygame_Init_Surface();
 
-extern VALUE cSurface;
-
 extern VALUE rbgm_surface_new(int, VALUE*, VALUE);
 
 extern VALUE rbgm_surface_get_w(VALUE);

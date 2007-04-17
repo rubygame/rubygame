@@ -25,8 +25,6 @@
 
 void Rubygame_Init_Surface();
 
-VALUE cSurface;
-
 VALUE rbgm_surface_new(int, VALUE*, VALUE);
 
 VALUE rbgm_surface_get_w(VALUE);
