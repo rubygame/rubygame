@@ -67,19 +67,14 @@ module Rubygame
     attr_accessor :ignore
 
     # Whether to fetch SDL events automatically when #each and #wait are used.
+    # Enabled by default.
     attr_accessor :autofetch    
 
     # Create a new EventQueue.
-    # 
-    # This method takes this argument:
-    # autofetch:: whether to call #fetch_sdl_events automatically when #each
-    #             and #wait are used. Defaults to true. If you do not enable
-    #             autofetch, you should fetch SDL events manually.
-    #             Autofetch status can be changed after initialization with
-    #             the @autofetch accessors.
-    def initialize(autofetch=true)
-      @autofetch = autofetch
+    def initialize()
+      @autofetch = true
       @ignore = []
+      yield self if block_given?
     end
 
     # Append events to the EventQueue.
@@ -167,9 +162,9 @@ module Rubygame
 
   # A mixin module to extend EventQueue with the ability to 'deliver' specific
   # types of events to subscribed objects, a la a mailing list. Each object
-  # must be subscribed for the types (classes) of events it wishes to receive;
-  # then, when the MailQueue receives an event of that type, it will
-  # push it onto the subscriber objects. See #subscribe for more information.
+  # must subscribe for the classes of events it wishes to receive;
+  # when the MailQueue receives an event of that type, it will deliver
+  # it to the subscribers. See #subscribe for more information.
   # 
   # Please note that if you extend an already-existing EventQueue object
   # with this mixin module (rather than including it in a class), you must
@@ -177,24 +172,24 @@ module Rubygame
   # internal variables for the MailQueue to work.
   # 
   module MailQueue
+    # Whether to automatically deliver events as they are received.
+    # Enabled by default.
     attr_accessor :autodeliver
 
-    # Create a new MailQueue object. If +autodeliver+ is true, the queue
-    # will automatically deliver events after #push; otherwise, you must
-    # call #deliver to deliver all events on the queue.
-    def initialize(autodeliver=true,*args)
-      setup(autodeliver)
-      super(*args)
+    # Create a new MailQueue object.
+    # Like EventQueue.new, this method will yield self if a block is given.
+    def initialize()
+      setup()
+      super
     end
 
     # Create the necessary internal variables for the MailQueue.
-    def setup(autodeliver=true)
+    def setup
       @subscribe = Hash.new
-      @autodeliver = autodeliver
+      @autodeliver = true
     end
 
-    # Returns an Array of all event classes which have at least one subscribed
-    # client object.
+    # Returns an Array of all event classes which have at least one subscriber.
     def list
       @subscribe.collect { |k, v|  
         (v.length > 0) ? k : nil  rescue NoMethodError nil
@@ -231,8 +226,6 @@ module Rubygame
       @subscribe[klass] << client
     rescue NoMethodError
       @subscribe[klass] = [client] if @subscribe[klass].nil?
-    ensure
-      return  
     end
 
     # Returns true if +client+ is currently subscribed to receive events
@@ -243,8 +236,8 @@ module Rubygame
     end
 
     # Unsubscribes the client to stop receiving events of type +klass+.
-    # It is safe (no effect) to unsubscribe for an event type you are not
-    # subscribed to receive.
+    # It is safe (has no effect) to unsubscribe for an event type you
+    # are not subscribed to receive.
     def unsubscribe(client,klass)
       @subscribe[klass] -= [client]  rescue NoMethodError
     ensure
@@ -256,9 +249,9 @@ module Rubygame
       @subscribe.each_pair { |klass,clients|
         begin
           if klass === event
-            clients.each { |client|
+            clients.each do |client|
               client.push(event) rescue NoMethodError
-            } 
+            end 
           end
         rescue NoMethodError
         end
@@ -266,8 +259,8 @@ module Rubygame
     end
     private :deliver_event
 
-    # Deliver each pending event to objects which are subscribed to its
-    # type of event. Every client object MUST have a #push method, or
+    # Deliver each pending event to all objects which are subscribed to
+    # that event class. Every client object MUST have a #push method, or
     # events can't be delivered to it, and it will become very lonely!
     # 
     # The queue will be cleared of all events after all deliveries are done.
@@ -277,7 +270,7 @@ module Rubygame
     end
 
     # Append events to the queue. If @autodeliver is enabled, all events
-    # on the queue will be delivered to subscribed client objects afterwards.
+    # on the queue will be delivered to subscribed client objects immediately.
     def push(*args)
       # Temporarily disable autofetch to avoid infinite loop
       a, @autofetch = @autofetch, false
