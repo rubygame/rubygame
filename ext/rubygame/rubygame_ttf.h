@@ -57,6 +57,7 @@ extern VALUE rbgm_ttf_height(VALUE);
 extern VALUE rbgm_ttf_ascent(VALUE);
 extern VALUE rbgm_ttf_descent(VALUE);
 extern VALUE rbgm_ttf_lineskip(VALUE);
+extern VALUE rbgm_ttf_sizetext(VALUE, VALUE);
 
 extern VALUE rbgm_ttf_render(int, VALUE*, VALUE);
 extern VALUE rbgm_ttf_render_utf8(int , VALUE*, VALUE);
