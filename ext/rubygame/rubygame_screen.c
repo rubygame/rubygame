@@ -44,12 +44,13 @@ VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
 
 
 /* call-seq:
- *  new(size, depth=0, flags=[SWSURFACE])  ->  Screen
- *  set_mode(size, depth=0, flags=[SWSURFACE])  ->  Screen
+ *     new(size, depth=0, flags=[SWSURFACE])  ->  Screen
+ *     (aliases: set_mode, instance)
  *
  *  Create a new Rubygame window if there is none, or modify the existing one.
- *  Returns the resulting Screen. You cannot create more than one Screen
- *  object.
+ *  You cannot create more than one Screen; the existing one will be replaced.
+ *  (This is a limitation of SDL.)
+ *  Returns the resulting Screen.
  *
  *  This method takes these arguments:
  *  size::  requested window size (in pixels), in the form [width,height]
@@ -86,6 +87,9 @@ VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
  *                       before calling this method with this flag. You can
  *                       then use separate opengl libraries (for example rbogl)
  *                       to do all OpenGL-related functions.
+ *                       Please note that you can't blit or draw regular SDL
+ *                       Surfaces onto an OpenGL-mode screen; you must use
+ *                       OpenGL functions.
  *          RESIZABLE::  Create a resizable window. When the window is 
  *                       resized by the user, a ResizeEvent is
  *                       generated and #set_mode can be called again
@@ -365,7 +369,8 @@ void Rubygame_Init_Screen()
   /* Screen class */
   cScreen = rb_define_class_under(mRubygame,"Screen",cSurface);
   rb_define_singleton_method(cScreen,"new",rbgm_screen_setmode, -1);
-  rb_define_singleton_method(cScreen,"set_mode",rbgm_screen_setmode, -1);
+  rb_define_alias(rb_singleton_class(cScreen),"set_mode","new");
+  rb_define_alias(rb_singleton_class(cScreen),"instance","new");
   rb_define_singleton_method(cScreen,"get_surface",rbgm_screen_getsurface, 0);
 
   /* These are inherited from Surface, but should not be called on Screen */
