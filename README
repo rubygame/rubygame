@@ -1,122 +1,99 @@
  = Rubygame README
 
- Rubygame is a game-development extension and library for the ruby
- language, with similarities to pygame. The purpose of rubygame is
- make the creation of games in the ruby language simple, easy, and fun,
- without limiting flexibility. Rubygame provides two things:
+ == What is Rubygame?
 
- 1. an interface to Simple DirectMedia Layer (SDL);
- 2. a library containing 'helper' classes and modules.
+ Rubygame is a cross-platform game-development extension and library for Ruby,
+ inspired by Pygame. The purpose of Rubygame is to empower game developers by
+ providing them with powerful and flexible high-level concepts. Instead of
+ worrying about low-level technical details, you can focus your energy on
+ more interesting things (like making a fun game).
 
- Rubygame was born out of a need (specifically, MY need) for a clean, 
- convenient Ruby-to-SDL binding (for more information, see the FAQ on the
- webpage: http://rubygame.seul.org/faq.html). If rubygame isn't your cup of
- tea, you might try two other Ruby-to-SDL bindings, Ruby/SDL and RUDL.
+ Rubygame's core is written in C to bind low-level SDL functions in ruby.
+ On top of that is a pure ruby library for higher-level behavior like
+ event and game object management.
 
- Many of the tutorials and examples for pygame will work with 
- rubygame (after some minor modification) so I encourage you to 
- consult those as well. Pygame's 'chimp' tutorial example has been
- translated to rubygame, with differences noted in the comments. See
- 'chimp.rb' in the samples directory packaged with rubygame.
+ There are two other Ruby-SDL bindings which are worth mentioning: Ruby/SDL
+ and RUDL. Ruby/SDL is a simple wrapper which closely mirrors SDL's C API,
+ while RUDL tries to provide some high-level concepts. 
+ The main differences with Rubygame come down to a matter of priorities:
+ a great deal of care and effort goes into making Rubygame especially clean,
+ well-documented, powerful, and easy to use.
 
- Rubygame is being programmed to be modular, meaning you can pick
- and choose which parts to use. For example, if you don't need
- TrueType font support, SDL_ttf is not required to compile rubygame.
- Additionally, it is possible for a game to detect at run-time which
- features are present, and behave differently (for example, disabling
- optional features).
-
- Further, rubygame is (or will be) multi-tiered, meaning that you can
- access rubygame's functionality on a number of levels, each level
- being built on the level below it. At the lowest level, rubygame is
- essentially a Ruby interface to SDL. At higher levels, rubygame 
- provides sprite classes, event queues, etc. At still higher levels,
- rubygame might (in the future) provide features like a simple physics
- model or animation classes. Each higher level is closer to a complete
- game, but is also less flexible.
-
- Rubygame is considered to be in beta (as of January 2006). The API may
- change, but backward-incompatible changes will be marked by a major
- version number increment (e.g. from 1.0 to 2.0). New features additions
- which are backward-compatible will be marked by a minor version number 
- increment (e.g. from 1.0 to 1.1). Bug fixes or other changes which do not
- affect the API will be marked by a patch version number increment (e.g.
- 1.0 to 1.0.1).
-
- === Links
+ === Relevant Links
  1. Rubygame: http://rubygame.sourceforge.net
- 2. Pygame: http://www.pygame.org
- 3. SDL: http://www.libsdl.org
- 4. Ruby/SDL: http://www.kmc.gr.jp/~ohai/rubysdl.en.html
- 5. RUDL: http://rudl.sourceforge.net
+ 2. Ruby: http://www.ruby-lang.org
+ 3. Pygame: http://www.pygame.org
+ 4. SDL: http://www.libsdl.org
+ 5. Ruby/SDL: http://www.kmc.gr.jp/~ohai/rubysdl.en.html
+ 6. RUDL: http://rudl.sourceforge.net
 
  == Requirements
 
- You will definitely need these software packages to compile rubygame:
+ You will definitely need these software packages to compile Rubygame:
 
  * ruby        >= 1.8 
  * SDL         >= 1.2.7
  * rake        >= 0.7.0    (for build/install system)
 
- It's highly recommended that you have these packages as well, or some features
- must be disabled. If you don't have them, you must give some flags to the 
- build task. See the "Advanced Install" section below.
+ It's highly recommended that you have these packages as well, or some
+ cool features won't be available!
 
  * SDL_gfx     >= 2.0.10
  * SDL_image   >= 1.2.3
+ * SDL_mixer   >= 1.2.7
  * SDL_ttf     >= 2.0.6
+
+ (If you don't have some of those, you have to disable those features
+ by passing some flags to the build process. See "Advanced Install", below.)
 
  If you are compiling source on a binary-based Linux ditribution,
  you will also need the "dev" packages of ruby, SDL, SDL_gfx, SDL_image,
+ SDL_mixer, and SDL_ttf. (Really, you just need the header files.)
  
- If you are compiling source, you will obviously need a C compiler
- as well. These versions of gcc worked fine for me:
+ And of course, if you are compiling the source, you will need a C compiler!
+ These versions of gcc worked fine when I tried them; other compilers might
+ work too:
 
- * gcc         >= 3.3.2
- (other compilers might work too)
+ * gcc 3.3, 3.4, 4.0, 4.1
+
 
  == Install
 
  === Basic Install
 
- Decompress archive and enter its top directory.
+ Extract the archive and enter its top directory.
  Then run ($ indicates as user, # as root):
 
   $ rake build
   # rake install
 
- or just:
-
-  # rake install
-
- (The 'build' task will happen automatically.)
-
  === Advanced Install
 
  You can provide flags to configure how the build and install tasks run.
- Flags should be provided in an environmental variable, RUBYGAME_CONFIG.
+ Flags are provided in an environmental variable, RUBYGAME_CONFIG.
+ (Yes, I know this is an ugly hack. At least you only have to do it once.)
 
- Try this command to see all the accepted flags:
+ Try this command to see all the possible configuration flags:
 
   $ RUBYGAME_CONFIG="--help" rake
 
- In particular, if you are missing an optional SDL_* library, you must
- specify a "--no-*" flag for that library. E.g. if we didn't have SDL_gfx:
+ IMPORTANT: if you are missing any optional SDL_* libraries, you must specify
+ "--no-*" flags for those libraries. For example, if you don't have SDL_gfx:
 
-  $ RUBYGAME_CONFIG="--no-gfx" rake
+  $ RUBYGAME_CONFIG="--no-gfx" rake build
 
- If you don't do this, the compiler will likely not be able to find the headers
- or dynamic libraries required. (The build system is not smart enough to
+ If you don't disable the features, the compile will probably fail when it
+ looks for the headers and libraries. (The build system is not smart enough to
  automatically disable missing features.)
 
  === Generating documentation
 
- You can generate documentation for rubygame's API by running:
+ You can generate documentation for Rubygame's API by running:
 
   # rake rdoc
 
  Documentation will be generated as HTML in the 'html' directory.
- View 'html/index.html' in a web browser.
+ Open 'html/index.html' in a web browser to get started.
 
  == Usage
  
@@ -126,18 +103,20 @@
 
  You will probably also want a display window and event queue:
 
-   screen = Rubygame::Screen.set_mode( [640,480] )
-   queue = Rubygame::Queue.instance()
+   screen = Rubygame::Screen.new( [640,480] )
+   queue = Rubygame::EventQueue.new()
 
  For more information, see the documentation (online at 
- http://rubygame.sourceforge.net).
+ http://rubygame.sourceforge.net, or generated locally with the 
+ 'rake rdoc' command). You should also take a peek at the demo applications
+ in the 'samples' directory.
 
  == License
 
  Rubygame is distributed under the terms of the GNU Lesser GPL.
  See LICENSE for more details.
 
- Some sample files are be distributed under licenses other than the
+ Some of the sample files are distributed under other licenses than the
  GNU Lesser GPL. See 'samples/README' and 'samples/GPL' for more details.
 
  John Croisant (jacius at users.sourceforge.net)
