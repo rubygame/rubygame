@@ -887,7 +887,7 @@ VALUE rbgm_transform_zoom_to(int argc, VALUE *argv, VALUE self)
   rb_scan_args(argc, argv, "21", &v_width, &v_height, &v_smooth);
 
   Data_Get_Struct(self,SDL_Surface,src);
-  smooth = RTEST(v_smooth) ? 0 : 1;
+  smooth = RTEST(v_smooth) ? 1 : 0;
   zoomx  = NIL_P(v_width) ? 1.0 : NUM2DBL(v_width)/src->w;
   zoomy  = NIL_P(v_height) ? 1.0 : NUM2DBL(v_height)/src->h;
   dst    = zoomSurface(src,zoomx,zoomy,smooth);
