@@ -667,7 +667,7 @@ VALUE rbgm_transform_zoomsize(int, VALUE*, VALUE);
 
 /*
  *  call-seq:
- *    rotozoom( angle, zoom, smooth )  ->  Surface
+ *    rotozoom( angle, zoom, smooth=false )  ->  Surface
  *
  *  Return a rotated and/or zoomed version of the given surface. Note that
  *  rotating a Surface anything other than a multiple of 90 degrees will 
@@ -685,9 +685,8 @@ VALUE rbgm_transform_zoomsize(int, VALUE*, VALUE);
  *  angle::   degrees to rotate counter-clockwise (negative for clockwise).
  *  zoom::    scaling factor(s). A single positive Numeric, unless you have
  *            SDL_gfx-2.0.13 or greater (see above).
- *  smooth::  whether to anti-alias the new surface. This option can be
- *            omitted, in which case the surface will not be anti-aliased.
- *            If true, the new surface will be 32bit RGBA.
+ *  smooth::  whether to anti-alias the new surface.
+ *            By the way, if true, the new surface will be 32bit RGBA.
  */
 VALUE rbgm_transform_rotozoom(int argc, VALUE *argv, VALUE self)
 {
@@ -695,8 +694,8 @@ VALUE rbgm_transform_rotozoom(int argc, VALUE *argv, VALUE self)
   double angle, zoomx, zoomy;
   int smooth = 0;
 
-  if(argc < 3)
-    rb_raise(rb_eArgError,"wrong number of arguments (%d for 3)",argc);
+  if(argc < 2)             /* smooth is optional, so only 2 required*/
+    rb_raise(rb_eArgError,"wrong number of arguments (%d for 2)",argc);
 
   /* argv[0], the source surface. */
   Data_Get_Struct(self,SDL_Surface,src);
@@ -822,16 +821,15 @@ VALUE rbgm_transform_rzsize(int argc, VALUE *argv, VALUE module)
 
 /* 
  *  call-seq:
- *     zoom(zoom, smooth)  ->  Surface
+ *     zoom(zoom, smooth=false)  ->  Surface
  *
  *  Return a zoomed version of the Surface.
  *
  *  This method takes these arguments:
- *  zoom::    the factor to scale by in both x and y directions, or an Array
- *            with separate x and y scale factors.
- *  smooth::  whether to anti-alias the new surface. This option can be
- *            omitted, in which case the surface will not be anti-aliased.
- *            If true, the new surface will be 32bit RGBA.
+ *  zoom::    a Numeric factor to scale by in both x and y directions,
+ *            or an Array with separate x and y scale factors.
+ *  smooth::  whether to anti-alias the new surface.
+ *            By the way, if true, the new surface will be 32bit RGBA.
  */
 VALUE rbgm_transform_zoom(int argc, VALUE *argv, VALUE self)
 {
@@ -839,7 +837,7 @@ VALUE rbgm_transform_zoom(int argc, VALUE *argv, VALUE self)
   double zoomx, zoomy;
   int smooth = 0;
 
-  if(argc < 2)									/* smooth is optional */
+  if(argc < 1)             /* smooth is optional, so only 1 required*/
     rb_raise(rb_eArgError,"wrong number of arguments (%d for 1)",argc);
   Data_Get_Struct(self,SDL_Surface,src);
 
