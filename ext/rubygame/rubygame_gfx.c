@@ -865,6 +865,41 @@ VALUE rbgm_transform_zoom(int argc, VALUE *argv, VALUE self)
 
 /* 
  *  call-seq:
+ *     zoom_to(width, height, smooth=true)  ->  Surface
+ *
+ *  Return a zoomed version of the Surface.
+ *
+ *  This method takes these arguments:
+ *  width::   the width to scale to. If nil is given, will keep x axis unscaled.
+ *  height::  the height to scale to. If nil is given, will keep x axis
+ *            unscaled.
+ *  smooth::  whether to anti-alias the new surface. This option can be
+ *            omitted, in which case the surface will not be anti-aliased.
+ *            If true, the new surface will be 32bit RGBA.
+ */
+VALUE rbgm_transform_zoom_to(int argc, VALUE *argv, VALUE self)
+{
+  SDL_Surface *src, *dst;
+  VALUE v_width, v_height, v_smooth;
+  double zoomx, zoomy;
+  int smooth;
+
+  rb_scan_args(argc, argv, "21", &v_width, &v_height, &v_smooth);
+
+  Data_Get_Struct(self,SDL_Surface,src);
+  smooth = RTEST(v_smooth) ? 0 : 1;
+  zoomx  = NIL_P(v_width) ? 1.0 : NUM2DBL(v_width)/src->w;
+  zoomy  = NIL_P(v_height) ? 1.0 : NUM2DBL(v_height)/src->h;
+  dst    = zoomSurface(src,zoomx,zoomy,smooth);
+
+  if(dst == NULL)
+    rb_raise(eSDLError,"Could not rotozoom surface: %s",SDL_GetError());
+
+  return Data_Wrap_Struct(cSurface,0,SDL_FreeSurface,dst);
+}
+
+/* 
+ *  call-seq:
  *    zoom_size(size, zoom)  ->  [width, height]
  *
  *  Return the dimensions of the surface that would be returned if
@@ -965,6 +1000,7 @@ void Init_rubygame_gfx()
 
   rb_define_method(cSurface,"rotozoom",rbgm_transform_rotozoom,-1);
   rb_define_method(cSurface,"zoom",rbgm_transform_zoom,-1);
+  rb_define_method(cSurface,"zoom_to",rbgm_transform_zoom_to,-1);
 
   rb_define_module_function(cSurface,"rotozoom_size",rbgm_transform_rzsize,-1);
   rb_define_module_function(cSurface,"zoom_size",rbgm_transform_zoomsize,-1);
