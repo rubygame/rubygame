@@ -7,8 +7,15 @@ require 'rake/rdoctask'
 
 require "rbconfig"
 include Config
-OBJEXT = CONFIG["OBJEXT"]
-DLEXT = CONFIG["DLEXT"]
+
+# Get a variable from ENV or CONFIG, with ENV having precedence.
+# Returns "" if the variable didn't exist at all.
+def from_env_or_config(string)
+  ([ENV[string], CONFIG[string]] - ["", nil])[0] or ""
+end
+
+OBJEXT = from_env_or_config("OBJEXT")
+DLEXT = from_env_or_config("DLEXT")
 
 RUBYGAME_VERSION = "2.0.0"
 
@@ -142,13 +149,12 @@ rule( /RUBYLIBDIR/ ) do |t|
   $options.sitelibdir = t.name.split("=")[1]
 end
 
-CFLAGS = [CONFIG["CFLAGS"],
-          ENV["CFLAGS"],
+CFLAGS = [from_env_or_config("CFLAGS"),
           (`sdl-config --cflags`.chomp if $options.sdl_config),
           "-I. -I#{CONFIG['topdir']}",
           ("-g" if $options.debug) ].join(" ")
 
-LINK_FLAGS = [CONFIG["LIBRUBYARG_SHARED"],
+LINK_FLAGS = [from_env_or_config("LIBRUBYARG_SHARED"),
               ENV["LINK_FLAGS"],
               (`sdl-config --libs`.chomp if $options.sdl_config)].join(" ")
 
@@ -179,7 +185,7 @@ class ExtensionModule
     objs_full = @objs.collect { |obj| "#{EXTDIR}#{obj}.#{OBJEXT}" }
 
     file dynlib_full => objs_full do |task|
-      link_command = "#{CONFIG['LDSHARED']} #{LINK_FLAGS} #{@lflags} -o #{task.name} #{task.prerequisites.join(' ')}"
+      link_command = "#{from_env_or_config('LDSHARED')} #{LINK_FLAGS} #{@lflags} -o #{task.name} #{task.prerequisites.join(' ')}"
       if( $options.verbose )
         sh link_command
       else
@@ -274,7 +280,7 @@ begin
      end
     ])\
   do |t|
-    compile_command = "#{CONFIG['CC']} -c #{CFLAGS} #{t.source} -o #{t.name}"
+    compile_command = "#{from_env_or_config('CC')} -c #{CFLAGS} #{t.source} -o #{t.name}"
     if( $options.verbose )
       sh compile_command
     else
