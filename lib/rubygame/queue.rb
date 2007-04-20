@@ -102,10 +102,10 @@ module Rubygame
       self.clear
     end
 
-		# Posts pending SDL hardware events to the EventQueue. Only one EventQueue
+    # Posts pending SDL hardware events to the EventQueue. Only one EventQueue
     # should call this method per application, and only if you are not using
-    # Rubygame#get_events to manually process events! Otherwise, some events
-    # may be removed from SDL's event stack before they can be properly
+    # Rubygame#fetch_sdl_events to manually process events! Otherwise, some
+    # events may be removed from SDL's event stack before they can be properly
     # processed!
 		def fetch_sdl_events
 			self.push(Rubygame.fetch_sdl_events())
