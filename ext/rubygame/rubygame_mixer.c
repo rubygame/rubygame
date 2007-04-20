@@ -1,5 +1,5 @@
 /*
- *  Interface to SDL_mixer library, for audio playback and mixing.
+ *  Interface to SDL_mixer, for audio playback and mixing.
  *--
  *  Rubygame -- Ruby code and bindings to SDL to facilitate game creation
  *  Copyright (C) 2004-2007  John Croisant
@@ -137,12 +137,12 @@ VALUE rbgm_mixer_setmixchans(VALUE module, VALUE channelsv)
 }
 
 /* call-seq:
- *  new( filename )  ->  Sample
+ *  load_file( filename )  ->  Sample
  *
- *  Load an audio sample (aka chunk) from a file.
+ *  Load an audio sample (a "chunk", to use SDL_mixer's term) from a file.
  *  Only WAV files are supported at this time.
  *
- *  May raise SDLError if the sample could not be loaded.
+ *  Raises SDLError if the sample could not be loaded.
  */
 VALUE rbgm_sample_new(VALUE class, VALUE filev)
 {
@@ -164,23 +164,22 @@ VALUE rbgm_sample_new(VALUE class, VALUE filev)
 }
 
 /* call-seq:
- *  play(sample, repeats, channel_num )  ->  integer
+ *  play(sample, channel_num, repeats )  ->  integer
  *
- *  Play the given audio sample on the given mixing channel, repeating the
- *  given number of times. Returns the number of the channel the sample
- *  will be played on.
+ *  Play an audio Sample on a mixing channel, repeating a certain number
+ *  of extra times. Returns the number of the channel that the sample
+ *  is being played on.
  *
- *  May raise SDLError
+ *  Raises SDLError if something goes wrong.
  *  
  *  This method takes these arguments:
- *  sample::      Sample to play
- *  repeats::     number of times after the first to repeat the sample.
- *                So, the sample will play +repeats+ + 1 times total.
- *                Can be -1 to repeat forever until it is stopped.
- *  channel_num:: number of the mixing channel to play the sample on.
+ *  sample::      what Sample to play
+ *  channel_num:: which mixing channel to play the sample on.
  *                Use -1 to play on the first unreserved channel.
+ *  repeats::     how many extra times to repeat the sample.
+ *                Can be -1 to repeat forever until it is stopped.
  */
-VALUE rbgm_mixchan_play( VALUE self, VALUE samplev, VALUE loopsv, VALUE chanv )
+VALUE rbgm_mixchan_play( VALUE self, VALUE samplev, VALUE chanv, VALUE loopsv )
 {
   Mix_Chunk* sample;
   int loops, channel, result;
@@ -241,12 +240,7 @@ VALUE rbgm_mixchan_resume( VALUE self, VALUE chanv )
   return Qnil;
 }
 
-/*
- *  Document-module: Rubygame::Mixer
- *
- *  The Mixer module provides access to the SDL_mixer library for audio
- *  playback and mixing. 
- */
+
 void Init_rubygame_mixer()
 {
 
@@ -263,6 +257,13 @@ void Init_rubygame_mixer()
                            INT2NUM(SDL_MIXER_MINOR_VERSION),
                            INT2NUM(SDL_MIXER_PATCHLEVEL)));
 
+	/*
+	 *  The Mixer module provides access to the SDL_mixer library for audio
+	 *  playback and mixing. This module is still very basic, but it is
+	 *  good enough to load and play WAV files on multiple mix channels.
+	 *
+	 *  See the Sample class for loading audio files.
+	 */
   mMixer = rb_define_module_under(mRubygame, "Mixer");
 
   rb_define_const(mMixer, "AUDIO_U8", INT2NUM(AUDIO_U8));
@@ -275,8 +276,9 @@ void Init_rubygame_mixer()
   rb_define_module_function(mMixer,"mix_channels",rbgm_mixer_getmixchans, 0);
   rb_define_module_function(mMixer,"mix_channels=",rbgm_mixer_setmixchans, 1);
 
+  /* Stores audio data to play with Mixer.play() */
   cSample = rb_define_class_under(mMixer, "Sample", rb_cObject);
-  rb_define_singleton_method(cSample, "new", rbgm_sample_new, 1);
+  rb_define_singleton_method(cSample, "load_audio", rbgm_sample_new, 1);
 
   rb_define_module_function(mMixer,"play", rbgm_mixchan_play, 3);
   rb_define_module_function(mMixer,"stop", rbgm_mixchan_stop, 1);
