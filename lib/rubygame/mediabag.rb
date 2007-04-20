@@ -84,7 +84,7 @@ module Rubygame
     end
 
     def load_sound(filename)
-      return Rubygame::Mixer::Sample.new(filename)
+      return Rubygame::Mixer::Sample.load_audio(filename)
     end
   end
 
