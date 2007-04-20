@@ -1,13 +1,15 @@
-Certain items in this directory are copyrighted works, but due to the nature of
-their media, copyright and licensing information either cannot be included in
-their contents or is being included herein to avoid doubt.
+Certain items in this directory are copyrighted works, but the nature
+of their media makes inclusion of copyright and licensing information
+impossible or inconvenient.
+
+Copyright and licensing information for those items is included herein
+for your convenience.
+
 
 
 "ruby.png"         copyright (C) 2006  John Croisant
 "term16.png"       copyright (C) 2005  John Croisant
 "panda.png"        copyright (C) 2004  John Croisant
-"freesansbold.ttf" copyright (C) 2002  Free Software Foundation
-
 
 "ruby.png", "term16.png", and "panda.png" are licensed under the 
 Creative Commons Attribution-ShareAlike 2.5 License. 
@@ -23,7 +25,10 @@ or send a letter to:
   San Francisco, California, 94105, USA.
 
 
-"freesansbold.ttf" is licensed under the GNU General Public License.
+
+"FreeSans.ttf"     copyright (C) 2002-2003  Free Software Foundation
+
+"FreeSans.ttf" is licensed under the GNU General Public License.
 
 You should have received a copy of the GNU General Public License along with 
 this program; if not, write to:
