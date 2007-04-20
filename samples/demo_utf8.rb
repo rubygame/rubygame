@@ -12,7 +12,7 @@ queue = Rubygame::EventQueue.new
 
 # Initialize fonts
 
-fontname = 'freesansbold.ttf'
+fontname = 'FreeSans.ttf'
 str = u'abc123하이~'
 if ARGV[0]
   if File.exist?(File.expand_path(ARGV[0]))
@@ -26,9 +26,6 @@ else
 This script demonstrates UTF8 (8-bit Unicode Transformation Format) text
 rendered with TTF fonts. This allows you to display international symbols
 in your games.
-
-Unfortunately, the sample font that is distributed with rubygame
-(freesansbold.ttf) cannot display all characters correctly.
 
 If you like, you can give some arguments to this script to try it out:
   1) A path to a different TTF font to use. (optional)

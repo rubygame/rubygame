@@ -151,7 +151,7 @@ def main
     raise "TTF is not usable. Bailing out."
   end
   TTF.setup()
-  font = TTF.new("freesansbold.ttf",30)
+  font = TTF.new("FreeSans.ttf",30)
 
   skip = font.line_skip()
 

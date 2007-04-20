@@ -168,7 +168,7 @@ sfont = SFont.new("term16.png")
 sfont.render("Love Pandas forever! <3").blit(background,[100,10])
 
 TTF.setup()
-ttfont = TTF.new("freesansbold.ttf",11)
+ttfont = TTF.new("FreeSans.ttf",11)
 ttfrndr = ttfont.render("(you call this a pizza?!?) -->",true,[250,250,250])
 ttfrndr.blit(background,[70,200])
 

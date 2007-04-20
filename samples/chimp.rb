@@ -228,11 +228,11 @@ def main
 		# We have to setup the TTF class before we can make TTF objects
 		Rubygame::TTF.setup()
 
-		# Rubygame has no default font, so we must specify freesansbold.ttf
+		# Rubygame has no default font, so we must specify FreeSans.ttf
 		# 
 		# 25 is more or less the actual font size in the pygame example,
 		# based on scaling factor (0.6875) pygame applies to its default font.
-		font = Rubygame::TTF.new("freesansbold.ttf",25)
+		font = Rubygame::TTF.new("FreeSans.ttf",25)
 		text = font.render("Pummel The Chimp, And Win $$$", true, [10,10,10])
 		textpos = Rubygame::Rect.new(0,0,*text.size)
 		textpos.centerx = background.width/2
