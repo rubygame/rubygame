@@ -1,0 +1,192 @@
+= Compiling Rubygame on Windows
+
+This guide describes how to build and install the Rubygame library yourself
+on Windows systems.  My test machine for this is running Windows XP 
+Professional, although in theory the instructions provided here should work
+for any Windows platform.  Don't be intimidated by the quantity of text here.
+My intention is to provide background on what each step is meant to accomplish
+so that you can adapt it to fit your own system if necessary.
+
+The guide assumes that you have the following installed:
+
+- Ruby[http://www.ruby-lang.org/en/downloads/], the language itself.
+  As you can see, there are a number of options for Windows users.  
+  <i>(a)</i> The easiest option is the <b>one-click installer</b>.  This will
+  install Ruby, Rubygems, and a number of useful libraries without being a
+  pain.  Taking this road necessitates certain compromises in later steps,
+  but for almost everyone, this is the way to go.  If you're curious or
+  masochistic, read on.  <i>(b)</i>  If you're a purist and you can't bear
+  having libraries installed that you might not need, download the 
+  <b>binary</b> distribution.  You'll need to acquire 
+  {Rubygems}[http://rubygems.org/] and {Rake}[http://rake.rubyforge.org/]
+  individually, and the caveat I mentioned for (a) will still apply.  
+  <i>(c)</i>  By far the most convoluted alternative is to build Ruby from
+  <b>source</b>.  Be aware that it has several hundred megabytes of
+  prerequisities and your build environment must be configured just so.  
+  The benefit you gain is that you'll avoid the dirty hack, and you will be
+  able to build other Ruby extensions with much less pain in the future.  
+  Is it worth it?  Maybe.
+- A build environment for Windows.  In this guide, I use the tools provided by
+  MinGW[http://www.mingw.org/].  Cygwin[http://www.cygwin.com/] is another
+  viable alternative, although some of the compiler options mentioned later
+  may need to be altered to avoid unwanted dependencies on Cygwin itself.
+
+  If you choose to go with MinGW, you have a plethora of installation options
+  -- there is a convenient guide 
+  {on their wiki}[http://www.mingw.org/MinGWiki/index.php/GettingStarted].  
+  All you really need to follow these instructions is provided by the
+  'Current' MinGW-NNN.exe installer, but you may install the others for
+  completeness or if you think you'll compiling things often in the future.
+
+  After you have the tools of your choice, add the full path to the compiler
+  executible to your system PATH if it isn't there already.  You should be able
+  to type <code>gcc -v</code> at a command line and see a version number.
+
+The usual caveats apply: follow these instructions at your own risk and so
+forth.  Please direct comments or questions to the {Rubygame user's mailing
+list}[http://sourceforge.net/mail/?group_id=172781].
+
+== Step 1: Gather Dependencies
+
+You first need to collect the external libraries that Rubygame links against:
+SDL and its four optional extensions.  You can find them at the following
+download pages:
+
+- SDL[http://www.libsdl.org/download-1.2.php].  The package you need is under
+  the heading <b>Development Libraries</b> near the bottom of the page.  There
+  are two options for Win32, Visual C++ and MinGW.  I recommend using the
+  Visual C++ download even if you are using MinGW -- the current MinGW
+  compiler can handle the .dll file just fine.
+- SDL_gfx[http://www.ferzkopp.net/joomla/content/view/19/14/].  There is only
+  one choice of download here.  Notice that it is packaged as a .tar.gz
+  archive.  You'll eventually need a tool that can extract it.  MSYS provides
+  the <code>tar</code> command, so if you downloaded that earlier you can
+  navigate a command prompt to the folder you download the archive to and
+  execute <code>tar -zxvf SDL_gfx-2.0.16.tar.gz</code> (changing version
+  numbers if appropriate, of course). Otherwise, I recommend 
+  {7-zip}[http://www.7-zip.org/].  Unfortunately, the SDL_gfx package does not
+  include a prebuilt DLL.  In the past, Rubygame bundled a version of this
+  library with its binary distribution: it is, for the moment, still accessible
+  at the {old Rubygame site}[http://rubygame.infogami.com/win32].  Yes, you
+  still need the source as well.
+- {SDL_image}[http://www.libsdl.org/projects/SDL_image/].  In the <b>Binary</b>
+  section, choose the <b>Win32</b> link with a name that contains 'devel'.
+- {SDL_mixer}[http://www.libsdl.org/projects/SDL_mixer/].  Choose the Win32
+  binary development download, as before.
+- {SDL_ttf}[http://www.libsdl.org/projects/SDL_ttf/].  One more time.  Don't
+  worry about the "VC6" in the download name.  Once again, gcc can
+  link against it fine.
+
+Once you have downloaded everything, extract each archive into a convenient
+location on your hard drive.  You'll thank yourself later if you use a short
+path with no spaces in it.  I unzipped everything under <code>C:\\src\\</code>
+(although I suppose it isn't really source code in this case).
+
+Next, you'll want to create a directory for the DLLs and copy the .dll file
+from the <code>lib</code> subdirectory of each extracted component there
+(except SDL_gfx, as noted above).  I called mine <code>C:\\dlls\\</code>.  
+Add this location to your system PATH -- Windows searches the PATH for
+libraries as well as executables.
+
+== Step 2: Get Rubygame
+
+If you haven't already, download the latest Rubygame source from the 
+{SourceForge download page}[http://sourceforge.net/project/showfiles.php?group_id=172781]. 
+If you're feeling particularly adventurous you could also access the latest
+code from the {Subversion repository}[http://sourceforge.net/svn/?group_id=172781].  
+You can decompress the .tar.bz2 file with either MSYS' <code>tar</code>
+(replace the -z in the tar command with -j) or 7zip, as before.
+
+Extract the source into another folder of your choice, such as 
+<code>C:\\src\\rubygame</code>.
+
+== Step 3: Edit setup.rb
+
+Beware: what follows is a dirty, dirty hack.
+
+When Ruby is compiled, it does something quite clever and records all of the
+build tools and commands that were used to compile it in a file called 
+"setup.rb".  Whenever you build an extension, Ruby takes the values
+written here and immediately has all of the paths and command-line options that
+it needs to properly compile and link everything.  However, if you have a 
+binary distribution of Ruby, it still has the setup file from whomever 
+compiled it; so, if your environment differs from theirs in any significant 
+way, compiling with these values will fail in various ugly ways.  Of course,
+if you compiled Ruby yourself, setup.rb will be properly initialized and you
+can skip this step completely. 
+
+Both of the binary distributions on the Ruby website were compiled with cl.exe,
+Microsoft Visual Studio's compiler.  Unfortunately, the Rubygame build process
+currently relies on gcc-specific options in a number of locations.  (If have
+Visual Studio and you're careful, you could potentially edit the Rakefile to
+successfully use cl, but I have not confirmed this.)  So, to use gcc to build
+Ruby extensions, you need to edit setup.rb.
+
+Find your Ruby installation directory and look in the following path: 
+<code>lib\\ruby\\1.8\\i386-mswin32\\</code> (version and architecture
+directories may differ on your system; choose the equivalent path, or just
+do a search). Back up "setup.rb" to "setup.bak" and open the original
+in your favorite text editor.
+
+Rubygame itself relies on the following keys.  To get other extensions to
+build properly, you would most likely have to transform the entire file to
+use gcc command-line switches that were the equivalents of each cl entry; 
+but for now, these keys are all you need to touch.
+
+- <b>CC</b>: Change from <code>cl -nologo</code> to <code>gcc</code>.
+- <b>LDSHARED</b>: Change from <code>cl -nologo -LD</code> to 
+  <code>ld -shared</code>.
+- <b>CFLAGS</b>: Change from <code>-MD -Zi -0262xg- -G6</code> to 
+  <code>-DHAVE_ISINF -D_MSC_VER=1200</code>. These odd-looking options fix an
+  error that occurs when using MinGW's include files and circumvent a
+  safeguard in the Ruby libraries, respectively.
+- <b>LIBRUBYARG_SHARED</b>: Change from <code>$(LIBRUBY)</code> to 
+  <code>-L #{TOPDIR}/bin -l$(RUBY_SO_NAME)</code>. This option locates and
+  links against the main Ruby library.
+
+Save the file and you should be ready.
+
+== Step 4: Set up environment variables
+
+Rake, the Ruby build management tool, does not like accepting command-line
+arguments as such.  For that reason, Rubygame's rakefile uses environment
+variables to configure its behavior.
+
+I recommend creating a text file in your Rubygame directory called 
+"envsetup.bat" that creates your environment for you.  In it, use
+code based on the following to set your variables:
+
+ set RUBYGAME_CONFIG=--no-sdl-config
+ 
+ set CFLAGS=-I \src\SDL-1.2.11\include -I \src\SDL_gfx-2.0.15
+ set CFLAGS=%CFLAGS% -I \src\SDL_image-1.2.5\include
+ set CFLAGS=%CFLAGS% -I \src\SDL_mixer-1.2.7\include
+ set CFLAGS=%CFLAGS% -I \src\SDL_ttf-2.0.8\include
+ 
+ set LINK_FLAGS=-L \dlls -lSDL
+
+
+Change the paths and version numbers to match your own installation structure.
+Each -I directory should contain the .H files for the respective SDL optional
+libraries.  Notice that both forward and backward slashes are accepted in 
+paths, and the C: is unnecessary when the build is executed from the same 
+drive (and for a while I thought that the colon was messing with the paths, 
+although I don't think that this is the case).  Similarly, the -L directory
+should contain all of the .DLL files from Step 1.  Only <code>-lSDL</code> is
+required on the LINK_FLAGS line, though, the Rakefile will provide the -l
+options for the other DLLs.
+
+== Step 5: Run Rake
+
+Open a command prompt and navigate to the root of your Rubygame source
+directory.  Type:
+
+ envsetup.bat
+ rake
+ rake install
+
+Congratulations!  If all goes well, you have built and installed Rubygame.
+Try to execute <code>require 'rubygame'</code> in an irb session and run
+the provided samples to ensure that everything is acceptable.
+
+This guide was contributed by Ash Wilson (smashwilson).
