@@ -1,80 +1,35 @@
-See the most up-to-date version of this list at: 
-    http://rubygame.infogami.com/todo
+= TODO / ROADMAP
 
-Notes to myself about rubygame work that I need to do. I hope it is somewhat intelligible to other people, but make no promises.
+=== 2.0.1
 
----
+- Use rb_scan_args! Better for my health! :) See: http://www.oreillynet.com/ruby/blog/2007/04/c_extension_authors_use_rb_sca_1.html
 
-### On the chopping block:
-
-- Next version (2.0.0) will break backwards API compatibility. Make the most of it.
-
-- Screen#new will be an alias for #set_mode. Convenience trumps senseless pedanticism.
-
-- Draw, Transform, and Image module methods should be Surface methods. Draw, Transform, and Image modules to be removed.
-
-- Drop most cases of "you can pass N values or an Array or ...".
-  Convenience for the user is one thing, but it's not that hard to expand
-  an Array into multiple values [hint: method(*myarray)] and supporting
-  multiple ways of giving arguments muddies the code too much.
-  - Rect.new_from_object() should remain, though. It's supposed to be that way.
-  - There should be a consistent rule across the API. Proposed rule:
-    - If the method's only arguments are the values (e.g. Rect#inflate), it
-      should take only the separate values (many parameters).
-    - If the method has other arguments besides the values(e.g. Surface.new), 
-      it should take the values as an Array only (single parameter).
-
-- Screen#set_caption and #caption should be split into functions for
-  title and iconized, style of 'title='
-
-### On the shelf:
-
-#### Features
-
-- **Sound/music playback** <-- in rubygame 2.1.0, maybe.
-  - SDL sound & mixer bindings first. Consider additional OpenAL support later.
-  - Add CD playback? Maybe, but not a priority.
-
-- Draw module: 
-  - add bezier curve
-  - <del>Consider replacements for SDL_gfx? How does SGE feel?</del>
-
-- Transform module:
-  - add hq2x, hq3x, hq4x -- http://www.hiend3d.com/hq3x.html
-  - image flipping by rotozoom -1 scale does not work. My fault or GFX's?
-
-#### API
-    
-#### Implementation
-
-- Framerate limiting with Clock#tick is unacceptably inaccurate.
-
-- Rect needs cleaned up and fixed.
-  - Some algorithms may be flat-out INCORRECT! (union, normalize, others?)
-  - 'test/test_rect.rb' doesn't test most methods yet!
-  - It's pretty lame to make e.g. Rect#union just call union! on a dup.
-    Or is it...? Is this a matter of style, or efficiency? D.R.Y.?
-
-- Code (especially C code) really needs to be cleaned up. Make a
-  "clean" branch, fix code module by module, then re-merge? (Maybe)
-  - Move all Rubygame_*_Initialize methods into rubygame.c?
-
-- **More argument checking!!**    (Make sure arguments are the right type.)
-  - Passing an optional argument to a C function as nil _IS NOT_ the same
-    as not passing it at all - it _is_ counted in number of arguments!
-  - Do NUM2INT, etc. check if it is a Numeric? Do they work with Floats?
-  - Do we need to make sure color values are between 0 and 255 before
+- Improve argument checking for methods written in C, especially when an Array
+  is expected as an argument. See Bug 1704064 ('Many methods segfault...')
+  - Do we need to make sure color components are between 0 and 255 before
     we pass them to SDL functions?
+
+=== On the horizon...
+
+- Flesh out Mixer API.
+
+- Flesh out Rect unit tests.
 
 - C equivalent of Rect.new_from_object (see rect.rb)
   - Screen#update (cannot pass object with rect attribute)
   - Screen#update_rects (same as above)
   - Why not just call the ruby function from within C?
 
+=== Off in space somewhere...
+
+- Add draw_bezier (SDL_gfx's bezierRGBA)
+
+- Add hq2x, hq3x, hq4x scaling -- http://www.hiend3d.com/hq3x.html
+
 - Should UpdateGroup union highly-overlapping rectangles for efficiency? (non-unioning may be a desirable behavior)
 
 - LimitGroup#add could be more efficient (replace many sprites at the
-  same time, rather than doing it one by one.)
+  same time, rather than doing it one by one.) Very low priority.
 
 - Better support for non-US keyboards, particularly generating strings for
   keypresses: (EURO, WORLD*). Will need someone with a non-US keyboard to

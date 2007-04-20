@@ -38,7 +38,7 @@ spec = Gem::Specification.new do |s|
   s.extensions = ["Rakefile"]
 
   s.extra_rdoc_files = ["./README", "./LICENSE", "./CREDITS",\
-    "./doc/getting_started.rdoc"]
+    "./TODO", "./doc/getting_started.rdoc"]
 end
 
 Rake::GemPackageTask.new(spec) do |pkg| 
@@ -53,7 +53,8 @@ Rake::RDocTask.new do |rd|
                         "doc/*.rdoc",
                         "./README",
                         "./LICENSE",
-                        "./CREDITS")
+                        "./CREDITS",
+                        "./TODO")
 end
 
 task :default => [:build]
