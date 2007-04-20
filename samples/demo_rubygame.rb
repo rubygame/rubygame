@@ -14,6 +14,9 @@ include Rubygame
 
 $stdout.sync = true
 
+# Use smooth scaling/rotating? You can toggle this with S key
+$smooth = false                 
+
 Rubygame.init()
 
 queue = EventQueue.new() # new EventQueue with autofetch
@@ -64,7 +67,7 @@ class SpinnyPanda < Panda
 
 	def update_image(time)
 		@angle += (@rate * time) % 360
-		@image = @@pandapic.rotozoom(@angle,1,false)
+		@image = @@pandapic.rotozoom(@angle,1,$smooth)
 	end
 end
 
@@ -79,7 +82,7 @@ class ExpandaPanda < Panda
 	def update_image(time)
 		@delta = (@delta + time*@rate/36) % (Math::PI*2)
 		zoom = 1 + Math.sin(@delta)/2
-		@image = @@pandapic.rotozoom(0,zoom,false)
+		@image = @@pandapic.rotozoom(0,zoom,$smooth)
 	end
 end
 
@@ -95,7 +98,7 @@ class WobblyPanda < Panda
 		@delta = (@delta + time*@rate/36) % (Math::PI*2)
 		zoomx = 1.5 + Math.sin(@delta)/6
 		zoomy = 1.5 + Math.cos(@delta)/5
-		@image = @@pandapic.zoom([zoomx,zoomy],false)
+		@image = @@pandapic.zoom([zoomx,zoomy],$smooth)
 	end
 end
 
@@ -199,6 +202,9 @@ catch(:rubygame_quit) do
 					panda1.vx = -1
 				when K_RIGHT
 					panda1.vx = 1
+				when K_S
+					$smooth = !$smooth
+					puts "#{$smooth?'En':'Dis'}abling smooth scale/rotate."
 				else
 					print "%s"%[event.string]
 				end
