@@ -1,12 +1,13 @@
 #!/usr/bin/env ruby
 
-# This program is PUBLIC DOMAIN.
+# This program is released to the PUBLIC DOMAIN.
 # It is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-# This script is very, very messy, but it demonstrates almost all of
-# Rubygame's features, and thus served as something of a test program.
+# This script is messy, but it demonstrates almost all of
+# Rubygame's features, so it acts as a test program to see
+# whether your installation of Rubygame is working.
 
 require "rubygame"
 include Rubygame
@@ -15,7 +16,6 @@ $stdout.sync = true
 
 Rubygame.init()
 
-puts "Creating queue and clock..."
 queue = EventQueue.new() # new EventQueue with autofetch
 queue.ignore = [MouseMotionEvent, ActiveEvent]
 clock = Clock.new()
@@ -114,17 +114,12 @@ panda3 = WobblyPanda.new(200,50,0.5)
 
 # Put the pandas in a sprite group
 pandas.push(panda1,panda2,panda3)
-puts "pandas: %s"%pandas.inspect
 
 # Make the background surface
 background = Surface.new(screen.size)
-puts "default colorkey is nil?: %s"%[background.colorkey==nil]
 
 # Create and test a new surface
 a = Surface.new([100,100])
-print "Surf(a): %dx%d, "%a.size
-print "%d bpp. Flags: %d "%[a.depth,a.flags]
-print "Masks: [%d, %d, %d, %d]\n"%a.masks
 
 # Draw a bunch of shapes on the new surface to try out the drawing module
 a.fill([70,70,255])
@@ -165,12 +160,11 @@ background.draw_ellipse_a([200,150],[30,25],[250,250,250])
 
 # Let's make some labels
 sfont = SFont.new("term16.png")
-sfont.render("Love Pandas forever! <3").blit(background,[100,10])
+sfont.render("Arrow keys move the spinning panda!").blit(background,[10,10])
 
 TTF.setup()
-ttfont = TTF.new("FreeSans.ttf",11)
-ttfrndr = ttfont.render("(you call this a pizza?!?) -->",true,[250,250,250])
-ttfrndr.blit(background,[70,200])
+ttfont = TTF.new("FreeSans.ttf",20)
+ttfont.render("This is some TTF text!",true,[250,250,250]).blit(background,[20,200])
 
 
 # Create another surface to test transparency blitting
@@ -181,10 +175,7 @@ b.blit(background,[20,40])
 background.blit(screen,[0,0])
 
 if Joystick.num_joysticks > 0
-	joys = true
-	joy = Joystick.new(0)
-else
-	joys = false
+	Joystick.new(0)  # So that joystick events will appear on the queue
 end
 
 update_time = 0
@@ -194,6 +185,36 @@ catch(:rubygame_quit) do
 	loop do
 		queue.each do |event|
 			case event
+			when KeyDownEvent
+				case event.key
+				when K_ESCAPE
+					throw :rubygame_quit 
+				when K_Q
+					throw :rubygame_quit 
+				when K_UP
+					panda1.vy = -1
+				when K_DOWN
+					panda1.vy = 1
+				when K_LEFT
+					panda1.vx = -1
+				when K_RIGHT
+					panda1.vx = 1
+				else
+					print "%s"%[event.string]
+				end
+			when KeyUpEvent
+				case event.key
+				when K_UP
+					panda1.vy = 0
+				when K_DOWN
+					panda1.vy = 0
+				when K_LEFT
+					panda1.vx = 0
+				when K_RIGHT
+					panda1.vx = 0
+				end
+			when QuitEvent
+				throw :rubygame_quit
 			when MouseDownEvent
 				puts "click: [%d,%d]"%event.pos
 			when JoyDownEvent
@@ -217,51 +238,16 @@ catch(:rubygame_quit) do
 				when 3; panda2.vy = event.value / 32767.0
 				end
 				#puts "jaxis: %d %d"%[event.axis,event.value]
-			when JoyHatEvent
-				puts "jhat: %d %d"%[event.hat,event.value]
-			when KeyDownEvent
-				case event.key
-				when K_ESCAPE
-					throw :rubygame_quit 
-				when K_Q
-					throw :rubygame_quit 
-				when K_UP
-					panda1.vy = -1
-				when K_DOWN
-					panda1.vy = 1
-				when K_LEFT
-					panda1.vx = -1
-				when K_RIGHT
-					panda1.vx = 1
-				end
-			when KeyUpEvent
-				case event.key
-				when K_UP
-					panda1.vy = 0
-				when K_DOWN
-					panda1.vy = 0
-				when K_LEFT
-					panda1.vx = 0
-				when K_RIGHT
-					panda1.vx = 0
-				end
-				print "%s"%[event.string]
-				#puts "Keydown: [%s, %d]"%[event.string,event.key]
-			when QuitEvent
-				throw :rubygame_quit
 			end
 		end
 		pandas.undraw(screen,background)
 		pandas.update(update_time)
-		# screen.draw_line_a(panda1.rect.center, panda2.rect.center,[200,200,200])
 		pandas.draw(screen)
 		screen.update()
 		update_time = clock.tick()
-		# update_time = Clock.delay(10)
 		unless framerate == clock.framerate
 			framerate = clock.framerate
 			screen.title = "Rubygame test [%d fps]"%framerate
-			# puts "tick: %d  fps: %d"%[update_time,framerate]
 		end
 	end
 end
