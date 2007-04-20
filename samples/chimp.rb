@@ -1,30 +1,11 @@
 #!/usr/bin/env ruby
 
+# This program is released to the PUBLIC DOMAIN.
+# It is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-# This is a derivative work of an original copyrighted work;
-# the original being distributed with Pygame, which is licensed
-# under the GNU LGPL. If the original work was distributed under
-# the GNU LGPL, then the following necessarily applies to this work:
-# 
-#	This program is free software; you can redistribute it and/or
-#	modify it under the terms of the GNU Lesser General Public
-#	License as published by the Free Software Foundation; either
-#	version 2.1 of the License, or (at your option) any later version.
-#
-#	This library is distributed in the hope that it will be useful,
-#	but WITHOUT ANY WARRANTY; without even the implied warranty of
-#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#	Lesser General Public License for more details.
-#
-#	You should have received a copy of the GNU Lesser General Public
-#	License along with this library; if not, write to the Free Software
-#	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-# 
-# If, however, the original was public domain, then the author of this
-# derivative work places this work in the public domain as well.
-
-
-# This is a shameless rip-off of an example application from
+# This is a translation of an example application from
 # pygame (http://www.pygame.org), translated to rubygame.
 # The original application had this to say:
 # 
@@ -39,9 +20,8 @@
 # 
 # As much as possible, this is a straight port of the pygame example,
 # without any real improvements in style. Significant deviations are
-# noted in comments. As such, this might serve as something of a
-# Rosetta Stone for a pygame user switching to rubygame, but is not to
-# be taken as recommended rubygame program layout or style.
+# noted by comments. As such, this might serve as something of a
+# Rosetta Stone for a pygame user switching to rubygame.
 
 require "rubygame"
 
@@ -68,7 +48,7 @@ end
 def load_sound(name)
     return nil unless $sound_ok
     begin
-        sound = Rubygame::Mixer::Sample.new(name)
+        sound = Rubygame::Mixer::Sample.load_audio(name)
         return sound
     rescue Rubygame::SDLError
         puts "Cannot load sound " + name
@@ -214,7 +194,7 @@ def main
 	# Initialize Everything
 	Rubygame.init()
 	screen = Rubygame::Screen.set_mode([468, 60])
-	screen.set_caption('Monkey Fever')
+	screen.title = 'Monkey Fever'
 	screen.show_cursor = false;
 	# In rubygame, you make an EventQueue object; pygame just uses functions
 	queue = Rubygame::EventQueue.new()
@@ -272,9 +252,7 @@ def main
 	# This also differs from pygame. Rather than pass the desired framerate
 	# when you call clock.tick, you set the framerate for the clock, either
 	# when you create it, or afterwards with the desired_fps accessors.
-	# 
-	# Please note that at the moment, framerate limiting is not very accurate.
-	clock = Rubygame::Clock.new(30)
+	clock = Rubygame::Clock.new { |clock| clock.target_framerate = 30 }
 
 	whiff_sound = load_sound('whiff.wav')
 	punch_sound = load_sound('punch.wav')
@@ -325,7 +303,7 @@ def main
 		allsprites.draw(screen)
 		screen.update()
 
-		screen.set_caption(clock.fps.to_s)
+		screen.title = '%d'%clock.framerate
 	end							# end loop
 
 	#Game Over
