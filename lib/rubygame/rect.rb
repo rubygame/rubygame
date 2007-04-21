@@ -478,17 +478,10 @@ class Rect < Array
 	end
 
 	# True if the point is inside (including on the border) of the caller.
-	# The point can be given as either an Array or separate coordinates.
-	def collide_point?(x,y=nil)
-		unless y
-			x, y = x[0..1]
-			unless y
-				raise ArgumentError("You must pass 2 Numerics or 1 Array.")
-			end
-		end
-		nself = self.normalize
-		return ((nself.left..nself.right).include? x and
-					(nself.top..nself.bottom).include? y)
+	# If you have Array of coordinates, you can use collide_point?(*coords).
+	def collide_point?(x,y)
+		nself = normalize()
+		x.between?(nself.left,nself.right) && y.between?(nself.top,nself.bottom)
 	end
 
 	# True if the caller and the given Rect overlap (or touch) at all.
@@ -572,13 +565,13 @@ class Rect < Array
 	# area it represents. Has no effect on Rects with non-negative width
 	# and height. Some Rect methods will automatically normalize the Rect.
 	def normalize!
-		if self[2] < 0
-			self[0], self[2] = self[0]+self[2], -self[2]
+		if self.at(2) < 0
+			self[0], self[2] = self.at(0)+self.at(2), -self.at(2)
 		end
-		if self[3] < 0
-			self[1], self[3] = self[1]+self[3], -self[3]
+		if self.at(3) < 0
+			self[1], self[3] = self.at(1)+self.at(3), -self.at(3)
 		end
-		return self
+		self
 	end
 
 	# As #union!, but the original caller is not changed.
