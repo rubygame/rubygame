@@ -21,6 +21,9 @@ require "rubygame"
 
 module Rubygame
 
+  # *NOTE*: you must require 'rubygame/mediabag' manually to gain access to
+  # Rubygame::MediaBag. It is not imported with Rubygame by default!
+  # 
   # A Hash-like class which will load and retain media files (images and
   # sounds), so that the file can be loaded once, but used many times.
   # 
