@@ -411,7 +411,7 @@ class Rect < Array
 	# As a side effect, the Rect is normalized.
 	def clip!(rect)
 		nself = self.normalize
-		rect = Rect.new_from_object(rect).normalize
+		rect = Rect.new_from_object(rect).normalize!
 		if self.collide_rect?(rect)
 			self[0] = min(nself.right, rect.right) - nself.at(0)
 			self[3] = min(nself.bottom, rect.bottom) - nself.at(1)
@@ -445,11 +445,9 @@ class Rect < Array
 	# Because a hash table is unordered, you should not expect the returned
 	# pairs to be in any particular order.
 	def collide_hash_all(hash_rects)
-		collection = []
-		hash_rects.each { |key,value|
-			if value.collide_rect?+(self); collection += [key,value]; end
+		hash_rects.select { |key,value|
+			value.collide_rect?+(self)
 		}
-		return collection
 	end
 
 	# Iterate through all elements in the given Array, and return
@@ -487,7 +485,7 @@ class Rect < Array
 	# True if the caller and the given Rect overlap (or touch) at all.
 	def collide_rect?(rect)
 		nself = self.normalize
-		rect = Rect.new_from_object(rect).normalize
+		rect  = Rect.new_from_object(rect).normalize!
 		return ((( (rect.l)..(rect.r) ).include?(nself.l)  or\
 						 ((nself.l)..(nself.r)).include?( rect.l)) and\
 						(( (rect.t)..(rect.b) ).include?(nself.t)  or\
@@ -498,7 +496,7 @@ class Rect < Array
 	# overlap.
 	def contain?(rect)
 		nself = self.normalize
-		rect = Rect.new_from_object(rect).normalize
+		rect = Rect.new_from_object(rect).normalize!
 		return (nself.left <= rect.left and rect.right <= nself.right and
 					nself.top <= rect.top and rect.bottom <= nself.bottom)
 	end
@@ -565,7 +563,7 @@ class Rect < Array
 		self.normalize!
     rleft, rtop = self.topleft
     rright, rbottom = self.bottomright
-		r2 = Rect.new_from_object(rect).normalize
+		r2 = Rect.new_from_object(rect).normalize!
 
 		rleft = [rleft, r2.left].min
 		rtop = [rtop, r2.top].min
