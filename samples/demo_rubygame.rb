@@ -162,6 +162,7 @@ background.draw_ellipse_s([200,150],[30,25],[250,250,250])
 background.draw_ellipse_a([200,150],[30,25],[250,250,250])
 
 # Let's make some labels
+require "rubygame/sfont"
 sfont = SFont.new("term16.png")
 sfont.render("Arrow keys move the spinning panda!").blit(background,[10,10])
 

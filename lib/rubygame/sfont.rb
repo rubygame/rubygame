@@ -19,6 +19,9 @@
 
 module Rubygame
 
+  # *NOTE*: you must require 'rubygame/sfont' manually to gain access to
+  # Rubygame::SFont. It is not imported with Rubygame by default!
+  # 
   # SFont is a type of bitmapped font, which is loaded from an image file
   # with a meaningful top row of pixels, and the font itself below that. The
   # top row provides information about what parts of of the lower area
