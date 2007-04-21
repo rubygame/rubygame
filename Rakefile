@@ -46,8 +46,8 @@ Rake::GemPackageTask.new(spec) do |pkg|
 end
 
 Rake::RDocTask.new do |rd|
-  rd.main = "doc/getting_started.rdoc"
-  rd.title = "Rubygame #{RUBYGAME_VERSION} API"
+  rd.main = "README"
+  rd.title = "Rubygame #{RUBYGAME_VERSION} Docs"
   rd.rdoc_files.include("ext/rubygame/*.c",
                         "lib/rubygame/*.rb",
                         "doc/*.rdoc",
