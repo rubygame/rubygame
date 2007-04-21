@@ -15,6 +15,11 @@
   Role::  Assistant developer
   Date::  2007 - present
 
+- <b>Rusterholz Stefan</b> / apeiros
+  Email:: apeiros at gmx.net
+  Role::  Assistant developer (optimization and clean-up)
+  Date::  2007 - present
+
 == Other Source Contributors
 
 - <b>Randy Eckenrode</b>
@@ -28,8 +33,3 @@
   Contribution::  Patch to add TTF#render_utf and TTF#render_unicode methods;
                   UTF8 demo application.
   Date::          received 2007-03-04; applied 2007-04-13 (r235).
-
-- <b>Rusterholz Stefan</b> / apeiros
-  Email::         apeiros at users.sourceforge.net
-  Contribution::  Added Surface#zoom_to method.
-  Date::          2007-04-20
