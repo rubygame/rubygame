@@ -22,6 +22,19 @@
 
 === Off in space somewhere...
 
+- Color (representation of a color)
+  - ColorRGB and ColorHSV classes
+  - Mix/combine colors using various blending modes (add, multiply, etc.)
+  - Library of common pre-defined colors.
+  - Integrate with SDL functions (automatic conversion).
+
+- Path (Curve?) (graphs/plots for tracing position and other uses)
+  - Can find the position N units along the path.
+  - Can draw a line showing the path.
+  - LinearPath (connect the dots, linear interpolation)
+  - BezierPath (chain of continuous cubic Bézier curves)
+  - AlgorithmicPath (calculated from a code block)
+
 - Add draw_bezier (SDL_gfx's bezierRGBA)
 
 - Add hq2x, hq3x, hq4x scaling -- http://www.hiend3d.com/hq3x.html
