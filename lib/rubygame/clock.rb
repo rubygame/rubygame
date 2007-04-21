@@ -44,7 +44,7 @@ module Rubygame
 			attr_accessor :target_frametime
 
 			# Returns the current target framerate (frames/second).
-			# This is an alternate way to access the #target_frametime.
+			# This is an alternate way to access @target_frametime.
 			# Same as: 1000.0 / #target_frametime
 			def target_framerate
 				if @target_frametime
@@ -57,7 +57,7 @@ module Rubygame
 			end
 
 			# Sets the target number of frames per second to +framerate+.
-			# This is an alternate way to access the #target_frametime.
+			# This is an alternate way to access @target_frametime.
 			# Same as: #target_frametime = 1000.0 / framerate
 			def target_framerate=( framerate )
 				if framerate
