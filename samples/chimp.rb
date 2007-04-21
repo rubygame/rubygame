@@ -285,10 +285,10 @@ def main
 			when Rubygame::MouseDownEvent
 				# can't play sound yet, we'll have to commentate
 				if fist.punch(chimp)
-					Rubygame::Mixer::play(punch_sound,0,-1)
+					Rubygame::Mixer::play(punch_sound,-1,0)
 					chimp.punched()
 				else
-				    Rubygame::Mixer::play(whiff_sound, 0,-1)
+				    Rubygame::Mixer::play(whiff_sound,-1,0)
 				end
 			when Rubygame::MouseUpEvent
 				fist.unpunch()
