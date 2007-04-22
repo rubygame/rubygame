@@ -865,7 +865,7 @@ VALUE rbgm_transform_zoom(int argc, VALUE *argv, VALUE self)
 
 /* 
  *  call-seq:
- *     zoom_to(width, height, smooth=true)  ->  Surface
+ *     zoom_to(width, height, smooth=false)  ->  Surface
  *
  *  Return a zoomed version of the Surface.
  *
