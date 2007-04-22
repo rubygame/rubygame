@@ -37,8 +37,12 @@ spec = Gem::Specification.new do |s|
   s.autorequire = "rubygame.rb"
   s.extensions = ["Rakefile"]
 
-  s.extra_rdoc_files = ["./README", "./LICENSE", "./CREDITS",\
-    "./TODO", "./doc/getting_started.rdoc"]
+  s.extra_rdoc_files = Dir.glob("./doc/*.rdoc")
+  s.extra_rdoc_files += ["./README",
+                        "./LICENSE",
+                        "./CREDITS",
+                        "./TODO",
+                        "./Changelog"]
 end
 
 Rake::GemPackageTask.new(spec) do |pkg| 
@@ -54,7 +58,8 @@ Rake::RDocTask.new do |rd|
                         "./README",
                         "./LICENSE",
                         "./CREDITS",
-                        "./TODO")
+                        "./TODO",
+                        "./Changelog")
 end
 
 task :default => [:build]
