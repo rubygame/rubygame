@@ -6,6 +6,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 require "rubygame"
+require "rubygame/sfont"
 include Rubygame
 
 def main(*args)

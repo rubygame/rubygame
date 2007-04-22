@@ -20,7 +20,7 @@
 
 module Rubygame
 
-# *NOTE*: you must `require "ftor"' manually to gain access to
+# *NOTE*: you must require 'rubygame/ftor' manually to gain access to
 # Rubygame::Ftor. It is not imported with Rubygame by default!
 # 
 # Ftor ("Fake vecTOR"), a vector-like class for 2D position/movement.
