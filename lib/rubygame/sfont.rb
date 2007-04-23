@@ -93,7 +93,7 @@ module Rubygame
         surface = filename
       end
       @height = surface.height
-      colorkey = surface.get_at([0,@height-1])
+      colorkey = surface.get_at(0,@height-1)
 
       # set colorkey if "transparent" color is not actually transparent
       if colorkey[3] != 0
@@ -101,7 +101,7 @@ module Rubygame
       end
 
       @glyphs = {}
-      @skip = surface.get_at([0,0])[0..2]
+      @skip = surface.get_at(0,0)[0..2]
 
       # split the glyphs into separate surfaces
       glyphs = (glyphs or @@default_glyphs)
@@ -151,7 +151,7 @@ or nil (got %s)"%[spacew.class])
     def load_glyph(surface,glyph,start_x) # :doc:
       # find where this glyph starts
       begin
-        while(surface.get_at([start_x,0])[0..2] == @skip)
+        while(surface.get_at(start_x,0)[0..2] == @skip)
           start_x += 1
         end
       rescue IndexError
@@ -162,7 +162,7 @@ or nil (got %s)"%[spacew.class])
 
       # find how wide this glyph is
       begin
-        while(surface.get_at([end_x,0])[0..2] != @skip)
+        while(surface.get_at(end_x,0)[0..2] != @skip)
           end_x += 1
         end
       rescue IndexError
