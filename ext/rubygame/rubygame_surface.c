@@ -45,7 +45,7 @@ VALUE rbgm_surface_blit(int, VALUE*, VALUE);
 
 VALUE rbgm_surface_fill(int, VALUE*, VALUE);
 
-VALUE rbgm_surface_getat(int, VALUE*, VALUE);
+VALUE rbgm_surface_getat(VALUE, VALUE, VALUE);
 
 VALUE rbgm_surface_pixels(VALUE);
 
@@ -58,7 +58,7 @@ VALUE rbgm_surface_displayformatalpha(VALUE);
 
 VALUE rbgm_image_savebmp(VALUE, VALUE);
 
-VALUE rbgm_transform_flip(int, VALUE*, VALUE);
+VALUE rbgm_transform_flip(VALUE, VALUE, VALUE);
 
 /* 
  *  call-seq:
@@ -569,49 +569,33 @@ VALUE rbgm_surface_fill( int argc, VALUE *argv, VALUE self )
 
 /* 
  *  call-seq: 
- *     get_at(pos)
  *     get_at(x,y)
  *
  *  Return the color [r,g,b,a] of the pixel at the given coordinate. 
  *
- *  This method takes these argument:
- *  - pos:: the coordinate of the pixel to get the color of.
- *
- *  The coordinate can also be given as two arguments, separate +x+ and +y+
- *  positions.
+ *  Raises IndexError if the coordinates are out of bounds.
  */
-VALUE rbgm_surface_getat( int argc, VALUE *argv, VALUE self )
+VALUE rbgm_surface_getat( VALUE self, VALUE vx, VALUE vy )
 {
 	SDL_Surface *surf;
-	int x,y;
-	int locked=0;
+	int x, y, locked;
 	Uint32 color;
 	Uint8 *pixels, *pix;
 	Uint8 r,g,b,a;
 
 	Data_Get_Struct(self, SDL_Surface, surf);
 
-	if(argc>2)
-		rb_raise(rb_eArgError,"wrong number of arguments (%d for 1)",argc);
+	x = NUM2INT(vx);
+	y = NUM2INT(vy);
 
-	if(argc==1)
-	{
-		x = NUM2INT(rb_ary_entry(argv[0],0));
-		y = NUM2INT(rb_ary_entry(argv[0],1));
-	}
-	else
-	{
-		x = NUM2INT(argv[0]);
-		y = NUM2INT(argv[1]);
-	}
-
-	if(x<0 || x>surf->w)
+	if( x < 0 || x > surf->w )
 		rb_raise(rb_eIndexError,"x index out of bounds (%d, min 0, max %d)",\
 			x,surf->w);
-	if(y<0 || y>surf->h)
+	if( y < 0 || y > surf->h )
 		rb_raise(rb_eIndexError,"y index out of bounds (%d, min 0, max %d)",\
 			y,surf->h);
 
+	locked = 0;
 	/* lock surface */
 	if(SDL_MUSTLOCK(surf))
 	{
@@ -922,7 +906,7 @@ static SDL_Surface* newsurf_fromsurf(SDL_Surface* surf, int width, int height)
  *  factors of -1 to #rotozoom (only if compiled with SDL_gfx 2.0.13 or
  *  greater). Your mileage may vary.
  */
-VALUE rbgm_transform_flip(int argc, VALUE *argv, VALUE self)
+VALUE rbgm_transform_flip(VALUE self, VALUE vhorz, VALUE vvert)
 {
   SDL_Surface *surf, *newsurf;
   int xaxis, yaxis;
@@ -931,13 +915,10 @@ VALUE rbgm_transform_flip(int argc, VALUE *argv, VALUE self)
   int pixsize, srcpitch, dstpitch;
   Uint8 *srcpix, *dstpix;
 
-  xaxis = argv[0];
-  yaxis = argv[1];
+  xaxis = RTEST(vhorz);
+  yaxis = RTEST(vvert);
 
-  if(argc < 2)
-    rb_raise(rb_eArgError,"wrong number of arguments (%d for 2)",argc);
   Data_Get_Struct(self,SDL_Surface,surf);
-
 
   /* Borrowed from Pygame: */
   newsurf = newsurf_fromsurf(surf, surf->w, surf->h);
@@ -1082,15 +1063,15 @@ void Rubygame_Init_Surface()
 	rb_define_method(cSurface,"set_colorkey",rbgm_surface_set_colorkey,-1);
 	rb_define_method(cSurface,"blit",rbgm_surface_blit,-1);
 	rb_define_method(cSurface,"fill",rbgm_surface_fill,-1);
-	rb_define_method(cSurface,"get_at",rbgm_surface_getat,-1);
+	rb_define_method(cSurface,"get_at",rbgm_surface_getat,2);
 	rb_define_method(cSurface,"pixels",rbgm_surface_pixels,0);
 	rb_define_method(cSurface,"clip",rbgm_surface_get_clip,0);
 	rb_define_method(cSurface,"clip=",rbgm_surface_set_clip,1);
 	rb_define_method(cSurface,"convert",rbgm_surface_convert,-1);
 	rb_define_method(cSurface,"to_display",rbgm_surface_dispform,0);
 	rb_define_method(cSurface,"to_display_alpha",rbgm_surface_dispformalpha,0);
-	rb_define_method(cSurface,"savebmp",rbgm_image_savebmp,2);
-	rb_define_method(cSurface,"flip",rbgm_transform_flip,-1);
+	rb_define_method(cSurface,"savebmp",rbgm_image_savebmp,1);
+	rb_define_method(cSurface,"flip",rbgm_transform_flip,2);
 
 	
 	/* Surface initialization flags */
