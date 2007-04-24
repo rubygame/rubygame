@@ -105,8 +105,10 @@ VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 	SDL_Surface *self_surf;
 	SDL_PixelFormat* pixformat;
 	Uint32 flags, Rmask, Gmask, Bmask, Amask;
-	int w, h, depth, counter;
-	
+	int w, h, depth;
+	VALUE vsize, vdepth, vflags;
+
+	rb_scan_args(argc, argv, "12", &vsize, &vdepth, &vflags);
 
 	if( SDL_GetVideoSurface() )
 	{
@@ -125,10 +127,10 @@ VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 	Bmask = pixformat->Bmask;
 	Amask = pixformat->Amask;
 
-	if( (argc > 1) && (argv[1] != Qnil) && (argv[1] != 0) )
+	if( !NIL_P(vdepth) && NUM2INT(vdepth) > 0 )
 	{
 		/* TODO: We might want to check that the requested depth makes sense. */
-		depth = NUM2INT(argv[1]);
+		depth = NUM2INT(vdepth);
 	}
 	else
 	{
@@ -136,33 +138,36 @@ VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 	}
 		
 
-	/* Get width and height for new surface from argv[0] */
-	Check_Type(argv[0],T_ARRAY);
+	/* Get width and height for new surface from vsize */
+	Check_Type(vsize,T_ARRAY);
 
-	if(RARRAY(argv[0])->len >= 2)
+	if(RARRAY(vsize)->len >= 2)
 	{
-		w = NUM2INT(rb_ary_entry(argv[0],0));
-		h = NUM2INT(rb_ary_entry(argv[0],1));
+		w = NUM2INT(rb_ary_entry(vsize,0));
+		h = NUM2INT(rb_ary_entry(vsize,1));
 	}
 	else
-		rb_raise(rb_eArgError,"wrong dimensions for Surface size (%d for 2)",\
-			RARRAY(argv[0])->len);
+		rb_raise(rb_eArgError,"Array is too short for Surface size (%d for 2)",\
+			RARRAY(vsize)->len);
 	
 
-	if(argc > 2 && argv[2] != Qnil)
+	flags = 0;
+	if( !NIL_P(vflags) )
 	{
-		switch( TYPE(argv[2]) ){
-			case T_ARRAY:;
-				for(counter=0;  counter < RARRAY(argv[2])->len; counter += 1)
-		    {
-		      flags |= NUM2UINT(  rb_ary_entry( argv[2],counter )  );
-		    }
-				break;
-			case T_FIXNUM:;
-				flags = NUM2UINT( argv[2] );
-				break;
-			default:;
+		switch( TYPE(vflags) ){
+			case T_ARRAY: {
+				int counter = 0;
+				for(counter; counter < RARRAY(vflags)->len; counter += 1)
+				{
+					flags |= NUM2UINT( rb_ary_entry(vflags, counter) );
+				}
+			}
+			case T_FIXNUM: {
+				flags = NUM2UINT(vflags);
+			}
+			default: {
 				rb_raise(rb_eArgError,"Wrong type for argument `flags' (wanted Fixnum or Array).");
+			}
 		}
 	}
 
@@ -307,28 +312,20 @@ VALUE rbgm_surface_set_alpha(int argc, VALUE *argv, VALUE self)
 	SDL_Surface *surf;
 	Uint8 alpha;
 	Uint32 flags = SDL_SRCALPHA;
+	VALUE valpha, vflags;
 
-	switch(argc)
+	rb_scan_args(argc, argv, "11", &valpha, &vflags);
+
+	if( !NIL_P(vflags) )
 	{
-		case 2: flags = NUM2UINT(argv[1]);
-			/* no break */
-		case 1: 
-		  {
-			int temp;
-			temp = NUM2INT(argv[0]);
-			if(temp<0) alpha = 0;
-			else if(temp>255) alpha = 255;
-			else alpha = (Uint8) temp;
-			break;
-		  }
-		default:
-			rb_raise(rb_eArgError,\
-				"Wrong number of args to set mode (%d for 1)",argc);
+		flags = NUM2UINT(vflags);
 	}
 
-	Data_Get_Struct(self,SDL_Surface,surf);
-	if(SDL_SetAlpha(surf,flags,alpha)!=0)
-		rb_raise(eSDLError,"%s",SDL_GetError());
+	alpha = NUM2UINT(valpha);
+
+	Data_Get_Struct(self, SDL_Surface, surf);
+	if( SDL_SetAlpha(surf,flags,alpha) != 0 )
+		rb_raise(eSDLError, "%s", SDL_GetError());
 	return self;
 }
 
@@ -376,31 +373,39 @@ VALUE rbgm_surface_set_colorkey( int argc, VALUE *argv, VALUE self)
 {
 	SDL_Surface *surf;
 	Uint32 color;
-	Uint32 flag;
+	Uint32 flags;
 	Uint8 r,g,b;
+	VALUE vcolor, vflags;
 
 	Data_Get_Struct(self, SDL_Surface, surf);
-	if(argv[0] == Qnil)
+
+	rb_scan_args(argc, argv, "11", &vcolor, &vflags);
+
+	if( !NIL_P(vflags) )
 	{
-		flag = 0;
-		color = 0;
+		flags = NUM2UINT(vflags);
 	}
 	else
 	{
-		if(argc > 1)
-			flag = NUM2UINT(argv[1]);
-		else
-			flag = SDL_SRCCOLORKEY;
-
-		r = NUM2UINT(rb_ary_entry(argv[0],0));
-		g = NUM2UINT(rb_ary_entry(argv[0],1));
-		b = NUM2UINT(rb_ary_entry(argv[0],2));
-		//printf("RGB: %d,%d,%d  ",r,g,b);
-		color = SDL_MapRGB(surf->format, r,g,b);
-		//printf("colorkey: %d\n", color);
+		flags = SDL_SRCCOLORKEY;
 	}
 
-	if(SDL_SetColorKey(surf,flag,color)!=0)
+
+	if( RTEST(vcolor) )
+	{
+		Check_Type(vcolor, T_ARRAY);
+		r = NUM2UINT(rb_ary_entry(vcolor,0));
+		g = NUM2UINT(rb_ary_entry(vcolor,1));
+		b = NUM2UINT(rb_ary_entry(vcolor,2));
+		color = SDL_MapRGB(surf->format, r,g,b);
+	}
+	else
+	{
+		flags = 0;
+		color = 0;
+	}
+
+	if(SDL_SetColorKey(surf,flags,color)!=0)
 		rb_raise(eSDLError,"could not set colorkey: %s",SDL_GetError());
 	return self;
 }
@@ -447,24 +452,26 @@ VALUE rbgm_surface_blit(int argc, VALUE *argv, VALUE self)
 	SDL_Surface *src, *dest;
 	SDL_Rect *src_rect, *blit_rect;
 
-	if(argc < 2 || argc > 3)
-		rb_raise( rb_eArgError,"Wrong number of arguments to blit (%d for 2)",argc);
+	VALUE vtarget, vdest, vsource;
 
+	rb_scan_args( argc, argv, "21", &vtarget, &vdest, &vsource );
 
 	Data_Get_Struct(self, SDL_Surface, src);
-	Data_Get_Struct(argv[0], SDL_Surface, dest);
+	Data_Get_Struct(vtarget, SDL_Surface, dest);
 
-	blit_x = NUM2INT(rb_ary_entry(argv[1],0));
-	blit_y = NUM2INT(rb_ary_entry(argv[1],1));
+	Check_Type(vdest, T_ARRAY);
+	blit_x = NUM2INT(rb_ary_entry(vdest,0));
+	blit_y = NUM2INT(rb_ary_entry(vdest,1));
 
 	/* did we get a src_rect argument or not? */
-	if(argc>2 && argv[2]!=Qnil)
+	if( !NIL_P(vsource) )
 	{
 		/* it might be good to check that it's actually a rect */
-		src_x = NUM2INT(rb_ary_entry(argv[2],0));
-		src_y = NUM2INT(rb_ary_entry(argv[2],1));
-		src_w = NUM2INT(rb_ary_entry(argv[2],2));
-		src_h = NUM2INT(rb_ary_entry(argv[2],3));
+		Check_Type(vsource, T_ARRAY);
+		src_x = NUM2INT( rb_ary_entry(vsource,0) );
+		src_y = NUM2INT( rb_ary_entry(vsource,1) );
+		src_w = NUM2INT( rb_ary_entry(vsource,2) );
+		src_h = NUM2INT( rb_ary_entry(vsource,3) );
 	}
 	else
 	{
@@ -523,21 +530,20 @@ VALUE rbgm_surface_fill( int argc, VALUE *argv, VALUE self )
 	SDL_Rect *rect;
 	Uint32 color;
 	Uint8 r,g,b,a;
+	VALUE vcolor, vrect;
 
 	Data_Get_Struct(self, SDL_Surface, surf);
 
-	if(argc < 1)
-	{
-		rb_raise(rb_eArgError,"wrong number of arguments (%d for 1 or 2)",argc);
-	}
+	rb_scan_args(argc, argv, "11", &vcolor, &vrect);
 
-	r = NUM2UINT(rb_ary_entry(argv[0],0));
-	g = NUM2UINT(rb_ary_entry(argv[0],1));
-	b = NUM2UINT(rb_ary_entry(argv[0],2));
+	Check_Type(vcolor, T_ARRAY);
+	r = NUM2UINT(rb_ary_entry(vcolor,0));
+	g = NUM2UINT(rb_ary_entry(vcolor,1));
+	b = NUM2UINT(rb_ary_entry(vcolor,2));
 	/* if the array is larger than [R,G,B], it should be [R,G,B,A] */
-	if(RARRAY(argv[0])->len > 3)
+	if(RARRAY(vcolor)->len > 3)
 	{
-		a = NUM2UINT(rb_ary_entry(argv[0],3));
+		a = NUM2UINT(rb_ary_entry(vcolor,3));
 		color = SDL_MapRGBA(surf->format, r,g,b,a);
 	}
 	else
@@ -545,25 +551,24 @@ VALUE rbgm_surface_fill( int argc, VALUE *argv, VALUE self )
 		color = SDL_MapRGB(surf->format, r,g,b);
 	}
 
-	switch(argc)
+	if( NIL_P(vrect) )
 	{
-		case 1: /* fill whole thing */
-			SDL_FillRect(surf,NULL,color);
-			break;
-		case 2: /* fill a given rect */
-			rect = make_rect(\
-			                 NUM2INT(rb_ary_entry(argv[1],0)),\
-			                 NUM2INT(rb_ary_entry(argv[1],1)),\
-			                 NUM2INT(rb_ary_entry(argv[1],2)),\
-			                 NUM2INT(rb_ary_entry(argv[1],3))\
-			                 );
-			SDL_FillRect(surf,rect,color);
-			free(rect);
-			break;
-		default:
-			rb_raise( rb_eArgError,"Wrong number of arguments to fill (%d for 1 or 2)",NUM2INT(argc));
-			break;
+		SDL_FillRect(surf,NULL,color);
 	}
+	else
+	{
+		Check_Type(vrect, T_ARRAY);
+
+		rect = make_rect(\
+										 NUM2INT(rb_ary_entry(vrect,0)),\
+										 NUM2INT(rb_ary_entry(vrect,1)),\
+										 NUM2INT(rb_ary_entry(vrect,2)),\
+										 NUM2INT(rb_ary_entry(vrect,3))\
+										 );
+		SDL_FillRect(surf,rect,color);
+		free(rect);
+	}
+
 	return self;
 }
 
@@ -713,12 +718,13 @@ VALUE rbgm_surface_set_clip( VALUE self, VALUE clip )
 	Data_Get_Struct(self, SDL_Surface, surf);
 
 
-	if(clip == Qnil)
+	if( NIL_P(clip) )
 	{
 		SDL_SetClipRect(surf,NULL);
 	}
 	else
 	{ 
+		Check_Type(clip, T_ARRAY);
 		rect = make_rect(\
 		                 NUM2INT(rb_ary_entry(clip,0)),\
 		                 NUM2INT(rb_ary_entry(clip,1)),\
@@ -751,12 +757,15 @@ VALUE rbgm_surface_convert(int argc, VALUE *argv, VALUE self)
 {
 	SDL_Surface *surf, *othersurf, *newsurf;
   Uint32 flags = 0;
+	VALUE vother, vflags;
 
 	Data_Get_Struct(self, SDL_Surface, surf);
 
-	if(argc>0 && argv[0]!=Qnil)
+	rb_scan_args(argc, argv, "02", &vother, &vflags );
+
+	if( !NIL_P(vother) )
   {
-    Data_Get_Struct(argv[0], SDL_Surface, othersurf);
+    Data_Get_Struct(vother, SDL_Surface, othersurf);
   }
   else
   {
@@ -767,10 +776,25 @@ VALUE rbgm_surface_convert(int argc, VALUE *argv, VALUE self)
     }
   }
 
-	if(argc>1 && argv[1]!=Qnil)
-  {
-    flags = NUM2UINT(argv[1]);
-  }
+	flags = 0;
+	if( !NIL_P(vflags) )
+	{
+		switch( TYPE(vflags) ){
+			case T_ARRAY: {
+				int counter = 0;
+				for(counter; counter < RARRAY(vflags)->len; counter += 1)
+				{
+					flags |= NUM2UINT( rb_ary_entry(vflags, counter) );
+				}
+			}
+			case T_FIXNUM: {
+				flags = NUM2UINT(vflags);
+			}
+			default: {
+				rb_raise(rb_eArgError,"Wrong type for argument `flags' (wanted Fixnum or Array).");
+			}
+		}
+	}
 
   newsurf = SDL_ConvertSurface( surf, othersurf->format, flags );
 
