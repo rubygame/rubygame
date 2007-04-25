@@ -29,8 +29,7 @@ VALUE cTTF;
 
 VALUE rbgm_ttf_setup(VALUE);
 VALUE rbgm_ttf_quit(VALUE);
-VALUE rbgm_ttf_new(int, VALUE*, VALUE);
-VALUE rbgm_ttf_initialize(int, VALUE *, VALUE);
+VALUE rbgm_ttf_new(VALUE, VALUE, VALUE);
 
 VALUE rbgm_ttf_getbold(VALUE);
 VALUE rbgm_ttf_setbold(VALUE, VALUE);
@@ -91,22 +90,21 @@ VALUE rbgm_ttf_quit(VALUE module)
  *  This function takes these arguments:
  *  file:: filename of the TrueType font to use. Should be a +TTF+ or 
  *         +FON+ file.
- *  size:: point size (based on 72DPI). Or, the height in pixels from the
- *         bottom of the descent to the top of the ascent.
+ *  size:: point size (based on 72DPI). (That means the height in pixels from
+ *         the bottom of the descent to the top of the ascent.)
  */
-VALUE rbgm_ttf_new(int argc, VALUE *argv, VALUE class)
+VALUE rbgm_ttf_new(VALUE class, VALUE vfile, VALUE vsize)
 {
 	VALUE self;
 	TTF_Font *font;
 	
 	if(!TTF_WasInit())
 		rb_raise(eSDLError,"Font module must be initialized before making new font.");
-	font = TTF_OpenFont(StringValuePtr(argv[0]), NUM2INT(argv[1]));
+	font = TTF_OpenFont(StringValuePtr(vfile), NUM2INT(vsize));
 	if(font == NULL)
 		rb_raise(eSDLError,"could not load font: %s",TTF_GetError());
 
 	self = Data_Wrap_Struct(cTTF,0,TTF_CloseFont,font);
-	rb_obj_call_init(self,argc,argv);
 	return self;
 }
 
@@ -147,13 +145,13 @@ VALUE rbgm_ttf_setbold(VALUE self,VALUE bold)
 	style = TTF_GetFontStyle(font);
 
 	/* Font is currently bold, and we want it to be not bold. */
-	if((style & TTF_STYLE_BOLD) == TTF_STYLE_BOLD && !bold)
+	if((style & TTF_STYLE_BOLD) == TTF_STYLE_BOLD && !RTEST(bold))
 	  {
 		TTF_SetFontStyle(font,style^TTF_STYLE_BOLD);
 		return Qtrue;			/* The old value */
 	  }
 	/* Font is not currently bold, and we want it to be bold. */
-	else if(bold)
+	else if( RTEST(bold) )
 	  {
 		TTF_SetFontStyle(font,style|TTF_STYLE_BOLD);
 		return Qfalse;			/* The old value */
@@ -194,13 +192,13 @@ VALUE rbgm_ttf_setitalic(VALUE self,VALUE italic)
 	style = TTF_GetFontStyle(font);
 
 	/* Font is currently italic, and we want it to be not italic. */
-	if((style & TTF_STYLE_ITALIC) == TTF_STYLE_ITALIC && !italic)
+	if((style & TTF_STYLE_ITALIC) == TTF_STYLE_ITALIC && !RTEST(italic))
 	  {
 		TTF_SetFontStyle(font,style^TTF_STYLE_ITALIC);
 		return Qtrue;			/* The old value */
 	  }
 	/* Font is not currently italic, and we want it to be italic. */
-	else if(italic)
+	else if(RTEST(italic))
 	  {
 		TTF_SetFontStyle(font,style|TTF_STYLE_ITALIC);
 		return Qfalse;			/* The old value */
@@ -241,13 +239,13 @@ VALUE rbgm_ttf_setunderline(VALUE self,VALUE underline)
 	style = TTF_GetFontStyle(font);
 
 	/* Font is currently underlined, and we want it to be not underlined. */
-	if((style & TTF_STYLE_UNDERLINE) == TTF_STYLE_UNDERLINE && !underline)
+	if((style & TTF_STYLE_UNDERLINE) == TTF_STYLE_UNDERLINE && !RTEST(underline))
 	  {
 		TTF_SetFontStyle(font,style^TTF_STYLE_UNDERLINE);
 		return Qtrue;			/* The old value */
 	  }
 	/* Font is not currently underlined, and we want it to be underlined. */
-	else if(underline)
+	else if(RTEST(underline))
 	  {
 		TTF_SetFontStyle(font,style|TTF_STYLE_UNDERLINE);
 		return Qfalse;			/* The old value */
@@ -333,6 +331,12 @@ VALUE rbgm_ttf_sizetext(VALUE self, VALUE string)
 	return result;
 }
 
+/*
+ *--
+ * TODO: Refactor/integrate #render, #render_utf8, and #render_unicode
+ *++
+ */
+
 /*  call-seq:
  *    render(string, aa, fg, bg)  ->  Surface
  *
@@ -350,45 +354,45 @@ VALUE rbgm_ttf_render(int argc, VALUE *argv, VALUE self)
 {
 	SDL_Surface *surf;
 	TTF_Font *font;
-	int antialias;
 	SDL_Color fore, back; /* foreground and background colors */
+	VALUE vstring, vaa, vfg, vbg;
 
-	if(argc<3)
-		rb_raise(rb_eArgError,"wrong number of arguments (%d for 3)",argc);
+	rb_scan_args(argc, argv, "31", &vstring, &vaa, &vfg, &vbg);
 
 	Data_Get_Struct(self,TTF_Font,font);
 
-	antialias = argv[1];
-	fore.r = NUM2UINT(rb_ary_entry(argv[2],0));
-	fore.g = NUM2UINT(rb_ary_entry(argv[2],1));
-	fore.b = NUM2UINT(rb_ary_entry(argv[2],2));
+	Check_Type(vfg,T_ARRAY);
+	fore.r = NUM2UINT(rb_ary_entry(vfg,0));
+	fore.g = NUM2UINT(rb_ary_entry(vfg,1));
+	fore.b = NUM2UINT(rb_ary_entry(vfg,2));
 
-	if(argc>3)
+	if( !NIL_P(vbg) )
 	{
-		back.r = NUM2UINT(rb_ary_entry(argv[3],0));
-		back.g = NUM2UINT(rb_ary_entry(argv[3],1));
-		back.b = NUM2UINT(rb_ary_entry(argv[3],2));
+		Check_Type(vbg,T_ARRAY);
+		back.r = NUM2UINT(rb_ary_entry(vbg,0));
+		back.g = NUM2UINT(rb_ary_entry(vbg,1));
+		back.b = NUM2UINT(rb_ary_entry(vbg,2));
 	}
 
-	if(antialias) /* anti-aliasing enabled */
+	if( RTEST(vaa) ) /* anti-aliasing enabled */
 	{
-		if(argc>3) /* background color provided */
-			surf = TTF_RenderText_Shaded(font,StringValuePtr(argv[0]),fore,back);
+		if( RTEST(vbg) ) /* background color provided */
+			surf = TTF_RenderText_Shaded(font,StringValuePtr(vstring),fore,back);
 		else /* no background color */
-			surf = TTF_RenderText_Blended(font,StringValuePtr(argv[0]),fore);
+			surf = TTF_RenderText_Blended(font,StringValuePtr(vstring),fore);
 	}
 	else /* anti-aliasing not enabled */
 	{
-		if(argc>3) /* background color provided */	
+		if( RTEST(vbg) ) /* background color provided */	
 		{
 			/* remove colorkey, set color index 0 to background color */
-			surf = TTF_RenderText_Solid(font,StringValuePtr(argv[0]),fore);
+			surf = TTF_RenderText_Solid(font,StringValuePtr(vstring),fore);
 			SDL_SetColors(surf,&back,0,1);
 			SDL_SetColorKey(surf,0,0);
 		}
 		else /* no background color */
 		{
-			surf = TTF_RenderText_Solid(font,StringValuePtr(argv[0]),fore);
+			surf = TTF_RenderText_Solid(font,StringValuePtr(vstring),fore);
 		}
 	}
 
@@ -415,45 +419,45 @@ VALUE rbgm_ttf_render_utf8(int argc, VALUE *argv, VALUE self)
 {
  	SDL_Surface *surf;
  	TTF_Font *font;
- 	int antialias;
  	SDL_Color fore, back; /* foreground and background colors */
+	VALUE vstring, vaa, vfg, vbg;
  
- 	if(argc<3)
- 		rb_raise(rb_eArgError,"wrong number of arguments (%d for 3)",argc);
+	rb_scan_args(argc, argv, "31", &vstring, &vaa, &vfg, &vbg);
  
  	Data_Get_Struct(self,TTF_Font,font);
  
- 	antialias = argv[1];
- 	fore.r = NUM2UINT(rb_ary_entry(argv[2],0));
- 	fore.g = NUM2UINT(rb_ary_entry(argv[2],1));
- 	fore.b = NUM2UINT(rb_ary_entry(argv[2],2));
- 
- 	if(argc>3)
+	Check_Type(vfg,T_ARRAY);
+	fore.r = NUM2UINT(rb_ary_entry(vfg,0));
+	fore.g = NUM2UINT(rb_ary_entry(vfg,1));
+	fore.b = NUM2UINT(rb_ary_entry(vfg,2));
+
+	if( RTEST(vbg) )
+	{
+		Check_Type(vbg,T_ARRAY);
+		back.r = NUM2UINT(rb_ary_entry(vbg,0));
+		back.g = NUM2UINT(rb_ary_entry(vbg,1));
+		back.b = NUM2UINT(rb_ary_entry(vbg,2));
+	}
+
+	if( RTEST(vaa) ) /* anti-aliasing enabled */
  	{
- 		back.r = NUM2UINT(rb_ary_entry(argv[3],0));
- 		back.g = NUM2UINT(rb_ary_entry(argv[3],1));
- 		back.b = NUM2UINT(rb_ary_entry(argv[3],2));
- 	}
- 
- 	if(antialias) /* anti-aliasing enabled */
- 	{
- 		if(argc>3) /* background color provided */
- 			surf = TTF_RenderUTF8_Shaded(font,StringValuePtr(argv[0]),fore,back);
+ 		if( RTEST(vbg) ) /* background color provided */
+ 			surf = TTF_RenderUTF8_Shaded(font,StringValuePtr(vstring),fore,back);
  		else /* no background color */
- 			surf = TTF_RenderUTF8_Blended(font,StringValuePtr(argv[0]),fore);
+ 			surf = TTF_RenderUTF8_Blended(font,StringValuePtr(vstring),fore);
  	}
  	else /* anti-aliasing not enabled */
  	{
- 		if(argc>3) /* background color provided */	
+ 		if( RTEST(vbg) ) /* background color provided */	
  		{
  			/* remove colorkey, set color index 0 to background color */
- 			surf = TTF_RenderUTF8_Solid(font,StringValuePtr(argv[0]),fore);
+ 			surf = TTF_RenderUTF8_Solid(font,StringValuePtr(vstring),fore);
  			SDL_SetColors(surf,&back,0,1);
  			SDL_SetColorKey(surf,0,0);
  		}
  		else /* no background color */
  		{
- 			surf = TTF_RenderUTF8_Solid(font,StringValuePtr(argv[0]),fore);
+ 			surf = TTF_RenderUTF8_Solid(font,StringValuePtr(vstring),fore);
  		}
  	}
  
@@ -477,48 +481,48 @@ VALUE rbgm_ttf_render_utf8(int argc, VALUE *argv, VALUE self)
  */
 VALUE rbgm_ttf_render_unicode(int argc, VALUE *argv, VALUE self)
 {
-	//TODO:... ->unicode
+	/* TODO:... ->unicode */
  	SDL_Surface *surf;
  	TTF_Font *font;
- 	int antialias;
  	SDL_Color fore, back; /* foreground and background colors */
+ 	VALUE vstring, vaa, vfg, vbg;
  
- 	if(argc<3)
- 		rb_raise(rb_eArgError,"wrong number of arguments (%d for 3)",argc);
+	rb_scan_args(argc, argv, "31", &vstring, &vaa, &vfg, &vbg);
  
  	Data_Get_Struct(self,TTF_Font,font);
  
- 	antialias = argv[1];
- 	fore.r = NUM2UINT(rb_ary_entry(argv[2],0));
- 	fore.g = NUM2UINT(rb_ary_entry(argv[2],1));
- 	fore.b = NUM2UINT(rb_ary_entry(argv[2],2));
- 
- 	if(argc>3)
+	Check_Type(vfg,T_ARRAY);
+	fore.r = NUM2UINT(rb_ary_entry(vfg,0));
+	fore.g = NUM2UINT(rb_ary_entry(vfg,1));
+	fore.b = NUM2UINT(rb_ary_entry(vfg,2));
+
+	if( RTEST(vbg) )
+	{
+		Check_Type(vbg,T_ARRAY);
+		back.r = NUM2UINT(rb_ary_entry(vbg,0));
+		back.g = NUM2UINT(rb_ary_entry(vbg,1));
+		back.b = NUM2UINT(rb_ary_entry(vbg,2));
+	}
+
+	if( RTEST(vaa) ) /* anti-aliasing enabled */
  	{
- 		back.r = NUM2UINT(rb_ary_entry(argv[3],0));
- 		back.g = NUM2UINT(rb_ary_entry(argv[3],1));
- 		back.b = NUM2UINT(rb_ary_entry(argv[3],2));
- 	}
- 
- 	if(antialias) /* anti-aliasing enabled */
- 	{
- 		if(argc>3) /* background color provided */
- 			surf = TTF_RenderUNICODE_Shaded(font,(Uint16*)StringValuePtr(argv[0]),fore,back);
+ 		if( RTEST(vbg) ) /* background color provided */
+ 			surf = TTF_RenderUNICODE_Shaded(font,(Uint16*)StringValuePtr(vstring),fore,back);
  		else /* no background color */
- 			surf = TTF_RenderUNICODE_Blended(font,(Uint16*)StringValuePtr(argv[0]),fore);
+ 			surf = TTF_RenderUNICODE_Blended(font,(Uint16*)StringValuePtr(vstring),fore);
  	}
  	else /* anti-aliasing not enabled */
  	{
- 		if(argc>3) /* background color provided */	
+ 		if( RTEST(vbg) ) /* background color provided */	
  		{
  			/* remove colorkey, set color index 0 to background color */
- 			surf = TTF_RenderUNICODE_Solid(font,(Uint16*)StringValuePtr(argv[0]),fore);
+ 			surf = TTF_RenderUNICODE_Solid(font,(Uint16*)StringValuePtr(vstring),fore);
  			SDL_SetColors(surf,&back,0,1);
  			SDL_SetColorKey(surf,0,0);
  		}
  		else /* no background color */
  		{
- 			surf = TTF_RenderUNICODE_Solid(font,(Uint16*)StringValuePtr(argv[0]),fore);
+ 			surf = TTF_RenderUNICODE_Solid(font,(Uint16*)StringValuePtr(vstring),fore);
  		}
  	}
  
@@ -559,7 +563,7 @@ void Init_rubygame_ttf()
 
 	cTTF = rb_define_class_under(mRubygame,"TTF",rb_cObject);
 
-	rb_define_singleton_method(cTTF,"new",rbgm_ttf_new,-1);
+	rb_define_singleton_method(cTTF,"new",rbgm_ttf_new,2);
 	rb_define_singleton_method(cTTF,"setup",rbgm_ttf_setup,0);
 	rb_define_singleton_method(cTTF,"quit",rbgm_ttf_quit,0);
 

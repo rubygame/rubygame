@@ -41,7 +41,7 @@ extern VALUE cTTF;
 
 extern VALUE rbgm_ttf_setup(VALUE);
 extern VALUE rbgm_ttf_quit(VALUE);
-extern VALUE rbgm_ttf_new(int, VALUE*, VALUE);
+extern VALUE rbgm_ttf_new(VALUE, VALUE, VALUE);
 extern VALUE rbgm_ttf_initialize(int, VALUE*, VALUE);
 
 extern VALUE rbgm_ttf_getbold(VALUE);

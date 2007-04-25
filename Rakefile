@@ -156,6 +156,7 @@ rule( /RUBYLIBDIR/ ) do |t|
 end
 
 CFLAGS = [from_env_or_config("CFLAGS"),
+          $options.cflags,
           (`sdl-config --cflags`.chomp if $options.sdl_config),
           "-I. -I#{CONFIG['topdir']}",
           ("-g" if $options.debug) ].join(" ")
