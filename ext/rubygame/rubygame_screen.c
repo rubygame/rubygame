@@ -260,9 +260,6 @@ VALUE rbgm_screen_update(int argc, VALUE *argv, VALUE self)
 			}
 		}
 	}
-	else {
-		
-	}
 
   SDL_UpdateRect(screen,x,y,w,h);
   return self;

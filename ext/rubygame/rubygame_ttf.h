@@ -62,5 +62,5 @@ extern VALUE rbgm_ttf_sizetext(VALUE, VALUE);
 extern VALUE rbgm_ttf_render(int, VALUE*, VALUE);
 extern VALUE rbgm_ttf_render_utf8(int , VALUE*, VALUE);
 extern VALUE rbgm_ttf_render_unicode(int , VALUE*, VALUE);
-
+ 
 #endif

@@ -333,7 +333,7 @@ VALUE rbgm_ttf_sizetext(VALUE self, VALUE string)
 
 /*
  *--
- * TODO: Refactor/integrate #render, #render_utf8, and #render_unicode
+ * TODO: Refactor/integrate #render, #render_utf8, and #render_unicode 
  *++
  */
 
