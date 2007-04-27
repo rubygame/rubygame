@@ -33,3 +33,8 @@
   Contribution::  Patch to add TTF#render_utf and TTF#render_unicode methods;
                   UTF8 demo application.
   Date::          received 2007-03-04; applied 2007-04-13 (r235).
+
+- <b>Johan Berntsson</b>
+  Email::         johan@microheaven.com
+  Contribution::  Patch to add Mixer::Music class (music playback).
+  Date::          2007-04-27 (r304).

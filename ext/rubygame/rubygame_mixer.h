@@ -35,6 +35,12 @@ extern VALUE rbgm_mixer_setmixchans(VALUE, VALUE);
 extern VALUE cSample;
 extern VALUE rbgm_sample_new(VALUE, VALUE);
 
+extern VALUE cMusic;
+extern VALUE rbgm_music_new(VALUE, VALUE);
+extern VALUE rbgm_mixchan_stop_music( VALUE );
+extern VALUE rbgm_mixchan_music_volume( VALUE, VALUE );
+extern VALUE rbgm_mixchan_play_music( VALUE, VALUE, VALUE );
+
 extern VALUE rbgm_mixchan_play( VALUE, VALUE, VALUE, VALUE );
 extern VALUE rbgm_mixchan_stop( VALUE, VALUE );
 extern VALUE rbgm_mixchan_pause( VALUE, VALUE );
