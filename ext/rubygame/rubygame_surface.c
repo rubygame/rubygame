@@ -45,7 +45,7 @@ VALUE rbgm_surface_blit(int, VALUE*, VALUE);
 
 VALUE rbgm_surface_fill(int, VALUE*, VALUE);
 
-VALUE rbgm_surface_getat(VALUE, VALUE, VALUE);
+VALUE rbgm_surface_getat(int, VALUE*, VALUE);
 
 VALUE rbgm_surface_pixels(VALUE);
 
@@ -575,23 +575,39 @@ VALUE rbgm_surface_fill( int argc, VALUE *argv, VALUE self )
 /* 
  *  call-seq: 
  *     get_at(x,y)
+ *     get_at([x,y]) # deprecated
  *
  *  Return the color [r,g,b,a] of the pixel at the given coordinate. 
  *
  *  Raises IndexError if the coordinates are out of bounds.
  */
-VALUE rbgm_surface_getat( VALUE self, VALUE vx, VALUE vy )
+VALUE rbgm_surface_getat( int argc, VALUE *argv, VALUE self )
 {
 	SDL_Surface *surf;
 	int x, y, locked;
 	Uint32 color;
 	Uint8 *pixels, *pix;
 	Uint8 r,g,b,a;
+	VALUE vx, vy;
 
 	Data_Get_Struct(self, SDL_Surface, surf);
 
-	x = NUM2INT(vx);
-	y = NUM2INT(vy);
+	rb_scan_args(argc, argv, "11", &vx, &vy);
+
+	/* Still support passing position as an Array... for now. */
+	switch( TYPE(vx) )
+	{
+		case T_ARRAY: {
+			x = NUM2INT( rb_ary_entry(vx,0) );
+			y = NUM2INT( rb_ary_entry(vx,1) );
+			break;
+		}
+		default: {
+			x = NUM2INT(vx);
+			y = NUM2INT(vy);
+			break;
+		}
+	}
 
 	if( x < 0 || x > surf->w )
 		rb_raise(rb_eIndexError,"x index out of bounds (%d, min 0, max %d)",\
@@ -1087,7 +1103,7 @@ void Rubygame_Init_Surface()
 	rb_define_method(cSurface,"set_colorkey",rbgm_surface_set_colorkey,-1);
 	rb_define_method(cSurface,"blit",rbgm_surface_blit,-1);
 	rb_define_method(cSurface,"fill",rbgm_surface_fill,-1);
-	rb_define_method(cSurface,"get_at",rbgm_surface_getat,2);
+	rb_define_method(cSurface,"get_at",rbgm_surface_getat,-1);
 	rb_define_method(cSurface,"pixels",rbgm_surface_pixels,0);
 	rb_define_method(cSurface,"clip",rbgm_surface_get_clip,0);
 	rb_define_method(cSurface,"clip=",rbgm_surface_set_clip,1);

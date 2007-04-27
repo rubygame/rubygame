@@ -44,7 +44,7 @@ extern VALUE rbgm_surface_blit(int, VALUE*, VALUE);
 
 extern VALUE rbgm_surface_fill(int, VALUE*, VALUE);
 
-extern VALUE rbgm_surface_getat(VALUE, VALUE, VALUE);
+extern VALUE rbgm_surface_getat(int, VALUE*, VALUE);
 
 extern VALUE rbgm_surface_pixels(VALUE);
 
