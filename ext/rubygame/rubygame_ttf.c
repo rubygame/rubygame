@@ -113,6 +113,17 @@ VALUE rbgm_ttf_initialize(int argc, VALUE *argv, VALUE self)
 	return self;
 }
 
+/*
+ *--
+ * TODO:
+ *   Don't Repeat Yourself - bold/italic/underline = much repeated code.
+ *   - Make a getter which takes the current style and a TTF_STYLE_* flag
+ *     and checks if it is that style.
+ *   - Make a setter which takes the font, a TTF_STYLE_* flag, and the
+ *     true/false argument, and sets the style.
+ *++
+ */
+
 /*  call-seq:
  *    bold  ->  Bool
  *
@@ -366,7 +377,7 @@ VALUE rbgm_ttf_render(int argc, VALUE *argv, VALUE self)
 	fore.g = NUM2UINT(rb_ary_entry(vfg,1));
 	fore.b = NUM2UINT(rb_ary_entry(vfg,2));
 
-	if( !NIL_P(vbg) )
+	if( RTEST(vbg) )
 	{
 		Check_Type(vbg,T_ARRAY);
 		back.r = NUM2UINT(rb_ary_entry(vbg,0));
