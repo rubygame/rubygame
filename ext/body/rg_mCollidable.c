@@ -15,6 +15,7 @@ static VALUE rg_cCircle;
 static VALUE rg_cRect;
 static VALUE rg_cSegment;
 static VALUE rg_cFtor;
+static ID rg_id_call;
 
 int rg_collidable_type(VALUE class)
 {
@@ -25,8 +26,24 @@ int rg_collidable_type(VALUE class)
 	return 0;
 }
 
+// ruby bail out if non-C-classes are involved
+int rg_collidable_crb_collide(VALUE a, VALUE b)
+{
+	VALUE colliders = rb_iv_get(mCollidable, "@colliders");
+	VALUE key = rb_ary_new3(2, CLASS_OF(a), CLASS_OF(b));
+	VALUE collider  = rb_hash_aref(colliders, key);
+	if (NIL_P(collider)) {
+		rb_raise(rb_eArgError,"Could not collide %s with %s",
+			rb_class2name(CLASS_OF(a)),
+			rb_class2name(CLASS_OF(b))
+		);
+		return -1;
+	}
+	return RTEST(rb_funcall(collider, rg_id_call, 2, a, b)) ? 1 : 0;
+}
+
 // returns -1 on error, 0 if no collision and 1 if collides
-int rg_collidable_collide(int ta, int tb, void *a, void *b)
+int rg_collidable_cc_collide(int ta, int tb, void *a, void *b)
 {
 	if (ta > tb) {
 		void *tmp;
@@ -173,10 +190,15 @@ int rg_collidable_collide_bodies(VALUE a, VALUE b)
 	VALUE cb = CLASS_OF(b);
 	int   ta = rg_collidable_type(ca);
 	int   tb = rg_collidable_type(cb);
-	rg_collidable_extract_struct(&p_a, ca, a);
-	rg_collidable_extract_struct(&p_b, cb, b);
-
-	return rg_collidable_collide(ta, tb, p_a, p_b);
+	
+	if (ta && tb) {
+		rg_collidable_extract_struct(&p_a, ca, a);
+		rg_collidable_extract_struct(&p_b, cb, b);
+		
+		return rg_collidable_cc_collide(ta, tb, p_a, p_b);
+	} else {
+		return rg_collidable_crb_collide(a, b);
+	}
 }
 
 /*** RUBY STUFF ***************************************************************/
@@ -203,9 +225,20 @@ static VALUE rg_collidable_rb_collide(VALUE class, VALUE a, VALUE b)
 
 static VALUE rg_collidable_rb_collide_single(VALUE self, VALUE other)
 {
-	int result = rg_collidable_collide_bodies(self, other);
-	return INT2FIX(result);
-	//return () ? other : Qnil;
+	switch(rg_collidable_collide_bodies(self, other)) {
+		case -1:
+			rb_raise(rb_eArgError,"Could not collide %s with %s",
+				rb_class2name(CLASS_OF(self)),
+				rb_class2name(CLASS_OF(other))
+			);
+		case 0:
+			return Qnil;
+		case 1:
+			return other;
+		default:
+			rb_raise(rb_eNotImpError,"Unexpected return value from collide_bodes.");
+	}
+	return Qnil;			
 }
 
 static VALUE rg_collidable_rb_collide(int argc, VALUE *argv, VALUE self)
@@ -237,9 +270,13 @@ static VALUE rg_collidable_rb_collide_key(int argc, VALUE *argv, VALUE self)
 
 void Init_rg_mCollidable()
 {
+	ID rg_id_call = rb_intern("call");
+
 	mRubygame   = rb_define_module("Rubygame");
 	mBody       = rb_define_module_under(mRubygame, "Body");
 	mCollidable = rb_define_module_under(mBody, "Collidable");
+	
+	rb_iv_set(mCollidable, "@colliders", rb_hash_new());
 
 	rg_cFtor    = rb_define_class_under(mBody, "Ftor", rb_cObject);
 	rg_cSegment = rb_define_class_under(mBody, "Segment", rb_cObject);
