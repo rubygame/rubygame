@@ -39,10 +39,11 @@ VALUE rbgm_mixchan_pause( VALUE, VALUE );
 VALUE rbgm_mixchan_resume( VALUE, VALUE );
 
 VALUE cMusic;
-VALUE rbgm_music_new(VALUE, VALUE);
-VALUE rbgm_mixchan_stop_music( VALUE );
-VALUE rbgm_mixchan_play_music( VALUE, VALUE, VALUE );
-VALUE rbgm_mixchan_music_volume( VALUE, VALUE );
+VALUE rbgm_mixmusic_new(VALUE, VALUE);
+VALUE rbgm_mixmusic_stop( VALUE );
+VALUE rbgm_mixmusic_play( VALUE, VALUE );
+VALUE rbgm_mixmusic_getvolume( VALUE );
+VALUE rbgm_mixmusic_setvolume( VALUE, VALUE );
 
 /* call-seq:
  *  open_audio( frequency, format, channels, samplesize)
@@ -142,13 +143,13 @@ VALUE rbgm_mixer_setmixchans(VALUE module, VALUE channelsv)
 }
 
 /* call-seq:
- *  load_file( filename )  ->  Music
+ *  load_audio( filename )  ->  Music
  *
  *  Load music from a file.
  *
  *  Raises SDLError if the music could not be loaded.
  */
-VALUE rbgm_music_new(VALUE class, VALUE filev)
+VALUE rbgm_mixmusic_new(VALUE class, VALUE filev)
 {
   VALUE self;
   Mix_Music* music;
@@ -168,7 +169,7 @@ VALUE rbgm_music_new(VALUE class, VALUE filev)
 }
 
 /* call-seq:
- *  load_file( filename )  ->  Sample
+ *  load_audio( filename )  ->  Sample
  *
  *  Load an audio sample (a "chunk", to use SDL_mixer's term) from a file.
  *  Only WAV files are supported at this time.
@@ -195,10 +196,10 @@ VALUE rbgm_sample_new(VALUE class, VALUE filev)
 }
 
 /* call-seq:
- *  play_music(sample, repeats )  ->  integer
+ *  play(sample, repeats )
  *
  *  Play music, repeating a certain number
- *  of extra times. Return 0
+ *  of extra times.
  *
  *  Raises SDLError if something goes wrong.
  *  
@@ -207,7 +208,7 @@ VALUE rbgm_sample_new(VALUE class, VALUE filev)
  *  repeats::     how many extra times to repeat the sample.
  *                Can be -1 to repeat forever until it is stopped.
  */
-VALUE rbgm_mixchan_play_music( VALUE self, VALUE musicv, VALUE loopsv )
+VALUE rbgm_mixmusic_play( VALUE musicv, VALUE loopsv )
 {
   Mix_Music* music;
   int loops, result;
@@ -223,7 +224,7 @@ VALUE rbgm_mixchan_play_music( VALUE self, VALUE musicv, VALUE loopsv )
              Mix_GetError());
   }
 
-  return INT2NUM( result );
+  return Qnil;
 }
 
 /* call-seq:
@@ -264,23 +265,33 @@ VALUE rbgm_mixchan_play( VALUE self, VALUE samplev, VALUE chanv, VALUE loopsv )
 
 
 /* call-seq:
- *  stop_music( )
+ *  stop
  *
  *  Stop playback of music.
- *  See also #play_music.
+ *  See also #play
  */
-VALUE rbgm_mixchan_stop_music( VALUE self )
+VALUE rbgm_mixmusic_stop( VALUE self )
 {
   Mix_HaltMusic();
   return Qnil;
 }
 
 /* call-seq:
- *  music_volume( volume )
+ *  volume
  *
- *  Sets the volume of the music
+ *  Returns the current volume level of the music.
  */
-VALUE rbgm_mixchan_music_volume( VALUE self, VALUE volumev )
+VALUE rbgm_mixmusic_getvolume( VALUE self )
+{
+  return INT2NUM(Mix_VolumeMusic(-1));
+}
+
+/* call-seq:
+ *  volume = new_volume
+ *
+ *  Sets the volume level of the music.
+ */
+VALUE rbgm_mixmusic_setvolume( VALUE self, VALUE volumev )
 {
   Mix_VolumeMusic(NUM2INT(volumev));
   return Qnil;
@@ -362,12 +373,13 @@ void Init_rubygame_mixer()
   rb_define_module_function(mMixer,"mix_channels",rbgm_mixer_getmixchans, 0);
   rb_define_module_function(mMixer,"mix_channels=",rbgm_mixer_setmixchans, 1);
 
-  /* Stores audio data to play with Mixer.play_music() */
+  /* Stores music audio data. */
   cMusic = rb_define_class_under(mMixer, "Music", rb_cObject);
-  rb_define_singleton_method(cMusic, "load_audio", rbgm_music_new, 1);
-  rb_define_module_function(mMixer,"play_music", rbgm_mixchan_play_music, 2);
-  rb_define_module_function(mMixer,"stop_music", rbgm_mixchan_stop_music, 0);
-  rb_define_module_function(mMixer,"music_volume", rbgm_mixchan_music_volume, 1);
+  rb_define_singleton_method(cMusic, "load_audio", rbgm_mixmusic_new, 1);
+  rb_define_method(cMusic,"play", rbgm_mixmusic_play, 1);
+  rb_define_method(cMusic,"stop", rbgm_mixmusic_stop, 0);
+  rb_define_method(cMusic,"volume", rbgm_mixmusic_getvolume, 0);
+  rb_define_method(cMusic,"volume=", rbgm_mixmusic_setvolume, 1);
 
   /* Stores audio data to play with Mixer.play() */
   cSample = rb_define_class_under(mMixer, "Sample", rb_cObject);
