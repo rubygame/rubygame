@@ -101,7 +101,7 @@ VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
 VALUE rbgm_screen_setmode(int argc, VALUE *argv, VALUE module)
 {
   SDL_Surface *screen;
-  int w, h, depth, i;
+  int w, h, depth;
   Uint32 flags;
 	VALUE vsize, vdepth, vflags;
 
@@ -117,24 +117,7 @@ VALUE rbgm_screen_setmode(int argc, VALUE *argv, VALUE module)
 		depth = NUM2INT(vdepth);
 	}
 
-	flags = 0;
-  if( RTEST(vflags) )
-	{
-    switch( TYPE(vflags) ){
-			case T_ARRAY: {
-				for(i=0;  i < RARRAY(vflags)->len;  i++)
-        {
-          flags |= NUM2UINT(  rb_ary_entry( vflags,i )  );
-        }
-			}
-			case T_FIXNUM: {
-				flags = NUM2UINT( vflags );
-			}
-			default: {
-				rb_raise(rb_eArgError,"Wrong type for argument `flags' (wanted Fixnum or Array).");
-			}
-    }
-	}
+	flags = collapse_flags(vflags); /* in rubygame_shared */
 
   screen = SDL_SetVideoMode( w,h,depth,flags );
 

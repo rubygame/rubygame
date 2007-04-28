@@ -150,26 +150,7 @@ VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 		rb_raise(rb_eArgError,"Array is too short for Surface size (%d for 2)",\
 			RARRAY(vsize)->len);
 	
-
-	flags = 0;
-	if( !NIL_P(vflags) )
-	{
-		switch( TYPE(vflags) ){
-			case T_ARRAY: {
-				int counter = 0;
-				for(counter; counter < RARRAY(vflags)->len; counter += 1)
-				{
-					flags |= NUM2UINT( rb_ary_entry(vflags, counter) );
-				}
-			}
-			case T_FIXNUM: {
-				flags = NUM2UINT(vflags);
-			}
-			default: {
-				rb_raise(rb_eArgError,"Wrong type for argument `flags' (wanted Fixnum or Array).");
-			}
-		}
-	}
+	flags = collapse_flags(vflags); /* in rubygame_shared */
 
 	/* Finally, we can create the new Surface! Or try, anyway... */
 	self_surf = SDL_CreateRGBSurface(flags,w,h,depth,Rmask,Gmask,Bmask,Amask);

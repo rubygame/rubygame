@@ -31,6 +31,7 @@ extern VALUE eSDLError;
 extern VALUE cSurface;
 extern VALUE cRect;
 extern SDL_Rect *make_rect(int, int, int, int);
+extern Uint32 collapse_flags(VALUE);
 extern void Init_rubygame_shared();
 
 #endif
