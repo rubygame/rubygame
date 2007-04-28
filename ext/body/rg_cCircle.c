@@ -113,8 +113,8 @@ static VALUE rg_circle_rb_inspect(VALUE self)
 
 void Init_rg_cCircle()
 {
-	mRubygame = rb_define_module("Rubygame");
-	mBody     = rb_define_module_under(mRubygame, "Body");
+	mRubygame   = rb_define_module("Rubygame");
+	mBody       = rb_define_module_under(mRubygame, "Body");
 
 	rg_cCircle  = rb_define_class_under(mBody, "Circle", rb_cObject);
 	rg_cRect    = rb_define_class_under(mBody, "Rect", rb_cObject);

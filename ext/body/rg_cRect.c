@@ -4,6 +4,7 @@
 #include "rg_cFtor.h"
 #include "rg_cSegment.h"
 #include "rg_cRect.h"
+#include "defines.h"
 
 static VALUE mRubygame;
 static VALUE mBody;
@@ -12,6 +13,27 @@ static VALUE rg_cFtor;
 static VALUE rg_cSegment;
 static VALUE rg_cRect;
 static VALUE rg_cCircle;
+
+void rg_rect_top(rg_segment *seg, rg_rect *rect)
+{
+	seg->start = rect->topleft;
+	seg->vec   = rect->horizontal;
+}
+void rg_rect_right(rg_segment *seg, rg_rect *rect)
+{
+	rg_ftor_add(&seg->start, &rect->topleft, &rect->horizontal);
+	rg_ftor_negate(&seg->vec, &rect->vertical);
+}
+void rg_rect_bottom(rg_segment *seg, rg_rect *rect)
+{
+	rg_ftor_add(&seg->start, &rect->topleft, &rect->vertical);
+	seg->vec   = rect->horizontal;
+}
+void rg_rect_left(rg_segment *seg, rg_rect *rect)
+{
+	seg->start = rect->topleft;
+	seg->vec   = rect->vertical;
+}
 
 void rg_rect_top_mid(rg_ftor *ftor, rg_rect *rect)
 {
@@ -273,10 +295,11 @@ static VALUE rg_rect_rb_rotate(VALUE self, VALUE rad, VALUE center)
 static VALUE rg_rect_rb_inspect(VALUE self)
 {
 	rg_rect *rect;
-	rg_ftor  topright, bottomright, bottomleft;
 	Data_Get_Struct(self, rg_rect, rect);
 	VALUE str;
 	char buf[255];
+
+	rg_ftor  topright, bottomright, bottomleft;
 	rg_rect_top_right(&topright, rect);
 	rg_rect_bottom_right(&bottomright, rect);
 	rg_rect_bottom_left(&bottomleft, rect);

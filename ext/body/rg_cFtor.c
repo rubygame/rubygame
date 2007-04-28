@@ -1,6 +1,7 @@
 #include <math.h>
 #include <ruby.h>
 #include "rg_cFtor.h"
+#include "defines.h"
 
 static VALUE mRubygame;
 static VALUE mBody;

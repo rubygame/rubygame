@@ -1,12 +1,7 @@
-#define RAD2DEG(x) ((x)*180/M_PI)
-#define DEG2RAD(x) ((x)/180*M_PI)
-
-typedef struct {
+typedef struct rg_ftor_struct {
 	double x;
 	double y;
 } rg_ftor;
-
-void Init_rg_cFtor();
 
 // sum of two ftors
 void rg_ftor_add(rg_ftor *result, rg_ftor *a, rg_ftor *b);
@@ -55,3 +50,5 @@ double rg_ftor_angle_deg(rg_ftor *a);
 
 // the angle between two vectors
 double rg_ftor_angle_between(rg_ftor *a, rg_ftor *b);
+
+void Init_rg_cFtor();

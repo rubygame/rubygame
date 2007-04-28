@@ -3,6 +3,7 @@
 #include <math.h>
 #include "rg_cFtor.h"
 #include "rg_cSegment.h"
+#include "defines.h"
 
 static VALUE mRubygame;
 static VALUE mBody;
