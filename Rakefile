@@ -216,6 +216,18 @@ rubygame_core = ExtensionModule.new do |core|
   core.create_dl_task()
 end
 
+rubygame_body = ExtensionModule.new do |body|
+	body.dynlib = 'rubygame_body'
+	body.objs = %w(	rubygame_mBody
+									rubygame_mCollidable
+									rubygame_cFtor
+									rubygame_cSegment
+									rubygame_cRect
+									rubygame_cCircle
+							)
+  body.create_dl_task()
+end
+
 # TODO: We should check if the libraries exist?
 
 rubygame_gfx = ExtensionModule.new do |gfx|
