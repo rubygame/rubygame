@@ -277,7 +277,7 @@ def depends_headers( filename )
       end
     end
   end
-  return depends
+  return []
 end
 
 begin

@@ -287,22 +287,14 @@ int rg_collidable_collide_bodies(VALUE a, VALUE b)
 }
 
 /*** RUBY STUFF ***************************************************************/
-/*
-static VALUE rg_collidable_rb_collide(VALUE class, VALUE a, VALUE b)
-{
-	void *p_a;
-	void *p_b;
-	VALUE ca = CLASS_OF(a);
-	VALUE cb = CLASS_OF(b);
-	int   ta = rg_collidable_type(ca);
-	int   tb = rg_collidable_type(cb);
-	rg_collidable_extract_struct(p_a, ca, a);
-	rg_collidable_extract_struct(p_b, cb, b);
 
-	return INT2FIX(rg_collidable_collide(ta, tb, p_a, p_b));
-}
-*/
-
+/* 
+ *  call-seq:
+ *    collide?(other_body)  ->  other_body or nil
+ *
+ *  Test if caller collides with other_body.
+ *  Also see Collidable#collide
+ */
 static VALUE rg_collidable_rb_collide_single(VALUE self, VALUE other)
 {
 	switch(rg_collidable_collide_bodies(self, other)) {
@@ -321,6 +313,18 @@ static VALUE rg_collidable_rb_collide_single(VALUE self, VALUE other)
 	return Qnil;			
 }
 
+/* 
+ *  call-seq:
+ *    collide?(list_of_bodies, stop_after=-1)  ->  list of colliding bodies
+ *    collide?(list_of_bodies, stop_after=-1) { |colliding_body| } ->  mapped list of colliding bodies
+ *
+ *  Get all bodies that collide. The optional block is called for every colliding body
+ *  and the result of the block will be in the list instead of the body.
+ *  The optional stop_after argument allows to specify a maximum count of colliding
+ *  bodies, negative numbers are taken as N less than there are bodies (e.g. if you
+ *  have 10 bodies and stop_after = -4 it would mean max. 6, -1 means all possible)
+ *  Also see Collidable#collide?
+ */
 static VALUE rg_collidable_rb_collide(int argc, VALUE *argv, VALUE self)
 {
 	VALUE rb_objects, rb_stop_after;
@@ -346,6 +350,12 @@ static VALUE rg_collidable_rb_collide(int argc, VALUE *argv, VALUE self)
 	return results;
 }
 
+/*
+ * Document-module: Rubygame::Body::Collidable
+ *
+ *  Collidable is a mixin for Body representations to add collision
+ *  detection.
+ */
 void Init_rg_mCollidable()
 {
 	ID rg_id_call = rb_intern("call");

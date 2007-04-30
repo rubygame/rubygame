@@ -26,6 +26,13 @@ void rg_segment_rotate_around(rg_segment *seg, rg_ftor *center, double rad)
 
 
 /***  RUBY method wrappers  ***************************************************/
+
+/* 
+ *  call-seq:
+ *    Segment.new(Ftor begin, Ftor vector) -> Segment
+ *
+ *  Create a Segment from it's begin and the vector needed to add to get to the end.
+ */
 static VALUE rg_segment_rb_singleton_new(int argc, VALUE *argv, VALUE class)
 {
 	rg_segment *seg;
@@ -35,6 +42,12 @@ static VALUE rg_segment_rb_singleton_new(int argc, VALUE *argv, VALUE class)
 	return rb_seg;
 }
 
+/* 
+ *  call-seq:
+ *    Segment.points(x1,y1, x2,y2) -> Segment
+ *
+ *  Create a Segment from it's begins and ends components.
+ */
 static VALUE rg_segment_rb_singleton_points(VALUE class, VALUE bx, VALUE by, VALUE ex, VALUE ey)
 {
 	rg_segment *seg;
@@ -48,6 +61,9 @@ static VALUE rg_segment_rb_singleton_points(VALUE class, VALUE bx, VALUE by, VAL
 	return rb_seg;
 }
 
+/* 
+ *  :nodoc:
+ */
 static VALUE rg_segment_rb_initialize(VALUE self, VALUE start, VALUE vec)
 {
 	rg_segment *seg;
@@ -60,6 +76,12 @@ static VALUE rg_segment_rb_initialize(VALUE self, VALUE start, VALUE vec)
 	return self;
 }
 
+/* 
+ *  call-seq:
+ *    begin -> Ftor
+ *
+ *  Returns the Ftor pointing to the begin of the Segment.
+ */
 static VALUE rg_segment_rb_begin(VALUE self)
 {
 	rg_segment *seg;
@@ -71,6 +93,12 @@ static VALUE rg_segment_rb_begin(VALUE self)
 	return rb_ftor;
 }
 
+/* 
+ *  call-seq:
+ *    center -> Ftor
+ *
+ *  Returns the Ftor pointing to the center of the Segment.
+ */
 static VALUE rg_segment_rb_center(VALUE self)
 {
 	rg_segment *seg;
@@ -83,6 +111,12 @@ static VALUE rg_segment_rb_center(VALUE self)
 	return rb_ftor;
 }
 
+/* 
+ *  call-seq:
+ *    end -> Ftor
+ *
+ *  Returns the Ftor pointing to the end of the Segment.
+ */
 static VALUE rg_segment_rb_end(VALUE self)
 {
 	rg_segment *seg;
@@ -93,6 +127,12 @@ static VALUE rg_segment_rb_end(VALUE self)
 	return rb_ftor;
 }
 
+/* 
+ *  call-seq:
+ *    vec -> Ftor
+ *
+ *  Returns the Ftor from begin to end of the Segment.
+ */
 static VALUE rg_segment_rb_vec(VALUE self)
 {
 	rg_segment *seg;
@@ -104,6 +144,12 @@ static VALUE rg_segment_rb_vec(VALUE self)
 	return rb_ftor;
 }
 
+/* 
+ *  call-seq:
+ *    length -> Float
+ *
+ *  Returns the length of the Segment (same as vec.magnitude).
+ */
 static VALUE rg_segment_rb_length(VALUE self)
 {
 	rg_segment *seg;
@@ -111,6 +157,12 @@ static VALUE rg_segment_rb_length(VALUE self)
 	return rb_float_new(rg_ftor_magnitude(&seg->vec));
 }
 
+/* 
+ *  call-seq:
+ *    angle -> Float
+ *
+ *  Returns the angle of the Segment (in radians).
+ */
 static VALUE rg_segment_rb_angle(VALUE self)
 {
 	rg_segment *seg;
@@ -118,6 +170,12 @@ static VALUE rg_segment_rb_angle(VALUE self)
 	return rb_float_new(rg_ftor_angle(&seg->vec));
 }
 
+/* 
+ *  call-seq:
+ *    move(by) -> self
+ *
+ *  Move Segment by Ftor 'by'.
+ */
 static VALUE rg_segment_rb_move(VALUE self, VALUE by)
 {
 	rg_segment *seg;
@@ -128,6 +186,13 @@ static VALUE rg_segment_rb_move(VALUE self, VALUE by)
 	return self;
 }
 
+/* 
+ *  call-seq:
+ *    rotate(radians, around) -> self
+ *
+ *  Rotates the Segment around the position 'around' which must be given as an
+ *  Ftor, by an angle of 'radians' which must be given in radians.
+ */
 static VALUE rg_segment_rb_rotate(VALUE self, VALUE rad, VALUE center)
 {
 	rg_segment *seg;
@@ -138,6 +203,12 @@ static VALUE rg_segment_rb_rotate(VALUE self, VALUE rad, VALUE center)
 	return self;
 }
 
+/* 
+ *  call-seq:
+ *    inspect -> String
+ *
+ *  Begin and end, magnitude and angle of the Segment as String.
+ */
 static VALUE rg_segment_rb_inspect(VALUE self)
 {
 	rg_segment *seg;
@@ -162,6 +233,11 @@ static VALUE rg_segment_rb_inspect(VALUE self)
 	return str;
 }
 
+/*
+ * Document-class: Rubygame::Body::Segment
+ *
+ *  Segment represents a line segment, determined by a begin and an end.
+ */
 void Init_rg_cSegment()
 {
 	mRubygame = rb_define_module("Rubygame");

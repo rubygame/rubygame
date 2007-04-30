@@ -108,6 +108,13 @@ double rg_ftor_angle_between(rg_ftor *a, rg_ftor *b)
 
 
 /***  RUBY method wrappers  ***************************************************/
+
+/* 
+ *  call-seq:
+ *    Ftor.new(x,y) -> Ftor
+ *
+ *  Create an Ftor from components. See also Ftor::[] (it's faster).
+ */
 static VALUE rg_ftor_rb_singleton_new(int argc, VALUE *argv, VALUE class)
 {
 	rg_ftor *ftor;
@@ -117,6 +124,13 @@ static VALUE rg_ftor_rb_singleton_new(int argc, VALUE *argv, VALUE class)
 	return rb_ftor;
 }
 
+/* 
+ *  call-seq:
+ *    Ftor[x,y] -> Ftor
+ *
+ *  Create an Ftor from components. This method is both, less to type and
+ *  faster than Ftor.new.
+ */
 static VALUE rg_ftor_rb_singleton_bracket(VALUE class, VALUE x, VALUE y)
 {
 	rg_ftor *ftor;
@@ -126,6 +140,12 @@ static VALUE rg_ftor_rb_singleton_bracket(VALUE class, VALUE x, VALUE y)
 	return rb_ftor;	
 }
 
+/* 
+ *  call-seq:
+ *    Ftor.new(magnitude, angle) -> Ftor
+ *
+ *  Create an Ftor from angle (in radians) and magnitude.
+ */
 static VALUE rg_ftor_rb_singleton_polar(VALUE class, VALUE mag, VALUE rad)
 {
 	rg_ftor *ftor;
@@ -134,6 +154,9 @@ static VALUE rg_ftor_rb_singleton_polar(VALUE class, VALUE mag, VALUE rad)
 	return rb_ftor;	
 }
 
+/*
+ *  :nodoc:
+ */
 static VALUE rg_ftor_rb_initialize(VALUE self, VALUE x, VALUE y)
 {
 	rg_ftor *ftor;
@@ -143,6 +166,12 @@ static VALUE rg_ftor_rb_initialize(VALUE self, VALUE x, VALUE y)
 	return self;
 }
 
+/* 
+ *  call-seq:
+ *    y -> Float
+ *
+ *  The x component of the receiver.
+ */
 static VALUE rg_ftor_rb_x(VALUE self)
 {
 	rg_ftor *ftor;
@@ -150,6 +179,12 @@ static VALUE rg_ftor_rb_x(VALUE self)
 	return rb_float_new(ftor->x);
 }
 
+/* 
+ *  call-seq:
+ *    y -> Float
+ *
+ *  The y component of the receiver.
+ */
 static VALUE rg_ftor_rb_y(VALUE self)
 {
 	rg_ftor *ftor;
@@ -157,6 +192,13 @@ static VALUE rg_ftor_rb_y(VALUE self)
 	return rb_float_new(ftor->y);
 }
 
+/* 
+ *  call-seq:
+ *    magnitude -> Float
+ *
+ *  The magnitude of the receiver. Can be used to calculate distances.
+ *  I.e. the distance between 5,5 and 10,8 is (Ftor[5,5]-Ftor[10,8]).magnitude.
+ */
 static VALUE rg_ftor_rb_magnitude(VALUE self)
 {
 	rg_ftor *ftor;
@@ -164,6 +206,12 @@ static VALUE rg_ftor_rb_magnitude(VALUE self)
 	return rb_float_new(rg_ftor_magnitude(ftor));
 }
 
+/* 
+ *  call-seq:
+ *    angle -> Float
+ *
+ *  The angle of the receiver in radians.
+ */
 static VALUE rg_ftor_rb_angle(VALUE self)
 {
 	rg_ftor *ftor;
@@ -171,6 +219,12 @@ static VALUE rg_ftor_rb_angle(VALUE self)
 	return rb_float_new(rg_ftor_angle(ftor));
 }
 
+/* 
+ *  call-seq:
+ *    angle_deg -> Float
+ *
+ *  The angle of a the receiver in degrees.
+ */
 static VALUE rg_ftor_rb_angle_deg(VALUE self)
 {
 	rg_ftor *ftor;
@@ -178,6 +232,12 @@ static VALUE rg_ftor_rb_angle_deg(VALUE self)
 	return rb_float_new(rg_ftor_angle_deg(ftor));
 }
 
+/* 
+ *  call-seq:
+ *    self + other -> Ftor
+ *
+ *  Sum of two Ftors (component wise addition).
+ */
 static VALUE rg_ftor_rb_binary_plus(VALUE self, VALUE other)
 {
 	rg_ftor *a, *b, *c;
@@ -191,6 +251,12 @@ static VALUE rg_ftor_rb_binary_plus(VALUE self, VALUE other)
 	return rb_ftor;
 }
 
+/* 
+ *  call-seq:
+ *    self - other -> Ftor
+ *
+ *  Difference of two Ftors (component wise subtraction).
+ */
 static VALUE rg_ftor_rb_binary_minus(VALUE self, VALUE other)
 {
 	rg_ftor *a, *b, *c;
@@ -204,6 +270,12 @@ static VALUE rg_ftor_rb_binary_minus(VALUE self, VALUE other)
 	return rb_ftor;
 }
 
+/* 
+ *  call-seq:
+ *    +ftor -> Ftor
+ *
+ *  Returns a duplicate of self.
+ */
 static VALUE rg_ftor_rb_unary_plus(VALUE self)
 {
 	rg_ftor *a, *b;
@@ -214,6 +286,12 @@ static VALUE rg_ftor_rb_unary_plus(VALUE self)
 	return rb_ftor;	
 }
 
+/* 
+ *  call-seq:
+ *    -ftor -> Ftor
+ *
+ *  Returns an Ftor with all components negated.
+ */
 static VALUE rg_ftor_rb_unary_minus(VALUE self)
 {
 	rg_ftor *a, *b;
@@ -224,6 +302,13 @@ static VALUE rg_ftor_rb_unary_minus(VALUE self)
 	return rb_ftor;	
 }
 
+/* 
+ *  call-seq:
+ *    dot(other_ftor) -> Float
+ *
+ *  Returns the dot product between receiver and other_ftor (sum of products of components,
+ *  i.e. a.x*b.x + a.y*b.y).
+ */
 static VALUE rg_ftor_rb_dotproduct(VALUE self, VALUE other)
 {
 	rg_ftor *a, *b;
@@ -234,6 +319,12 @@ static VALUE rg_ftor_rb_dotproduct(VALUE self, VALUE other)
 	return rb_float_new(rg_ftor_dotproduct(a, b));
 }
 
+/* 
+ *  call-seq:
+ *    normalized -> Ftor
+ *
+ *  Returns an Ftor with the same angle but normalized magnitude ( == 1).
+ */
 static VALUE rg_ftor_rb_normalized(VALUE self)
 {
 	rg_ftor *a, *b;
@@ -244,6 +335,12 @@ static VALUE rg_ftor_rb_normalized(VALUE self)
 	return rb_ftor;	
 }
 
+/* 
+ *  call-seq:
+ *    resized_to(new_magnitude) -> Ftor
+ *
+ *  Returns an Ftor with the same angle but magnitude scaled by factor 'new_magnitude'.
+ */
 static VALUE rg_ftor_rb_resized_to(VALUE self, VALUE size)
 {
 	rg_ftor *a, *b;
@@ -254,6 +351,12 @@ static VALUE rg_ftor_rb_resized_to(VALUE self, VALUE size)
 	return rb_ftor;	
 }
 
+/* 
+ *  call-seq:
+ *    resized_by(factor) -> Ftor
+ *
+ *  Returns an Ftor with the same angle but magnitude scaled by factor 'factor'.
+ */
 static VALUE rg_ftor_rb_resized_by(VALUE self, VALUE factor)
 {
 	rg_ftor *a, *b;
@@ -264,6 +367,13 @@ static VALUE rg_ftor_rb_resized_by(VALUE self, VALUE factor)
 	return rb_ftor;	
 }
 
+/* 
+ *  call-seq:
+ *    rotated_to(radians) -> Ftor
+ *
+ *  Returns an Ftor with the same magnitude but the angle rotated to the angle
+ *  'radians' given in radians.
+ */
 static VALUE rg_ftor_rb_rotated_to(VALUE self, VALUE rad)
 {
 	rg_ftor *a, *b;
@@ -274,6 +384,13 @@ static VALUE rg_ftor_rb_rotated_to(VALUE self, VALUE rad)
 	return rb_ftor;	
 }
 
+/* 
+ *  call-seq:
+ *    rotated_by(radians) -> Ftor
+ *
+ *  Returns an Ftor with the same magnitude but the angle rotated by the angle
+ *  'radians' given in radians.
+ */
 static VALUE rg_ftor_rb_rotated_by(VALUE self, VALUE rad)
 {
 	rg_ftor *a, *b;
@@ -284,6 +401,14 @@ static VALUE rg_ftor_rb_rotated_by(VALUE self, VALUE rad)
 	return rb_ftor;	
 }
 
+/* 
+ *  call-seq:
+ *    rotated_around(Ftor center, radians) -> Ftor
+ *
+ *  A new Ftor created by rotating the point in the coordinate system the Ftor
+ *  as position vector determines rotated around point 'center' given as Ftor
+ *  by an angle 'radians' in radians.
+ */
 static VALUE rg_ftor_rb_rotated_around(VALUE self, VALUE center, VALUE rad)
 {
 	rg_ftor *a, *b, *c;
@@ -295,6 +420,12 @@ static VALUE rg_ftor_rb_rotated_around(VALUE self, VALUE center, VALUE rad)
 	return rb_ftor;	
 }
 
+/* 
+ *  call-seq:
+ *    projected(Ftor on) -> Ftor
+ *
+ *  Projects the Ftor on another Ftor.
+ */
 static VALUE rg_ftor_rb_projected(VALUE self, VALUE project_on)
 {
 	rg_ftor *a, *b, *c;
@@ -308,6 +439,12 @@ static VALUE rg_ftor_rb_projected(VALUE self, VALUE project_on)
 	return rb_ftor;	
 }
 
+/* 
+ *  call-seq:
+ *    to_a -> [x, y]
+ *
+ *  Returns an array with the components.
+ */
 static VALUE rg_ftor_rb_to_a(VALUE self)
 {
 	rg_ftor *ftor;
@@ -315,6 +452,12 @@ static VALUE rg_ftor_rb_to_a(VALUE self)
 	return rb_ary_new3(2, rb_float_new(ftor->x), rb_float_new(ftor->y));
 }
 
+/* 
+ *  call-seq:
+ *    to_s -> String
+ *
+ *  The components as String.
+ */
 static VALUE rg_ftor_rb_to_s(VALUE self)
 {
 	rg_ftor *ftor;
@@ -322,8 +465,7 @@ static VALUE rg_ftor_rb_to_s(VALUE self)
 	VALUE str;
 	char buf[255];
 	
-	sprintf(buf, "<%s %.0f, %.0f>",
-		"Ftor",
+	sprintf(buf, "%.0f, %.0f",
 		ftor->x,
 		ftor->y
 	);
@@ -331,6 +473,12 @@ static VALUE rg_ftor_rb_to_s(VALUE self)
 	return str;
 }
 
+/* 
+ *  call-seq:
+ *    inspect -> String
+ *
+ *  The components, magnitude and angle.
+ */
 static VALUE rg_ftor_rb_inspect(VALUE self)
 {
 	rg_ftor *ftor;
@@ -350,6 +498,13 @@ static VALUE rg_ftor_rb_inspect(VALUE self)
 	return str;
 }
 
+/*
+ * Document-class: Rubygame::Body::Ftor
+ *
+ *  Ftor (from Fake vecTOR, as it is similar to a vector but sports some
+ *  methods that don't belong to a vector and also is limited to 2d) is
+ *  a Vector like class, used to represent Points, Movements and Distances.
+ */
 void Init_rg_cFtor()
 {
 	mRubygame = rb_define_module("Rubygame");

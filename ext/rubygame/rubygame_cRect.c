@@ -99,6 +99,10 @@ void rg_rect_rotate_around(rg_rect *rect, rg_ftor *center, double rad)
 
 
 /***  RUBY method wrappers  ***************************************************/
+
+/*
+ * :nodoc:
+ */
 static VALUE rg_rect_rb_singleton_new(int argc, VALUE *argv, VALUE class)
 {
 	rg_rect *rect;
@@ -107,6 +111,13 @@ static VALUE rg_rect_rb_singleton_new(int argc, VALUE *argv, VALUE class)
 	return rb_rect;
 }
 
+/* 
+ *  call-seq:
+ *    Rect.rect(x,y,width,height)
+ *
+ *  Creates a rect with top left of 'x' and 'y' with width and height 'width' and 'height'.
+ *  Also see Rect.new.
+ */
 static VALUE rg_rect_rb_singleton_rect(VALUE class, VALUE x, VALUE y, VALUE w, VALUE h)
 {
 	rg_rect *rect;
@@ -128,6 +139,13 @@ static VALUE rg_rect_rb_singleton_rect(VALUE class, VALUE x, VALUE y, VALUE w, V
 	return rb_rect;
 }
 
+/* 
+ *  call-seq:
+ *    initialize(Ftor topleft, Ftor horizontal, Ftor vertical)
+ *
+ *  FIXME
+ *  Also see Rect.rect.
+ */
 static VALUE rg_rect_rb_initialize(VALUE self, VALUE topleft, VALUE horizontal, VALUE vertical)
 {
 	rg_rect *rect;
@@ -142,6 +160,12 @@ static VALUE rg_rect_rb_initialize(VALUE self, VALUE topleft, VALUE horizontal, 
 	return self;
 }
 
+/* 
+ *  call-seq:
+ *    left -> Segment
+ *
+ *  Returns a Segment from top left to top right of the Rect.
+ */
 static VALUE rg_rect_rb_top(VALUE self)
 {
 	rg_rect *rect;
@@ -155,6 +179,12 @@ static VALUE rg_rect_rb_top(VALUE self)
 	return rb_seg;
 }
 
+/* 
+ *  call-seq:
+ *    left -> Segment
+ *
+ *  Returns a Segment from top right to bottom right of the Rect.
+ */
 static VALUE rg_rect_rb_right(VALUE self)
 {
 	rg_rect *rect;
@@ -168,6 +198,12 @@ static VALUE rg_rect_rb_right(VALUE self)
 	return rb_seg;
 }
 
+/* 
+ *  call-seq:
+ *    left -> Segment
+ *
+ *  Returns a Segment from bottom left to bottom right of the Rect.
+ */
 static VALUE rg_rect_rb_bottom(VALUE self)
 {
 	rg_rect *rect;
@@ -181,6 +217,12 @@ static VALUE rg_rect_rb_bottom(VALUE self)
 	return rb_seg;
 }
 
+/* 
+ *  call-seq:
+ *    left -> Segment
+ *
+ *  Returns a Segment from top left to bottom left of the Rect.
+ */
 static VALUE rg_rect_rb_left(VALUE self)
 {
 	rg_rect *rect;
@@ -194,6 +236,12 @@ static VALUE rg_rect_rb_left(VALUE self)
 	return rb_seg;
 }
 
+/* 
+ *  call-seq:
+ *    top_left -> Ftor
+ *
+ *  Returns an Ftor pointing to the top left corner of the Rect.
+ */
 static VALUE rg_rect_rb_top_left(VALUE self)
 {
 	rg_rect *rect;
@@ -207,6 +255,12 @@ static VALUE rg_rect_rb_top_left(VALUE self)
 	return rb_ftor;
 }
 
+/* 
+ *  call-seq:
+ *    top_mid -> Ftor
+ *
+ *  Returns an Ftor pointing to the middle of the top Segment.
+ */
 static VALUE rg_rect_rb_top_mid(VALUE self)
 {
 	rg_rect *rect;
@@ -220,6 +274,12 @@ static VALUE rg_rect_rb_top_mid(VALUE self)
 	return rb_ftor;
 }
 
+/* 
+ *  call-seq:
+ *    top_right -> Ftor
+ *
+ *  Returns an Ftor pointing to the top right corner of the Rect.
+ */
 static VALUE rg_rect_rb_top_right(VALUE self)
 {
 	rg_rect *rect;
@@ -233,6 +293,12 @@ static VALUE rg_rect_rb_top_right(VALUE self)
 	return rb_ftor;
 }
 
+/* 
+ *  call-seq:
+ *    mid_right -> Ftor
+ *
+ *  Returns an Ftor pointing to the middle of the right Segment.
+ */
 static VALUE rg_rect_rb_mid_right(VALUE self)
 {
 	rg_rect *rect;
@@ -246,6 +312,12 @@ static VALUE rg_rect_rb_mid_right(VALUE self)
 	return rb_ftor;
 }
 
+/* 
+ *  call-seq:
+ *    bottom_right -> Ftor
+ *
+ *  Returns an Ftor pointing to the bottom right corner of the Rect.
+ */
 static VALUE rg_rect_rb_bottom_right(VALUE self)
 {
 	rg_rect *rect;
@@ -259,6 +331,12 @@ static VALUE rg_rect_rb_bottom_right(VALUE self)
 	return rb_ftor;
 }
 
+/* 
+ *  call-seq:
+ *    bottom_mid -> Ftor
+ *
+ *  Returns an Ftor pointing to the middle of the bottom Segment.
+ */
 static VALUE rg_rect_rb_bottom_mid(VALUE self)
 {
 	rg_rect *rect;
@@ -272,6 +350,12 @@ static VALUE rg_rect_rb_bottom_mid(VALUE self)
 	return rb_ftor;
 }
 
+/* 
+ *  call-seq:
+ *    bottom_left -> Ftor
+ *
+ *  Returns an Ftor pointing to the bottom left corner of the Rect.
+ */
 static VALUE rg_rect_rb_bottom_left(VALUE self)
 {
 	rg_rect *rect;
@@ -285,6 +369,12 @@ static VALUE rg_rect_rb_bottom_left(VALUE self)
 	return rb_ftor;
 }
 
+/* 
+ *  call-seq:
+ *    mid_left -> Ftor
+ *
+ *  Returns an Ftor pointing to the middle of the left Segment.
+ */
 static VALUE rg_rect_rb_mid_left(VALUE self)
 {
 	rg_rect *rect;
@@ -298,6 +388,12 @@ static VALUE rg_rect_rb_mid_left(VALUE self)
 	return rb_ftor;
 }
 
+/* 
+ *  call-seq:
+ *    center -> Ftor
+ *
+ *  Returns an Ftor pointing to the center of the Rect.
+ */
 static VALUE rg_rect_rb_center(VALUE self)
 {
 	rg_rect *rect;
@@ -311,6 +407,12 @@ static VALUE rg_rect_rb_center(VALUE self)
 	return rb_ftor;
 }
 
+/* 
+ *  call-seq:
+ *    angle -> Float
+ *
+ *  Returns the angle (measured at the top Segment) in radians.
+ */
 static VALUE rg_rect_rb_angle(VALUE self)
 {
 	rg_rect *rect;
@@ -318,6 +420,12 @@ static VALUE rg_rect_rb_angle(VALUE self)
 	return rb_float_new(rg_ftor_angle(&rect->horizontal));
 }
 
+/* 
+ *  call-seq:
+ *    move(by) -> self
+ *
+ *  Moves the Rect by an Ftor 'by'.
+ */
 static VALUE rg_rect_rb_move(VALUE self, VALUE by)
 {
 	rg_rect *rect;
@@ -331,6 +439,13 @@ static VALUE rg_rect_rb_move(VALUE self, VALUE by)
 	return self;
 }
 
+/* 
+ *  call-seq:
+ *    rotate(radians, around) -> self
+ *
+ *  Rotates the rect around the position 'around' which must be given as an
+ *  Ftor, by an angle of 'radians' which must be given in radians.
+ */
 static VALUE rg_rect_rb_rotate(VALUE self, VALUE rad, VALUE center)
 {
 	rg_rect *rect;
@@ -344,6 +459,12 @@ static VALUE rg_rect_rb_rotate(VALUE self, VALUE rad, VALUE center)
 	return self;
 }
 
+/* 
+ *  call-seq:
+ *    inspect -> String
+ *
+ *  Displays the four corners of the rect and in parens the width and height.
+ */
 static VALUE rg_rect_rb_inspect(VALUE self)
 {
 	rg_rect *rect;
@@ -374,6 +495,12 @@ static VALUE rg_rect_rb_inspect(VALUE self)
 	return str;
 }
 
+/*
+ * Document-class: Rubygame::Body::Rect
+ *
+ *  Rect is a class to represent bodies of rectangular shape.
+ *  Bodies are only used for collision and positioning.
+ */
 void Init_rg_cRect()
 {
 	mRubygame = rb_define_module("Rubygame");

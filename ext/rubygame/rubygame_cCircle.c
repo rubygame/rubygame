@@ -24,6 +24,12 @@ void rg_circle_rotate_around(rg_circle *circle, rg_ftor *center, double rad)
 
 
 /***  RUBY method wrappers  ***************************************************/
+/* 
+ *  call-seq:
+ *    Circle.new(Ftor center, radius)
+ *
+ *  Creates a Circle with center given by an Ftor 'center' and radius 'radius'.
+ */
 static VALUE rg_circle_rb_singleton_new(int argc, VALUE *argv, VALUE class)
 {
 	rg_circle *circle;
@@ -32,6 +38,9 @@ static VALUE rg_circle_rb_singleton_new(int argc, VALUE *argv, VALUE class)
 	return rb_circle;
 }
 
+/* 
+ *  :nodoc:
+ */
 static VALUE rg_circle_rb_initialize(VALUE self, VALUE center, VALUE radius)
 {
 	rg_circle *circle;
@@ -46,6 +55,12 @@ static VALUE rg_circle_rb_initialize(VALUE self, VALUE center, VALUE radius)
 	return self;
 }
 
+/* 
+ *  call-seq:
+ *    center -> Ftor
+ *
+ *  Returns an Ftor representing the center of the Circle.
+ */
 static VALUE rg_circle_rb_center(VALUE self)
 {
 	rg_circle *circle;
@@ -59,6 +74,12 @@ static VALUE rg_circle_rb_center(VALUE self)
 	return rb_ftor;
 }
 
+/* 
+ *  call-seq:
+ *    radius -> Float
+ *
+ *  Returns the radius of the Circle.
+ */
 static VALUE rg_circle_rb_radius(VALUE self)
 {
 	rg_circle *circle;
@@ -67,6 +88,12 @@ static VALUE rg_circle_rb_radius(VALUE self)
 	return rb_float_new(circle->radius);
 }
 
+/* 
+ *  call-seq:
+ *    move(by) -> self
+ *
+ *  Moves the Circle by an Ftor 'by'.
+ */
 static VALUE rg_circle_rb_move(VALUE self, VALUE by)
 {
 	rg_circle *circle;
@@ -80,6 +107,12 @@ static VALUE rg_circle_rb_move(VALUE self, VALUE by)
 	return self;
 }
 
+/* 
+ *  call-seq:
+ *    rotate(radians, around) -> self
+ *
+ *  Rotates the circle by an angle 'radians' in radians around an Ftor 'around'.
+ */
 static VALUE rg_circle_rb_rotate(VALUE self, VALUE rad, VALUE center)
 {
 	rg_circle *circle;
@@ -93,6 +126,12 @@ static VALUE rg_circle_rb_rotate(VALUE self, VALUE rad, VALUE center)
 	return self;
 }
 
+/* 
+ *  call-seq:
+ *    inspect -> String
+ *
+ *  The Circles center and radius.
+ */
 static VALUE rg_circle_rb_inspect(VALUE self)
 {
 	rg_circle *circle;
