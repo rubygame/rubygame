@@ -73,7 +73,7 @@ module Rubygame
 			# 
 			# Returns time in milliseconds since this Clock instance was created.
 			def lifetime
-				@last_tick - @start
+				Clock.runtime() - @start
 			end
 
 			# call-seq: framerate()  ->  Numeric
@@ -85,7 +85,7 @@ module Rubygame
 			# entire lifetime of the Clock. 
 			def framerate
 				# below is same as: return @ticks / (lifetime / 1000.0)
-				return 1000.0 * @ticks / lifetime
+				return 1000.0 * @ticks / lifetime()
 			rescue ZeroDivisionError
 				return 0
 			end
@@ -114,7 +114,7 @@ module Rubygame
 			# make your code run faster, only slow it down if it is
 			# running too fast.)
 			def tick()
-				passed = Clock.runtime - @last_tick  # how long since the last tick?
+				passed = Clock.runtime() - @last_tick  # how long since the last tick?
 				if @target_frametime
 					return Clock.delay(@target_frametime - passed) + passed
 				end
