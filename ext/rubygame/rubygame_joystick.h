@@ -29,7 +29,7 @@ extern VALUE cJoy;
 extern VALUE rbgm_joy_numjoysticks(VALUE);
 extern VALUE rbgm_joy_getname(VALUE, VALUE);
 
-extern VALUE rbgm_joystick_new(int, VALUE*, VALUE);
+extern VALUE rbgm_joystick_new(VALUE, VALUE);
 
 extern VALUE rbgm_joystick_index(VALUE);
 extern VALUE rbgm_joystick_name(VALUE);
