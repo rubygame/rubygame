@@ -1,5 +1,3 @@
-// Rubygame::Body.collide(Rubygame::Body::Ftor[2,2], Rubygame::Body::Ftor[2,2])
-
 #include <ruby.h>
 #include <math.h>
 #include "rubygame_defines.h"
@@ -19,7 +17,7 @@ static VALUE rg_cRect;
 static VALUE rg_cSegment;
 static VALUE rg_cFtor;
 
-void Init_body()
+void Init_rubygame_body()
 {
 	Init_rg_cFtor();
 	Init_rg_cSegment();

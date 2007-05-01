@@ -27,6 +27,22 @@ void rg_segment_rotate_around(rg_segment *seg, rg_ftor *center, double rad)
 
 /***  RUBY method wrappers  ***************************************************/
 
+
+/* 
+ *  :nodoc:
+ */
+static VALUE rg_segment_rb_singleton_alloc(VALUE class)
+{
+	rg_segment *seg;
+	VALUE      rb_seg;
+	rb_seg = Data_Make_Struct(class, rg_segment, NULL, free, seg);
+	seg->start.x = 0;
+	seg->start.y = 0;
+	seg->vec.x   = 0;
+	seg->vec.y   = 0;
+	return rb_seg;
+}
+
 /* 
  *  call-seq:
  *    Segment.new(Ftor begin, Ftor vector) -> Segment
@@ -73,6 +89,18 @@ static VALUE rg_segment_rb_initialize(VALUE self, VALUE start, VALUE vec)
 	Data_Get_Struct(vec, rg_ftor, c_vec);
 	seg->start = *c_start;
 	seg->vec   = *c_vec;
+	return self;
+}
+
+/* 
+ *  :nodoc:
+ */
+static VALUE rg_segment_rb_initialize_copy(VALUE self, VALUE old)
+{
+	rg_segment *seg1, *seg2;
+	Data_Get_Struct(self, rg_segment, seg1);
+	Data_Get_Struct(old, rg_segment, seg2);
+	*seg1 = *seg2;
 	return self;
 }
 
@@ -248,17 +276,20 @@ void Init_rg_cSegment()
 	rg_cSegment = rb_define_class_under(mBody, "Segment", rb_cObject);
 	rg_cFtor    = rb_define_class_under(mBody, "Ftor", rb_cObject);
 
+	rb_define_alloc_func(rg_cSegment, rg_segment_rb_singleton_alloc);
+
 	rb_define_singleton_method(rg_cSegment, "new",    rg_segment_rb_singleton_new, -1);
 	rb_define_singleton_method(rg_cSegment, "points", rg_segment_rb_singleton_points, 4);
 
-	rb_define_method(rg_cSegment, "initialize",    rg_segment_rb_initialize, 2);
-	rb_define_method(rg_cSegment, "begin",         rg_segment_rb_begin, 0);
-	rb_define_method(rg_cSegment, "center",        rg_segment_rb_center, 0);
-	rb_define_method(rg_cSegment, "end",           rg_segment_rb_end, 0);
-	rb_define_method(rg_cSegment, "vector",        rg_segment_rb_vec, 0);
-	rb_define_method(rg_cSegment, "length",        rg_segment_rb_length, 0);
-	rb_define_method(rg_cSegment, "angle",         rg_segment_rb_angle, 0);
-	rb_define_method(rg_cSegment, "move",          rg_segment_rb_move, 1);
-	rb_define_method(rg_cSegment, "rotate",        rg_segment_rb_rotate, 2);
-	rb_define_method(rg_cSegment, "inspect",       rg_segment_rb_inspect, 0);
+	rb_define_method(rg_cSegment, "initialize",      rg_segment_rb_initialize, 2);
+	rb_define_method(rg_cSegment, "initialize_copy", rg_segment_rb_initialize_copy, 1);
+	rb_define_method(rg_cSegment, "begin",           rg_segment_rb_begin, 0);
+	rb_define_method(rg_cSegment, "center",          rg_segment_rb_center, 0);
+	rb_define_method(rg_cSegment, "end",             rg_segment_rb_end, 0);
+	rb_define_method(rg_cSegment, "vector",          rg_segment_rb_vec, 0);
+	rb_define_method(rg_cSegment, "length",          rg_segment_rb_length, 0);
+	rb_define_method(rg_cSegment, "angle",           rg_segment_rb_angle, 0);
+	rb_define_method(rg_cSegment, "move",            rg_segment_rb_move, 1);
+	rb_define_method(rg_cSegment, "rotate",          rg_segment_rb_rotate, 2);
+	rb_define_method(rg_cSegment, "inspect",         rg_segment_rb_inspect, 0);
 }

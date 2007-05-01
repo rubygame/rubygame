@@ -1,7 +1,7 @@
 #include <math.h>
 #include <ruby.h>
+#include "rubygame_defines.h"
 #include "rubygame_cFtor.h"
-#include "defines.h"
 
 static VALUE mRubygame;
 static VALUE mBody;
@@ -110,17 +110,15 @@ double rg_ftor_angle_between(rg_ftor *a, rg_ftor *b)
 /***  RUBY method wrappers  ***************************************************/
 
 /* 
- *  call-seq:
- *    Ftor.new(x,y) -> Ftor
- *
- *  Create an Ftor from components. See also Ftor::[] (it's faster).
+ *  :nodoc:
  */
-static VALUE rg_ftor_rb_singleton_new(int argc, VALUE *argv, VALUE class)
+static VALUE rg_ftor_rb_singleton_alloc(VALUE class)
 {
 	rg_ftor *ftor;
-	VALUE   rb_ftor;
+	VALUE    rb_ftor;
 	rb_ftor = Data_Make_Struct(class, rg_ftor, NULL, free, ftor);
-	rb_obj_call_init(rb_ftor, argc, argv);
+	ftor->x = 0;
+	ftor->y = 0;
 	return rb_ftor;
 }
 
@@ -154,8 +152,11 @@ static VALUE rg_ftor_rb_singleton_polar(VALUE class, VALUE mag, VALUE rad)
 	return rb_ftor;	
 }
 
-/*
- *  :nodoc:
+/* 
+ *  call-seq:
+ *    Ftor.new(x,y) -> Ftor
+ *
+ *  Create an Ftor from components. See also Ftor::[] (it's faster).
  */
 static VALUE rg_ftor_rb_initialize(VALUE self, VALUE x, VALUE y)
 {
@@ -163,6 +164,20 @@ static VALUE rg_ftor_rb_initialize(VALUE self, VALUE x, VALUE y)
 	Data_Get_Struct(self, rg_ftor, ftor);
 	ftor->x = NUM2DBL(x);
 	ftor->y = NUM2DBL(y);
+	return self;
+}
+
+/* 
+ *  :nodoc:
+ */
+static VALUE rg_ftor_rb_initialize_copy(VALUE self, VALUE old)
+{
+	rg_ftor *ftor1, *ftor2;
+	Data_Get_Struct(self, rg_ftor, ftor1);
+	Data_Get_Struct(old, rg_ftor, ftor2);
+
+	*ftor1 = *ftor2;
+	
 	return self;
 }
 
@@ -515,11 +530,13 @@ void Init_rg_cFtor()
 	rg_cSegment = rb_define_class_under(mBody, "Segment", rb_cObject);
 	rg_cFtor    = rb_define_class_under(mBody, "Ftor", rb_cObject);
 
+	rb_define_alloc_func(rg_cFtor, rg_ftor_rb_singleton_alloc);
+
 	rb_define_singleton_method(rg_cFtor, "polar", rg_ftor_rb_singleton_polar, 2);
-	rb_define_singleton_method(rg_cFtor, "new",   rg_ftor_rb_singleton_new, -1);
 	rb_define_singleton_method(rg_cFtor, "[]",    rg_ftor_rb_singleton_bracket, 2);
 
 	rb_define_method(rg_cFtor, "initialize",      rg_ftor_rb_initialize, 2);
+	rb_define_method(rg_cFtor, "initialize_copy", rg_ftor_rb_initialize_copy, 1);
 	rb_define_method(rg_cFtor, "x",               rg_ftor_rb_x, 0);
 	rb_define_method(rg_cFtor, "y",               rg_ftor_rb_y, 0);
 	rb_define_method(rg_cFtor, "magnitude",       rg_ftor_rb_magnitude, 0);

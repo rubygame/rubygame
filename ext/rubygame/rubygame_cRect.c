@@ -103,11 +103,16 @@ void rg_rect_rotate_around(rg_rect *rect, rg_ftor *center, double rad)
 /*
  * :nodoc:
  */
-static VALUE rg_rect_rb_singleton_new(int argc, VALUE *argv, VALUE class)
+static VALUE rg_rect_rb_singleton_alloc(VALUE class)
 {
 	rg_rect *rect;
 	VALUE rb_rect = Data_Make_Struct(class, rg_rect, NULL, free, rect);
-	rb_obj_call_init(rb_rect, argc, argv);
+	rect->topleft.x    = 0;
+	rect->topleft.y    = 0;
+	rect->horizontal.x = 0;
+	rect->horizontal.y = 0;
+	rect->vertical.x   = 0;
+	rect->vertical.y   = 0;
 	return rb_rect;
 }
 
@@ -157,6 +162,20 @@ static VALUE rg_rect_rb_initialize(VALUE self, VALUE topleft, VALUE horizontal, 
 	rect->topleft    = *c_topleft;
 	rect->horizontal = *c_horizontal;
 	rect->vertical   = *c_vertical;
+	return self;
+}
+
+/* 
+ *  :nodoc:
+ */
+static VALUE rg_rect_rb_initialize_copy(VALUE self, VALUE old)
+{
+	rg_rect *rect1, *rect2;
+	Data_Get_Struct(self, rg_rect, rect1);
+	Data_Get_Struct(old, rg_rect, rect2);
+
+	*rect1 = *rect2;
+	
 	return self;
 }
 
@@ -511,25 +530,27 @@ void Init_rg_cRect()
 	rg_cSegment = rb_define_class_under(mBody, "Segment", rb_cObject);
 	rg_cFtor    = rb_define_class_under(mBody, "Ftor", rb_cObject);
 
-	rb_define_singleton_method(rg_cRect, "new",    rg_rect_rb_singleton_new, -1);
+	rb_define_alloc_func(rg_cRect, rg_rect_rb_singleton_alloc);
+
 	rb_define_singleton_method(rg_cRect, "rect",   rg_rect_rb_singleton_rect, 4);
 
-	rb_define_method(rg_cRect, "initialize",    rg_rect_rb_initialize, 3);
-	rb_define_method(rg_cRect, "top",           rg_rect_rb_top, 0);
-	rb_define_method(rg_cRect, "right",         rg_rect_rb_right, 0);
-	rb_define_method(rg_cRect, "bottom",        rg_rect_rb_bottom, 0);
-	rb_define_method(rg_cRect, "left",          rg_rect_rb_left, 0);
-	rb_define_method(rg_cRect, "top_left",      rg_rect_rb_top_left, 0);
-	rb_define_method(rg_cRect, "top_mid",       rg_rect_rb_top_mid, 0);
-	rb_define_method(rg_cRect, "top_right",     rg_rect_rb_top_right, 0);
-	rb_define_method(rg_cRect, "mid_right",     rg_rect_rb_mid_right, 0);
-	rb_define_method(rg_cRect, "bottom_right",  rg_rect_rb_bottom_right, 0);
-	rb_define_method(rg_cRect, "bottom_mid",    rg_rect_rb_bottom_mid, 0);
-	rb_define_method(rg_cRect, "bottom_left",   rg_rect_rb_bottom_left, 0);
-	rb_define_method(rg_cRect, "mid_left",      rg_rect_rb_mid_left, 0);
-	rb_define_method(rg_cRect, "center",        rg_rect_rb_center, 0);
-	rb_define_method(rg_cRect, "angle",         rg_rect_rb_angle, 0);
-	rb_define_method(rg_cRect, "move",          rg_rect_rb_move, 1);
-	rb_define_method(rg_cRect, "rotate",        rg_rect_rb_rotate, 2);
-	rb_define_method(rg_cRect, "inspect",       rg_rect_rb_inspect, 0);
+	rb_define_method(rg_cRect, "initialize",      rg_rect_rb_initialize, 3);
+	rb_define_method(rg_cRect, "initialize_copy", rg_rect_rb_initialize_copy, 1);
+	rb_define_method(rg_cRect, "top",             rg_rect_rb_top, 0);
+	rb_define_method(rg_cRect, "right",           rg_rect_rb_right, 0);
+	rb_define_method(rg_cRect, "bottom",          rg_rect_rb_bottom, 0);
+	rb_define_method(rg_cRect, "left",            rg_rect_rb_left, 0);
+	rb_define_method(rg_cRect, "top_left",        rg_rect_rb_top_left, 0);
+	rb_define_method(rg_cRect, "top_mid",         rg_rect_rb_top_mid, 0);
+	rb_define_method(rg_cRect, "top_right",       rg_rect_rb_top_right, 0);
+	rb_define_method(rg_cRect, "mid_right",       rg_rect_rb_mid_right, 0);
+	rb_define_method(rg_cRect, "bottom_right",    rg_rect_rb_bottom_right, 0);
+	rb_define_method(rg_cRect, "bottom_mid",      rg_rect_rb_bottom_mid, 0);
+	rb_define_method(rg_cRect, "bottom_left",     rg_rect_rb_bottom_left, 0);
+	rb_define_method(rg_cRect, "mid_left",        rg_rect_rb_mid_left, 0);
+	rb_define_method(rg_cRect, "center",          rg_rect_rb_center, 0);
+	rb_define_method(rg_cRect, "angle",           rg_rect_rb_angle, 0);
+	rb_define_method(rg_cRect, "move",            rg_rect_rb_move, 1);
+	rb_define_method(rg_cRect, "rotate",          rg_rect_rb_rotate, 2);
+	rb_define_method(rg_cRect, "inspect",         rg_rect_rb_inspect, 0);
 }

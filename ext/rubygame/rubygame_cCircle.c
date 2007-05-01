@@ -1,6 +1,7 @@
 // require 'ruby/numeric'; circle = Segment.new(Ftor[1,1], Ftor[2,2]); circle.rotate(90.to_radian, Ftor[2,2])
 #include <ruby.h>
 #include <math.h>
+#include "rubygame_defines.h"
 #include "rubygame_cFtor.h"
 #include "rubygame_cCircle.h"
 
@@ -24,22 +25,25 @@ void rg_circle_rotate_around(rg_circle *circle, rg_ftor *center, double rad)
 
 
 /***  RUBY method wrappers  ***************************************************/
+
+/* 
+ *  :nodoc:
+ */
+static VALUE rg_circle_rb_singleton_alloc(VALUE class)
+{
+	rg_circle *circle;
+	VALUE rb_circle = Data_Make_Struct(class, rg_circle, NULL, free, circle);
+	circle->center.x = 0;
+	circle->center.y = 0;
+	circle->radius   = 0;
+	return rb_circle;
+}
+
 /* 
  *  call-seq:
  *    Circle.new(Ftor center, radius)
  *
  *  Creates a Circle with center given by an Ftor 'center' and radius 'radius'.
- */
-static VALUE rg_circle_rb_singleton_new(int argc, VALUE *argv, VALUE class)
-{
-	rg_circle *circle;
-	VALUE rb_circle = Data_Make_Struct(class, rg_circle, NULL, free, circle);
-	rb_obj_call_init(rb_circle, argc, argv);
-	return rb_circle;
-}
-
-/* 
- *  :nodoc:
  */
 static VALUE rg_circle_rb_initialize(VALUE self, VALUE center, VALUE radius)
 {
@@ -51,6 +55,20 @@ static VALUE rg_circle_rb_initialize(VALUE self, VALUE center, VALUE radius)
 
 	circle->center  = *c_center;
 	circle->radius  = NUM2DBL(radius);
+	
+	return self;
+}
+
+/* 
+ *  :nodoc:
+ */
+static VALUE rg_circle_rb_initialize_copy(VALUE self, VALUE old)
+{
+	rg_circle *circle1, *circle2;
+	Data_Get_Struct(self, rg_circle, circle1);
+	Data_Get_Struct(old, rg_circle, circle2);
+
+	*circle1 = *circle2;
 	
 	return self;
 }
@@ -160,12 +178,13 @@ void Init_rg_cCircle()
 	rg_cSegment = rb_define_class_under(mBody, "Segment", rb_cObject);
 	rg_cFtor    = rb_define_class_under(mBody, "Ftor", rb_cObject);
 
-	rb_define_singleton_method(rg_cCircle, "new",    rg_circle_rb_singleton_new, -1);
+	rb_define_alloc_func(rg_cCircle, rg_circle_rb_singleton_alloc);
 
-	rb_define_method(rg_cCircle, "initialize",    rg_circle_rb_initialize, 2);
-	rb_define_method(rg_cCircle, "center",        rg_circle_rb_center, 0);
-	rb_define_method(rg_cCircle, "radius",        rg_circle_rb_radius, 0);
-	rb_define_method(rg_cCircle, "move",          rg_circle_rb_move, 1);
-	rb_define_method(rg_cCircle, "rotate",        rg_circle_rb_rotate, 2);
-	rb_define_method(rg_cCircle, "inspect",       rg_circle_rb_inspect, 0);
+	rb_define_method(rg_cCircle, "initialize",      rg_circle_rb_initialize, 2);
+	rb_define_method(rg_cCircle, "initialize_copy", rg_circle_rb_initialize_copy, 1);
+	rb_define_method(rg_cCircle, "center",          rg_circle_rb_center, 0);
+	rb_define_method(rg_cCircle, "radius",          rg_circle_rb_radius, 0);
+	rb_define_method(rg_cCircle, "move",            rg_circle_rb_move, 1);
+	rb_define_method(rg_cCircle, "rotate",          rg_circle_rb_rotate, 2);
+	rb_define_method(rg_cCircle, "inspect",         rg_circle_rb_inspect, 0);
 }
