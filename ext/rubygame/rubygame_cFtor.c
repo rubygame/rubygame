@@ -140,11 +140,11 @@ static VALUE rg_ftor_rb_singleton_bracket(VALUE class, VALUE x, VALUE y)
 
 /* 
  *  call-seq:
- *    Ftor.new(magnitude, angle) -> Ftor
+ *    Ftor.new(angle, magnitude) -> Ftor
  *
  *  Create an Ftor from angle (in radians) and magnitude.
  */
-static VALUE rg_ftor_rb_singleton_polar(VALUE class, VALUE mag, VALUE rad)
+static VALUE rg_ftor_rb_singleton_polar(VALUE class, VALUE rad, VALUE mag)
 {
 	rg_ftor *ftor;
 	VALUE rb_ftor = Data_Make_Struct(class, rg_ftor, NULL, free, ftor);

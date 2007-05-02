@@ -1,4 +1,5 @@
 int rg_collidable_type(VALUE class);
+void rg_collidable_extract_struct(void **strct, VALUE class, VALUE x);
 
 int rg_collidable_cc_collide(int ta, int tb, void *a, void *b);
 int rg_collidable_crb_collide(VALUE a, VALUE b);

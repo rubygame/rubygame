@@ -21,6 +21,44 @@ static VALUE rg_cRect;
 static VALUE rg_cSegment;
 static VALUE rg_cFtor;
 static ID rg_id_call;
+static ID rg_id_body;
+
+int rg_collidable_collide_bodies(VALUE a, VALUE b)
+{
+	void *p_a;
+	void *p_b;
+	VALUE ca = CLASS_OF(a);
+	VALUE cb = CLASS_OF(b);
+	int   ta = rg_collidable_type(ca);
+	int   tb = rg_collidable_type(cb);
+
+	// use body attribute if present
+	if (ta == 0 && rb_respond_to(a, rg_id_body)) {
+		a  = rb_funcall(a, rg_id_body, 0);
+		ca = CLASS_OF(a);
+		ta = rg_collidable_type(ca);
+		rb_warn("Using #body -> %s, %d", rb_class2name(ca), ta);
+	}	else if (ta == 0) {
+		rb_warn("A %s does not respond to %s (%d, %lx)", rb_class2name(ca), rb_id2name(rg_id_body), rb_respond_to(a, rg_id_body), a);
+	}
+	if (tb == 0 && rb_respond_to(b, rg_id_body)) {
+		b  = rb_funcall(b, rg_id_body, 0);
+		cb = CLASS_OF(b);
+		tb = rg_collidable_type(cb);
+		rb_warn("Using #body -> %s, %d", rb_class2name(cb), tb);
+	}	else if (tb == 0) {
+		rb_warn("B %s does not respond to %s (%d, %lx)", rb_class2name(cb), rb_id2name(rg_id_body), rb_respond_to(b, rg_id_body), b);
+	}
+	
+	if (ta && tb) {
+		rg_collidable_extract_struct(&p_a, ca, a);
+		rg_collidable_extract_struct(&p_b, cb, b);
+		
+		return rg_collidable_cc_collide(ta, tb, p_a, p_b);
+	} else {
+		return rg_collidable_crb_collide(a, b);
+	}
+}
 
 int rg_collidable_type(VALUE class)
 {
@@ -40,23 +78,6 @@ void swap_rows(int len, double *x, double *y)
 		*(x+i) = *(y+i);
 		*(y+i) = tmp;
 	}
-}
-
-
-// ruby bail out if non-C-classes are involved
-int rg_collidable_crb_collide(VALUE a, VALUE b)
-{
-	VALUE colliders = rb_iv_get(mCollidable, "@colliders");
-	VALUE key = rb_ary_new3(2, CLASS_OF(a), CLASS_OF(b));
-	VALUE collider  = rb_hash_aref(colliders, key);
-	if (NIL_P(collider)) {
-		rb_raise(rb_eArgError,"Could not collide %s with %s",
-			rb_class2name(CLASS_OF(a)),
-			rb_class2name(CLASS_OF(b))
-		);
-		return -1;
-	}
-	return RTEST(rb_funcall(collider, rg_id_call, 2, a, b)) ? 1 : 0;
 }
 
 // returns -1 on error, 0 if no collision and 1 if collides
@@ -84,6 +105,22 @@ int rg_collidable_cc_collide(int ta, int tb, void *a, void *b)
 		// case 13-14 would be ternary, case 15 quaternary
 		default: return -1;
 	}
+}
+
+// ruby bail out if non-C-classes are involved
+int rg_collidable_crb_collide(VALUE a, VALUE b)
+{
+	VALUE colliders = rb_iv_get(mCollidable, "@colliders");
+	VALUE key = rb_ary_new3(2, CLASS_OF(a), CLASS_OF(b));
+	VALUE collider  = rb_hash_aref(colliders, key);
+	if (NIL_P(collider)) {
+		rb_raise(rb_eArgError,"Could not collide %s with %s (crb_collide)",
+			rb_class2name(CLASS_OF(a)),
+			rb_class2name(CLASS_OF(b))
+		);
+		return -1;
+	}
+	return RTEST(rb_funcall(collider, rg_id_call, 2, a, b)) ? 1 : 0;
 }
 
 int rg_collidable_collide_ftor_ftor(rg_ftor *a, rg_ftor *b)
@@ -267,25 +304,6 @@ void rg_collidable_extract_struct(void **strct, VALUE class, VALUE x)
 	}
 }
 
-int rg_collidable_collide_bodies(VALUE a, VALUE b)
-{
-	void *p_a;
-	void *p_b;
-	VALUE ca = CLASS_OF(a);
-	VALUE cb = CLASS_OF(b);
-	int   ta = rg_collidable_type(ca);
-	int   tb = rg_collidable_type(cb);
-	
-	if (ta && tb) {
-		rg_collidable_extract_struct(&p_a, ca, a);
-		rg_collidable_extract_struct(&p_b, cb, b);
-		
-		return rg_collidable_cc_collide(ta, tb, p_a, p_b);
-	} else {
-		return rg_collidable_crb_collide(a, b);
-	}
-}
-
 /*** RUBY STUFF ***************************************************************/
 
 /* 
@@ -359,6 +377,7 @@ static VALUE rg_collidable_rb_collide(int argc, VALUE *argv, VALUE self)
 void Init_rg_mCollidable()
 {
 	ID rg_id_call = rb_intern("call");
+	ID rg_id_body = rb_intern("body");
 
 	mRubygame   = rb_define_module("Rubygame");
 	mBody       = rb_define_module_under(mRubygame, "Body");
