@@ -62,12 +62,7 @@ task :extension => [:build]
 desc "Compile all of the extensions"
 task :build
 
-EXTDIR = File.join('.', 'ext', 'rubygame', '')
-
 require 'rake/clean'
-CLEAN.include("#{EXTDIR}*.#{OBJEXT}")
-CLOBBER.include("#{EXTDIR}*.#{DLEXT}")
-
 task(:clean) { puts "Cleaning out temporary generated files" }
 task(:clobber) { puts "Cleaning out final generated files" }
 
@@ -159,12 +154,13 @@ LINK_FLAGS = [from_env_or_config("LIBRUBYARG_SHARED"),
               ENV["LINK_FLAGS"],
               (`sdl-config --libs`.chomp if $options.sdl_config)].join(" ")
 
-
+DEFALUT_EXTDIR = File.join('ext','rubygame','')
 
 class ExtensionModule
   @@libflag = " -l%s " # compiler flag for giving linked libraries
-  attr_accessor :dynlib, :objs, :libs, :cflags, :lflags
+  attr_accessor :dynlib, :objs, :libs, :cflags, :lflags, :directory
   def initialize(&block)
+    @directory = DEFALUT_EXTDIR
     @dynlib = ""
     @objs = []
     @libs = []
@@ -180,17 +176,24 @@ class ExtensionModule
     #CFLAGS << " -DHAVE_#{header.upcase.gsub('.','_')} "
   end
 
+  def create_all_tasks()
+    create_obj_task
+    create_dl_task
+    CLEAN.include("#{@directory}/*.#{OBJEXT}")
+    CLOBBER.include("#{@directory}/*.#{DLEXT}")
+  end
+
   # Create a file task for each dynamic library (.so) we want to generate.
   def create_dl_task
-    dynlib_full  = "#{EXTDIR}#{@dynlib}.#{DLEXT}"
-    objs_full = @objs.collect { |obj| "#{EXTDIR}#{obj}.#{OBJEXT}" }
+    dynlib_full  = "#{@directory}#{@dynlib}.#{DLEXT}"
+    objs_full = @objs.collect { |obj| "#{@directory}#{obj}.#{OBJEXT}" }
 
     file dynlib_full => objs_full do |task|
       link_command = "#{from_env_or_config('LDSHARED')} #{LINK_FLAGS} #{@lflags} -o #{task.name} #{task.prerequisites.join(' ')}"
       if( $options.verbose )
         sh link_command
       else
-        puts "Linking compiled files to create #{File.basename(task.name)}"
+        puts "Linking compiled files to create #{File.basename(@directory)}/#{File.basename(task.name)}"
         `#{link_command}`
       end
     end
@@ -199,6 +202,57 @@ class ExtensionModule
     task  taskname => [dynlib_full]
     task :build => [taskname]   # Add this as a prereq of the build
     task :install_ext => [dynlib_full] # ...and install_ext tasks
+  end
+
+  def create_obj_task
+    # A rule for object files (".o" on linux).
+    # This won't work for rake < 0.7.2, because the proc returns an Array.
+    # If it raises an exception, we'll try a more compatible way.
+    rule(/#{@directory}.+\.#{OBJEXT}$/ =>
+         [
+          # Generate dependencies for this .o file
+          proc do |objfile|
+            source = objfile.sub(".#{OBJEXT}", ".c") # the .c file
+            [source] + depends_headers( source ) # Array of .c + .h dependencies
+          end
+         ])\
+    do |t|
+      compile_command = "#{from_env_or_config('CC')} -c #{CFLAGS} #{t.source} -o #{t.name}"
+      if( $options.verbose )
+        sh compile_command
+      else
+        puts "Compiling #{File.basename(@directory)}/#{File.basename(t.source)}"
+        `#{compile_command}`
+      end
+    end
+  rescue
+    # Generate a .o rule for each .c file in the directory.
+    FileList.new("#{@directory}*.c").each do |source|
+      object = source.sub(".c", ".#{OBJEXT}")
+      file object => ([source] + depends_headers( source )) do |t|
+        compile_command = "#{CONFIG['CC']} -c #{CFLAGS} #{source} -o #{t.name}"
+        if( $options.verbose )
+          sh compile_command
+        else
+          puts "Compiling #{File.basename(@directory)}/#{File.basename(source)}"
+          `#{compile_command}`
+        end
+      end
+    end
+  end
+
+  # Extracts the names of all the headers that the C file depends on.
+  def depends_headers( filename )
+    return []                   # workaround for a bug
+    depends = []
+    File.open(filename, "r") do |file|
+      file.each_line do |line|
+        if /#include\s+"(\w+\.h)"/ =~ line
+          depends << @directory+$1
+        end
+      end
+    end
+    return depends
   end
 end
 
@@ -213,10 +267,11 @@ rubygame_core = ExtensionModule.new do |core|
                'rubygame_surface',
                'rubygame_time',
               ]
-  core.create_dl_task()
+  core.create_all_tasks()
 end
 
 rubygame_body = ExtensionModule.new do |body|
+  body.directory = File.join('ext','body','')
 	body.dynlib = 'rubygame_body'
 	body.objs = %w(	rubygame_mBody
 									rubygame_mCollidable
@@ -225,7 +280,7 @@ rubygame_body = ExtensionModule.new do |body|
 									rubygame_cRect
 									rubygame_cCircle
 							)
-  body.create_dl_task()
+  body.create_all_tasks()
 end
 
 # TODO: We should check if the libraries exist?
@@ -236,7 +291,7 @@ rubygame_gfx = ExtensionModule.new do |gfx|
   gfx.add_lib( 'SDL_gfx' )
   gfx.add_header( 'SDL_gfxPrimitives.h')
   gfx.add_header( 'SDL_rotozoom.h' )
-  gfx.create_dl_task() if $options.gfx
+  gfx.create_all_tasks() if $options.gfx
 end
 
 rubygame_image = ExtensionModule.new do |image|
@@ -244,7 +299,7 @@ rubygame_image = ExtensionModule.new do |image|
   image.objs = ['rubygame_shared', 'rubygame_image']
   image.add_lib('SDL_image')
   image.add_header('SDL_image.h')
-  image.create_dl_task() if $options.image
+  image.create_all_tasks() if $options.image
 end
 
 rubygame_mixer = ExtensionModule.new do |mixer|
@@ -252,7 +307,7 @@ rubygame_mixer = ExtensionModule.new do |mixer|
   mixer.objs = ['rubygame_shared', 'rubygame_mixer']
   mixer.add_lib('SDL_mixer')
   mixer.add_header('SDL_mixer.h')
-  mixer.create_dl_task() if $options.mixer
+  mixer.create_all_tasks() if $options.mixer
 end
 
 rubygame_ttf = ExtensionModule.new do |ttf|
@@ -260,61 +315,11 @@ rubygame_ttf = ExtensionModule.new do |ttf|
   ttf.add_lib('SDL_ttf')
   ttf.objs = ['rubygame_shared', 'rubygame_ttf']
   ttf.add_header('SDL_ttf.h')
-  ttf.create_dl_task() if $options.ttf
+  ttf.create_all_tasks() if $options.ttf
 end
 
 if $options.opengl
   CFLAGS << " -DHAVE_OPENGL "
-end
-
-# Extracts the names of all the headers that the C file depends on.
-def depends_headers( filename )
-  depends = []
-  File.open(filename, "r") do |file|
-    file.each_line do |line|
-      if /#include\s+"(\w+\.h)"/ =~ line
-        depends << EXTDIR+$1
-      end
-    end
-  end
-  return []
-end
-
-begin
-  # A rule for object files (".o" on linux).
-  # This won't work for rake < 0.7.2, because the proc returns an Array.
-  # If it raises an exception, we'll try a more compatible way.
-  rule(/#{EXTDIR}.+\.#{OBJEXT}$/ =>
-    [
-     # Generate dependencies for this .o file
-     proc do |objfile|
-       source = objfile.sub(".#{OBJEXT}", ".c") # the .c file
-       [source] + depends_headers( source ) # Array of .c + .h dependencies
-     end
-    ])\
-  do |t|
-    compile_command = "#{from_env_or_config('CC')} -c #{CFLAGS} #{t.source} -o #{t.name}"
-    if( $options.verbose )
-      sh compile_command
-    else
-      puts "Compiling #{File.basename(t.source)}"
-      `#{compile_command}`
-    end
-  end
-rescue
-  # Generate a .o rule for each .c file in the directory.
-  FileList.new("#{EXTDIR}*.c").each do |source|
-    object = source.sub(".c", ".#{OBJEXT}")
-    file object => ([source] + depends_headers( source )) do |t|
-      compile_command = "#{CONFIG['CC']} -c #{CFLAGS} #{source} -o #{t.name}"
-      if( $options.verbose )
-        sh compile_command
-      else
-        puts "Compiling #{File.basename(source)}"
-        `#{compile_command}`
-      end
-    end
-  end
 end
 
 desc "Install only the extensions"
