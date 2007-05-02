@@ -37,17 +37,11 @@ int rg_collidable_collide_bodies(VALUE a, VALUE b)
 		a  = rb_funcall(a, rg_id_body, 0);
 		ca = CLASS_OF(a);
 		ta = rg_collidable_type(ca);
-		rb_warn("Using #body -> %s, %d", rb_class2name(ca), ta);
-	}	else if (ta == 0) {
-		rb_warn("A %s does not respond to %s (%d, %lx)", rb_class2name(ca), rb_id2name(rg_id_body), rb_respond_to(a, rg_id_body), a);
 	}
 	if (tb == 0 && rb_respond_to(b, rg_id_body)) {
 		b  = rb_funcall(b, rg_id_body, 0);
 		cb = CLASS_OF(b);
 		tb = rg_collidable_type(cb);
-		rb_warn("Using #body -> %s, %d", rb_class2name(cb), tb);
-	}	else if (tb == 0) {
-		rb_warn("B %s does not respond to %s (%d, %lx)", rb_class2name(cb), rb_id2name(rg_id_body), rb_respond_to(b, rg_id_body), b);
 	}
 	
 	if (ta && tb) {
@@ -376,8 +370,8 @@ static VALUE rg_collidable_rb_collide(int argc, VALUE *argv, VALUE self)
  */
 void Init_rg_mCollidable()
 {
-	ID rg_id_call = rb_intern("call");
-	ID rg_id_body = rb_intern("body");
+	rg_id_call = rb_intern("call");
+	rg_id_body = rb_intern("body");
 
 	mRubygame   = rb_define_module("Rubygame");
 	mBody       = rb_define_module_under(mRubygame, "Body");
