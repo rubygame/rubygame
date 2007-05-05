@@ -57,6 +57,21 @@ VALUE rbgm_draw_fillpolygon(VALUE, VALUE, VALUE);
  *  Clean up this ugly mess of code!
  */
 
+void extract_color(VALUE rgba, Uint8* r, Uint8* g, Uint8* b, Uint8* a)
+{
+  Check_Type(rgba,T_ARRAY);
+  if(RARRAY(rgba)->len < 3)
+    rb_raise(rb_eArgError,"color must be [r,g,b] or [r,g,b,a] form");
+  *r = NUM2UINT(rb_ary_entry(rgba,0));
+  *g = NUM2UINT(rb_ary_entry(rgba,1));
+  *b = NUM2UINT(rb_ary_entry(rgba,2));
+  
+  if(RARRAY(rgba)->len > 3)
+    *a = NUM2UINT(rb_ary_entry(rgba,3));
+  else
+    *a = 255;
+}
+
 /*********
  * LINES *
  *********/
@@ -81,21 +96,7 @@ void draw_line(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int aa)
   y2 = NUM2INT(rb_ary_entry(pt2,1));
   //printf("pts: [%d,%d], [%d,%d]\n",x1,y1,x2,y2);
   
-  /* get the color of the line */
-  Check_Type(rgba,T_ARRAY);
-  if(RARRAY(rgba)->len < 3)
-    rb_raise(rb_eArgError,"color must be [r,g,b] or [r,g,b,a] form");
-  r = NUM2UINT(rb_ary_entry(rgba,0));
-  g = NUM2UINT(rb_ary_entry(rgba,1));
-  b = NUM2UINT(rb_ary_entry(rgba,2));
-  //printf("color: [%d,%d,%d]\n",r,g,b);
-  
-  /* did we get alpha, or not? */
-  if(RARRAY(rgba)->len > 3)
-    a = NUM2UINT(rb_ary_entry(rgba,3));
-  else
-    a = 255;
-  //printf("alpha: %d\n",a);
+  extract_color(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
   //printf("dest: %dx%d\n",dest->w,dest->h);
@@ -179,21 +180,7 @@ void draw_rect(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int fill)
   y2 = NUM2INT(rb_ary_entry(pt2,1));
   //printf("pts: [%d,%d], [%d,%d]\n",x1,y1,x2,y2);
   
-  /* get the color of the line */
-  Check_Type(rgba,T_ARRAY);
-  if(RARRAY(rgba)->len < 3)
-    rb_raise(rb_eArgError,"color must be [r,g,b] or [r,g,b,a] form");
-  r = NUM2UINT(rb_ary_entry(rgba,0));
-  g = NUM2UINT(rb_ary_entry(rgba,1));
-  b = NUM2UINT(rb_ary_entry(rgba,2));
-  //printf("color: [%d,%d,%d]\n",r,g,b);
-  
-  /* did we get alpha, or not? */
-  if(RARRAY(rgba)->len > 3)
-    a = NUM2UINT(rb_ary_entry(rgba,3));
-  else
-    a = 255;
-  //printf("alpha: %d\n",a);
+  extract_color(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
   //printf("dest: %dx%d\n",dest->w,dest->h);
@@ -263,21 +250,7 @@ void draw_circle(VALUE target, VALUE center, VALUE radius, VALUE rgba, int aa, i
   rad = NUM2INT(radius);
   //printf("pts: [%d,%d], [%d,%d]\n",x1,y1,x2,y2);
   
-  /* get the color of the line */
-  Check_Type(rgba,T_ARRAY);
-  if(RARRAY(rgba)->len < 3)
-    rb_raise(rb_eArgError,"color must be [r,g,b] or [r,g,b,a] form");
-  r = NUM2UINT(rb_ary_entry(rgba,0));
-  g = NUM2UINT(rb_ary_entry(rgba,1));
-  b = NUM2UINT(rb_ary_entry(rgba,2));
-  //printf("color: [%d,%d,%d]\n",r,g,b);
-  
-  /* did we get alpha, or not? */
-  if(RARRAY(rgba)->len > 3)
-    a = NUM2UINT(rb_ary_entry(rgba,3));
-  else
-    a = 255;
-  //printf("alpha: %d\n",a);
+  extract_color(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
   //printf("dest: %dx%d\n",dest->w,dest->h);
@@ -370,21 +343,7 @@ void draw_ellipse(VALUE target, VALUE center, VALUE radii, VALUE rgba, int aa, i
   rady = NUM2INT(rb_ary_entry(radii,1));
   //printf("pts: [%d,%d], [%d,%d]\n",x1,y1,x2,y2);
   
-  /* get the color of the line */
-  Check_Type(rgba,T_ARRAY);
-  if(RARRAY(rgba)->len < 3)
-    rb_raise(rb_eArgError,"color must be [r,g,b] or [r,g,b,a] form");
-  r = NUM2UINT(rb_ary_entry(rgba,0));
-  g = NUM2UINT(rb_ary_entry(rgba,1));
-  b = NUM2UINT(rb_ary_entry(rgba,2));
-  //printf("color: [%d,%d,%d]\n",r,g,b);
-  
-  /* did we get alpha, or not? */
-  if(RARRAY(rgba)->len > 3)
-    a = NUM2UINT(rb_ary_entry(rgba,3));
-  else
-    a = 255;
-  //printf("alpha: %d\n",a);
+  extract_color(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
   //printf("dest: %dx%d\n",dest->w,dest->h);
@@ -480,21 +439,7 @@ void draw_pie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba
   end = NUM2INT(rb_ary_entry(angles,1));
   //printf("pt: [%d,%d], %d, %d, %d\n",x,y,rad,start,end);
   
-  /* get the color of the line */
-  Check_Type(rgba,T_ARRAY);
-  if(RARRAY(rgba)->len < 3)
-    rb_raise(rb_eArgError,"color must be [r,g,b] or [r,g,b,a] form");
-  r = NUM2UINT(rb_ary_entry(rgba,0));
-  g = NUM2UINT(rb_ary_entry(rgba,1));
-  b = NUM2UINT(rb_ary_entry(rgba,2));
-  //printf("color: [%d,%d,%d]\n",r,g,b);
-  
-  /* did we get alpha, or not? */
-  if(RARRAY(rgba)->len > 3)
-    a = NUM2UINT(rb_ary_entry(rgba,3));
-  else
-    a = 255;
-  //printf("alpha: %d\n",a);
+  extract_color(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
   //printf("dest: %dx%d\n",dest->w,dest->h);
@@ -592,22 +537,8 @@ void draw_polygon(VALUE target, VALUE points, VALUE rgba, int aa, int fill)
     y[loop] = NUM2INT(rb_ary_entry(each_point,1));
   }
   //printf("pts: [%d,%d], [%d,%d]\n",x1,y1,x2,y2);
-  
-  /* get the color of the line */
-  Check_Type(rgba,T_ARRAY);
-  if(RARRAY(rgba)->len < 3)
-    rb_raise(rb_eArgError,"color must be [r,g,b] or [r,g,b,a] form");
-  r = NUM2UINT(rb_ary_entry(rgba,0));
-  g = NUM2UINT(rb_ary_entry(rgba,1));
-  b = NUM2UINT(rb_ary_entry(rgba,2));
-  //printf("color: [%d,%d,%d]\n",r,g,b);
-  
-  /* did we get alpha, or not? */
-  if(RARRAY(rgba)->len > 3)
-    a = NUM2UINT(rb_ary_entry(rgba,3));
-  else
-    a = 255;
-  //printf("alpha: %d\n",a);
+
+  extract_color(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
   //printf("dest: %dx%d\n",dest->w,dest->h);
