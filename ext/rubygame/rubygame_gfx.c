@@ -61,7 +61,7 @@ VALUE rbgm_draw_fillpolygon(VALUE, VALUE, VALUE);
 
 void extract_color(VALUE rgba, Uint8* r, Uint8* g, Uint8* b, Uint8* a)
 {
-  Check_Type(rgba,T_ARRAY);
+  rgba = rb_check_array_type(rgba);
   if(RARRAY(rgba)->len < 3)
     rb_raise(rb_eArgError,"color must be [r,g,b] or [r,g,b,a] form");
   *r = NUM2UINT(rb_ary_entry(rgba,0));
@@ -76,7 +76,7 @@ void extract_color(VALUE rgba, Uint8* r, Uint8* g, Uint8* b, Uint8* a)
 
 void extract_xy(VALUE point, Sint16* x, Sint16* y)
 {
-  Check_Type(point,T_ARRAY);
+	point = rb_check_array_type(point);
   if(RARRAY(point)->len < 2)
     rb_raise(rb_eArgError,"expected argument as [x,y] form");
   *x = NUM2INT(rb_ary_entry(point,0));
@@ -488,7 +488,7 @@ void draw_polygon(VALUE target, VALUE points, VALUE rgba, int aa, int fill)
   Sint16 *x, *y;
 
   /* separate points into arrays of x and y values */
-  Check_Type(points,T_ARRAY);
+  points = rb_check_array_type(points);
   length = RARRAY(points)->len;
   x = alloca(sizeof (Sint16) * length);
   y = alloca(sizeof (Sint16) * length);
@@ -692,7 +692,7 @@ VALUE rbgm_transform_rzsize(int argc, VALUE *argv, VALUE module)
 
   rb_scan_args(argc,argv,"3", &vsize, &vangle, &vzoom);
 
-  Check_Type(vsize,T_ARRAY);
+  vsize = rb_check_array_type(vsize);
   w = NUM2INT(rb_ary_entry(argv[0],0));
   h = NUM2INT(rb_ary_entry(argv[0],0));
   angle = NUM2DBL(vangle);
@@ -850,7 +850,7 @@ VALUE rbgm_transform_zoomsize(int argc, VALUE *argv, VALUE module)
 
   rb_scan_args(argc,argv,"2", &vsize, &vzoom);
 
-  Check_Type(vsize,T_ARRAY);
+  vsize = rb_check_array_type(vsize);
   w = NUM2INT(rb_ary_entry(vsize,0));
   h = NUM2INT(rb_ary_entry(vsize,1));
 
