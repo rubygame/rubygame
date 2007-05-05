@@ -468,7 +468,7 @@ void draw_pie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba
 
   /* get the starting and ending points of the line */
   Check_Type(center,T_ARRAY);
-  Check_Type(angle,T_ARRAY);
+  Check_Type(angles,T_ARRAY);
   if(RARRAY(center)->len < 2)
     rb_raise(rb_eArgError,"center point must be [x,y] form");
   if(RARRAY(angles)->len < 2)
@@ -715,57 +715,58 @@ VALUE rbgm_transform_rotozoom(int argc, VALUE *argv, VALUE self)
   double angle, zoomx, zoomy;
   int smooth = 0;
 
-  if(argc < 2)             /* smooth is optional, so only 2 required*/
-    rb_raise(rb_eArgError,"wrong number of arguments (%d for 2)",argc);
+  VALUE vangle, vzoom, vsmooth;
 
-  /* argv[0], the source surface. */
+  rb_scan_args(argc, argv, "21", &vangle, &vzoom, &vsmooth);
+
   Data_Get_Struct(self,SDL_Surface,src);
 
-  /* argv[1], the angle of rotation. */
-  angle = NUM2DBL(argv[0]);
+  angle = NUM2DBL(vangle);
+  smooth = RTEST(vsmooth) ? 1 : 0;
 
-  /* Parsing of argv[2] is delayed until below, because its type
-     affects which function we call. */
-
-  /* argv[3] (optional), rotozoom smoothly? */
-  if(argc > 2)
-    smooth = argv[2];
-
-  /* argv[1], the zoom factor(s) */
-  if(TYPE(argv[1])==T_ARRAY)    /* if we got separate X and Y factors */
+  switch( TYPE(vzoom) )
   {
-
+   case T_ARRAY: {
+     /* separate X and Y factors */
 #ifdef HAVE_ROTOZOOMXY
-    /* Do the real function. */
-    zoomx = NUM2DBL(rb_ary_entry(argv[1],0));
-    zoomy = NUM2DBL(rb_ary_entry(argv[1],1));
-    dst = rotozoomSurfaceXY(src, angle, zoomx, zoomy, smooth);
-    if(dst == NULL)
-      rb_raise(eSDLError,"Could not rotozoom surface: %s",SDL_GetError());
+     /* Do the real function. */
+     zoomx = NUM2DBL(rb_ary_entry(vzoom,0));
+     zoomy = NUM2DBL(rb_ary_entry(vzoom,1));
+     dst = rotozoomSurfaceXY(src, angle, zoomx, zoomy, smooth);
+     if(dst == NULL)
+       rb_raise(eSDLError,"Could not rotozoom surface: %s",SDL_GetError());
 #else
-    /* Raise SDLError. You should have checked first! */
-    rb_raise(eSDLError,"Separate X/Y rotozoom scale factors is not supported by your version of SDL_gfx (%d,%d,%d). Please upgrade to 2.0.13 or later.", SDL_GFXPRIMITIVES_MAJOR, SDL_GFXPRIMITIVES_MINOR, SDL_GFXPRIMITIVES_MICRO);
-    return Qnil;
+     /* Raise SDLError. You should have checked first! */
+     rb_raise(eSDLError,"Separate X/Y rotozoom scale factors is not supported by your version of SDL_gfx (%d,%d,%d). Please upgrade to 2.0.13 or later.", SDL_GFXPRIMITIVES_MAJOR, SDL_GFXPRIMITIVES_MINOR, SDL_GFXPRIMITIVES_MICRO);
+     return Qnil;
 #endif
+     break;
+   }
+
+    case T_FLOAT:
+    case T_FIXNUM: {
+      /* uniform factor for both X and Y */
+      zoomx = NUM2DBL(vzoom);
+#ifndef HAVE_ROTOZOOMXY
+      if(zoomx < 0)                /* negative zoom (for flipping) */
+      {
+      	/* Raise SDLError. You should have checked first! */
+      	rb_raise(eSDLError,"Negative rotozoom scale factor is not supported by your version of SDL_gfx (%d,%d,%d). Please upgrade to 2.0.13 or later.", SDL_GFXPRIMITIVES_MAJOR, SDL_GFXPRIMITIVES_MINOR, SDL_GFXPRIMITIVES_MICRO);
+      }
+#endif
+      dst = rotozoomSurface(src, angle, zoomx, smooth);
+      if(dst == NULL)
+      	rb_raise(eSDLError,"Could not rotozoom surface: %s",SDL_GetError());
+      break;
+    }
+
+    default: {
+      rb_raise(rb_eArgError,
+               "wrong zoom factor type (expected Array or Numeric)");
+      break;
+    }
 
   }
-  /* If we got 1 zoom factor for both X and Y */
-  else if(FIXNUM_P(argv[1]) || TYPE(argv[1])==T_FLOAT)
-  {
-    zoomx = NUM2DBL(argv[1]);
-#ifndef HAVE_ROTOZOOMXY
-    if(zoomx < 0)                /* negative zoom (for flipping) */
-    {
-      /* Raise SDLError. You should have checked first! */
-      rb_raise(eSDLError,"Negative rotozoom scale factor is not supported by your version of SDL_gfx (%d,%d,%d). Please upgrade to 2.0.13 or later.", SDL_GFXPRIMITIVES_MAJOR, SDL_GFXPRIMITIVES_MINOR, SDL_GFXPRIMITIVES_MICRO);
-    }
-#endif
-    dst = rotozoomSurface(src, angle, zoomx, smooth);
-    if(dst == NULL)
-      rb_raise(eSDLError,"Could not rotozoom surface: %s",SDL_GetError());
-  }
-  else
-    rb_raise(rb_eArgError,"wrong zoom factor type (expected Array or Numeric)");
 
   return Data_Wrap_Struct(cSurface,0,SDL_FreeSurface,dst);
 }
@@ -796,47 +797,56 @@ VALUE rbgm_transform_rzsize(int argc, VALUE *argv, VALUE module)
   int w,h, dstw,dsth;
   double angle, zoomx, zoomy;
 
-  if(argc < 3)
-    rb_raise(rb_eArgError,"wrong number of arguments (%d for 3)",argc);
-  Check_Type(argv[0],T_ARRAY);
+  VALUE vsize, vangle, vzoom;
+
+  rb_scan_args(argc,argv,"3", &vsize, &vangle, &vzoom);
+
+  Check_Type(vsize,T_ARRAY);
   w = NUM2INT(rb_ary_entry(argv[0],0));
   h = NUM2INT(rb_ary_entry(argv[0],0));
-  angle = NUM2DBL(argv[1]);
+  angle = NUM2DBL(vangle);
 
-  if(TYPE(argv[2])==T_ARRAY)
+  switch( TYPE(vzoom) )
   {
-/* Separate X/Y rotozoom scaling was not supported prior to 2.0.13. */
-/* Check if we have at least version 2.0.13 of SDL_gfxPrimitives */
+    case T_ARRAY: {
+      /* Separate X/Y rotozoom scaling was not supported prior to 2.0.13. */
+      /* Check if we have at least version 2.0.13 of SDL_gfxPrimitives */
 #ifdef HAVE_ROTOZOOMXY
-    /* Do the real function. */
-    zoomx = NUM2DBL(rb_ary_entry(argv[1],0));
-    zoomy = NUM2DBL(rb_ary_entry(argv[1],1));
-    rotozoomSurfaceSizeXY(w, h, angle, zoomx, zoomy, &dstw, &dsth);
-
+      /* Do the real function. */
+      zoomx = NUM2DBL(rb_ary_entry(vzoom,0));
+      zoomy = NUM2DBL(rb_ary_entry(vzoom,1));
+      rotozoomSurfaceSizeXY(w, h, angle, zoomx, zoomy, &dstw, &dsth);
 #else 
-    /* Return nil, because it's not supported. */
-    return Qnil;
-#endif
-
-  }
-  else if(FIXNUM_P(argv[1]) || TYPE(argv[1])==T_FLOAT)
-  {
-    zoomx = NUM2DBL(argv[1]);
-#ifndef HAVE_ROTOZOOMXY
-    if(zoomx < 0)                /* negative zoom (for flipping) */
-    {
       /* Return nil, because it's not supported. */
       return Qnil;
-    }
 #endif
-    rotozoomSurfaceSize(w, h, angle, zoomx, &dstw, &dsth);
-  }
-  else
-    rb_raise(rb_eArgError,"wrong zoom factor type (expected Array or Numeric)");
+      break;
+    }
 
+    case T_FLOAT:
+    case T_FIXNUM: {
+      zoomx = NUM2DBL(argv[1]);
+#ifndef HAVE_ROTOZOOMXY
+      if(zoomx < 0)                /* negative zoom (for flipping) */
+      {
+      	/* Return nil, because it's not supported. */
+      	return Qnil;
+      }
+#endif
+      rotozoomSurfaceSize(w, h, angle, zoomx, &dstw, &dsth);
+      break;
+    }
+
+    default: {
+      rb_raise(rb_eArgError,
+               "wrong zoom factor type (expected Array or Numeric)");
+      break;
+    }
+
+  }
 
   /*   if(dstw == NULL || dsth == NULL)
-     rb_raise(eSDLError,"Could not rotozoom surface: %s",SDL_GetError());*/
+       rb_raise(eSDLError,"Could not rotozoom surface: %s",SDL_GetError());*/
   return rb_ary_new3(2,INT2NUM(dstw),INT2NUM(dsth));
 
 }
@@ -859,26 +869,34 @@ VALUE rbgm_transform_zoom(int argc, VALUE *argv, VALUE self)
   double zoomx, zoomy;
   int smooth = 0;
 
-  if(argc < 1)             /* smooth is optional, so only 1 required*/
-    rb_raise(rb_eArgError,"wrong number of arguments (%d for 1)",argc);
+  VALUE vzoom, vsmooth;
+
+  rb_scan_args(argc, argv, "11", &vzoom, &vsmooth);
+
   Data_Get_Struct(self,SDL_Surface,src);
 
-  if(TYPE(argv[0])==T_ARRAY)
-  {
-    zoomx = NUM2DBL(rb_ary_entry(argv[0],0));
-    zoomy = NUM2DBL(rb_ary_entry(argv[0],1));
-  }
-  else if(FIXNUM_P(argv[0]) || TYPE(argv[0])==T_FLOAT)
-  {
-    zoomx = NUM2DBL(argv[0]);
-    zoomy = zoomx;
-  }
-  else
-    rb_raise(rb_eArgError,"wrong zoom factor type (expected Array or Numeric)");
+  smooth = RTEST(vsmooth) ? 1 : 0;
 
-  if(argc > 1)
-    smooth = argv[1];
+  switch( TYPE(vzoom) )
+  {
+    case T_ARRAY:{
+      zoomx = NUM2DBL(rb_ary_entry(vzoom,0));
+      zoomy = NUM2DBL(rb_ary_entry(vzoom,1));
+      break;
+    }
+    case T_FLOAT:
+    case T_FIXNUM: {
+      zoomx = NUM2DBL(argv[0]);
+      zoomy = zoomx;
+      break;
+    }
+    default: {
+      rb_raise(rb_eArgError,
+               "wrong zoom factor type (expected Array or Numeric)");
+      break;
+    }
 
+  }
   dst = zoomSurface(src,zoomx,zoomy,smooth);
   if(dst == NULL)
     rb_raise(eSDLError,"Could not rotozoom surface: %s",SDL_GetError());
@@ -937,24 +955,34 @@ VALUE rbgm_transform_zoomsize(int argc, VALUE *argv, VALUE module)
   int w,h, dstw,dsth;
   double zoomx, zoomy;
 
-  if(argc < 3)
-    rb_raise(rb_eArgError,"wrong number of arguments (%d for 3)",argc);
-  Check_Type(argv[0],T_ARRAY);
-  w = NUM2INT(rb_ary_entry(argv[0],0));
-  h = NUM2INT(rb_ary_entry(argv[0],0));
+  VALUE vsize, vzoom;
 
-  if(TYPE(argv[1])==T_ARRAY)
+  rb_scan_args(argc,argv,"2", &vsize, &vzoom);
+
+  Check_Type(vsize,T_ARRAY);
+  w = NUM2INT(rb_ary_entry(vsize,0));
+  h = NUM2INT(rb_ary_entry(vsize,1));
+
+  switch( TYPE(vzoom) )
   {
-    zoomx = NUM2DBL(rb_ary_entry(argv[1],0));
-    zoomy = NUM2DBL(rb_ary_entry(argv[1],1));
+    case T_ARRAY: {
+      zoomx = NUM2DBL(rb_ary_entry(vzoom,0));
+      zoomy = NUM2DBL(rb_ary_entry(vzoom,1));
+      break;
+    }
+
+    case T_FLOAT:
+    case T_FIXNUM: {
+      zoomx = NUM2DBL(vzoom);
+      zoomy = zoomx;
+      break;
+    }
+    default: {
+      rb_raise(rb_eArgError,
+               "wrong zoom factor type (expected Array or Numeric)");
+      break;
+    }
   }
-  else if(FIXNUM_P(argv[1]) || TYPE(argv[1])==T_FLOAT)
-  {
-    zoomx = NUM2DBL(argv[1]);
-    zoomy = zoomx;
-  }
-  else
-    rb_raise(rb_eArgError,"wrong zoom factor type (expected Array or Numeric)");
 
   zoomSurfaceSize(w, h,  zoomx, zoomy, &dstw, &dsth);
   return rb_ary_new3(2,INT2NUM(dstw),INT2NUM(dsth));
