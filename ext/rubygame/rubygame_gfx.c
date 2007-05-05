@@ -23,6 +23,8 @@
 #include "rubygame_gfx.h"
 
 void Init_rubygame_gfx();
+void extract_color(VALUE, Uint8*, Uint8*, Uint8*, Uint8*);
+void extract_xy(VALUE, Sint16*, Sint16*);
 
 void draw_line(VALUE, VALUE, VALUE, VALUE, int);
 VALUE rbgm_draw_line(VALUE, VALUE, VALUE, VALUE);
@@ -72,6 +74,15 @@ void extract_color(VALUE rgba, Uint8* r, Uint8* g, Uint8* b, Uint8* a)
     *a = 255;
 }
 
+void extract_xy(VALUE point, Sint16* x, Sint16* y)
+{
+  Check_Type(point,T_ARRAY);
+  if(RARRAY(point)->len < 2)
+    rb_raise(rb_eArgError,"expected argument as [x,y] form");
+  *x = NUM2INT(rb_ary_entry(point,0));
+  *y = NUM2INT(rb_ary_entry(point,1));
+}
+
 /*********
  * LINES *
  *********/
@@ -83,18 +94,8 @@ void draw_line(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int aa)
   Uint8 r,g,b,a;
   Sint16 x1, y1, x2, y2;
 
-  /* get the starting and ending points of the line */
-  Check_Type(pt1,T_ARRAY);
-  Check_Type(pt2,T_ARRAY);
-  if(RARRAY(pt1)->len < 2)
-    rb_raise(rb_eArgError,"point 1 must be [x,y] form");
-  if(RARRAY(pt2)->len < 2)
-    rb_raise(rb_eArgError,"point 2 must be [x,y] form");
-  x1 = NUM2INT(rb_ary_entry(pt1,0));
-  y1 = NUM2INT(rb_ary_entry(pt1,1));
-  x2 = NUM2INT(rb_ary_entry(pt2,0));
-  y2 = NUM2INT(rb_ary_entry(pt2,1));
-  //printf("pts: [%d,%d], [%d,%d]\n",x1,y1,x2,y2);
+  extract_xy(pt1, &x1, &y1);
+  extract_xy(pt2, &x2, &y2);
   
   extract_color(rgba, &r, &g, &b, &a);
 
@@ -167,18 +168,8 @@ void draw_rect(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int fill)
   Uint8 r,g,b,a;
   Sint16 x1, y1, x2, y2;
 
-  /* get the starting and ending points of the line */
-  Check_Type(pt1,T_ARRAY);
-  Check_Type(pt2,T_ARRAY);
-  if(RARRAY(pt1)->len < 2)
-    rb_raise(rb_eArgError,"point 1 must be [x,y] form");
-  if(RARRAY(pt2)->len < 2)
-    rb_raise(rb_eArgError,"point 2 must be [x,y] form");
-  x1 = NUM2INT(rb_ary_entry(pt1,0));
-  y1 = NUM2INT(rb_ary_entry(pt1,1));
-  x2 = NUM2INT(rb_ary_entry(pt2,0));
-  y2 = NUM2INT(rb_ary_entry(pt2,1));
-  //printf("pts: [%d,%d], [%d,%d]\n",x1,y1,x2,y2);
+  extract_xy(pt1, &x1, &y1);
+  extract_xy(pt2, &x2, &y2);
   
   extract_color(rgba, &r, &g, &b, &a);
 
@@ -241,14 +232,8 @@ void draw_circle(VALUE target, VALUE center, VALUE radius, VALUE rgba, int aa, i
   Uint8 r,g,b,a;
   Sint16 x, y, rad;
 
-  /* get the starting and ending points of the line */
-  Check_Type(center,T_ARRAY);
-  if(RARRAY(center)->len < 2)
-    rb_raise(rb_eArgError,"center point must be [x,y] form");
-  x = NUM2INT(rb_ary_entry(center,0));
-  y = NUM2INT(rb_ary_entry(center,1));
+  extract_xy(center, &x, &y);
   rad = NUM2INT(radius);
-  //printf("pts: [%d,%d], [%d,%d]\n",x1,y1,x2,y2);
   
   extract_color(rgba, &r, &g, &b, &a);
 
@@ -330,23 +315,12 @@ void draw_ellipse(VALUE target, VALUE center, VALUE radii, VALUE rgba, int aa, i
   Uint8 r,g,b,a;
   Sint16 x, y, radx,rady;
 
-  /* get the starting and ending points of the line */
-  Check_Type(center,T_ARRAY);
-  Check_Type(radii,T_ARRAY);
-  if(RARRAY(center)->len < 2)
-    rb_raise(rb_eArgError,"center point must be [x,y] form");
-  if(RARRAY(radii)->len < 2)
-    rb_raise(rb_eArgError,"radii must be [rad_x,rad_y] form");
-  x = NUM2INT(rb_ary_entry(center,0));
-  y = NUM2INT(rb_ary_entry(center,1));
-  radx = NUM2INT(rb_ary_entry(radii,0));
-  rady = NUM2INT(rb_ary_entry(radii,1));
-  //printf("pts: [%d,%d], [%d,%d]\n",x1,y1,x2,y2);
+  extract_xy(center, &x, &y);
+  extract_xy(radii, &radx, &rady);
   
   extract_color(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
-  //printf("dest: %dx%d\n",dest->w,dest->h);
 
   /* call the appropriate function for the circumstances */
   
@@ -425,24 +399,13 @@ void draw_pie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba
   Uint8 r,g,b,a;
   Sint16 x, y, rad, start, end;
 
-  /* get the starting and ending points of the line */
-  Check_Type(center,T_ARRAY);
-  Check_Type(angles,T_ARRAY);
-  if(RARRAY(center)->len < 2)
-    rb_raise(rb_eArgError,"center point must be [x,y] form");
-  if(RARRAY(angles)->len < 2)
-    rb_raise(rb_eArgError,"angles must be [start,end] form");
-  x = NUM2INT(rb_ary_entry(center,0));
-  y = NUM2INT(rb_ary_entry(center,1));
+  extract_xy(center, &x, &y);
+  extract_xy(angles, &start, &end);
   rad = NUM2INT(radius);
-  start = NUM2INT(rb_ary_entry(angles,0));
-  end = NUM2INT(rb_ary_entry(angles,1));
-  //printf("pt: [%d,%d], %d, %d, %d\n",x,y,rad,start,end);
   
   extract_color(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
-  //printf("dest: %dx%d\n",dest->w,dest->h);
 
   /* call the appropriate function for the circumstances */
   
@@ -533,15 +496,12 @@ void draw_polygon(VALUE target, VALUE points, VALUE rgba, int aa, int fill)
   for(loop=0;loop<length;loop++)
   {
     each_point = rb_ary_entry(points,loop);
-    x[loop] = NUM2INT(rb_ary_entry(each_point,0));
-    y[loop] = NUM2INT(rb_ary_entry(each_point,1));
+    extract_xy(each_point, &(x[loop]), &(y[loop]));
   }
-  //printf("pts: [%d,%d], [%d,%d]\n",x1,y1,x2,y2);
 
   extract_color(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
-  //printf("dest: %dx%d\n",dest->w,dest->h);
 
   /* call the appropriate function for the circumstances */
   
