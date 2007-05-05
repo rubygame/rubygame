@@ -51,6 +51,11 @@ VALUE rbgm_draw_polygon(VALUE, VALUE, VALUE);
 VALUE rbgm_draw_aapolygon(VALUE, VALUE, VALUE);
 VALUE rbgm_draw_fillpolygon(VALUE, VALUE, VALUE);
 
+/*
+ * TODO: 
+ *  Minimize redundancy (e.g. point and color checks). DRY.
+ *  Clean up this ugly mess of code!
+ */
 
 /*********
  * LINES *
@@ -64,6 +69,8 @@ void draw_line(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int aa)
   Sint16 x1, y1, x2, y2;
 
   /* get the starting and ending points of the line */
+  Check_Type(pt1,T_ARRAY);
+  Check_Type(pt2,T_ARRAY);
   if(RARRAY(pt1)->len < 2)
     rb_raise(rb_eArgError,"point 1 must be [x,y] form");
   if(RARRAY(pt2)->len < 2)
@@ -75,6 +82,7 @@ void draw_line(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int aa)
   //printf("pts: [%d,%d], [%d,%d]\n",x1,y1,x2,y2);
   
   /* get the color of the line */
+  Check_Type(rgba,T_ARRAY);
   if(RARRAY(rgba)->len < 3)
     rb_raise(rb_eArgError,"color must be [r,g,b] or [r,g,b,a] form");
   r = NUM2UINT(rb_ary_entry(rgba,0));
@@ -159,6 +167,8 @@ void draw_rect(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int fill)
   Sint16 x1, y1, x2, y2;
 
   /* get the starting and ending points of the line */
+  Check_Type(pt1,T_ARRAY);
+  Check_Type(pt2,T_ARRAY);
   if(RARRAY(pt1)->len < 2)
     rb_raise(rb_eArgError,"point 1 must be [x,y] form");
   if(RARRAY(pt2)->len < 2)
@@ -170,6 +180,7 @@ void draw_rect(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int fill)
   //printf("pts: [%d,%d], [%d,%d]\n",x1,y1,x2,y2);
   
   /* get the color of the line */
+  Check_Type(rgba,T_ARRAY);
   if(RARRAY(rgba)->len < 3)
     rb_raise(rb_eArgError,"color must be [r,g,b] or [r,g,b,a] form");
   r = NUM2UINT(rb_ary_entry(rgba,0));
@@ -244,6 +255,7 @@ void draw_circle(VALUE target, VALUE center, VALUE radius, VALUE rgba, int aa, i
   Sint16 x, y, rad;
 
   /* get the starting and ending points of the line */
+  Check_Type(center,T_ARRAY);
   if(RARRAY(center)->len < 2)
     rb_raise(rb_eArgError,"center point must be [x,y] form");
   x = NUM2INT(rb_ary_entry(center,0));
@@ -252,6 +264,7 @@ void draw_circle(VALUE target, VALUE center, VALUE radius, VALUE rgba, int aa, i
   //printf("pts: [%d,%d], [%d,%d]\n",x1,y1,x2,y2);
   
   /* get the color of the line */
+  Check_Type(rgba,T_ARRAY);
   if(RARRAY(rgba)->len < 3)
     rb_raise(rb_eArgError,"color must be [r,g,b] or [r,g,b,a] form");
   r = NUM2UINT(rb_ary_entry(rgba,0));
@@ -345,6 +358,8 @@ void draw_ellipse(VALUE target, VALUE center, VALUE radii, VALUE rgba, int aa, i
   Sint16 x, y, radx,rady;
 
   /* get the starting and ending points of the line */
+  Check_Type(center,T_ARRAY);
+  Check_Type(radii,T_ARRAY);
   if(RARRAY(center)->len < 2)
     rb_raise(rb_eArgError,"center point must be [x,y] form");
   if(RARRAY(radii)->len < 2)
@@ -356,6 +371,7 @@ void draw_ellipse(VALUE target, VALUE center, VALUE radii, VALUE rgba, int aa, i
   //printf("pts: [%d,%d], [%d,%d]\n",x1,y1,x2,y2);
   
   /* get the color of the line */
+  Check_Type(rgba,T_ARRAY);
   if(RARRAY(rgba)->len < 3)
     rb_raise(rb_eArgError,"color must be [r,g,b] or [r,g,b,a] form");
   r = NUM2UINT(rb_ary_entry(rgba,0));
@@ -451,6 +467,8 @@ void draw_pie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba
   Sint16 x, y, rad, start, end;
 
   /* get the starting and ending points of the line */
+  Check_Type(center,T_ARRAY);
+  Check_Type(angle,T_ARRAY);
   if(RARRAY(center)->len < 2)
     rb_raise(rb_eArgError,"center point must be [x,y] form");
   if(RARRAY(angles)->len < 2)
@@ -463,6 +481,7 @@ void draw_pie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba
   //printf("pt: [%d,%d], %d, %d, %d\n",x,y,rad,start,end);
   
   /* get the color of the line */
+  Check_Type(rgba,T_ARRAY);
   if(RARRAY(rgba)->len < 3)
     rb_raise(rb_eArgError,"color must be [r,g,b] or [r,g,b,a] form");
   r = NUM2UINT(rb_ary_entry(rgba,0));
@@ -561,6 +580,7 @@ void draw_polygon(VALUE target, VALUE points, VALUE rgba, int aa, int fill)
   Sint16 *x, *y;
 
   /* separate points into arrays of x and y values */
+  Check_Type(points,T_ARRAY);
   length = RARRAY(points)->len;
   x = alloca(sizeof (Sint16) * length);
   y = alloca(sizeof (Sint16) * length);
@@ -574,6 +594,7 @@ void draw_polygon(VALUE target, VALUE points, VALUE rgba, int aa, int fill)
   //printf("pts: [%d,%d], [%d,%d]\n",x1,y1,x2,y2);
   
   /* get the color of the line */
+  Check_Type(rgba,T_ARRAY);
   if(RARRAY(rgba)->len < 3)
     rb_raise(rb_eArgError,"color must be [r,g,b] or [r,g,b,a] form");
   r = NUM2UINT(rb_ary_entry(rgba,0));
@@ -711,7 +732,7 @@ VALUE rbgm_transform_rotozoom(int argc, VALUE *argv, VALUE self)
     smooth = argv[2];
 
   /* argv[1], the zoom factor(s) */
-  if(TYPE(argv[1])==T_ARRAY)		/* if we got separate X and Y factors */
+  if(TYPE(argv[1])==T_ARRAY)    /* if we got separate X and Y factors */
   {
 
 #ifdef HAVE_ROTOZOOMXY
@@ -733,7 +754,7 @@ VALUE rbgm_transform_rotozoom(int argc, VALUE *argv, VALUE self)
   {
     zoomx = NUM2DBL(argv[1]);
 #ifndef HAVE_ROTOZOOMXY
-    if(zoomx < 0)								/* negative zoom (for flipping) */
+    if(zoomx < 0)                /* negative zoom (for flipping) */
     {
       /* Raise SDLError. You should have checked first! */
       rb_raise(eSDLError,"Negative rotozoom scale factor is not supported by your version of SDL_gfx (%d,%d,%d). Please upgrade to 2.0.13 or later.", SDL_GFXPRIMITIVES_MAJOR, SDL_GFXPRIMITIVES_MINOR, SDL_GFXPRIMITIVES_MICRO);
@@ -777,6 +798,7 @@ VALUE rbgm_transform_rzsize(int argc, VALUE *argv, VALUE module)
 
   if(argc < 3)
     rb_raise(rb_eArgError,"wrong number of arguments (%d for 3)",argc);
+  Check_Type(argv[0],T_ARRAY);
   w = NUM2INT(rb_ary_entry(argv[0],0));
   h = NUM2INT(rb_ary_entry(argv[0],0));
   angle = NUM2DBL(argv[1]);
@@ -801,10 +823,10 @@ VALUE rbgm_transform_rzsize(int argc, VALUE *argv, VALUE module)
   {
     zoomx = NUM2DBL(argv[1]);
 #ifndef HAVE_ROTOZOOMXY
-    if(zoomx < 0)								/* negative zoom (for flipping) */
+    if(zoomx < 0)                /* negative zoom (for flipping) */
     {
-			/* Return nil, because it's not supported. */
-			return Qnil;
+      /* Return nil, because it's not supported. */
+      return Qnil;
     }
 #endif
     rotozoomSurfaceSize(w, h, angle, zoomx, &dstw, &dsth);
@@ -917,6 +939,7 @@ VALUE rbgm_transform_zoomsize(int argc, VALUE *argv, VALUE module)
 
   if(argc < 3)
     rb_raise(rb_eArgError,"wrong number of arguments (%d for 3)",argc);
+  Check_Type(argv[0],T_ARRAY);
   w = NUM2INT(rb_ary_entry(argv[0],0));
   h = NUM2INT(rb_ary_entry(argv[0],0));
 
@@ -966,8 +989,8 @@ VALUE rbgm_transform_zoomsize(int argc, VALUE *argv, VALUE module)
 void Init_rubygame_gfx()
 {
 #if 0
-	mRubygame = rb_define_module("Rubygame");
-	cSurface = rb_define_class_under(mRubygame,"Surface",rb_cObject);
+  mRubygame = rb_define_module("Rubygame");
+  cSurface = rb_define_class_under(mRubygame,"Surface",rb_cObject);
 #endif
 
   Init_rubygame_shared();
