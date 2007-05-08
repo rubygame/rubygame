@@ -262,7 +262,7 @@ VALUE rbgm_screen_updaterects(VALUE self, VALUE array_rects)
   int i, num_rects;
   VALUE each_rect;
   SDL_Surface *screen;
-  SDL_Rect **rects;
+  SDL_Rect *rects;
 
   /* unwrap the Screen instance from self (VALUE) */
   Data_Get_Struct(self,SDL_Surface,screen);
@@ -270,20 +270,20 @@ VALUE rbgm_screen_updaterects(VALUE self, VALUE array_rects)
   /* prepare an (uninitialized) array of Rects */
   array_rects = rb_check_array_type(array_rects);
   num_rects = RARRAY(array_rects)->len;
-  rects = alloca(sizeof (SDL_Rect*) * num_rects);
+  rects = ALLOCA_N(SDL_Rect, num_rects);
 
   /* initialize the array of Rects from array_rects */
   for( i=0; i < num_rects; i++ )
 	{
 	  each_rect = rb_ary_entry(array_rects,i);
-	  rects[i]->x = NUM2INT(rb_ary_entry(each_rect,0));
-	  rects[i]->y = NUM2INT(rb_ary_entry(each_rect,1));
-	  rects[i]->w = NUM2INT(rb_ary_entry(each_rect,2));
-	  rects[i]->h = NUM2INT(rb_ary_entry(each_rect,3));
+	  rects[i].x = NUM2INT(rb_ary_entry(each_rect,0));
+	  rects[i].y = NUM2INT(rb_ary_entry(each_rect,1));
+	  rects[i].w = NUM2INT(rb_ary_entry(each_rect,2));
+	  rects[i].h = NUM2INT(rb_ary_entry(each_rect,3));
 	}
 
   /* call the SDL method to update from all these rects */
-  SDL_UpdateRects( screen, num_rects, *rects );
+  SDL_UpdateRects( screen, num_rects, rects );
 
   return self;
 }
