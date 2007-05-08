@@ -229,6 +229,7 @@ VALUE rbgm_screen_update(int argc, VALUE *argv, VALUE self)
 				y = NUM2INT(rb_ary_entry(vx,1));
 				w = NUM2INT(rb_ary_entry(vx,2));
 				h = NUM2INT(rb_ary_entry(vx,3));
+				break;
 			}
 			case T_FLOAT:
 			case T_BIGNUM:
@@ -237,9 +238,11 @@ VALUE rbgm_screen_update(int argc, VALUE *argv, VALUE self)
 				y = NUM2INT(vy);
 				w = NUM2INT(vw);
 				h = NUM2INT(vh);
+				break;
 			}
 			default: {
 				rb_raise(rb_eTypeError,"Unrecognized type for x (wanted Array or Numeric).");
+				break;
 			}
 		}
 	}

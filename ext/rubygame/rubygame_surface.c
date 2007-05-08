@@ -783,12 +783,15 @@ VALUE rbgm_surface_convert(int argc, VALUE *argv, VALUE self)
 				{
 					flags |= NUM2UINT( rb_ary_entry(vflags, counter) );
 				}
+				break;
 			}
 			case T_FIXNUM: {
 				flags = NUM2UINT(vflags);
+				break;
 			}
 			default: {
 				rb_raise(rb_eArgError,"Wrong type for argument `flags' (wanted Fixnum or Array).");
+				break;
 			}
 		}
 	}
