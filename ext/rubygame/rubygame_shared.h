@@ -35,8 +35,8 @@ extern Uint32 collapse_flags(VALUE);
 extern void Init_rubygame_shared();
 
 #ifndef _MSC_VER
-extern static inline int max(int, int);
-extern static inline int min(int, int);
+extern inline int max(int, int);
+extern inline int min(int, int);
 #endif
 
 #endif
