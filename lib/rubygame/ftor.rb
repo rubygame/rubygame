@@ -252,7 +252,7 @@ class Ftor
   # In other words, the Ftor will point in the same direction, but it will
   # be a different length from tail to head.
 	def magnitude=(m)
-		new = normal() * m
+		new = unit() * m
 		set!(new.x, new.y)
 	end
 
