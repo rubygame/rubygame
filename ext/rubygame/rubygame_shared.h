@@ -34,4 +34,9 @@ extern SDL_Rect *make_rect(int, int, int, int);
 extern Uint32 collapse_flags(VALUE);
 extern void Init_rubygame_shared();
 
+#ifndef _MSC_VER
+extern static inline int max(int, int);
+extern static inline int min(int, int);
+#endif
+
 #endif

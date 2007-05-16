@@ -391,20 +391,6 @@ VALUE rbgm_surface_set_colorkey( int argc, VALUE *argv, VALUE self)
 	return self;
 }
 
-/* Apparently it is not desirable to define these functions when
- * using Micrsoft Visual C.
- */
-#ifndef _MSC_VER
-
-static inline int max(int a, int b) {
-	return a > b ? a : b;
-}
-static inline int min(int a, int b) {
-	return a > b ? b : a;
-}
-
-#endif
-
 /* 
  *  call-seq:
  *     blit(target,dest,source=nil)  ->  Rect
@@ -773,28 +759,7 @@ VALUE rbgm_surface_convert(int argc, VALUE *argv, VALUE self)
     }
   }
 
-	flags = 0;
-	if( !NIL_P(vflags) )
-	{
-		switch( TYPE(vflags) ){
-			case T_ARRAY: {
-				int counter = 0;
-				for(counter; counter < RARRAY(vflags)->len; counter += 1)
-				{
-					flags |= NUM2UINT( rb_ary_entry(vflags, counter) );
-				}
-				break;
-			}
-			case T_FIXNUM: {
-				flags = NUM2UINT(vflags);
-				break;
-			}
-			default: {
-				rb_raise(rb_eArgError,"Wrong type for argument `flags' (wanted Fixnum or Array).");
-				break;
-			}
-		}
-	}
+	flags = collapse_flags(vflags); /* in rubygame_shared.c */
 
   newsurf = SDL_ConvertSurface( surf, othersurf->format, flags );
 

@@ -50,7 +50,8 @@ Uint32 collapse_flags(VALUE vflags)
 	{
     switch( TYPE(vflags) ){
 			case T_ARRAY: {
-				for(i=0;  i < RARRAY(vflags)->len;  i++)
+				int len = RARRAY(vflags)->len;
+				for(i=0;  i < len;  i++)
         {
           flags |= NUM2UINT(  rb_ary_entry( vflags,i )  );
         }
@@ -69,6 +70,21 @@ Uint32 collapse_flags(VALUE vflags)
 
 	return flags;
 }
+
+
+/* Apparently it is not desirable to define these functions when
+ * using Micrsoft Visual C.
+ */
+#ifndef _MSC_VER
+
+static inline int max(int a, int b) {
+	return a > b ? a : b;
+}
+static inline int min(int a, int b) {
+	return a > b ? b : a;
+}
+
+#endif
 
 void Init_rubygame_shared()
 {
