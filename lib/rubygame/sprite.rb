@@ -274,6 +274,7 @@ module Rubygame
 				if killb
 					sprites.each_value { |sprite| sprite.kill }
 				end
+				return sprites
 			end
 
 			# Remove each sprite in +sprites+ from the Group. Each sprite is notified
