@@ -247,6 +247,18 @@ VALUE rbgm_screen_update(int argc, VALUE *argv, VALUE self)
 		}
 	}
 
+	Sint16 left,top,right,bottom;
+
+	left   = min( max( 0,    x    ), screen->w );
+	top    = min( max( 0,    y    ), screen->h );
+	right  = min( max( left, x + w), screen->w );
+	bottom = min( max( top,  y + h), screen->h );
+
+	x = left;
+	y = top;
+	w = right - left;
+	h = bottom - top;
+
   SDL_UpdateRect(screen,x,y,w,h);
   return self;
 }
@@ -277,13 +289,27 @@ VALUE rbgm_screen_updaterects(VALUE self, VALUE array_rects)
 
   /* initialize the array of Rects from array_rects */
   for( i=0; i < num_rects; i++ )
-	{
-	  each_rect = rb_ary_entry(array_rects,i);
-	  rects[i].x = NUM2INT(rb_ary_entry(each_rect,0));
-	  rects[i].y = NUM2INT(rb_ary_entry(each_rect,1));
-	  rects[i].w = NUM2INT(rb_ary_entry(each_rect,2));
-	  rects[i].h = NUM2INT(rb_ary_entry(each_rect,3));
-	}
+  {
+    each_rect = rb_ary_entry(array_rects,i);
+
+    Sint16 x,y,left,top,right,bottom;
+    Uint16 w,h;
+
+    x = NUM2INT(rb_ary_entry(each_rect,0));
+    y = NUM2INT(rb_ary_entry(each_rect,1));
+    w = NUM2INT(rb_ary_entry(each_rect,2));
+    h = NUM2INT(rb_ary_entry(each_rect,3));
+
+		left   = min( max( 0,    x    ), screen->w );
+		top    = min( max( 0,    y    ), screen->h );
+		right  = min( max( left, x + w), screen->w );
+		bottom = min( max( top,  y + h), screen->h );
+
+    rects[i].x = left;
+    rects[i].y = top;
+    rects[i].w = right - left;
+    rects[i].h = bottom - top;
+  }
 
   /* call the SDL method to update from all these rects */
   SDL_UpdateRects( screen, num_rects, rects );
