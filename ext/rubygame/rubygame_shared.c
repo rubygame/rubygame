@@ -71,21 +71,6 @@ Uint32 collapse_flags(VALUE vflags)
 	return flags;
 }
 
-
-/* Apparently it is not desirable to define these functions when
- * using Micrsoft Visual C.
- */
-#ifndef _MSC_VER
-
-static inline int max(int a, int b) {
-	return a > b ? a : b;
-}
-static inline int min(int a, int b) {
-	return a > b ? b : a;
-}
-
-#endif
-
 void Init_rubygame_shared()
 {
 
