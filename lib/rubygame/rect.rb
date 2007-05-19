@@ -411,14 +411,13 @@ class Rect < Array
 	# As a side effect, the Rect is normalized.
 	def clip!(rect)
 		nself = self.normalize
-		rect = Rect.new_from_object(rect).normalize!
-		if self.collide_rect?(rect)
-			self[0] = min(nself.right, rect.right) - nself.at(0)
-			self[3] = min(nself.bottom, rect.bottom) - nself.at(1)
-			self[0] = max(nself.at(0), rect.at(1))
-			self[1] = max(nself.at(1), rect.at(1))
-			#if they do not intersect at all:
-		else
+		other = Rect.new_from_object(rect).normalize!
+		if self.collide_rect?(other)
+			self[0] = [nself.at(0), other.at(0)].max
+			self[1] = [nself.at(1), other.at(1)].max
+			self[2] = [nself.right, other.right].min - self.at(0)
+			self[3] = [nself.bottom, other.bottom].min - self.at(1)
+		else #if they do not intersect at all:
 			self[0], self[1] = nself.topleft
 			self[2], self[3] = 0, 0
 		end
