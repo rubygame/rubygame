@@ -12,17 +12,6 @@
 #include "rubygame_mCollidable.h"
 #include "rubygame_defines.h"
 
-extern VALUE mRubygame;
-extern VALUE mBody;
-extern VALUE mCollidable;
-
-extern VALUE rg_cCircle;
-extern VALUE rg_cRect;
-extern VALUE rg_cSegment;
-extern VALUE rg_cFtor;
-static ID rg_id_call;
-static ID rg_id_body;
-
 void rg_collidable_extract_struct(void**, VALUE, VALUE);
 
 int rg_collidable_collide_bodies(VALUE a, VALUE b)
@@ -58,10 +47,10 @@ int rg_collidable_collide_bodies(VALUE a, VALUE b)
 
 int rg_collidable_type(VALUE class)
 {
-	if (class == rg_cFtor)    return  1;
-	if (class == rg_cSegment) return  2;
-	if (class == rg_cRect)    return  4;
-	if (class == rg_cCircle)  return  8;
+	if (class == cFtor)    return  1;
+	if (class == cSegment) return  2;
+	if (class == cRect)    return  4;
+	if (class == cCircle)  return  8;
 	return 0;
 }
 
@@ -287,13 +276,13 @@ int rg_collidable_collide_circle_circle(rg_circle *a, rg_circle *b)
 
 void rg_collidable_extract_struct(void **strct, VALUE class, VALUE x)
 {
-	if (class == rg_cFtor) {
+	if (class == cFtor) {
 		Data_Get_Struct(x, rg_ftor, *strct);
-	} else if (class == rg_cSegment)  {
+	} else if (class == cSegment)  {
 		Data_Get_Struct(x, rg_segment, *strct);
-	} else if (class == rg_cRect) {
+	} else if (class == cRect) {
 		Data_Get_Struct(x, rg_rect, *strct);
-	} else if (class == rg_cCircle) {
+	} else if (class == cCircle) {
 		Data_Get_Struct(x, rg_circle, *strct);
 	} else {
 		rb_warn("couldn't extract struct");

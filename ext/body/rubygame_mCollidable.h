@@ -4,8 +4,10 @@
 extern VALUE rg_collidable_rb_collide_single(VALUE, VALUE);
 extern VALUE rg_collidable_rb_collide(int, VALUE*, VALUE);
 
-extern void Init_rg_mCollidable();
+extern void Init_Collidable();
 
 extern VALUE mCollidable;
+extern ID rg_id_call;
+extern ID rg_id_body;
 
 #endif

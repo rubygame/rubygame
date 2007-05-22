@@ -6,7 +6,7 @@
 #include "rubygame_cSegment.h"
 #include "collision_math.h"
 
-VALUE rg_cSegment;
+VALUE cSegment;
 
 void rg_segment_move(rg_segment *seg, rg_ftor *ftor)
 {
@@ -110,7 +110,7 @@ static VALUE rg_segment_rb_begin(VALUE self)
 	rg_segment *seg;
 	rg_ftor    *ftor;
 	Data_Get_Struct(self, rg_segment, seg);
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, ftor);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
 	ftor->x = seg->start.x;
 	ftor->y = seg->start.y;
 	return rb_ftor;
@@ -128,7 +128,7 @@ static VALUE rg_segment_rb_center(VALUE self)
 	rg_ftor    *ftor;
 	rg_ftor    half;
 	Data_Get_Struct(self, rg_segment, seg);
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, ftor);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
 	rg_ftor_resized_by(&half, &seg->vec, 0.5);
 	rg_ftor_add(ftor, &seg->start, &half);
 	return rb_ftor;
@@ -145,7 +145,7 @@ static VALUE rg_segment_rb_end(VALUE self)
 	rg_segment *seg;
 	rg_ftor    *ftor;
 	Data_Get_Struct(self, rg_segment, seg);
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, ftor);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
 	rg_ftor_add(ftor, &seg->start, &seg->vec);
 	return rb_ftor;
 }
@@ -161,7 +161,7 @@ static VALUE rg_segment_rb_vec(VALUE self)
 	rg_segment *seg;
 	rg_ftor    *ftor;
 	Data_Get_Struct(self, rg_segment, seg);
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, ftor);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
 	ftor->x = seg->vec.x;
 	ftor->y = seg->vec.y;
 	return rb_ftor;
@@ -261,27 +261,27 @@ static VALUE rg_segment_rb_inspect(VALUE self)
  *
  *  Segment represents a line segment, determined by a begin and an end.
  */
-void Init_rg_cSegment()
+void Init_Segment()
 {
 	mRubygame = rb_define_module("Rubygame");
 	mBody     = rb_define_module_under(mRubygame, "Body");
 
-	rg_cSegment = rb_define_class_under(mBody, "Segment", rb_cObject);
+	cSegment = rb_define_class_under(mBody, "Segment", rb_cObject);
 
-	rb_define_alloc_func(rg_cSegment, rg_segment_rb_singleton_alloc);
+	rb_define_alloc_func(cSegment, rg_segment_rb_singleton_alloc);
 
-	rb_define_singleton_method(rg_cSegment, "new",    rg_segment_rb_singleton_new, -1);
-	rb_define_singleton_method(rg_cSegment, "points", rg_segment_rb_singleton_points, 4);
+	rb_define_singleton_method(cSegment, "new",    rg_segment_rb_singleton_new, -1);
+	rb_define_singleton_method(cSegment, "points", rg_segment_rb_singleton_points, 4);
 
-	rb_define_method(rg_cSegment, "initialize",      rg_segment_rb_initialize, 2);
-	rb_define_method(rg_cSegment, "initialize_copy", rg_segment_rb_initialize_copy, 1);
-	rb_define_method(rg_cSegment, "begin",           rg_segment_rb_begin, 0);
-	rb_define_method(rg_cSegment, "center",          rg_segment_rb_center, 0);
-	rb_define_method(rg_cSegment, "end",             rg_segment_rb_end, 0);
-	rb_define_method(rg_cSegment, "vector",          rg_segment_rb_vec, 0);
-	rb_define_method(rg_cSegment, "length",          rg_segment_rb_length, 0);
-	rb_define_method(rg_cSegment, "angle",           rg_segment_rb_angle, 0);
-	rb_define_method(rg_cSegment, "move",            rg_segment_rb_move, 1);
-	rb_define_method(rg_cSegment, "rotate",          rg_segment_rb_rotate, 2);
-	rb_define_method(rg_cSegment, "inspect",         rg_segment_rb_inspect, 0);
+	rb_define_method(cSegment, "initialize",      rg_segment_rb_initialize, 2);
+	rb_define_method(cSegment, "initialize_copy", rg_segment_rb_initialize_copy, 1);
+	rb_define_method(cSegment, "begin",           rg_segment_rb_begin, 0);
+	rb_define_method(cSegment, "center",          rg_segment_rb_center, 0);
+	rb_define_method(cSegment, "end",             rg_segment_rb_end, 0);
+	rb_define_method(cSegment, "vector",          rg_segment_rb_vec, 0);
+	rb_define_method(cSegment, "length",          rg_segment_rb_length, 0);
+	rb_define_method(cSegment, "angle",           rg_segment_rb_angle, 0);
+	rb_define_method(cSegment, "move",            rg_segment_rb_move, 1);
+	rb_define_method(cSegment, "rotate",          rg_segment_rb_rotate, 2);
+	rb_define_method(cSegment, "inspect",         rg_segment_rb_inspect, 0);
 }

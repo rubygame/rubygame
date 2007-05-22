@@ -7,7 +7,7 @@
 #include "rubygame_cRect.h"
 #include "collision_math.h"
 
-VALUE rg_cRect;
+VALUE cRect;
 
 void rg_rect_top(rg_segment *seg, rg_rect *rect)
 {
@@ -186,7 +186,7 @@ static VALUE rg_rect_rb_top(VALUE self)
 	Data_Get_Struct(self, rg_rect, rect);
 
 	rg_segment *seg;
-	VALUE rb_seg = Data_Make_Struct(rg_cSegment, rg_segment, NULL, free, seg);
+	VALUE rb_seg = Data_Make_Struct(cSegment, rg_segment, NULL, free, seg);
 	
 	rg_rect_top(seg, rect);
 
@@ -205,7 +205,7 @@ static VALUE rg_rect_rb_right(VALUE self)
 	Data_Get_Struct(self, rg_rect, rect);
 
 	rg_segment *seg;
-	VALUE rb_seg = Data_Make_Struct(rg_cSegment, rg_segment, NULL, free, seg);
+	VALUE rb_seg = Data_Make_Struct(cSegment, rg_segment, NULL, free, seg);
 	
 	rg_rect_right(seg, rect);
 
@@ -224,7 +224,7 @@ static VALUE rg_rect_rb_bottom(VALUE self)
 	Data_Get_Struct(self, rg_rect, rect);
 
 	rg_segment *seg;
-	VALUE rb_seg = Data_Make_Struct(rg_cSegment, rg_segment, NULL, free, seg);
+	VALUE rb_seg = Data_Make_Struct(cSegment, rg_segment, NULL, free, seg);
 	
 	rg_rect_bottom(seg, rect);
 
@@ -243,7 +243,7 @@ static VALUE rg_rect_rb_left(VALUE self)
 	Data_Get_Struct(self, rg_rect, rect);
 
 	rg_segment *seg;
-	VALUE rb_seg = Data_Make_Struct(rg_cSegment, rg_segment, NULL, free, seg);
+	VALUE rb_seg = Data_Make_Struct(cSegment, rg_segment, NULL, free, seg);
 	
 	rg_rect_left(seg, rect);
 
@@ -262,7 +262,7 @@ static VALUE rg_rect_rb_top_left(VALUE self)
 	Data_Get_Struct(self, rg_rect, rect);
 
 	rg_ftor *ftor;
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, ftor);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
 	
 	*ftor = rect->topleft;
 
@@ -281,7 +281,7 @@ static VALUE rg_rect_rb_top_mid(VALUE self)
 	Data_Get_Struct(self, rg_rect, rect);
 
 	rg_ftor *ftor;
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, ftor);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
 	
 	rg_rect_top_mid(ftor, rect);
 
@@ -300,7 +300,7 @@ static VALUE rg_rect_rb_top_right(VALUE self)
 	Data_Get_Struct(self, rg_rect, rect);
 
 	rg_ftor *ftor;
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, ftor);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
 	
 	rg_rect_top_right(ftor, rect);
 
@@ -319,7 +319,7 @@ static VALUE rg_rect_rb_mid_right(VALUE self)
 	Data_Get_Struct(self, rg_rect, rect);
 
 	rg_ftor *ftor;
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, ftor);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
 	
 	rg_rect_mid_right(ftor, rect);
 
@@ -338,7 +338,7 @@ static VALUE rg_rect_rb_bottom_right(VALUE self)
 	Data_Get_Struct(self, rg_rect, rect);
 
 	rg_ftor *ftor;
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, ftor);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
 	
 	rg_rect_bottom_right(ftor, rect);
 
@@ -357,7 +357,7 @@ static VALUE rg_rect_rb_bottom_mid(VALUE self)
 	Data_Get_Struct(self, rg_rect, rect);
 
 	rg_ftor *ftor;
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, ftor);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
 	
 	rg_rect_bottom_mid(ftor, rect);
 
@@ -376,7 +376,7 @@ static VALUE rg_rect_rb_bottom_left(VALUE self)
 	Data_Get_Struct(self, rg_rect, rect);
 
 	rg_ftor *ftor;
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, ftor);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
 	
 	rg_rect_bottom_left(ftor, rect);
 
@@ -395,7 +395,7 @@ static VALUE rg_rect_rb_mid_left(VALUE self)
 	Data_Get_Struct(self, rg_rect, rect);
 
 	rg_ftor *ftor;
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, ftor);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
 	
 	rg_rect_mid_left(ftor, rect);
 
@@ -414,7 +414,7 @@ static VALUE rg_rect_rb_center(VALUE self)
 	Data_Get_Struct(self, rg_rect, rect);
 
 	rg_ftor *ftor;
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, ftor);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
 	
 	rg_rect_center(ftor, rect);
 
@@ -515,34 +515,34 @@ static VALUE rg_rect_rb_inspect(VALUE self)
  *  Rect is a class to represent bodies of rectangular shape.
  *  Bodies are only used for collision and positioning.
  */
-void Init_rg_cRect()
+void Init_Rect()
 {
 	mRubygame = rb_define_module("Rubygame");
 	mBody     = rb_define_module_under(mRubygame, "Body");
 
-	rg_cRect    = rb_define_class_under(mBody, "Rect", rb_cObject);
+	cRect    = rb_define_class_under(mBody, "Rect", rb_cObject);
 
-	rb_define_alloc_func(rg_cRect, rg_rect_rb_singleton_alloc);
+	rb_define_alloc_func(cRect, rg_rect_rb_singleton_alloc);
 
-	rb_define_singleton_method(rg_cRect, "rect",   rg_rect_rb_singleton_rect, 4);
+	rb_define_singleton_method(cRect, "rect",   rg_rect_rb_singleton_rect, 4);
 
-	rb_define_method(rg_cRect, "initialize",      rg_rect_rb_initialize, 3);
-	rb_define_method(rg_cRect, "initialize_copy", rg_rect_rb_initialize_copy, 1);
-	rb_define_method(rg_cRect, "top",             rg_rect_rb_top, 0);
-	rb_define_method(rg_cRect, "right",           rg_rect_rb_right, 0);
-	rb_define_method(rg_cRect, "bottom",          rg_rect_rb_bottom, 0);
-	rb_define_method(rg_cRect, "left",            rg_rect_rb_left, 0);
-	rb_define_method(rg_cRect, "top_left",        rg_rect_rb_top_left, 0);
-	rb_define_method(rg_cRect, "top_mid",         rg_rect_rb_top_mid, 0);
-	rb_define_method(rg_cRect, "top_right",       rg_rect_rb_top_right, 0);
-	rb_define_method(rg_cRect, "mid_right",       rg_rect_rb_mid_right, 0);
-	rb_define_method(rg_cRect, "bottom_right",    rg_rect_rb_bottom_right, 0);
-	rb_define_method(rg_cRect, "bottom_mid",      rg_rect_rb_bottom_mid, 0);
-	rb_define_method(rg_cRect, "bottom_left",     rg_rect_rb_bottom_left, 0);
-	rb_define_method(rg_cRect, "mid_left",        rg_rect_rb_mid_left, 0);
-	rb_define_method(rg_cRect, "center",          rg_rect_rb_center, 0);
-	rb_define_method(rg_cRect, "angle",           rg_rect_rb_angle, 0);
-	rb_define_method(rg_cRect, "move",            rg_rect_rb_move, 1);
-	rb_define_method(rg_cRect, "rotate",          rg_rect_rb_rotate, 2);
-	rb_define_method(rg_cRect, "inspect",         rg_rect_rb_inspect, 0);
+	rb_define_method(cRect, "initialize",      rg_rect_rb_initialize, 3);
+	rb_define_method(cRect, "initialize_copy", rg_rect_rb_initialize_copy, 1);
+	rb_define_method(cRect, "top",             rg_rect_rb_top, 0);
+	rb_define_method(cRect, "right",           rg_rect_rb_right, 0);
+	rb_define_method(cRect, "bottom",          rg_rect_rb_bottom, 0);
+	rb_define_method(cRect, "left",            rg_rect_rb_left, 0);
+	rb_define_method(cRect, "top_left",        rg_rect_rb_top_left, 0);
+	rb_define_method(cRect, "top_mid",         rg_rect_rb_top_mid, 0);
+	rb_define_method(cRect, "top_right",       rg_rect_rb_top_right, 0);
+	rb_define_method(cRect, "mid_right",       rg_rect_rb_mid_right, 0);
+	rb_define_method(cRect, "bottom_right",    rg_rect_rb_bottom_right, 0);
+	rb_define_method(cRect, "bottom_mid",      rg_rect_rb_bottom_mid, 0);
+	rb_define_method(cRect, "bottom_left",     rg_rect_rb_bottom_left, 0);
+	rb_define_method(cRect, "mid_left",        rg_rect_rb_mid_left, 0);
+	rb_define_method(cRect, "center",          rg_rect_rb_center, 0);
+	rb_define_method(cRect, "angle",           rg_rect_rb_angle, 0);
+	rb_define_method(cRect, "move",            rg_rect_rb_move, 1);
+	rb_define_method(cRect, "rotate",          rg_rect_rb_rotate, 2);
+	rb_define_method(cRect, "inspect",         rg_rect_rb_inspect, 0);
 }

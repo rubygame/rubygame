@@ -4,7 +4,7 @@
 #include "rubygame_cFtor.h"
 #include "collision_math.h"
 
-VALUE rg_cFtor;
+VALUE cFtor;
 
 void rg_ftor_add(rg_ftor *result, rg_ftor *a, rg_ftor *b)
 {
@@ -255,7 +255,7 @@ static VALUE rg_ftor_rb_binary_plus(VALUE self, VALUE other)
 	Data_Get_Struct(self, rg_ftor, a);
 	Data_Get_Struct(other, rg_ftor, b);
 
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, c);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, c);
 	rg_ftor_add(c, a, b);
 
 	return rb_ftor;
@@ -274,7 +274,7 @@ static VALUE rg_ftor_rb_binary_minus(VALUE self, VALUE other)
 	Data_Get_Struct(self, rg_ftor, a);
 	Data_Get_Struct(other, rg_ftor, b);
 
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, c);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, c);
 	rg_ftor_subtract(c, a, b);
 
 	return rb_ftor;
@@ -290,7 +290,7 @@ static VALUE rg_ftor_rb_unary_plus(VALUE self)
 {
 	rg_ftor *a, *b;
 	Data_Get_Struct(self, rg_ftor, a);
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, b);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, b);
 	b->x = a->x;
 	b->y = a->y;
 	return rb_ftor;	
@@ -306,7 +306,7 @@ static VALUE rg_ftor_rb_unary_minus(VALUE self)
 {
 	rg_ftor *a, *b;
 	Data_Get_Struct(self, rg_ftor, a);
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, b);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, b);
 	b->x = -a->x;
 	b->y = -a->y;
 	return rb_ftor;	
@@ -339,7 +339,7 @@ static VALUE rg_ftor_rb_normalized(VALUE self)
 {
 	rg_ftor *a, *b;
 	Data_Get_Struct(self, rg_ftor, a);
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, b);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, b);
 	
 	rg_ftor_normalized(b, a);
 	return rb_ftor;	
@@ -355,7 +355,7 @@ static VALUE rg_ftor_rb_resized_to(VALUE self, VALUE size)
 {
 	rg_ftor *a, *b;
 	Data_Get_Struct(self, rg_ftor, a);
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, b);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, b);
 	
 	rg_ftor_resized_to(b, a, NUM2DBL(size));
 	return rb_ftor;	
@@ -371,7 +371,7 @@ static VALUE rg_ftor_rb_resized_by(VALUE self, VALUE factor)
 {
 	rg_ftor *a, *b;
 	Data_Get_Struct(self, rg_ftor, a);
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, b);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, b);
 	
 	rg_ftor_resized_by(b, a, NUM2DBL(factor));
 	return rb_ftor;	
@@ -388,7 +388,7 @@ static VALUE rg_ftor_rb_rotated_to(VALUE self, VALUE rad)
 {
 	rg_ftor *a, *b;
 	Data_Get_Struct(self, rg_ftor, a);
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, b);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, b);
 	
 	rg_ftor_rotated_to(b, a, NUM2DBL(rad));
 	return rb_ftor;	
@@ -405,7 +405,7 @@ static VALUE rg_ftor_rb_rotated_by(VALUE self, VALUE rad)
 {
 	rg_ftor *a, *b;
 	Data_Get_Struct(self, rg_ftor, a);
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, b);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, b);
 	
 	rg_ftor_rotated_by(b, a, NUM2DBL(rad));
 	return rb_ftor;	
@@ -424,7 +424,7 @@ static VALUE rg_ftor_rb_rotated_around(VALUE self, VALUE center, VALUE rad)
 	rg_ftor *a, *b, *c;
 	Data_Get_Struct(self, rg_ftor, a);
 	Data_Get_Struct(center, rg_ftor, b);
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, c);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, c);
 	
 	rg_ftor_rotated_around(c, a, b, NUM2DBL(rad));
 	return rb_ftor;	
@@ -443,7 +443,7 @@ static VALUE rg_ftor_rb_projected(VALUE self, VALUE project_on)
 	Data_Get_Struct(self, rg_ftor, a);
 	Data_Get_Struct(project_on, rg_ftor, b);
 
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, c);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, c);
 	
 	rg_ftor_projected(c, a, b);
 	return rb_ftor;	
@@ -515,38 +515,38 @@ static VALUE rg_ftor_rb_inspect(VALUE self)
  *  methods that don't belong to a vector and also is limited to 2d) is
  *  a Vector like class, used to represent Points, Movements and Distances.
  */
-void Init_rg_cFtor()
+void Init_Ftor()
 {
 	mRubygame = rb_define_module("Rubygame");
 	mBody     = rb_define_module_under(mRubygame, "Body");
 
-	rg_cFtor    = rb_define_class_under(mBody, "Ftor", rb_cObject);
+	cFtor    = rb_define_class_under(mBody, "Ftor", rb_cObject);
 
-	rb_define_alloc_func(rg_cFtor, rg_ftor_rb_singleton_alloc);
+	rb_define_alloc_func(cFtor, rg_ftor_rb_singleton_alloc);
 
-	rb_define_singleton_method(rg_cFtor, "polar", rg_ftor_rb_singleton_polar, 2);
-	rb_define_singleton_method(rg_cFtor, "[]",    rg_ftor_rb_singleton_bracket, 2);
+	rb_define_singleton_method(cFtor, "polar", rg_ftor_rb_singleton_polar, 2);
+	rb_define_singleton_method(cFtor, "[]",    rg_ftor_rb_singleton_bracket, 2);
 
-	rb_define_method(rg_cFtor, "initialize",      rg_ftor_rb_initialize, 2);
-	rb_define_method(rg_cFtor, "initialize_copy", rg_ftor_rb_initialize_copy, 1);
-	rb_define_method(rg_cFtor, "x",               rg_ftor_rb_x, 0);
-	rb_define_method(rg_cFtor, "y",               rg_ftor_rb_y, 0);
-	rb_define_method(rg_cFtor, "magnitude",       rg_ftor_rb_magnitude, 0);
-	rb_define_method(rg_cFtor, "angle",           rg_ftor_rb_angle, 0);
-	rb_define_method(rg_cFtor, "angle_deg",       rg_ftor_rb_angle_deg, 0);
-	rb_define_method(rg_cFtor, "+",               rg_ftor_rb_binary_plus, 1);
-	rb_define_method(rg_cFtor, "-",               rg_ftor_rb_binary_minus, 1);
-	rb_define_method(rg_cFtor, "+@",              rg_ftor_rb_unary_plus, 0);
-	rb_define_method(rg_cFtor, "-@",              rg_ftor_rb_unary_minus, 0);
-	rb_define_method(rg_cFtor, "dot",             rg_ftor_rb_dotproduct, 1);
-	rb_define_method(rg_cFtor, "normalized",      rg_ftor_rb_normalized, 0);
-	rb_define_method(rg_cFtor, "resized_to",      rg_ftor_rb_resized_to, 1);
-	rb_define_method(rg_cFtor, "resized_by",      rg_ftor_rb_resized_by, 1);
-	rb_define_method(rg_cFtor, "rotated_to",      rg_ftor_rb_rotated_to, 1);
-	rb_define_method(rg_cFtor, "rotated_by",      rg_ftor_rb_rotated_by, 1);
-	rb_define_method(rg_cFtor, "rotated_around",  rg_ftor_rb_rotated_around, 2);
-	rb_define_method(rg_cFtor, "projected",       rg_ftor_rb_projected, 1);
-	rb_define_method(rg_cFtor, "to_a",            rg_ftor_rb_to_a, 0);
-	rb_define_method(rg_cFtor, "to_s",            rg_ftor_rb_to_s, 0);
-	rb_define_method(rg_cFtor, "inspect",         rg_ftor_rb_inspect, 0);
+	rb_define_method(cFtor, "initialize",      rg_ftor_rb_initialize, 2);
+	rb_define_method(cFtor, "initialize_copy", rg_ftor_rb_initialize_copy, 1);
+	rb_define_method(cFtor, "x",               rg_ftor_rb_x, 0);
+	rb_define_method(cFtor, "y",               rg_ftor_rb_y, 0);
+	rb_define_method(cFtor, "magnitude",       rg_ftor_rb_magnitude, 0);
+	rb_define_method(cFtor, "angle",           rg_ftor_rb_angle, 0);
+	rb_define_method(cFtor, "angle_deg",       rg_ftor_rb_angle_deg, 0);
+	rb_define_method(cFtor, "+",               rg_ftor_rb_binary_plus, 1);
+	rb_define_method(cFtor, "-",               rg_ftor_rb_binary_minus, 1);
+	rb_define_method(cFtor, "+@",              rg_ftor_rb_unary_plus, 0);
+	rb_define_method(cFtor, "-@",              rg_ftor_rb_unary_minus, 0);
+	rb_define_method(cFtor, "dot",             rg_ftor_rb_dotproduct, 1);
+	rb_define_method(cFtor, "normalized",      rg_ftor_rb_normalized, 0);
+	rb_define_method(cFtor, "resized_to",      rg_ftor_rb_resized_to, 1);
+	rb_define_method(cFtor, "resized_by",      rg_ftor_rb_resized_by, 1);
+	rb_define_method(cFtor, "rotated_to",      rg_ftor_rb_rotated_to, 1);
+	rb_define_method(cFtor, "rotated_by",      rg_ftor_rb_rotated_by, 1);
+	rb_define_method(cFtor, "rotated_around",  rg_ftor_rb_rotated_around, 2);
+	rb_define_method(cFtor, "projected",       rg_ftor_rb_projected, 1);
+	rb_define_method(cFtor, "to_a",            rg_ftor_rb_to_a, 0);
+	rb_define_method(cFtor, "to_s",            rg_ftor_rb_to_s, 0);
+	rb_define_method(cFtor, "inspect",         rg_ftor_rb_inspect, 0);
 }

@@ -6,7 +6,7 @@
 #include "rubygame_cCircle.h"
 #include "collision_math.h"
 
-VALUE rg_cCircle;
+VALUE cCircle;
 
 void rg_circle_move(rg_circle *circle, rg_ftor *ftor)
 {
@@ -80,7 +80,7 @@ static VALUE rg_circle_rb_center(VALUE self)
 	Data_Get_Struct(self, rg_circle, circle);
 
 	rg_ftor    *ftor;
-	VALUE rb_ftor = Data_Make_Struct(rg_cFtor, rg_ftor, NULL, free, ftor);
+	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
 
 	*ftor = circle->center;
 
@@ -163,20 +163,20 @@ static VALUE rg_circle_rb_inspect(VALUE self)
 	return str;
 }
 
-void Init_rg_cCircle()
+void Init_Circle()
 {
 	mRubygame   = rb_define_module("Rubygame");
 	mBody       = rb_define_module_under(mRubygame, "Body");
 
-	rg_cCircle  = rb_define_class_under(mBody, "Circle", rb_cObject);
+	cCircle  = rb_define_class_under(mBody, "Circle", rb_cObject);
 
-	rb_define_alloc_func(rg_cCircle, rg_circle_rb_singleton_alloc);
+	rb_define_alloc_func(cCircle, rg_circle_rb_singleton_alloc);
 
-	rb_define_method(rg_cCircle, "initialize",      rg_circle_rb_initialize, 2);
-	rb_define_method(rg_cCircle, "initialize_copy", rg_circle_rb_initialize_copy, 1);
-	rb_define_method(rg_cCircle, "center",          rg_circle_rb_center, 0);
-	rb_define_method(rg_cCircle, "radius",          rg_circle_rb_radius, 0);
-	rb_define_method(rg_cCircle, "move",            rg_circle_rb_move, 1);
-	rb_define_method(rg_cCircle, "rotate",          rg_circle_rb_rotate, 2);
-	rb_define_method(rg_cCircle, "inspect",         rg_circle_rb_inspect, 0);
+	rb_define_method(cCircle, "initialize",      rg_circle_rb_initialize, 2);
+	rb_define_method(cCircle, "initialize_copy", rg_circle_rb_initialize_copy, 1);
+	rb_define_method(cCircle, "center",          rg_circle_rb_center, 0);
+	rb_define_method(cCircle, "radius",          rg_circle_rb_radius, 0);
+	rb_define_method(cCircle, "move",            rg_circle_rb_move, 1);
+	rb_define_method(cCircle, "rotate",          rg_circle_rb_rotate, 2);
+	rb_define_method(cCircle, "inspect",         rg_circle_rb_inspect, 0);
 }

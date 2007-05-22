@@ -13,8 +13,6 @@
 #include "rubygame_defines.h"
 #include "collision_math.h"
 
-VALUE mRubygame;
-VALUE mBody;
 VALUE mCollidable;
 
 ID rg_id_call;
@@ -88,7 +86,7 @@ VALUE rg_collidable_rb_collide(int argc, VALUE *argv, VALUE self)
  *  Collidable is a mixin for Body representations to add collision
  *  detection.
  */
-void Init_rg_mCollidable()
+void Init_Collidable()
 {
 	rg_id_call = rb_intern("call");
 	rg_id_body = rb_intern("body");

@@ -1,12 +1,12 @@
 #ifndef _RUBYGAME_CFTOR_H
 #define _RUBYGAME_CFTOR_H
 
-typedef struct rg_ftor_struct {
+typedef struct {
 	double x;
 	double y;
 } rg_ftor;
 
-extern VALUE rg_cFtor;
+extern VALUE cFtor;
 
 // sum of two ftors
 void rg_ftor_add(rg_ftor *result, rg_ftor *a, rg_ftor *b);
@@ -56,6 +56,6 @@ double rg_ftor_angle_deg(rg_ftor *a);
 // the angle between two vectors
 double rg_ftor_angle_between(rg_ftor *a, rg_ftor *b);
 
-void Init_rg_cFtor();
+void Init_Ftor();
 
 #endif
