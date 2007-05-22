@@ -1,0 +1,42 @@
+Sprite - something that exists in the scene
+	width, height - natural size
+	scale - factor applied to natural size to get render size
+	angle - rotation around the forward axis
+	position - x, y
+	depth - 0 (near) to 100 (far)
+
+	responsible for...
+		notifying its parents when its depth changes
+		checking collision with another object when asked to
+		handling events that it is told about
+		loading and setting its own texture
+		drawing itself when asked to
+
+Group - a hierarchical collection of objects/other groups of objects
+	inherits from Object
+	children - subordinate objects
+
+	responsible for...
+		keeping children sorted by depth
+		notifying its parents when its depth changes
+		checking collision with another object when asked to
+		asking its children to draw themselves in reverse order by depth
+
+View - renders the scene
+	position - translate the scene
+	angle - rotate the scene around the forward axis
+	zoom - shrink/enlarge the scene
+
+	responsible for...
+		setting the projection matrix
+		clearing the screen
+		asking the scene objects to draw themselves
+
+Scene - a collection of objects and cameras
+	one or more views
+	main group of objects
+
+	responsible for...
+		initializing the screen, viewport, and render settings
+		triggering collision checks between objects
+		asking the views to draw

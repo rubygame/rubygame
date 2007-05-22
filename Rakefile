@@ -49,7 +49,7 @@ Rake::RDocTask.new do |rd|
   rd.main = "README"
   rd.title = "Rubygame #{RUBYGAME_VERSION} Docs"
   rd.rdoc_files.include("ext/rubygame/*.c",
-                        "lib/rubygame/*.rb",
+                        "lib/rubygame/**/*.rb",
                         "doc/*.rdoc",
                         "./README",
                         "./LICENSE",
@@ -334,6 +334,8 @@ task :install_lib do |task|
   cp "./lib/rubygame.rb", $options.sitelibdir
   mkdir_p $options.sitelibdir + "/rubygame/"
   cp FileList.new("./lib/rubygame/*.rb").to_a, $options.sitelibdir+"/rubygame/"
+  mkdir_p $options.sitelibdir + "/rubygame/gl/"
+  cp FileList.new("./lib/rubygame/gl/*.rb").to_a, $options.sitelibdir+"/rubygame/gl/"
 end
 
 desc "Install both the extensions and the library"
