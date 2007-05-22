@@ -279,6 +279,7 @@ rubygame_body = ExtensionModule.new do |body|
 									rubygame_cSegment
 									rubygame_cRect
 									rubygame_cCircle
+									collision_math
 							)
   body.create_all_tasks()
 end
