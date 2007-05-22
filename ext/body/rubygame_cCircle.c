@@ -152,7 +152,7 @@ static VALUE rg_circle_rb_inspect(VALUE self)
 	VALUE str;
 	char buf[255];
 	
-	sprintf(buf, "#<%s:0x%lx center: %.2f, %.2f radius: %.1f>",
+	snprintf(buf, 255, "#<%s:0x%lx center: %.2f, %.2f radius: %.1f>",
 		rb_obj_classname(self),
 		self,
 		circle->center.x,

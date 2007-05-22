@@ -475,7 +475,7 @@ static VALUE rg_ftor_rb_to_s(VALUE self)
 	VALUE str;
 	char buf[255];
 	
-	sprintf(buf, "%.0f, %.0f",
+	snprintf(buf, 255, "%.0f, %.0f",
 		ftor->x,
 		ftor->y
 	);
@@ -496,7 +496,7 @@ static VALUE rg_ftor_rb_inspect(VALUE self)
 	VALUE str;
 	char buf[255];
 	
-	sprintf(buf, "#<%s:0x%lx %.2f, %.2f (|%.2f|, %.1f°)>",
+	snprintf(buf, 255, "#<%s:0x%lx %.2f, %.2f (|%.2f|, %.1f°)>",
 		rb_obj_classname(self),
 		self,
 		ftor->x,

@@ -242,7 +242,7 @@ static VALUE rg_segment_rb_inspect(VALUE self)
 	rg_ftor_add(&end, &seg->start, &seg->vec);
 	vec = seg->vec;
 	
-	sprintf(buf, "#<%s:0x%lx %.2f, %.2f - %.2f, %.2f (|%.2f| %.1f°)>",
+	snprintf(buf, 255, "#<%s:0x%lx %.2f, %.2f - %.2f, %.2f (|%.2f| %.1f°)>",
 		rb_obj_classname(self),
 		self,
 		seg->start.x,

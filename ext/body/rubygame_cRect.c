@@ -491,7 +491,7 @@ static VALUE rg_rect_rb_inspect(VALUE self)
 	rg_rect_bottom_right(&bottomright, rect);
 	rg_rect_bottom_left(&bottomleft, rect);
 	
-	sprintf(buf, "#<%s:0x%lx %.2f, %.2f / %.2f, %.2f / %.2f, %.2f / %.2f, %.2f (%.2fx%.2f)>",
+	snprintf(buf, 255, "#<%s:0x%lx %.2f, %.2f / %.2f, %.2f / %.2f, %.2f / %.2f, %.2f (%.2fx%.2f)>",
 		rb_obj_classname(self),
 		self,
 		rect->topleft.x,
