@@ -5,14 +5,9 @@
 #include "rubygame_cFtor.h"
 #include "rubygame_cSegment.h"
 #include "rubygame_cRect.h"
+#include "collision_math.h"
 
-static VALUE mRubygame;
-static VALUE mBody;
-
-static VALUE rg_cFtor;
-static VALUE rg_cSegment;
-static VALUE rg_cRect;
-static VALUE rg_cCircle;
+VALUE rg_cRect;
 
 void rg_rect_top(rg_segment *seg, rg_rect *rect)
 {
@@ -525,10 +520,7 @@ void Init_rg_cRect()
 	mRubygame = rb_define_module("Rubygame");
 	mBody     = rb_define_module_under(mRubygame, "Body");
 
-	rg_cCircle  = rb_define_class_under(mBody, "Circle", rb_cObject);
 	rg_cRect    = rb_define_class_under(mBody, "Rect", rb_cObject);
-	rg_cSegment = rb_define_class_under(mBody, "Segment", rb_cObject);
-	rg_cFtor    = rb_define_class_under(mBody, "Ftor", rb_cObject);
 
 	rb_define_alloc_func(rg_cRect, rg_rect_rb_singleton_alloc);
 

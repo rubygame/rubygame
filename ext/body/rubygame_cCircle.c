@@ -4,14 +4,9 @@
 #include "rubygame_defines.h"
 #include "rubygame_cFtor.h"
 #include "rubygame_cCircle.h"
+#include "collision_math.h"
 
-static VALUE mRubygame;
-static VALUE mBody;
-
-static VALUE rg_cFtor;
-static VALUE rg_cSegment;
-static VALUE rg_cRect;
-static VALUE rg_cCircle;
+VALUE rg_cCircle;
 
 void rg_circle_move(rg_circle *circle, rg_ftor *ftor)
 {
@@ -174,9 +169,6 @@ void Init_rg_cCircle()
 	mBody       = rb_define_module_under(mRubygame, "Body");
 
 	rg_cCircle  = rb_define_class_under(mBody, "Circle", rb_cObject);
-	rg_cRect    = rb_define_class_under(mBody, "Rect", rb_cObject);
-	rg_cSegment = rb_define_class_under(mBody, "Segment", rb_cObject);
-	rg_cFtor    = rb_define_class_under(mBody, "Ftor", rb_cObject);
 
 	rb_define_alloc_func(rg_cCircle, rg_circle_rb_singleton_alloc);
 

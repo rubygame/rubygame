@@ -1,3 +1,11 @@
+#ifndef _COLLISION_MATH_H
+#define _COLLISION_MATH_H
+
+#include "rubygame_cFtor.h"
+#include "rubygame_cSegment.h"
+#include "rubygame_cRect.h"
+#include "rubygame_cCircle.h"
+
 extern int rg_collidable_type(VALUE class);
 extern void rg_collidable_extract_struct(void **strct, VALUE class, VALUE x);
 
@@ -13,3 +21,5 @@ extern int rg_collidable_collide_segment_circle(rg_segment *a, rg_circle *b);
 extern int rg_collidable_collide_rect_rect(rg_rect *a, rg_rect *b);
 extern int rg_collidable_collide_rect_circle(rg_rect *a, rg_circle *b);
 extern int rg_collidable_collide_circle_circle(rg_circle *a, rg_circle *b);
+
+#endif

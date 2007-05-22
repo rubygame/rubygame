@@ -17,13 +17,8 @@ VALUE mRubygame;
 VALUE mBody;
 VALUE mCollidable;
 
-VALUE rg_cCircle;
-VALUE rg_cRect;
-VALUE rg_cSegment;
-VALUE rg_cFtor;
 ID rg_id_call;
 ID rg_id_body;
-
 
 /* 
  *  call-seq:
@@ -103,11 +98,6 @@ void Init_rg_mCollidable()
 	mCollidable = rb_define_module_under(mBody, "Collidable");
 	
 	rb_iv_set(mCollidable, "@colliders", rb_hash_new());
-
-	rg_cFtor    = rb_define_class_under(mBody, "Ftor", rb_cObject);
-	rg_cSegment = rb_define_class_under(mBody, "Segment", rb_cObject);
-	rg_cRect    = rb_define_class_under(mBody, "Rect", rb_cObject);
-	rg_cCircle  = rb_define_class_under(mBody, "Circle", rb_cObject);
 
 	rb_define_method(mCollidable, "collide?", rg_collidable_rb_collide_single, 1);
 	rb_define_method(mCollidable, "collide", rg_collidable_rb_collide, -1);
