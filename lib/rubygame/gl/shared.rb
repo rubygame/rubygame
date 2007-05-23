@@ -1,11 +1,13 @@
 require 'rubygame'
-require 'rubygame/ftor'
+require 'rubygame_body'
+include Rubygame::Body
+
 require 'gl'
 require 'glu'
 include Gl
 include GLU
 
-Ftor = Rubygame::Ftor
+
 
 def pushpop_matrix(&block)
 	glPushMatrix()

@@ -26,15 +26,15 @@ def main()
 		def update( time )
 			@t += time
 			@angle = 20 * Math::sin(@t / 300.0)
-			@scale = Ftor.new(1.0 + 0.05*Math::sin(@t/85.0),
-												1.0 + 0.05*Math::cos(@t/83.0))
+			@scale = Vector2.new(1.0 + 0.05*Math::sin(@t/85.0),
+			                     1.0 + 0.05*Math::cos(@t/83.0))
 		end
 	end
 
 	ruby = GLImageSprite.new {
 		@surface = Rubygame::Surface.load_image('ruby.png')
 		setup_texture()
-		@pos = Ftor.new(300,200)
+		@pos = Vector2[300,200]
 		@depth = -0.1
 	}
 
@@ -47,7 +47,7 @@ def main()
 			queue.each do |event|
 				case event
 				when Rubygame::MouseMotionEvent
-					panda.pos = Ftor.new(event.pos[0], HEIGHT - event.pos[1])
+					panda.pos = Vector2[event.pos[0], HEIGHT - event.pos[1]]
 				when Rubygame::KeyDownEvent
 					case event.key
 					when Rubygame::K_ESCAPE

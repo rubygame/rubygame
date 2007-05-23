@@ -6,7 +6,7 @@ class GLSprite
 
 	def initialize(&block)
 		@t = 0
-		@pos = Ftor.new(0,0)
+		@pos = Vector2[0,0]
 		@depth = 0
 		@scale = 1
 		@angle = 0
@@ -20,7 +20,7 @@ class GLSprite
 			glTranslate(@pos.x, @pos.y, @depth)
 			glRotate(@angle, 0, 0, 1)
 			case @scale
-			when Ftor
+			when Vector2
 				glScale(@scale.x, @scale.y, 1)
 			when Numeric
 				glScale(@scale,   @scale,   1)
@@ -66,13 +66,13 @@ end
 class GLImageSprite < GLSprite
 	attr_accessor :surface, :size, :tex_id, :has_alpha
 	def initialize
-		@size = Ftor.new(1,1)
+		@size = Vector2[1,1]
 		@has_alpha = false
 		super
 	end
 
 	def setup_texture()
-		@size = Ftor.new(*@surface.size)
+		@size = Vector2[*@surface.size]
 		@tex_id = glGenTextures(1)[0]
 		glBindTexture(GL_TEXTURE_2D, @tex_id)
 		if @has_alpha
