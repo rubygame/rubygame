@@ -10,13 +10,13 @@ class Scene
 		Rubygame::GL.set_attrib(Rubygame::GL::DOUBLEBUFFER, 1)
 		@screen = Rubygame::Screen.new(size, 16, [Rubygame::OPENGL])
 
-		GL::Viewport( 0, 0, size.at(0), size.at(1) )
-		GL::ShadeModel(GL::SMOOTH)
-		GL::Enable(GL::TEXTURE_2D)
-		GL::Enable(GL::DEPTH_TEST)
-		GL::DepthFunc(GL::LESS)
-		GL::Enable(GL::BLEND)
-		GL::BlendFunc(GL::SRC_ALPHA, GL::ONE_MINUS_SRC_ALPHA)
+		glViewport( 0, 0, size.at(0), size.at(1) )
+		glShadeModel(GL_SMOOTH)
+		glEnable(GL_TEXTURE_2D)
+		glEnable(GL_DEPTH_TEST)
+		glDepthFunc(GL_LESS)
+		glEnable(GL_BLEND)
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 	end
 
 	def refresh()

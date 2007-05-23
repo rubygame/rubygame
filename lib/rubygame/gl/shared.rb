@@ -1,17 +1,20 @@
 require 'rubygame'
 require 'rubygame/ftor'
-require 'opengl'
+require 'gl'
+require 'glu'
+include Gl
+include GLU
 
 Ftor = Rubygame::Ftor
 
 def pushpop_matrix(&block)
-	GL::PushMatrix()
+	glPushMatrix()
 	block.call()
-	GL::PopMatrix()
+	glPopMatrix()
 end
 
 def glbegin(type, &block)
-	GL::Begin(type)
+	glBegin(type)
 	block.call()
-	GL::End()
+	glEnd()
 end

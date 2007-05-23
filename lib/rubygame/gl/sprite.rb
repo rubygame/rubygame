@@ -14,16 +14,16 @@ class GLSprite
 	end
 
 	def with_transformation(&block)
-		GL::MatrixMode( GL::MODELVIEW )
-		GL::LoadIdentity()
+		glMatrixMode( GL_MODELVIEW )
+		glLoadIdentity()
 		pushpop_matrix do
-			GL::Translate(@pos.x, @pos.y, @depth)
-			GL::Rotate(@angle, 0, 0, 1)
+			glTranslate(@pos.x, @pos.y, @depth)
+			glRotate(@angle, 0, 0, 1)
 			case @scale
 			when Ftor
-				GL::Scale(@scale.x, @scale.y, 1)
+				glScale(@scale.x, @scale.y, 1)
 			when Numeric
-				GL::Scale(@scale,   @scale,   1)
+				glScale(@scale,   @scale,   1)
 			end
 			block.call()
 		end
@@ -73,37 +73,37 @@ class GLImageSprite < GLSprite
 
 	def setup_texture()
 		@size = Ftor.new(*@surface.size)
-		@tex_id = GL::GenTextures(1)[0]
-		GL::BindTexture(GL::TEXTURE_2D, @tex_id)
+		@tex_id = glGenTextures(1)[0]
+		glBindTexture(GL_TEXTURE_2D, @tex_id)
 		if @has_alpha
-			channels, format = 4, GL::RGBA
+			channels, format = 4, GL_RGBA
 		else
-			channels, format = 3, GL::RGB
+			channels, format = 3, GL_RGB
 		end
 		
-		GL::TexImage2D(GL::TEXTURE_2D, 0, channels, @surface.w, @surface.h,
-									 0, format, GL::UNSIGNED_BYTE, @surface.pixels)
-		GL::TexParameter(GL::TEXTURE_2D,GL::TEXTURE_MIN_FILTER,GL::NEAREST);
-		GL::TexParameter(GL::TEXTURE_2D,GL::TEXTURE_MAG_FILTER,GL::LINEAR);
+		glTexImage2D(GL_TEXTURE_2D, 0, channels, @surface.w, @surface.h,
+									 0, format, GL_UNSIGNED_BYTE, @surface.pixels)
+		glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	end
 
 	def draw()
 		with_transformation do
 			w, h = @size.x.div(2.0), @size.y.div(2.0)
-			GL::BindTexture(GL::TEXTURE_2D, @tex_id)
-			glbegin(GL::TRIANGLE_FAN) do
-				GL::TexCoord([0.5,0.5])
-				GL::Vertex([0,0])
-				GL::TexCoord([0,1]);
-				GL::Vertex([-w, -h]);
-				GL::TexCoord([1,1]);
-				GL::Vertex([w,-h]);
-				GL::TexCoord([1,0]);
-				GL::Vertex([w, h]);
-				GL::TexCoord([0,0]);
-				GL::Vertex([-w, h]);
-				GL::TexCoord([0,1]);
-				GL::Vertex([-w, -h]);
+			glBindTexture(GL_TEXTURE_2D, @tex_id)
+			glbegin(GL_TRIANGLE_FAN) do
+				glTexCoord([0.5,0.5])
+				glVertex([0,0])
+				glTexCoord([0,1]);
+				glVertex([-w, -h]);
+				glTexCoord([1,1]);
+				glVertex([w,-h]);
+				glTexCoord([1,0]);
+				glVertex([w, h]);
+				glTexCoord([0,0]);
+				glVertex([-w, h]);
+				glTexCoord([0,1]);
+				glVertex([-w, -h]);
 			end
 		end
 	end
