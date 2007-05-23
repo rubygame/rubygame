@@ -1,21 +1,21 @@
-// require 'ruby/numeric'; circle = Segment.new(Ftor[1,1], Ftor[2,2]); circle.rotate(90.to_radian, Ftor[2,2])
+// require 'ruby/numeric'; circle = Segment.new(Vector2[1,1], Vector2[2,2]); circle.rotate(90.to_radian, Vector2[2,2])
 #include <ruby.h>
 #include <math.h>
 #include "rubygame_defines.h"
-#include "rubygame_cFtor.h"
+#include "rubygame_cVector2.h"
 #include "rubygame_cCircle.h"
 #include "collision_math.h"
 
 VALUE cCircle;
 
-void rg_circle_move(rg_circle *circle, rg_ftor *ftor)
+void rg_circle_move(rg_circle *circle, rg_vector2 *vector2)
 {
-	rg_ftor_add(&circle->center, &circle->center, ftor);
+	rg_vector2_add(&circle->center, &circle->center, vector2);
 }
 
-void rg_circle_rotate_around(rg_circle *circle, rg_ftor *center, double rad)
+void rg_circle_rotate_around(rg_circle *circle, rg_vector2 *center, double rad)
 {
-	rg_ftor_rotated_around(&circle->center, &circle->center, center, rad);
+	rg_vector2_rotated_around(&circle->center, &circle->center, center, rad);
 }
 
 
@@ -36,17 +36,17 @@ static VALUE rg_circle_rb_singleton_alloc(VALUE class)
 
 /* 
  *  call-seq:
- *    Circle.new(Ftor center, radius)
+ *    Circle.new(Vector2 center, radius)
  *
- *  Creates a Circle with center given by an Ftor 'center' and radius 'radius'.
+ *  Creates a Circle with center given by a Vector2 'center' and radius 'radius'.
  */
 static VALUE rg_circle_rb_initialize(VALUE self, VALUE center, VALUE radius)
 {
 	rg_circle *circle;
 	Data_Get_Struct(self, rg_circle, circle);
 
-	rg_ftor    *c_center;
-	Data_Get_Struct(center, rg_ftor, c_center);
+	rg_vector2    *c_center;
+	Data_Get_Struct(center, rg_vector2, c_center);
 
 	circle->center  = *c_center;
 	circle->radius  = NUM2DBL(radius);
@@ -70,21 +70,21 @@ static VALUE rg_circle_rb_initialize_copy(VALUE self, VALUE old)
 
 /* 
  *  call-seq:
- *    center -> Ftor
+ *    center -> Vector2
  *
- *  Returns an Ftor representing the center of the Circle.
+ *  Returns a Vector2 representing the center of the Circle.
  */
 static VALUE rg_circle_rb_center(VALUE self)
 {
 	rg_circle *circle;
 	Data_Get_Struct(self, rg_circle, circle);
 
-	rg_ftor    *ftor;
-	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
+	rg_vector2    *vector2;
+	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, vector2);
 
-	*ftor = circle->center;
+	*vector2 = circle->center;
 
-	return rb_ftor;
+	return rb_vector2;
 }
 
 /* 
@@ -105,15 +105,15 @@ static VALUE rg_circle_rb_radius(VALUE self)
  *  call-seq:
  *    move(by) -> self
  *
- *  Moves the Circle by an Ftor 'by'.
+ *  Moves the Circle by a Vector2 'by'.
  */
 static VALUE rg_circle_rb_move(VALUE self, VALUE by)
 {
 	rg_circle *circle;
 	Data_Get_Struct(self, rg_circle, circle);
 
-	rg_ftor    *vec;
-	Data_Get_Struct(by, rg_ftor, vec);
+	rg_vector2    *vec;
+	Data_Get_Struct(by, rg_vector2, vec);
 
 	rg_circle_move(circle, vec);
 
@@ -124,15 +124,15 @@ static VALUE rg_circle_rb_move(VALUE self, VALUE by)
  *  call-seq:
  *    rotate(radians, around) -> self
  *
- *  Rotates the circle by an angle 'radians' in radians around an Ftor 'around'.
+ *  Rotates the circle by an angle 'radians' in radians around a Vector2 'around'.
  */
 static VALUE rg_circle_rb_rotate(VALUE self, VALUE rad, VALUE center)
 {
 	rg_circle *circle;
 	Data_Get_Struct(self, rg_circle, circle);
 
-	rg_ftor    *c_center;
-	Data_Get_Struct(center, rg_ftor, c_center);
+	rg_vector2    *c_center;
+	Data_Get_Struct(center, rg_vector2, c_center);
 
 	rg_circle_rotate_around(circle, c_center, NUM2DBL(rad));
 

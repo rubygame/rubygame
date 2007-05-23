@@ -5,7 +5,7 @@
 
 #include <ruby.h>
 #include <math.h>
-#include "rubygame_cFtor.h"
+#include "rubygame_cVector2.h"
 #include "rubygame_cSegment.h"
 #include "rubygame_cRect.h"
 #include "rubygame_cCircle.h"

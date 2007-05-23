@@ -275,7 +275,7 @@ rubygame_body = ExtensionModule.new do |body|
 	body.dynlib = 'rubygame_body'
 	body.objs = %w(	rubygame_mBody
 									rubygame_mCollidable
-									rubygame_cFtor
+									rubygame_cVector2
 									rubygame_cSegment
 									rubygame_cRect
 									rubygame_cCircle

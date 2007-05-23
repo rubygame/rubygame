@@ -2,7 +2,7 @@
 #define _RUBYGAME_CCIRCLE_H
 
 typedef struct {
-	rg_ftor center;
+	rg_vector2 center;
 	double radius;
 } rg_circle;
 

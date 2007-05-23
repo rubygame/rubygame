@@ -1,8 +1,8 @@
-// require 'ruby/numeric'; seg = Segment.new(Ftor[1,1], Ftor[2,2]); seg.rotate(90.to_radian, Ftor[2,2])
+// require 'ruby/numeric'; seg = Segment.new(Vector2[1,1], Vector2[2,2]); seg.rotate(90.to_radian, Vector2[2,2])
 #include <ruby.h>
 #include <math.h>
 #include "rubygame_defines.h"
-#include "rubygame_cFtor.h"
+#include "rubygame_cVector2.h"
 #include "rubygame_cSegment.h"
 #include "rubygame_cRect.h"
 #include "collision_math.h"
@@ -16,12 +16,12 @@ void rg_rect_top(rg_segment *seg, rg_rect *rect)
 }
 void rg_rect_right(rg_segment *seg, rg_rect *rect)
 {
-	rg_ftor_add(&seg->start, &rect->topleft, &rect->horizontal);
+	rg_vector2_add(&seg->start, &rect->topleft, &rect->horizontal);
 	seg->vec = rect->vertical;
 }
 void rg_rect_bottom(rg_segment *seg, rg_rect *rect)
 {
-	rg_ftor_add(&seg->start, &rect->topleft, &rect->vertical);
+	rg_vector2_add(&seg->start, &rect->topleft, &rect->vertical);
 	seg->vec   = rect->horizontal;
 }
 void rg_rect_left(rg_segment *seg, rg_rect *rect)
@@ -30,65 +30,65 @@ void rg_rect_left(rg_segment *seg, rg_rect *rect)
 	seg->vec   = rect->vertical;
 }
 
-void rg_rect_top_mid(rg_ftor *ftor, rg_rect *rect)
+void rg_rect_top_mid(rg_vector2 *vector2, rg_rect *rect)
 {
-	rg_ftor_resized_by(ftor, &rect->horizontal, 0.5);
-	rg_ftor_add(ftor, &rect->topleft, ftor);
+	rg_vector2_resized_by(vector2, &rect->horizontal, 0.5);
+	rg_vector2_add(vector2, &rect->topleft, vector2);
 }
 
-void rg_rect_top_right(rg_ftor *ftor, rg_rect *rect)
+void rg_rect_top_right(rg_vector2 *vector2, rg_rect *rect)
 {
-	rg_ftor_add(ftor, &rect->topleft, &rect->horizontal);
+	rg_vector2_add(vector2, &rect->topleft, &rect->horizontal);
 }
 
-void rg_rect_mid_right(rg_ftor *ftor, rg_rect *rect)
+void rg_rect_mid_right(rg_vector2 *vector2, rg_rect *rect)
 {
-	rg_ftor_resized_by(ftor, &rect->vertical, 0.5);
-	rg_ftor_add(ftor, &rect->topleft, ftor);
-	rg_ftor_add(ftor, &rect->horizontal, ftor);
+	rg_vector2_resized_by(vector2, &rect->vertical, 0.5);
+	rg_vector2_add(vector2, &rect->topleft, vector2);
+	rg_vector2_add(vector2, &rect->horizontal, vector2);
 }
 
-void rg_rect_bottom_right(rg_ftor *ftor, rg_rect *rect)
+void rg_rect_bottom_right(rg_vector2 *vector2, rg_rect *rect)
 {
-	rg_ftor_add(ftor, &rect->topleft, &rect->horizontal);
-	rg_ftor_add(ftor, ftor, &rect->vertical);
+	rg_vector2_add(vector2, &rect->topleft, &rect->horizontal);
+	rg_vector2_add(vector2, vector2, &rect->vertical);
 }
 
-void rg_rect_bottom_mid(rg_ftor *ftor, rg_rect *rect)
+void rg_rect_bottom_mid(rg_vector2 *vector2, rg_rect *rect)
 {
-	rg_ftor_resized_by(ftor, &rect->horizontal, 0.5);
-	rg_ftor_add(ftor, &rect->topleft, ftor);
-	rg_ftor_add(ftor, &rect->vertical, ftor);
+	rg_vector2_resized_by(vector2, &rect->horizontal, 0.5);
+	rg_vector2_add(vector2, &rect->topleft, vector2);
+	rg_vector2_add(vector2, &rect->vertical, vector2);
 }
 
-void rg_rect_bottom_left(rg_ftor *ftor, rg_rect *rect)
+void rg_rect_bottom_left(rg_vector2 *vector2, rg_rect *rect)
 {
-	rg_ftor_add(ftor, &rect->topleft, &rect->vertical);
+	rg_vector2_add(vector2, &rect->topleft, &rect->vertical);
 }
 
-void rg_rect_mid_left(rg_ftor *ftor, rg_rect *rect)
+void rg_rect_mid_left(rg_vector2 *vector2, rg_rect *rect)
 {
-	rg_ftor_resized_by(ftor, &rect->vertical, 0.5);
-	rg_ftor_add(ftor, &rect->topleft, ftor);
+	rg_vector2_resized_by(vector2, &rect->vertical, 0.5);
+	rg_vector2_add(vector2, &rect->topleft, vector2);
 }
 
-void rg_rect_center(rg_ftor *ftor, rg_rect *rect)
+void rg_rect_center(rg_vector2 *vector2, rg_rect *rect)
 {
-	rg_ftor_add(ftor, &rect->horizontal, &rect->vertical);
-	rg_ftor_resized_by(ftor, ftor, 0.5);
-	rg_ftor_add(ftor, &rect->topleft, ftor);
+	rg_vector2_add(vector2, &rect->horizontal, &rect->vertical);
+	rg_vector2_resized_by(vector2, vector2, 0.5);
+	rg_vector2_add(vector2, &rect->topleft, vector2);
 }
 
-void rg_rect_move(rg_rect *rect, rg_ftor *ftor)
+void rg_rect_move(rg_rect *rect, rg_vector2 *vector2)
 {
-	rg_ftor_add(&rect->topleft, &rect->topleft, ftor);
+	rg_vector2_add(&rect->topleft, &rect->topleft, vector2);
 }
 
-void rg_rect_rotate_around(rg_rect *rect, rg_ftor *center, double rad)
+void rg_rect_rotate_around(rg_rect *rect, rg_vector2 *center, double rad)
 {
-	rg_ftor_rotated_around(&rect->topleft, &rect->topleft, center, rad);
-	rg_ftor_rotated_by(&rect->horizontal, &rect->horizontal, rad);
-	rg_ftor_rotated_by(&rect->vertical, &rect->vertical, rad);
+	rg_vector2_rotated_around(&rect->topleft, &rect->topleft, center, rad);
+	rg_vector2_rotated_by(&rect->horizontal, &rect->horizontal, rad);
+	rg_vector2_rotated_by(&rect->vertical, &rect->vertical, rad);
 }
 
 
@@ -128,9 +128,9 @@ static VALUE rg_rect_rb_singleton_rect(VALUE class, VALUE x, VALUE y, VALUE w, V
 	double c_w = NUM2DBL(w);
 	double c_h = NUM2DBL(h);
 
-	rg_ftor topleft    = { c_x, c_y };
-	rg_ftor horizontal = { c_w, 0 };
-	rg_ftor vertical   = { 0, c_h };
+	rg_vector2 topleft    = { c_x, c_y };
+	rg_vector2 horizontal = { c_w, 0 };
+	rg_vector2 vertical   = { 0, c_h };
 	
 	rect->topleft    = topleft;
 	rect->horizontal = horizontal;
@@ -141,7 +141,7 @@ static VALUE rg_rect_rb_singleton_rect(VALUE class, VALUE x, VALUE y, VALUE w, V
 
 /* 
  *  call-seq:
- *    initialize(Ftor topleft, Ftor horizontal, Ftor vertical)
+ *    initialize(Vector2 topleft, Vector2 horizontal, Vector2 vertical)
  *
  *  FIXME
  *  Also see Rect.rect.
@@ -149,11 +149,11 @@ static VALUE rg_rect_rb_singleton_rect(VALUE class, VALUE x, VALUE y, VALUE w, V
 static VALUE rg_rect_rb_initialize(VALUE self, VALUE topleft, VALUE horizontal, VALUE vertical)
 {
 	rg_rect *rect;
-	rg_ftor *c_topleft, *c_horizontal, *c_vertical;
+	rg_vector2 *c_topleft, *c_horizontal, *c_vertical;
 	Data_Get_Struct(self, rg_rect, rect);
-	Data_Get_Struct(topleft,    rg_ftor, c_topleft);
-	Data_Get_Struct(horizontal, rg_ftor, c_horizontal);
-	Data_Get_Struct(vertical,   rg_ftor, c_vertical);
+	Data_Get_Struct(topleft,    rg_vector2, c_topleft);
+	Data_Get_Struct(horizontal, rg_vector2, c_horizontal);
+	Data_Get_Struct(vertical,   rg_vector2, c_vertical);
 	rect->topleft    = *c_topleft;
 	rect->horizontal = *c_horizontal;
 	rect->vertical   = *c_vertical;
@@ -252,173 +252,173 @@ static VALUE rg_rect_rb_left(VALUE self)
 
 /* 
  *  call-seq:
- *    top_left -> Ftor
+ *    top_left -> Vector2
  *
- *  Returns an Ftor pointing to the top left corner of the Rect.
+ *  Returns a Vector2 pointing to the top left corner of the Rect.
  */
 static VALUE rg_rect_rb_top_left(VALUE self)
 {
 	rg_rect *rect;
 	Data_Get_Struct(self, rg_rect, rect);
 
-	rg_ftor *ftor;
-	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
+	rg_vector2 *vector2;
+	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, vector2);
 	
-	*ftor = rect->topleft;
+	*vector2 = rect->topleft;
 
-	return rb_ftor;
+	return rb_vector2;
 }
 
 /* 
  *  call-seq:
- *    top_mid -> Ftor
+ *    top_mid -> Vector2
  *
- *  Returns an Ftor pointing to the middle of the top Segment.
+ *  Returns a Vector2 pointing to the middle of the top Segment.
  */
 static VALUE rg_rect_rb_top_mid(VALUE self)
 {
 	rg_rect *rect;
 	Data_Get_Struct(self, rg_rect, rect);
 
-	rg_ftor *ftor;
-	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
+	rg_vector2 *vector2;
+	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, vector2);
 	
-	rg_rect_top_mid(ftor, rect);
+	rg_rect_top_mid(vector2, rect);
 
-	return rb_ftor;
+	return rb_vector2;
 }
 
 /* 
  *  call-seq:
- *    top_right -> Ftor
+ *    top_right -> Vector2
  *
- *  Returns an Ftor pointing to the top right corner of the Rect.
+ *  Returns a Vector2 pointing to the top right corner of the Rect.
  */
 static VALUE rg_rect_rb_top_right(VALUE self)
 {
 	rg_rect *rect;
 	Data_Get_Struct(self, rg_rect, rect);
 
-	rg_ftor *ftor;
-	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
+	rg_vector2 *vector2;
+	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, vector2);
 	
-	rg_rect_top_right(ftor, rect);
+	rg_rect_top_right(vector2, rect);
 
-	return rb_ftor;
+	return rb_vector2;
 }
 
 /* 
  *  call-seq:
- *    mid_right -> Ftor
+ *    mid_right -> Vector2
  *
- *  Returns an Ftor pointing to the middle of the right Segment.
+ *  Returns a Vector2 pointing to the middle of the right Segment.
  */
 static VALUE rg_rect_rb_mid_right(VALUE self)
 {
 	rg_rect *rect;
 	Data_Get_Struct(self, rg_rect, rect);
 
-	rg_ftor *ftor;
-	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
+	rg_vector2 *vector2;
+	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, vector2);
 	
-	rg_rect_mid_right(ftor, rect);
+	rg_rect_mid_right(vector2, rect);
 
-	return rb_ftor;
+	return rb_vector2;
 }
 
 /* 
  *  call-seq:
- *    bottom_right -> Ftor
+ *    bottom_right -> Vector2
  *
- *  Returns an Ftor pointing to the bottom right corner of the Rect.
+ *  Returns a Vector2 pointing to the bottom right corner of the Rect.
  */
 static VALUE rg_rect_rb_bottom_right(VALUE self)
 {
 	rg_rect *rect;
 	Data_Get_Struct(self, rg_rect, rect);
 
-	rg_ftor *ftor;
-	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
+	rg_vector2 *vector2;
+	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, vector2);
 	
-	rg_rect_bottom_right(ftor, rect);
+	rg_rect_bottom_right(vector2, rect);
 
-	return rb_ftor;
+	return rb_vector2;
 }
 
 /* 
  *  call-seq:
- *    bottom_mid -> Ftor
+ *    bottom_mid -> Vector2
  *
- *  Returns an Ftor pointing to the middle of the bottom Segment.
+ *  Returns a Vector2 pointing to the middle of the bottom Segment.
  */
 static VALUE rg_rect_rb_bottom_mid(VALUE self)
 {
 	rg_rect *rect;
 	Data_Get_Struct(self, rg_rect, rect);
 
-	rg_ftor *ftor;
-	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
+	rg_vector2 *vector2;
+	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, vector2);
 	
-	rg_rect_bottom_mid(ftor, rect);
+	rg_rect_bottom_mid(vector2, rect);
 
-	return rb_ftor;
+	return rb_vector2;
 }
 
 /* 
  *  call-seq:
- *    bottom_left -> Ftor
+ *    bottom_left -> Vector2
  *
- *  Returns an Ftor pointing to the bottom left corner of the Rect.
+ *  Returns a Vector2 pointing to the bottom left corner of the Rect.
  */
 static VALUE rg_rect_rb_bottom_left(VALUE self)
 {
 	rg_rect *rect;
 	Data_Get_Struct(self, rg_rect, rect);
 
-	rg_ftor *ftor;
-	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
+	rg_vector2 *vector2;
+	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, vector2);
 	
-	rg_rect_bottom_left(ftor, rect);
+	rg_rect_bottom_left(vector2, rect);
 
-	return rb_ftor;
+	return rb_vector2;
 }
 
 /* 
  *  call-seq:
- *    mid_left -> Ftor
+ *    mid_left -> Vector2
  *
- *  Returns an Ftor pointing to the middle of the left Segment.
+ *  Returns a Vector2 pointing to the middle of the left Segment.
  */
 static VALUE rg_rect_rb_mid_left(VALUE self)
 {
 	rg_rect *rect;
 	Data_Get_Struct(self, rg_rect, rect);
 
-	rg_ftor *ftor;
-	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
+	rg_vector2 *vector2;
+	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, vector2);
 	
-	rg_rect_mid_left(ftor, rect);
+	rg_rect_mid_left(vector2, rect);
 
-	return rb_ftor;
+	return rb_vector2;
 }
 
 /* 
  *  call-seq:
- *    center -> Ftor
+ *    center -> Vector2
  *
- *  Returns an Ftor pointing to the center of the Rect.
+ *  Returns a Vector2 pointing to the center of the Rect.
  */
 static VALUE rg_rect_rb_center(VALUE self)
 {
 	rg_rect *rect;
 	Data_Get_Struct(self, rg_rect, rect);
 
-	rg_ftor *ftor;
-	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
+	rg_vector2 *vector2;
+	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, vector2);
 	
-	rg_rect_center(ftor, rect);
+	rg_rect_center(vector2, rect);
 
-	return rb_ftor;
+	return rb_vector2;
 }
 
 /* 
@@ -431,22 +431,22 @@ static VALUE rg_rect_rb_angle(VALUE self)
 {
 	rg_rect *rect;
 	Data_Get_Struct(self, rg_rect, rect);
-	return rb_float_new(rg_ftor_angle(&rect->horizontal));
+	return rb_float_new(rg_vector2_angle(&rect->horizontal));
 }
 
 /* 
  *  call-seq:
  *    move(by) -> self
  *
- *  Moves the Rect by an Ftor 'by'.
+ *  Moves the Rect by a Vector2 'by'.
  */
 static VALUE rg_rect_rb_move(VALUE self, VALUE by)
 {
 	rg_rect *rect;
 	Data_Get_Struct(self, rg_rect, rect);
 
-	rg_ftor *vec;
-	Data_Get_Struct(by, rg_ftor, vec);
+	rg_vector2 *vec;
+	Data_Get_Struct(by, rg_vector2, vec);
 
 	rg_rect_move(rect, vec);
 
@@ -458,15 +458,15 @@ static VALUE rg_rect_rb_move(VALUE self, VALUE by)
  *    rotate(radians, around) -> self
  *
  *  Rotates the rect around the position 'around' which must be given as an
- *  Ftor, by an angle of 'radians' which must be given in radians.
+ *  Vector2, by an angle of 'radians' which must be given in radians.
  */
 static VALUE rg_rect_rb_rotate(VALUE self, VALUE rad, VALUE center)
 {
 	rg_rect *rect;
 	Data_Get_Struct(self, rg_rect, rect);
 
-	rg_ftor    *c_center;
-	Data_Get_Struct(center, rg_ftor, c_center);
+	rg_vector2    *c_center;
+	Data_Get_Struct(center, rg_vector2, c_center);
 
 	rg_rect_rotate_around(rect, c_center, NUM2DBL(rad));
 
@@ -486,7 +486,7 @@ static VALUE rg_rect_rb_inspect(VALUE self)
 	VALUE str;
 	char buf[255];
 
-	rg_ftor  topright, bottomright, bottomleft;
+	rg_vector2  topright, bottomright, bottomleft;
 	rg_rect_top_right(&topright, rect);
 	rg_rect_bottom_right(&bottomright, rect);
 	rg_rect_bottom_left(&bottomleft, rect);
@@ -502,8 +502,8 @@ static VALUE rg_rect_rb_inspect(VALUE self)
 		bottomright.y,
 		bottomleft.x,
 		bottomleft.y,
-		rg_ftor_magnitude(&rect->horizontal),
-		rg_ftor_magnitude(&rect->vertical)
+		rg_vector2_magnitude(&rect->horizontal),
+		rg_vector2_magnitude(&rect->vertical)
 	);
 	str  = rb_str_new2(buf);
 	return str;

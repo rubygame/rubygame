@@ -5,7 +5,7 @@
 
 #include <ruby.h>
 #include <math.h>
-#include "rubygame_cFtor.h"
+#include "rubygame_cVector2.h"
 #include "rubygame_cSegment.h"
 #include "rubygame_cRect.h"
 #include "rubygame_cCircle.h"
@@ -47,7 +47,7 @@ int rg_collidable_collide_bodies(VALUE a, VALUE b)
 
 int rg_collidable_type(VALUE class)
 {
-	if (class == cFtor)    return  1;
+	if (class == cVector2)    return  1;
 	if (class == cSegment) return  2;
 	if (class == cRect)    return  4;
 	if (class == cCircle)  return  8;
@@ -75,15 +75,15 @@ int rg_collidable_cc_collide(int ta, int tb, void *a, void *b)
 		b = tmp;
 	}
 	switch(ta | tb) {
-		case  1: return rg_collidable_collide_ftor_ftor((rg_ftor*)a, (rg_ftor*)b);
+		case  1: return rg_collidable_collide_vector2_vector2((rg_vector2*)a, (rg_vector2*)b);
 		case  2: return rg_collidable_collide_segment_segment((rg_segment*)a,(rg_segment*)b);
-		case  3: return rg_collidable_collide_ftor_segment((rg_ftor*)a,(rg_segment*)b);
+		case  3: return rg_collidable_collide_vector2_segment((rg_vector2*)a,(rg_segment*)b);
 		case  4: return rg_collidable_collide_rect_rect((rg_rect*)a,(rg_rect*)b);
-		case  5: return rg_collidable_collide_ftor_rect((rg_ftor*)a,(rg_rect*)b);
+		case  5: return rg_collidable_collide_vector2_rect((rg_vector2*)a,(rg_rect*)b);
 		case  6: return rg_collidable_collide_segment_rect((rg_segment*)a,(rg_rect*)b);
 		// case 7 would be ternary
 		case  8: return rg_collidable_collide_circle_circle((rg_circle*)a,(rg_circle*)b);
-		case  9: return rg_collidable_collide_ftor_circle((rg_ftor*)a,(rg_circle*)b);
+		case  9: return rg_collidable_collide_vector2_circle((rg_vector2*)a,(rg_circle*)b);
 		case 10: return rg_collidable_collide_segment_circle((rg_segment*)a,(rg_circle*)b);
 		// case 11 would be ternary
 		case 12: return rg_collidable_collide_rect_circle((rg_rect*)a,(rg_circle*)b);
@@ -108,32 +108,32 @@ int rg_collidable_crb_collide(VALUE a, VALUE b)
 	return RTEST(rb_funcall(collider, rg_id_call, 2, a, b)) ? 1 : 0;
 }
 
-int rg_collidable_collide_ftor_ftor(rg_ftor *a, rg_ftor *b)
+int rg_collidable_collide_vector2_vector2(rg_vector2 *a, rg_vector2 *b)
 {
 	return (FEQUAL(a->x, b->x) && FEQUAL(a->y, b->y));
 }
 
-int rg_collidable_collide_ftor_segment(rg_ftor *a, rg_segment *b)
+int rg_collidable_collide_vector2_segment(rg_vector2 *a, rg_segment *b)
 {
 	double x = (a->x - b->start.x)/b->vec.x;
 	return (x >= 0 && x <= 1 && FEQUAL(x, ((a->y - b->start.y)/b->vec.y)));
 }
 
-int rg_collidable_collide_ftor_rect(rg_ftor *a, rg_rect *b)
+int rg_collidable_collide_vector2_rect(rg_vector2 *a, rg_rect *b)
 {
 	// it works by relocating the whole to Origin and then project the
 	// point on the spanning vectors and see if it fits in
-	rg_ftor r;
-	rg_ftor_subtract(&r, a, &b->topleft);
-	double x = rg_ftor_dotproduct(&r, &b->horizontal)/rg_ftor_magnitude2(&b->horizontal);
-	double y = rg_ftor_dotproduct(&r, &b->vertical)/rg_ftor_magnitude2(&b->vertical);
+	rg_vector2 r;
+	rg_vector2_subtract(&r, a, &b->topleft);
+	double x = rg_vector2_dotproduct(&r, &b->horizontal)/rg_vector2_magnitude2(&b->horizontal);
+	double y = rg_vector2_dotproduct(&r, &b->vertical)/rg_vector2_magnitude2(&b->vertical);
 	return (0 <= x && x <= 1 && 0 <= y && y <= 1);
 }
 
-int rg_collidable_collide_ftor_circle(rg_ftor *a, rg_circle *b)
+int rg_collidable_collide_vector2_circle(rg_vector2 *a, rg_circle *b)
 {
-	rg_ftor r;
-	rg_ftor_subtract(&r, a, &b->center);
+	rg_vector2 r;
+	rg_vector2_subtract(&r, a, &b->center);
 	return FBETWEEN(r.x*r.x+r.y*r.y,0,b->radius*b->radius);
 }
 
@@ -176,10 +176,10 @@ int rg_collidable_collide_segment_segment(rg_segment *a, rg_segment *b)
 		y[2] /= y[1];
 		return (FBETWEEN(x[2], 0, 1) && FBETWEEN(y[2], 0, 1));
 	} else if (y[2] == 0) {
-		if (rg_collidable_collide_ftor_segment(&a->start, b)) return 1;
-		rg_ftor end;
-		rg_ftor_add(&end, &a->start, &a->vec);
-		return (rg_collidable_collide_ftor_segment(&end, b));
+		if (rg_collidable_collide_vector2_segment(&a->start, b)) return 1;
+		rg_vector2 end;
+		rg_vector2_add(&end, &a->start, &a->vec);
+		return (rg_collidable_collide_vector2_segment(&end, b));
 	} else {
 		return 0;
 	}
@@ -219,7 +219,7 @@ int rg_collidable_collide_segment_circle(rg_segment *seg, rg_circle *circle)
 	double D = b*b-4*a*c;
 	
 	if (a == 0) { // 0 vector
-		return rg_collidable_collide_ftor_ftor(&seg->start, &circle->center);
+		return rg_collidable_collide_vector2_vector2(&seg->start, &circle->center);
 	} else if (D < 0) { // no solution
 		return 0;
 	} else if (D > 0) {
@@ -269,15 +269,15 @@ int rg_collidable_collide_rect_circle(rg_rect *a, rg_circle *b)
 
 int rg_collidable_collide_circle_circle(rg_circle *a, rg_circle *b)
 {
-	rg_ftor r;
-	rg_ftor_subtract(&r, &a->center, &b->center);
-	return ((rg_ftor_magnitude(&r)-MAX_DELTA) <= (a->radius+b->radius));
+	rg_vector2 r;
+	rg_vector2_subtract(&r, &a->center, &b->center);
+	return ((rg_vector2_magnitude(&r)-MAX_DELTA) <= (a->radius+b->radius));
 }
 
 void rg_collidable_extract_struct(void **strct, VALUE class, VALUE x)
 {
-	if (class == cFtor) {
-		Data_Get_Struct(x, rg_ftor, *strct);
+	if (class == cVector2) {
+		Data_Get_Struct(x, rg_vector2, *strct);
 	} else if (class == cSegment)  {
 		Data_Get_Struct(x, rg_segment, *strct);
 	} else if (class == cRect) {

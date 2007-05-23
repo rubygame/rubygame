@@ -1,10 +1,11 @@
-require 'body'
+#!/usr/bin/env ruby
+require 'rubygame_body'
 include Rubygame::Body
 
 require 'test/unit'
 class TestBody < Test::Unit::TestCase
 	def test_raise
-		assert_raises(ArgumentError) { Ftor[20,20].collide?("foo") }
+		assert_raises(ArgumentError) { Vector2[20,20].collide?("foo") }
 	end
 	
 	def collisions(a,collide,no_coll)
@@ -26,37 +27,37 @@ class TestBody < Test::Unit::TestCase
 	end
 
 	def test_ftor_ftor_collision
-		assert(Ftor[20,20].collide?(Ftor[20,20]))
-		assert(!Ftor[20,20].collide?(Ftor[0,0]))
-		assert(!Ftor[20,20].collide?(Ftor[20,0]))
-		assert(!Ftor[20,20].collide?(Ftor[0,20]))
+		assert(Vector2[20,20].collide?(Vector2[20,20]))
+		assert(!Vector2[20,20].collide?(Vector2[0,0]))
+		assert(!Vector2[20,20].collide?(Vector2[20,0]))
+		assert(!Vector2[20,20].collide?(Vector2[0,20]))
 	end
 	
 	def test_ftor_segment_collision
 		seg = Segment.points(0,0,20,20)
-		collide = [Ftor[0,0], Ftor[10,10], Ftor[20,20]]
-		no_coll = [Ftor[1,0], Ftor[21,21], Ftor[-1,-1]]
+		collide = [Vector2[0,0], Vector2[10,10], Vector2[20,20]]
+		no_coll = [Vector2[1,0], Vector2[21,21], Vector2[-1,-1]]
 		collisions(seg,collide,no_coll)
 	end
 	
 	def test_ftor_rect_collision
 		r = Rect.rect(0,0,20,20)
-		collide = [Ftor[11,9], Ftor[20,20], Ftor[20,10], Ftor[0,20]]
-		no_coll = [Ftor[0,30], Ftor[30,0]]
+		collide = [Vector2[11,9], Vector2[20,20], Vector2[20,10], Vector2[0,20]]
+		no_coll = [Vector2[0,30], Vector2[30,0]]
 		collisions(r,collide,no_coll)
 	end
 
 	def test_ftor_circle_collision
-		c       = Circle.new(Ftor[2,4],5)
-		collide = [[2,4],[4,4],[2,6],[7,4],[2,9]].map{|e| e===Ftor ? e : Ftor[*e]}
-		no_coll = [Ftor[0,30], Ftor[30,0]]
+		c       = Circle.new(Vector2[2,4],5)
+		collide = [[2,4],[4,4],[2,6],[7,4],[2,9]].map{|e| e===Vector2 ? e : Vector2[*e]}
+		no_coll = [Vector2[0,30], Vector2[30,0]]
 		collisions(c,collide,no_coll)
 		20.times {
-			ftor = Ftor[2,9].rotated_around(Ftor[2,4],rand*2*Math::PI)
+			ftor = Vector2[2,9].rotated_around(Vector2[2,4],rand*2*Math::PI)
 			assert(ftor.collide?(c), should("rand",ftor,c))
 		}
 		20.times {
-			ftor = Ftor[2,10].rotated_around(Ftor[2,4],rand*2*Math::PI)
+			ftor = Vector2[2,10].rotated_around(Vector2[2,4],rand*2*Math::PI)
 			assert(!ftor.collide?(c), should_not("rand",ftor,c))
 		}
 	end
@@ -76,7 +77,7 @@ class TestBody < Test::Unit::TestCase
 	end
 
 	def test_segment_circle_collision
-		c = Circle.new(Ftor[5,7],15)
+		c = Circle.new(Vector2[5,7],15)
 		collide = [[5,8,40,28],[20,12,20,-10]].map{|s|Segment===s ? s : Segment.points(*s)}
 		no_coll = [[40,40,42,42]].map{|s|Segment===s ? s : Segment.points(*s)}
 		collisions(c,collide,no_coll)

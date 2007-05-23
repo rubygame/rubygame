@@ -1,22 +1,22 @@
-// require 'ruby/numeric'; seg = Segment.new(Ftor[1,1], Ftor[2,2]); seg.rotate(90.to_radian, Ftor[2,2])
+// require 'ruby/numeric'; seg = Segment.new(Vector2[1,1], Vector2[2,2]); seg.rotate(90.to_radian, Vector2[2,2])
 #include <ruby.h>
 #include <math.h>
 #include "rubygame_defines.h"
-#include "rubygame_cFtor.h"
+#include "rubygame_cVector2.h"
 #include "rubygame_cSegment.h"
 #include "collision_math.h"
 
 VALUE cSegment;
 
-void rg_segment_move(rg_segment *seg, rg_ftor *ftor)
+void rg_segment_move(rg_segment *seg, rg_vector2 *vector2)
 {
-	rg_ftor_add(&seg->start, &seg->start, ftor);
+	rg_vector2_add(&seg->start, &seg->start, vector2);
 }
 
-void rg_segment_rotate_around(rg_segment *seg, rg_ftor *center, double rad)
+void rg_segment_rotate_around(rg_segment *seg, rg_vector2 *center, double rad)
 {
-	rg_ftor_rotated_around(&seg->start, &seg->start, center, rad);
-	rg_ftor_rotated_by(&seg->vec, &seg->vec, rad);
+	rg_vector2_rotated_around(&seg->start, &seg->start, center, rad);
+	rg_vector2_rotated_by(&seg->vec, &seg->vec, rad);
 }
 
 
@@ -40,7 +40,7 @@ static VALUE rg_segment_rb_singleton_alloc(VALUE class)
 
 /* 
  *  call-seq:
- *    Segment.new(Ftor begin, Ftor vector) -> Segment
+ *    Segment.new(Vector2 begin, Vector2 vector) -> Segment
  *
  *  Create a Segment from it's begin and the vector needed to add to get to the end.
  */
@@ -78,10 +78,10 @@ static VALUE rg_segment_rb_singleton_points(VALUE class, VALUE bx, VALUE by, VAL
 static VALUE rg_segment_rb_initialize(VALUE self, VALUE start, VALUE vec)
 {
 	rg_segment *seg;
-	rg_ftor    *c_start, *c_vec;
+	rg_vector2    *c_start, *c_vec;
 	Data_Get_Struct(self, rg_segment, seg);
-	Data_Get_Struct(start, rg_ftor, c_start);
-	Data_Get_Struct(vec, rg_ftor, c_vec);
+	Data_Get_Struct(start, rg_vector2, c_start);
+	Data_Get_Struct(vec, rg_vector2, c_vec);
 	seg->start = *c_start;
 	seg->vec   = *c_vec;
 	return self;
@@ -101,70 +101,70 @@ static VALUE rg_segment_rb_initialize_copy(VALUE self, VALUE old)
 
 /* 
  *  call-seq:
- *    begin -> Ftor
+ *    begin -> Vector2
  *
- *  Returns the Ftor pointing to the begin of the Segment.
+ *  Returns the Vector2 pointing to the begin of the Segment.
  */
 static VALUE rg_segment_rb_begin(VALUE self)
 {
 	rg_segment *seg;
-	rg_ftor    *ftor;
+	rg_vector2    *vector2;
 	Data_Get_Struct(self, rg_segment, seg);
-	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
-	ftor->x = seg->start.x;
-	ftor->y = seg->start.y;
-	return rb_ftor;
+	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, vector2);
+	vector2->x = seg->start.x;
+	vector2->y = seg->start.y;
+	return rb_vector2;
 }
 
 /* 
  *  call-seq:
- *    center -> Ftor
+ *    center -> Vector2
  *
- *  Returns the Ftor pointing to the center of the Segment.
+ *  Returns the Vector2 pointing to the center of the Segment.
  */
 static VALUE rg_segment_rb_center(VALUE self)
 {
 	rg_segment *seg;
-	rg_ftor    *ftor;
-	rg_ftor    half;
+	rg_vector2    *vector2;
+	rg_vector2    half;
 	Data_Get_Struct(self, rg_segment, seg);
-	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
-	rg_ftor_resized_by(&half, &seg->vec, 0.5);
-	rg_ftor_add(ftor, &seg->start, &half);
-	return rb_ftor;
+	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, vector2);
+	rg_vector2_resized_by(&half, &seg->vec, 0.5);
+	rg_vector2_add(vector2, &seg->start, &half);
+	return rb_vector2;
 }
 
 /* 
  *  call-seq:
- *    end -> Ftor
+ *    end -> Vector2
  *
- *  Returns the Ftor pointing to the end of the Segment.
+ *  Returns the Vector2 pointing to the end of the Segment.
  */
 static VALUE rg_segment_rb_end(VALUE self)
 {
 	rg_segment *seg;
-	rg_ftor    *ftor;
+	rg_vector2    *vector2;
 	Data_Get_Struct(self, rg_segment, seg);
-	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
-	rg_ftor_add(ftor, &seg->start, &seg->vec);
-	return rb_ftor;
+	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, vector2);
+	rg_vector2_add(vector2, &seg->start, &seg->vec);
+	return rb_vector2;
 }
 
 /* 
  *  call-seq:
- *    vec -> Ftor
+ *    vec -> Vector2
  *
- *  Returns the Ftor from begin to end of the Segment.
+ *  Returns the Vector2 from begin to end of the Segment.
  */
 static VALUE rg_segment_rb_vec(VALUE self)
 {
 	rg_segment *seg;
-	rg_ftor    *ftor;
+	rg_vector2    *vector2;
 	Data_Get_Struct(self, rg_segment, seg);
-	VALUE rb_ftor = Data_Make_Struct(cFtor, rg_ftor, NULL, free, ftor);
-	ftor->x = seg->vec.x;
-	ftor->y = seg->vec.y;
-	return rb_ftor;
+	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, vector2);
+	vector2->x = seg->vec.x;
+	vector2->y = seg->vec.y;
+	return rb_vector2;
 }
 
 /* 
@@ -177,7 +177,7 @@ static VALUE rg_segment_rb_length(VALUE self)
 {
 	rg_segment *seg;
 	Data_Get_Struct(self, rg_segment, seg);
-	return rb_float_new(rg_ftor_magnitude(&seg->vec));
+	return rb_float_new(rg_vector2_magnitude(&seg->vec));
 }
 
 /* 
@@ -190,21 +190,21 @@ static VALUE rg_segment_rb_angle(VALUE self)
 {
 	rg_segment *seg;
 	Data_Get_Struct(self, rg_segment, seg);
-	return rb_float_new(rg_ftor_angle(&seg->vec));
+	return rb_float_new(rg_vector2_angle(&seg->vec));
 }
 
 /* 
  *  call-seq:
  *    move(by) -> self
  *
- *  Move Segment by Ftor 'by'.
+ *  Move Segment by Vector2 'by'.
  */
 static VALUE rg_segment_rb_move(VALUE self, VALUE by)
 {
 	rg_segment *seg;
-	rg_ftor    *vec;
+	rg_vector2    *vec;
 	Data_Get_Struct(self, rg_segment, seg);
-	Data_Get_Struct(by, rg_ftor, vec);
+	Data_Get_Struct(by, rg_vector2, vec);
 	rg_segment_move(seg, vec);
 	return self;
 }
@@ -214,14 +214,14 @@ static VALUE rg_segment_rb_move(VALUE self, VALUE by)
  *    rotate(radians, around) -> self
  *
  *  Rotates the Segment around the position 'around' which must be given as an
- *  Ftor, by an angle of 'radians' which must be given in radians.
+ *  Vector2, by an angle of 'radians' which must be given in radians.
  */
 static VALUE rg_segment_rb_rotate(VALUE self, VALUE rad, VALUE center)
 {
 	rg_segment *seg;
-	rg_ftor    *c_center;
+	rg_vector2    *c_center;
 	Data_Get_Struct(self, rg_segment, seg);
-	Data_Get_Struct(center, rg_ftor, c_center);
+	Data_Get_Struct(center, rg_vector2, c_center);
 	rg_segment_rotate_around(seg, c_center, NUM2DBL(rad));
 	return self;
 }
@@ -235,11 +235,11 @@ static VALUE rg_segment_rb_rotate(VALUE self, VALUE rad, VALUE center)
 static VALUE rg_segment_rb_inspect(VALUE self)
 {
 	rg_segment *seg;
-	rg_ftor    end, vec;
+	rg_vector2    end, vec;
 	Data_Get_Struct(self, rg_segment, seg);
 	VALUE str;
 	char buf[255];
-	rg_ftor_add(&end, &seg->start, &seg->vec);
+	rg_vector2_add(&end, &seg->start, &seg->vec);
 	vec = seg->vec;
 	
 	snprintf(buf, 255, "#<%s:0x%lx %.2f, %.2f - %.2f, %.2f (|%.2f| %.1f°)>",
@@ -249,8 +249,8 @@ static VALUE rg_segment_rb_inspect(VALUE self)
 		seg->start.y,
 		end.x,
 		end.y,
-		rg_ftor_magnitude(&vec),
-		rg_ftor_angle_deg(&vec)
+		rg_vector2_magnitude(&vec),
+		rg_vector2_angle_deg(&vec)
 	);
 	str  = rb_str_new2(buf);
 	return str;
