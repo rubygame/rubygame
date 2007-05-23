@@ -178,7 +178,7 @@ static VALUE rg_vector2_rb_initialize_copy(VALUE self, VALUE old)
 
 /* 
  *  call-seq:
- *    y -> Float
+ *    x -> Float
  *
  *  The x component of the receiver.
  */
@@ -187,6 +187,20 @@ static VALUE rg_vector2_rb_x(VALUE self)
 	rg_vector2 *vector2;
 	Data_Get_Struct(self, rg_vector2, vector2);
 	return rb_float_new(vector2->x);
+}
+
+/* 
+ *  call-seq:
+ *    x = a_float
+ *
+ *  Set the x component of the receiver to a_float.
+ */
+static VALUE rg_vector2_rb_xset(VALUE self, VALUE vx)
+{
+	rg_vector2 *vector2;
+	Data_Get_Struct(self, rg_vector2, vector2);
+	vector2->x = NUM2DBL(vx);
+	return vx;
 }
 
 /* 
@@ -200,6 +214,20 @@ static VALUE rg_vector2_rb_y(VALUE self)
 	rg_vector2 *vector2;
 	Data_Get_Struct(self, rg_vector2, vector2);
 	return rb_float_new(vector2->y);
+}
+
+/* 
+ *  call-seq:
+ *    y = a_float
+ *
+ *  Set the y component of the receiver to a_float.
+ */
+static VALUE rg_vector2_rb_yset(VALUE self, VALUE vy)
+{
+	rg_vector2 *vector2;
+	Data_Get_Struct(self, rg_vector2, vector2);
+	vector2->y = NUM2DBL(vy);
+	return vy;
 }
 
 /* 
@@ -530,7 +558,9 @@ void Init_Vector2()
 	rb_define_method(cVector2, "initialize",      rg_vector2_rb_initialize, 2);
 	rb_define_method(cVector2, "initialize_copy", rg_vector2_rb_initialize_copy, 1);
 	rb_define_method(cVector2, "x",               rg_vector2_rb_x, 0);
+	rb_define_method(cVector2, "x=",              rg_vector2_rb_xset, 1);
 	rb_define_method(cVector2, "y",               rg_vector2_rb_y, 0);
+	rb_define_method(cVector2, "y=",              rg_vector2_rb_yset, 1);
 	rb_define_method(cVector2, "magnitude",       rg_vector2_rb_magnitude, 0);
 	rb_define_method(cVector2, "angle",           rg_vector2_rb_angle, 0);
 	rb_define_method(cVector2, "angle_deg",       rg_vector2_rb_angle_deg, 0);
