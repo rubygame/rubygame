@@ -121,8 +121,7 @@ static VALUE rg_vector2_rb_singleton_alloc(VALUE class)
  *  call-seq:
  *    Vector2[x,y] -> Vector2
  *
- *  Create a Vector2 from components. This method is both, less to type and
- *  faster than Vector2.new.
+ *  Create a Vector2 from components.
  */
 static VALUE rg_vector2_rb_singleton_bracket(VALUE class, VALUE x, VALUE y)
 {
@@ -135,15 +134,29 @@ static VALUE rg_vector2_rb_singleton_bracket(VALUE class, VALUE x, VALUE y)
 
 /* 
  *  call-seq:
- *    Vector2.new(angle, magnitude) -> Vector2
+ *    Vector2.polar(angle, magnitude) -> Vector2
  *
  *  Create a Vector2 from angle (in radians) and magnitude.
  */
-static VALUE rg_vector2_rb_singleton_polar(VALUE class, VALUE rad, VALUE mag)
+static VALUE rg_vector2_rb_singleton_polar(VALUE class, VALUE angle, VALUE mag)
 {
 	rg_vector2 *vector2;
 	VALUE rb_vector2 = Data_Make_Struct(class, rg_vector2, NULL, free, vector2);
-	rg_vector2_magnitude_and_rotation(vector2, NUM2DBL(mag), NUM2DBL(rad));
+	rg_vector2_magnitude_and_rotation(vector2, NUM2DBL(mag), NUM2DBL(angle));
+	return rb_vector2;	
+}
+
+/* 
+ *  call-seq:
+ *    Vector2.polar_deg(angle, magnitude) -> Vector2
+ *
+ *  Create a Vector2 from angle (in degrees) and magnitude.
+ */
+static VALUE rg_vector2_rb_singleton_polar_deg(VALUE class, VALUE angle, VALUE mag)
+{
+	rg_vector2 *vector2;
+	VALUE rb_vector2 = Data_Make_Struct(class, rg_vector2, NULL, free, vector2);
+	rg_vector2_magnitude_and_rotation(vector2, NUM2DBL(mag), DEG2RAD(NUM2DBL(angle)));
 	return rb_vector2;	
 }
 
@@ -151,7 +164,7 @@ static VALUE rg_vector2_rb_singleton_polar(VALUE class, VALUE rad, VALUE mag)
  *  call-seq:
  *    Vector2.new(x,y) -> Vector2
  *
- *  Create a Vector2 from components. See also Vector2::[] (it's faster).
+ *  Create a Vector2 from components. See also Vector2::[]
  */
 static VALUE rg_vector2_rb_initialize(VALUE self, VALUE x, VALUE y)
 {
@@ -167,11 +180,11 @@ static VALUE rg_vector2_rb_initialize(VALUE self, VALUE x, VALUE y)
  */
 static VALUE rg_vector2_rb_initialize_copy(VALUE self, VALUE old)
 {
-	rg_vector2 *vector21, *vector22;
-	Data_Get_Struct(self, rg_vector2, vector21);
-	Data_Get_Struct(old, rg_vector2, vector22);
+	rg_vector2 *a, *b;
+	Data_Get_Struct(self, rg_vector2, a);
+	Data_Get_Struct(old, rg_vector2, b);
 
-	*vector21 = *vector22;
+	*a = *b;
 	
 	return self;
 }
@@ -195,7 +208,7 @@ static VALUE rg_vector2_rb_x(VALUE self)
  *
  *  Set the x component of the receiver to a_float.
  */
-static VALUE rg_vector2_rb_xset(VALUE self, VALUE vx)
+static VALUE rg_vector2_rb_set_x(VALUE self, VALUE vx)
 {
 	rg_vector2 *vector2;
 	Data_Get_Struct(self, rg_vector2, vector2);
@@ -222,7 +235,7 @@ static VALUE rg_vector2_rb_y(VALUE self)
  *
  *  Set the y component of the receiver to a_float.
  */
-static VALUE rg_vector2_rb_yset(VALUE self, VALUE vy)
+static VALUE rg_vector2_rb_set_y(VALUE self, VALUE vy)
 {
 	rg_vector2 *vector2;
 	Data_Get_Struct(self, rg_vector2, vector2);
@@ -235,13 +248,28 @@ static VALUE rg_vector2_rb_yset(VALUE self, VALUE vy)
  *    magnitude -> Float
  *
  *  The magnitude of the receiver. Can be used to calculate distances.
- *  I.e. the distance between 5,5 and 10,8 is (Vector2[5,5]-Vector2[10,8]).magnitude.
+ *  I.e. the distance between 5,5 and 10,8 is:
+ *    (Vector2[5,5]-Vector2[10,8]).magnitude.
  */
 static VALUE rg_vector2_rb_magnitude(VALUE self)
 {
 	rg_vector2 *vector2;
 	Data_Get_Struct(self, rg_vector2, vector2);
 	return rb_float_new(rg_vector2_magnitude(vector2));
+}
+
+/*
+ *  call-seq:
+ *    self.magnitude = new_magnitude
+ *
+ *  Set the magnitude of the receiver to new_magnitude, preserving angle.
+ */
+static VALUE rg_vector2_rb_set_magnitude(VALUE self, VALUE size)
+{
+	rg_vector2 *v;
+	Data_Get_Struct(self, rg_vector2, v);
+	rg_vector2_resized_to(v, v, NUM2DBL(size));
+	return size;
 }
 
 /* 
@@ -252,9 +280,23 @@ static VALUE rg_vector2_rb_magnitude(VALUE self)
  */
 static VALUE rg_vector2_rb_angle(VALUE self)
 {
-	rg_vector2 *vector2;
-	Data_Get_Struct(self, rg_vector2, vector2);
-	return rb_float_new(rg_vector2_angle(vector2));
+	rg_vector2 *v;
+	Data_Get_Struct(self, rg_vector2, v);
+	return rb_float_new(rg_vector2_angle(v));
+}
+
+/* 
+ *  call-seq:
+ *    angle = new_angle
+ *
+ *  Set the angle of the receiver in radians, preserving magnitude.
+ */
+static VALUE rg_vector2_rb_set_angle(VALUE self, VALUE angle)
+{
+	rg_vector2 *v;
+	Data_Get_Struct(self, rg_vector2, v);
+	rg_vector2_rotated_to(v, v, NUM2DBL(angle));
+	return angle;
 }
 
 /* 
@@ -265,9 +307,23 @@ static VALUE rg_vector2_rb_angle(VALUE self)
  */
 static VALUE rg_vector2_rb_angle_deg(VALUE self)
 {
-	rg_vector2 *vector2;
-	Data_Get_Struct(self, rg_vector2, vector2);
-	return rb_float_new(rg_vector2_angle_deg(vector2));
+	rg_vector2 *v;
+	Data_Get_Struct(self, rg_vector2, v);
+	return rb_float_new(rg_vector2_angle_deg(v));
+}
+
+/* 
+ *  call-seq:
+ *    angle_deg = new_angle
+ *
+ *  Set the angle of the receiver in degrees, preserving magnitude.
+ */
+static VALUE rg_vector2_rb_set_angle_deg(VALUE self, VALUE angle)
+{
+	rg_vector2 *v;
+	Data_Get_Struct(self, rg_vector2, v);
+	rg_vector2_rotated_to(v, v, DEG2RAD(NUM2DBL(angle)));
+	return angle;
 }
 
 /* 
@@ -276,7 +332,7 @@ static VALUE rg_vector2_rb_angle_deg(VALUE self)
  *
  *  Sum of two Vector2s (component wise addition).
  */
-static VALUE rg_vector2_rb_binary_plus(VALUE self, VALUE other)
+static VALUE rg_vector2_rb_add(VALUE self, VALUE other)
 {
 	rg_vector2 *a, *b, *c;
 
@@ -295,7 +351,7 @@ static VALUE rg_vector2_rb_binary_plus(VALUE self, VALUE other)
  *
  *  Difference of two Vector2s (component wise subtraction).
  */
-static VALUE rg_vector2_rb_binary_minus(VALUE self, VALUE other)
+static VALUE rg_vector2_rb_subtract(VALUE self, VALUE other)
 {
 	rg_vector2 *a, *b, *c;
 
@@ -344,8 +400,9 @@ static VALUE rg_vector2_rb_unary_minus(VALUE self)
  *  call-seq:
  *    dot(other_vector2) -> Float
  *
- *  Returns the dot product between receiver and other_vector2 (sum of products of components,
- *  i.e. a.x*b.x + a.y*b.y).
+ *  Returns the dot product between receiver and other_vector2.
+ *  The dot product is the sum of the products of the components:
+ *   a.x*b.x + a.y*b.y
  */
 static VALUE rg_vector2_rb_dotproduct(VALUE self, VALUE other)
 {
@@ -359,11 +416,12 @@ static VALUE rg_vector2_rb_dotproduct(VALUE self, VALUE other)
 
 /* 
  *  call-seq:
- *    normalized -> Vector2
+ *    unit -> Vector2
  *
- *  Returns a Vector2 with the same angle but normalized magnitude ( == 1).
+ *  Returns a Vector2 with the same angle as the receiver, but magnitude 1.0.
+ *  (A vector with magnitude = 1 is called a "unit vector" or "normalized vector".)
  */
-static VALUE rg_vector2_rb_normalized(VALUE self)
+static VALUE rg_vector2_rb_unit(VALUE self)
 {
 	rg_vector2 *a, *b;
 	Data_Get_Struct(self, rg_vector2, a);
@@ -371,6 +429,20 @@ static VALUE rg_vector2_rb_normalized(VALUE self)
 	
 	rg_vector2_normalized(b, a);
 	return rb_vector2;	
+}
+
+/* 
+ *  call-seq:
+ *    unit! -> self
+ *
+ *  Sets the magnitude of the receiver to 1.0.
+ */
+static VALUE rg_vector2_rb_unit_bang(VALUE self)
+{
+	rg_vector2 *a;
+	Data_Get_Struct(self, rg_vector2, a);
+	rg_vector2_resized_to(a, a, 1.0);
+	return self;
 }
 
 /* 
@@ -460,7 +532,7 @@ static VALUE rg_vector2_rb_rotated_around(VALUE self, VALUE center, VALUE rad)
 
 /* 
  *  call-seq:
- *    projected(Vector2 on) -> Vector2
+ *    projected(Vector2 other) -> Vector2
  *
  *  Projects the Vector2 on another Vector2.
  */
@@ -558,23 +630,27 @@ void Init_Vector2()
 	rb_define_method(cVector2, "initialize",      rg_vector2_rb_initialize, 2);
 	rb_define_method(cVector2, "initialize_copy", rg_vector2_rb_initialize_copy, 1);
 	rb_define_method(cVector2, "x",               rg_vector2_rb_x, 0);
-	rb_define_method(cVector2, "x=",              rg_vector2_rb_xset, 1);
+	rb_define_method(cVector2, "x=",              rg_vector2_rb_set_x, 1);
 	rb_define_method(cVector2, "y",               rg_vector2_rb_y, 0);
-	rb_define_method(cVector2, "y=",              rg_vector2_rb_yset, 1);
+	rb_define_method(cVector2, "y=",              rg_vector2_rb_set_y, 1);
 	rb_define_method(cVector2, "magnitude",       rg_vector2_rb_magnitude, 0);
+	rb_define_method(cVector2, "magnitude=",      rg_vector2_rb_set_magnitude,1);
 	rb_define_method(cVector2, "angle",           rg_vector2_rb_angle, 0);
 	rb_define_method(cVector2, "angle_deg",       rg_vector2_rb_angle_deg, 0);
-	rb_define_method(cVector2, "+",               rg_vector2_rb_binary_plus, 1);
-	rb_define_method(cVector2, "-",               rg_vector2_rb_binary_minus, 1);
+	rb_define_method(cVector2, "angle=",          rg_vector2_rb_set_angle,1);
+	rb_define_method(cVector2, "angle_deg=",      rg_vector2_rb_set_angle_deg,1);
+	rb_define_method(cVector2, "+",               rg_vector2_rb_add, 1);
+	rb_define_method(cVector2, "-",               rg_vector2_rb_subtract, 1);
 	rb_define_method(cVector2, "+@",              rg_vector2_rb_unary_plus, 0);
 	rb_define_method(cVector2, "-@",              rg_vector2_rb_unary_minus, 0);
 	rb_define_method(cVector2, "dot",             rg_vector2_rb_dotproduct, 1);
-	rb_define_method(cVector2, "normalized",      rg_vector2_rb_normalized, 0);
+	rb_define_method(cVector2, "unit",            rg_vector2_rb_unit, 0);
+	rb_define_method(cVector2, "unit!",           rg_vector2_rb_unit_bang, 0);
 	rb_define_method(cVector2, "resized_to",      rg_vector2_rb_resized_to, 1);
 	rb_define_method(cVector2, "resized_by",      rg_vector2_rb_resized_by, 1);
 	rb_define_method(cVector2, "rotated_to",      rg_vector2_rb_rotated_to, 1);
 	rb_define_method(cVector2, "rotated_by",      rg_vector2_rb_rotated_by, 1);
-	rb_define_method(cVector2, "rotated_around",  rg_vector2_rb_rotated_around, 2);
+	rb_define_method(cVector2, "rotated_around",  rg_vector2_rb_rotated_around,2);
 	rb_define_method(cVector2, "projected",       rg_vector2_rb_projected, 1);
 	rb_define_method(cVector2, "to_a",            rg_vector2_rb_to_a, 0);
 	rb_define_method(cVector2, "to_s",            rg_vector2_rb_to_s, 0);
