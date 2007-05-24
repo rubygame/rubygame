@@ -217,6 +217,11 @@ static VALUE rg_vector2_rb_x(VALUE self)
  */
 static VALUE rg_vector2_rb_set_x(VALUE self, VALUE vx)
 {
+	if(OBJ_FROZEN(self))
+	{
+		rb_raise(rb_eTypeError, "can't modify frozen object");
+	}
+
 	rg_vector2 *vector2;
 	Data_Get_Struct(self, rg_vector2, vector2);
 	vector2->x = NUM2DBL(vx);
@@ -244,6 +249,11 @@ static VALUE rg_vector2_rb_y(VALUE self)
  */
 static VALUE rg_vector2_rb_set_y(VALUE self, VALUE vy)
 {
+	if(OBJ_FROZEN(self))
+	{
+		rb_raise(rb_eTypeError, "can't modify frozen object");
+	}
+
 	rg_vector2 *vector2;
 	Data_Get_Struct(self, rg_vector2, vector2);
 	vector2->y = NUM2DBL(vy);
@@ -273,6 +283,11 @@ static VALUE rg_vector2_rb_magnitude(VALUE self)
  */
 static VALUE rg_vector2_rb_set_magnitude(VALUE self, VALUE size)
 {
+	if(OBJ_FROZEN(self))
+	{
+		rb_raise(rb_eTypeError, "can't modify frozen object");
+	}
+
 	rg_vector2 *v;
 	Data_Get_Struct(self, rg_vector2, v);
 	rg_vector2_set_magnitude(v, v, NUM2DBL(size));
@@ -300,6 +315,11 @@ static VALUE rg_vector2_rb_angle(VALUE self)
  */
 static VALUE rg_vector2_rb_set_angle(VALUE self, VALUE angle)
 {
+	if(OBJ_FROZEN(self))
+	{
+		rb_raise(rb_eTypeError, "can't modify frozen object");
+	}
+
 	rg_vector2 *v;
 	Data_Get_Struct(self, rg_vector2, v);
 	rg_vector2_set_angle(v, v, NUM2DBL(angle));
@@ -327,6 +347,11 @@ static VALUE rg_vector2_rb_angle_deg(VALUE self)
  */
 static VALUE rg_vector2_rb_set_angle_deg(VALUE self, VALUE angle)
 {
+	if(OBJ_FROZEN(self))
+	{
+		rb_raise(rb_eTypeError, "can't modify frozen object");
+	}
+
 	rg_vector2 *v;
 	Data_Get_Struct(self, rg_vector2, v);
 	rg_vector2_set_angle(v, v, DEG2RAD(NUM2DBL(angle)));
@@ -446,6 +471,11 @@ static VALUE rg_vector2_rb_unit(VALUE self)
  */
 static VALUE rg_vector2_rb_unit_bang(VALUE self)
 {
+	if(OBJ_FROZEN(self))
+	{
+		rb_raise(rb_eTypeError, "can't modify frozen object");
+	}
+
 	rg_vector2 *a;
 	Data_Get_Struct(self, rg_vector2, a);
 	rg_vector2_normalize(a, a);
