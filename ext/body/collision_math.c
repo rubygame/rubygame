@@ -125,8 +125,8 @@ int rg_collidable_collide_vector2_rect(rg_vector2 *a, rg_rect *b)
 	// point on the spanning vectors and see if it fits in
 	rg_vector2 r;
 	rg_vector2_subtract(&r, a, &b->topleft);
-	double x = rg_vector2_dotproduct(&r, &b->horizontal)/rg_vector2_magnitude2(&b->horizontal);
-	double y = rg_vector2_dotproduct(&r, &b->vertical)/rg_vector2_magnitude2(&b->vertical);
+	double x = rg_vector2_dotproduct(&r, &b->horizontal)/rg_vector2_magnitude_squared(&b->horizontal);
+	double y = rg_vector2_dotproduct(&r, &b->vertical)/rg_vector2_magnitude_squared(&b->vertical);
 	return (0 <= x && x <= 1 && 0 <= y && y <= 1);
 }
 

@@ -24,58 +24,58 @@ void rg_vector2_negate(rg_vector2 *result, rg_vector2 *a)
 	result->y = -a->y;
 }
 
-void rg_vector2_magnitude_and_rotation(rg_vector2 *result, double magnitude, double rad)
+void rg_vector2_set_polar(rg_vector2 *result, double magnitude, double rad)
 {
 	result->x = cos(rad)*magnitude;
 	result->y = sin(rad)*magnitude;
 }
 
-void rg_vector2_rotated_to(rg_vector2 *result, rg_vector2 *a, double rad)
+void rg_vector2_set_angle(rg_vector2 *result, rg_vector2 *a, double rad)
 {
-	rg_vector2_magnitude_and_rotation(result, rg_vector2_magnitude(a), rad);
+	rg_vector2_set_polar(result, rg_vector2_magnitude(a), rad);
 }
 
-void rg_vector2_rotated_by(rg_vector2 *result, rg_vector2 *a, double rad)
+void rg_vector2_rotate(rg_vector2 *result, rg_vector2 *a, double rad)
 {
-	rg_vector2_magnitude_and_rotation(result, rg_vector2_magnitude(a), rg_vector2_angle(a)+rad);
+	rg_vector2_set_polar(result, rg_vector2_magnitude(a), rg_vector2_angle(a)+rad);
 }
 
-void rg_vector2_rotated_around(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, double rad)
+void rg_vector2_rotate_around(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, double rad)
 {
 	rg_vector2_subtract(result, original, center);
-	rg_vector2_rotated_by(result, result, rad);
+	rg_vector2_rotate(result, result, rad);
 	rg_vector2_add(result, center, result);
 }
 
 
-void rg_vector2_resized_to(rg_vector2 *result, rg_vector2 *a, double magnitude)
+void rg_vector2_set_magnitude(rg_vector2 *result, rg_vector2 *a, double magnitude)
 {
-	rg_vector2_magnitude_and_rotation(result, magnitude, rg_vector2_angle(a));
+	rg_vector2_set_polar(result, magnitude, rg_vector2_angle(a));
 }
 
-void rg_vector2_resized_by(rg_vector2 *result, rg_vector2 *a, double factor)
+void rg_vector2_scale(rg_vector2 *result, rg_vector2 *a, double factor)
 {
-	rg_vector2_magnitude_and_rotation(result, rg_vector2_magnitude(a)*factor, rg_vector2_angle(a));
+	rg_vector2_set_polar(result, rg_vector2_angle(a)*factor, rg_vector2_angle(a));
 }
 
-void rg_vector2_normalized(rg_vector2 *result, rg_vector2 *a)
+void rg_vector2_normalize(rg_vector2 *result, rg_vector2 *a)
 {
-	rg_vector2_resized_to(result, a, 1.0);
+	rg_vector2_set_magnitude(result, a, 1.0);
 }
 
-void rg_vector2_projected(rg_vector2 *result, rg_vector2 *project, rg_vector2 *on)
+void rg_vector2_project(rg_vector2 *result, rg_vector2 *project, rg_vector2 *on)
 {
-	double fac = rg_vector2_dotproduct(project, on)/rg_vector2_magnitude2(on);
+	double fac = rg_vector2_dotproduct(project, on)/rg_vector2_magnitude_squared(on);
 	result->x = on->x*fac;
 	result->y = on->y*fac;
 }
 
 double rg_vector2_magnitude(rg_vector2 *a)
 {
-	return sqrt(rg_vector2_magnitude2(a));
+	return sqrt(rg_vector2_magnitude_squared(a));
 }
 
-double rg_vector2_magnitude2(rg_vector2 *a)
+double rg_vector2_magnitude_squared(rg_vector2 *a)
 {
 	return (a->x * a->x) + (a->y * a->y);
 }
@@ -142,7 +142,7 @@ static VALUE rg_vector2_rb_singleton_polar(VALUE class, VALUE angle, VALUE mag)
 {
 	rg_vector2 *vector2;
 	VALUE rb_vector2 = Data_Make_Struct(class, rg_vector2, NULL, free, vector2);
-	rg_vector2_magnitude_and_rotation(vector2, NUM2DBL(mag), NUM2DBL(angle));
+	rg_vector2_set_polar(vector2, NUM2DBL(mag), NUM2DBL(angle));
 	return rb_vector2;	
 }
 
@@ -156,7 +156,7 @@ static VALUE rg_vector2_rb_singleton_polar_deg(VALUE class, VALUE angle, VALUE m
 {
 	rg_vector2 *vector2;
 	VALUE rb_vector2 = Data_Make_Struct(class, rg_vector2, NULL, free, vector2);
-	rg_vector2_magnitude_and_rotation(vector2, NUM2DBL(mag), DEG2RAD(NUM2DBL(angle)));
+	rg_vector2_set_polar(vector2, NUM2DBL(mag), DEG2RAD(NUM2DBL(angle)));
 	return rb_vector2;	
 }
 
@@ -268,7 +268,7 @@ static VALUE rg_vector2_rb_set_magnitude(VALUE self, VALUE size)
 {
 	rg_vector2 *v;
 	Data_Get_Struct(self, rg_vector2, v);
-	rg_vector2_resized_to(v, v, NUM2DBL(size));
+	rg_vector2_set_magnitude(v, v, NUM2DBL(size));
 	return size;
 }
 
@@ -295,7 +295,7 @@ static VALUE rg_vector2_rb_set_angle(VALUE self, VALUE angle)
 {
 	rg_vector2 *v;
 	Data_Get_Struct(self, rg_vector2, v);
-	rg_vector2_rotated_to(v, v, NUM2DBL(angle));
+	rg_vector2_set_angle(v, v, NUM2DBL(angle));
 	return angle;
 }
 
@@ -322,7 +322,7 @@ static VALUE rg_vector2_rb_set_angle_deg(VALUE self, VALUE angle)
 {
 	rg_vector2 *v;
 	Data_Get_Struct(self, rg_vector2, v);
-	rg_vector2_rotated_to(v, v, DEG2RAD(NUM2DBL(angle)));
+	rg_vector2_set_angle(v, v, DEG2RAD(NUM2DBL(angle)));
 	return angle;
 }
 
@@ -427,7 +427,7 @@ static VALUE rg_vector2_rb_unit(VALUE self)
 	Data_Get_Struct(self, rg_vector2, a);
 	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, b);
 	
-	rg_vector2_normalized(b, a);
+	rg_vector2_normalize(b, a);
 	return rb_vector2;	
 }
 
@@ -441,39 +441,39 @@ static VALUE rg_vector2_rb_unit_bang(VALUE self)
 {
 	rg_vector2 *a;
 	Data_Get_Struct(self, rg_vector2, a);
-	rg_vector2_resized_to(a, a, 1.0);
+	rg_vector2_normalize(a, a);
 	return self;
 }
 
 /* 
  *  call-seq:
- *    resized_to(new_magnitude) -> Vector2
+ *    scaled_to(new_magnitude) -> Vector2
  *
  *  Returns a Vector2 with the same angle but magnitude scaled by factor 'new_magnitude'.
  */
-static VALUE rg_vector2_rb_resized_to(VALUE self, VALUE size)
+static VALUE rg_vector2_rb_scaled_to(VALUE self, VALUE size)
 {
 	rg_vector2 *a, *b;
 	Data_Get_Struct(self, rg_vector2, a);
 	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, b);
 	
-	rg_vector2_resized_to(b, a, NUM2DBL(size));
+	rg_vector2_set_magnitude(b, a, NUM2DBL(size));
 	return rb_vector2;	
 }
 
 /* 
  *  call-seq:
- *    resized_by(factor) -> Vector2
+ *    scaled_by(factor) -> Vector2
  *
  *  Returns a Vector2 with the same angle but magnitude scaled by factor 'factor'.
  */
-static VALUE rg_vector2_rb_resized_by(VALUE self, VALUE factor)
+static VALUE rg_vector2_rb_scaled_by(VALUE self, VALUE factor)
 {
 	rg_vector2 *a, *b;
 	Data_Get_Struct(self, rg_vector2, a);
 	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, b);
 	
-	rg_vector2_resized_by(b, a, NUM2DBL(factor));
+	rg_vector2_scaled_by(b, a, NUM2DBL(factor));
 	return rb_vector2;	
 }
 
@@ -490,7 +490,7 @@ static VALUE rg_vector2_rb_rotated_to(VALUE self, VALUE rad)
 	Data_Get_Struct(self, rg_vector2, a);
 	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, b);
 	
-	rg_vector2_rotated_to(b, a, NUM2DBL(rad));
+	rg_vector2_set_angle(b, a, NUM2DBL(rad));
 	return rb_vector2;	
 }
 
@@ -507,7 +507,7 @@ static VALUE rg_vector2_rb_rotated_by(VALUE self, VALUE rad)
 	Data_Get_Struct(self, rg_vector2, a);
 	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, b);
 	
-	rg_vector2_rotated_by(b, a, NUM2DBL(rad));
+	rg_vector2_rotate(b, a, NUM2DBL(rad));
 	return rb_vector2;	
 }
 
@@ -526,7 +526,7 @@ static VALUE rg_vector2_rb_rotated_around(VALUE self, VALUE center, VALUE rad)
 	Data_Get_Struct(center, rg_vector2, b);
 	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, c);
 	
-	rg_vector2_rotated_around(c, a, b, NUM2DBL(rad));
+	rg_vector2_rotate_around(c, a, b, NUM2DBL(rad));
 	return rb_vector2;	
 }
 
@@ -646,8 +646,8 @@ void Init_Vector2()
 	rb_define_method(cVector2, "dot",             rg_vector2_rb_dotproduct, 1);
 	rb_define_method(cVector2, "unit",            rg_vector2_rb_unit, 0);
 	rb_define_method(cVector2, "unit!",           rg_vector2_rb_unit_bang, 0);
-	rb_define_method(cVector2, "resized_to",      rg_vector2_rb_resized_to, 1);
-	rb_define_method(cVector2, "resized_by",      rg_vector2_rb_resized_by, 1);
+	rb_define_method(cVector2, "scaled_to",       rg_vector2_rb_scaled_to, 1);
+	rb_define_method(cVector2, "scaled_by",       rg_vector2_rb_scaled_by, 1);
 	rb_define_method(cVector2, "rotated_to",      rg_vector2_rb_rotated_to, 1);
 	rb_define_method(cVector2, "rotated_by",      rg_vector2_rb_rotated_by, 1);
 	rb_define_method(cVector2, "rotated_around",  rg_vector2_rb_rotated_around,2);
