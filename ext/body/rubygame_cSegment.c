@@ -1,4 +1,4 @@
-// require 'ruby/numeric'; seg = Segment.new(Vector2[1,1], Vector2[2,2]); seg.rotate(90.to_radian, Vector2[2,2])
+// require 'ruby/numeric'; seg = Segment.new(Vector2[1,1], Vector2[2,2]); seg.rotate_around(90.to_radian, Vector2[2,2])
 #include <ruby.h>
 #include <math.h>
 #include "rubygame_defines.h"
@@ -8,15 +8,15 @@
 
 VALUE cSegment;
 
-void rg_segment_move(rg_segment *seg, rg_vector2 *vector2)
+void rg_segment_move(rg_segment *result, rg_segment *seg, rg_vector2 *vector2)
 {
-	rg_vector2_add(&seg->start, &seg->start, vector2);
+	rg_vector2_add(&result->start, &seg->start, vector2);
 }
 
-void rg_segment_rotate_around(rg_segment *seg, rg_vector2 *center, double rad)
+void rg_segment_rotate_around(rg_segment *result, rg_segment *seg, rg_vector2 *center, double rad)
 {
-	rg_vector2_rotated_around(&seg->start, &seg->start, center, rad);
-	rg_vector2_rotated_by(&seg->vec, &seg->vec, rad);
+	rg_vector2_rotate_around(&result->start, &seg->start, center, rad);
+	rg_vector2_rotate(&result->vec, &seg->vec, rad);
 }
 
 
@@ -195,35 +195,38 @@ static VALUE rg_segment_rb_angle(VALUE self)
 
 /* 
  *  call-seq:
- *    move(by) -> self
+ *    moved(by)  ->  Vector2
  *
  *  Move Segment by Vector2 'by'.
  */
 static VALUE rg_segment_rb_move(VALUE self, VALUE by)
 {
-	rg_segment *seg;
+	rg_segment *seg, *result;
 	rg_vector2    *vec;
 	Data_Get_Struct(self, rg_segment, seg);
 	Data_Get_Struct(by, rg_vector2, vec);
-	rg_segment_move(seg, vec);
-	return self;
+
+	VALUE rb_result = Data_Make_Struct(cSegment, rg_segment, NULL, free, result);
+	rg_segment_move(result, seg, vec);
+	return rb_result;
 }
 
 /* 
  *  call-seq:
- *    rotate(radians, around) -> self
+ *    rotated_around(pivot, angle)  ->  Vector2
  *
- *  Rotates the Segment around the position 'around' which must be given as an
- *  Vector2, by an angle of 'radians' which must be given in radians.
+ *  Rotates the Segment by angle (radians) around the pivot point (Vector2).
  */
-static VALUE rg_segment_rb_rotate(VALUE self, VALUE rad, VALUE center)
+static VALUE rg_segment_rb_rotated_around(VALUE self, VALUE center, VALUE rad)
 {
-	rg_segment *seg;
+	rg_segment *seg, *result;
 	rg_vector2    *c_center;
 	Data_Get_Struct(self, rg_segment, seg);
 	Data_Get_Struct(center, rg_vector2, c_center);
-	rg_segment_rotate_around(seg, c_center, NUM2DBL(rad));
-	return self;
+
+	VALUE rb_result = Data_Make_Struct(cSegment, rg_segment, NULL, free, result);
+	rg_segment_rotate_around(result, seg, c_center, NUM2DBL(rad));
+	return rb_result;
 }
 
 /* 
@@ -282,6 +285,6 @@ void Init_Segment()
 	rb_define_method(cSegment, "length",          rg_segment_rb_length, 0);
 	rb_define_method(cSegment, "angle",           rg_segment_rb_angle, 0);
 	rb_define_method(cSegment, "move",            rg_segment_rb_move, 1);
-	rb_define_method(cSegment, "rotate",          rg_segment_rb_rotate, 2);
+	rb_define_method(cSegment, "rotated_around",  rg_segment_rb_rotated_around, 2);
 	rb_define_method(cSegment, "inspect",         rg_segment_rb_inspect, 0);
 }
