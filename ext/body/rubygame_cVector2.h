@@ -35,6 +35,9 @@ void rg_vector2_set_magnitude(rg_vector2 *result, rg_vector2 *a, double magnitud
 // resize an vector2 by a factor
 void rg_vector2_scale(rg_vector2 *result, rg_vector2 *a, double factor);
 
+// treat vector2 as position vector and scale it away from the center by factor
+void rg_vector2_scale_around(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, double factor);
+
 // the norm of a vector
 void rg_vector2_normalize(rg_vector2 *result, rg_vector2 *a);
 

@@ -55,7 +55,14 @@ void rg_vector2_set_magnitude(rg_vector2 *result, rg_vector2 *a, double magnitud
 
 void rg_vector2_scale(rg_vector2 *result, rg_vector2 *a, double factor)
 {
-	rg_vector2_set_polar(result, rg_vector2_angle(a)*factor, rg_vector2_angle(a));
+	rg_vector2_set_polar(result, rg_vector2_magnitude(a)*factor, rg_vector2_angle(a));
+}
+
+void rg_vector2_scale_around(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, double factor)
+{
+	rg_vector2_subtract(result, original, center);
+	rg_vector2_scale(result, result, factor);
+	rg_vector2_add(result, center, result);
 }
 
 void rg_vector2_normalize(rg_vector2 *result, rg_vector2 *a)
@@ -477,6 +484,26 @@ static VALUE rg_vector2_rb_scaled_by(VALUE self, VALUE factor)
 	return rb_vector2;	
 }
 
+
+/* 
+ *  call-seq:
+ *    scaled_around(pivot, factor) -> Vector2
+ *
+ *  Returns a duplicate of the receiver, scaled from the pivot point.
+ *  Values in 0.0...1.0 will shift towards the pivot, values >1.0 will shift
+ *  away from the pivot.
+ */
+static VALUE rg_vector2_rb_scaled_around(VALUE self, VALUE pivot, VALUE factor)
+{
+	rg_vector2 *a, *b, *c;
+	Data_Get_Struct(self, rg_vector2, a);
+	Data_Get_Struct(pivot, rg_vector2, b);
+	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, c);
+	
+	rg_vector2_scale_around(c, a, b, NUM2DBL(factor));
+	return rb_vector2;	
+}
+
 /* 
  *  call-seq:
  *    rotated_to(radians) -> Vector2
@@ -648,6 +675,7 @@ void Init_Vector2()
 	rb_define_method(cVector2, "unit!",           rg_vector2_rb_unit_bang, 0);
 	rb_define_method(cVector2, "scaled_to",       rg_vector2_rb_scaled_to, 1);
 	rb_define_method(cVector2, "scaled_by",       rg_vector2_rb_scaled_by, 1);
+	rb_define_method(cVector2, "scaled_around",   rg_vector2_rb_scaled_around, 2);
 	rb_define_method(cVector2, "rotated_to",      rg_vector2_rb_rotated_to, 1);
 	rb_define_method(cVector2, "rotated_by",      rg_vector2_rb_rotated_by, 1);
 	rb_define_method(cVector2, "rotated_around",  rg_vector2_rb_rotated_around,2);
