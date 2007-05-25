@@ -23,20 +23,16 @@ void rg_vector2_set_polar(rg_vector2 *result, double magnitude, double rad);
 // rotate an vector2 to angle rad (radians)
 void rg_vector2_set_angle(rg_vector2 *result, rg_vector2 *a, double rad);
 
-// rotate an vector2 by angle rad  (radians)
-void rg_vector2_rotate(rg_vector2 *result, rg_vector2 *a, double rad);
+void rg_vector2_rotate_by(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, double angle);
 
-// treat vector2 as position vector and rotate it around center by rad (radian)
-void rg_vector2_rotate_around(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, double rad);
+void rg_vector2_rotate_to(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, double angle);
 
 // resize an vector2 to magnitude
 void rg_vector2_set_magnitude(rg_vector2 *result, rg_vector2 *a, double magnitude);
 
-// resize an vector2 by a factor
-void rg_vector2_scale(rg_vector2 *result, rg_vector2 *a, double factor);
+void rg_vector2_scale_by(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, double factor);
 
-// treat vector2 as position vector and scale it away from the center by factor
-void rg_vector2_scale_around(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, double factor);
+void rg_vector2_scale_to(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, double new_scale);
 
 // the norm of a vector
 void rg_vector2_normalize(rg_vector2 *result, rg_vector2 *a);

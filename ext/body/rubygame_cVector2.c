@@ -35,33 +35,36 @@ void rg_vector2_set_angle(rg_vector2 *result, rg_vector2 *a, double rad)
 	rg_vector2_set_polar(result, rg_vector2_magnitude(a), rad);
 }
 
-void rg_vector2_rotate(rg_vector2 *result, rg_vector2 *a, double rad)
-{
-	rg_vector2_set_polar(result, rg_vector2_magnitude(a), rg_vector2_angle(a)+rad);
-}
-
-void rg_vector2_rotate_around(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, double rad)
+void rg_vector2_rotate_by(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, double angle)
 {
 	rg_vector2_subtract(result, original, center);
-	rg_vector2_rotate(result, result, rad);
+	rg_vector2_set_angle(result, result, rg_vector2_angle(original)+angle);
 	rg_vector2_add(result, center, result);
 }
 
+void rg_vector2_rotate_to(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, double angle)
+{
+	rg_vector2_subtract(result, original, center);
+	rg_vector2_set_angle(result, result, angle);
+	rg_vector2_add(result, center, result);
+}
 
 void rg_vector2_set_magnitude(rg_vector2 *result, rg_vector2 *a, double magnitude)
 {
 	rg_vector2_set_polar(result, magnitude, rg_vector2_angle(a));
 }
 
-void rg_vector2_scale(rg_vector2 *result, rg_vector2 *a, double factor)
-{
-	rg_vector2_set_polar(result, rg_vector2_magnitude(a)*factor, rg_vector2_angle(a));
-}
-
-void rg_vector2_scale_around(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, double factor)
+void rg_vector2_scale_by(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, double factor)
 {
 	rg_vector2_subtract(result, original, center);
-	rg_vector2_scale(result, result, factor);
+	rg_vector2_set_magnitude(result, result, rg_vector2_magnitude(original)*factor);
+	rg_vector2_add(result, center, result);
+}
+
+void rg_vector2_scale_to(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, double new_scale)
+{
+	rg_vector2_subtract(result, original, center);
+	rg_vector2_set_magnitude(result, result, new_scale);
 	rg_vector2_add(result, center, result);
 }
 
@@ -482,109 +485,122 @@ static VALUE rg_vector2_rb_unit_bang(VALUE self)
 	return self;
 }
 
-/* 
- *  call-seq:
- *    scaled_to(new_magnitude) -> Vector2
- *
- *  Returns a Vector2 with the same angle but magnitude scaled by factor 'new_magnitude'.
- */
-static VALUE rg_vector2_rb_scaled_to(VALUE self, VALUE size)
+/* returns vpivot if it's a Vector2, or a new Vector2 with
+ * the default x and y if vpivot is nil. If it's anything else,
+ * raises a type error. */
+VALUE get_pivot(VALUE vpivot, double default_x, double default_y)
 {
-	rg_vector2 *a, *b;
-	Data_Get_Struct(self, rg_vector2, a);
-	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, b);
-	
-	rg_vector2_set_magnitude(b, a, NUM2DBL(size));
-	return rb_vector2;	
+	rg_vector2 *pivot;
+
+	if(NIL_P(vpivot))
+	{
+		 vpivot = Data_Make_Struct(cVector2, rg_vector2, NULL, free, pivot);
+		 pivot->x = default_x;
+		 pivot->y = default_y;
+	}
+	else if( rb_obj_is_kind_of( vpivot, rb_class_real(cVector2) ) )
+	{
+		return vpivot;
+	}
+
+	rb_raise( rb_eTypeError, "couldn't convert %s to Vector2",
+						rb_obj_classname(vpivot) );
+
 }
 
 /* 
  *  call-seq:
- *    scaled_by(factor) -> Vector2
- *
- *  Returns a Vector2 with the same angle but magnitude scaled by factor 'factor'.
- */
-static VALUE rg_vector2_rb_scaled_by(VALUE self, VALUE factor)
-{
-	rg_vector2 *a, *b;
-	Data_Get_Struct(self, rg_vector2, a);
-	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, b);
-	
-	rg_vector2_scaled_by(b, a, NUM2DBL(factor));
-	return rb_vector2;	
-}
-
-
-/* 
- *  call-seq:
- *    scaled_around(pivot, factor) -> Vector2
+ *    scaled_by( factor, pivot=Vector2[0,0] )  ->  Vector2
  *
  *  Returns a duplicate of the receiver, scaled from the pivot point.
  *  Values in 0.0...1.0 will shift towards the pivot, values >1.0 will shift
  *  away from the pivot.
  */
-static VALUE rg_vector2_rb_scaled_around(VALUE self, VALUE pivot, VALUE factor)
+static VALUE rg_vector2_rb_scaled_by(int argc, VALUE *argv, VALUE self)
 {
-	rg_vector2 *a, *b, *c;
-	Data_Get_Struct(self, rg_vector2, a);
-	Data_Get_Struct(pivot, rg_vector2, b);
-	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, c);
+	rg_vector2 *vec, *pivot, *result;
+	VALUE vfactor, vpivot, vresult;
+
+	rb_scan_args(argc, argv, "11", &vfactor, &vpivot);
+	vpivot = get_pivot(vpivot, 0,0);
+	Data_Get_Struct(self,   rg_vector2, vec);
+	Data_Get_Struct(vpivot, rg_vector2, pivot);
+	vresult = Data_Make_Struct(cVector2, rg_vector2, NULL, free, result);
 	
-	rg_vector2_scale_around(c, a, b, NUM2DBL(factor));
-	return rb_vector2;	
+	rg_vector2_scale_by(result, vec, pivot, NUM2DBL(vfactor));
+	return vresult;
 }
 
 /* 
  *  call-seq:
- *    rotated_to(radians) -> Vector2
+ *    scaled_to( new_scale, pivot=Vector2[0,0] )  ->  Vector2
  *
- *  Returns a Vector2 with the same magnitude but the angle rotated to the angle
- *  'radians' given in radians.
+ *  Returns a duplicate of the receiver, scaled from the pivot point.
+ *  The returned Vector2 will be new_scale units away from the pivot point.
  */
-static VALUE rg_vector2_rb_rotated_to(VALUE self, VALUE rad)
+static VALUE rg_vector2_rb_scaled_to(int argc, VALUE *argv, VALUE self)
 {
-	rg_vector2 *a, *b;
-	Data_Get_Struct(self, rg_vector2, a);
-	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, b);
+	rg_vector2 *vec, *pivot, *result;
+	VALUE vnewscale, vpivot, vresult;
+
+	rb_scan_args(argc, argv, "11", &vnewscale, &vpivot);
+	vpivot = get_pivot(vpivot, 0,0);
+	Data_Get_Struct(self,   rg_vector2, vec);
+	Data_Get_Struct(vpivot, rg_vector2, pivot);
+	vresult = Data_Make_Struct(cVector2, rg_vector2, NULL, free, result);
 	
-	rg_vector2_set_angle(b, a, NUM2DBL(rad));
-	return rb_vector2;	
+	rg_vector2_scale_to(result, vec, pivot, NUM2DBL(vnewscale));
+	return vresult;
 }
 
 /* 
  *  call-seq:
- *    rotated_by(radians) -> Vector2
+ *    rotated_by( angle, pivot=Vector2[0,0] )  ->  Vector2
  *
- *  Returns a Vector2 with the same magnitude but the angle rotated by the angle
- *  'radians' given in radians.
+ *  Returns a duplicate of the receiver, rotated by angle (radians) around
+ *  the pivot point.
  */
-static VALUE rg_vector2_rb_rotated_by(VALUE self, VALUE rad)
+static VALUE rg_vector2_rb_rotated_by(int argc, VALUE *argv, VALUE self)
 {
-	rg_vector2 *a, *b;
-	Data_Get_Struct(self, rg_vector2, a);
-	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, b);
+	rg_vector2 *vec, *pivot, *result;
+	VALUE vangle, vpivot, vresult;
+
+	rb_scan_args(argc, argv, "11", &vangle, &vpivot);
+	vpivot = get_pivot(vpivot, 0,0);
+	Data_Get_Struct(self,   rg_vector2, vec);
+	Data_Get_Struct(vpivot, rg_vector2, pivot);
+	vresult = Data_Make_Struct(cVector2, rg_vector2, NULL, free, result);
 	
-	rg_vector2_rotate(b, a, NUM2DBL(rad));
-	return rb_vector2;	
+	rg_vector2_rotate_by(result, vec, pivot, NUM2DBL(vangle));
+	return vresult;
 }
 
 /* 
  *  call-seq:
- *    rotated_around(Vector2 center, radians) -> Vector2
+ *    rotated_to( new_angle, pivot=Vector2[0,0] )  ->  Vector2
  *
- *  A new Vector2 created by rotating the point in the coordinate system the Vector2
- *  as position vector determines rotated around point 'center' given as Vector2
- *  by an angle 'radians' in radians.
+ *  Returns a duplicate of the receiver, rotated around the pivot point
+ *  such that the angle of the new Vector2 relative to the pivot equals new_angle.
+ *
+ *  I.e. If you conceive of the result being a point in space, a vector connecting
+ *  the pivot point to the result would have an angle of new_angle (measured from the
+ *  positive X axis).
+ *
+ *  I.e. (result - pivot).angle == new_angle
  */
-static VALUE rg_vector2_rb_rotated_around(VALUE self, VALUE center, VALUE rad)
+static VALUE rg_vector2_rb_rotated_to(int argc, VALUE *argv, VALUE self)
 {
-	rg_vector2 *a, *b, *c;
-	Data_Get_Struct(self, rg_vector2, a);
-	Data_Get_Struct(center, rg_vector2, b);
-	VALUE rb_vector2 = Data_Make_Struct(cVector2, rg_vector2, NULL, free, c);
+	rg_vector2 *vec, *pivot, *result;
+	VALUE vnewangle, vpivot, vresult;
+
+	rb_scan_args(argc, argv, "11", &vnewangle, &vpivot);
+	vpivot = get_pivot(vpivot, 0,0);
+	Data_Get_Struct(self,   rg_vector2, vec);
+	Data_Get_Struct(vpivot, rg_vector2, pivot);
+	vresult = Data_Make_Struct(cVector2, rg_vector2, NULL, free, result);
 	
-	rg_vector2_rotate_around(c, a, b, NUM2DBL(rad));
-	return rb_vector2;	
+	rg_vector2_rotate_to(result, vec, pivot, NUM2DBL(vnewangle));
+	return vresult;
 }
 
 /* 
@@ -703,12 +719,10 @@ void Init_Vector2()
 	rb_define_method(cVector2, "dot",             rg_vector2_rb_dotproduct, 1);
 	rb_define_method(cVector2, "unit",            rg_vector2_rb_unit, 0);
 	rb_define_method(cVector2, "unit!",           rg_vector2_rb_unit_bang, 0);
-	rb_define_method(cVector2, "scaled_to",       rg_vector2_rb_scaled_to, 1);
-	rb_define_method(cVector2, "scaled_by",       rg_vector2_rb_scaled_by, 1);
-	rb_define_method(cVector2, "scaled_around",   rg_vector2_rb_scaled_around, 2);
-	rb_define_method(cVector2, "rotated_to",      rg_vector2_rb_rotated_to, 1);
-	rb_define_method(cVector2, "rotated_by",      rg_vector2_rb_rotated_by, 1);
-	rb_define_method(cVector2, "rotated_around",  rg_vector2_rb_rotated_around,2);
+	rb_define_method(cVector2, "scaled_by",       rg_vector2_rb_scaled_by, -1);
+	rb_define_method(cVector2, "scaled_to",       rg_vector2_rb_scaled_to, -1);
+	rb_define_method(cVector2, "rotated_by",      rg_vector2_rb_rotated_by, -1);
+	rb_define_method(cVector2, "rotated_to",      rg_vector2_rb_rotated_to, -1);
 	rb_define_method(cVector2, "projected",       rg_vector2_rb_projected, 1);
 	rb_define_method(cVector2, "to_a",            rg_vector2_rb_to_a, 0);
 	rb_define_method(cVector2, "to_s",            rg_vector2_rb_to_s, 0);
