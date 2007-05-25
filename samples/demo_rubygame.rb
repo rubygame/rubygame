@@ -20,7 +20,7 @@ $smooth = false
 Rubygame.init()
 
 queue = EventQueue.new() # new EventQueue with autofetch
-queue.ignore = [MouseMotionEvent, ActiveEvent]
+queue.ignore = [MouseMotionEvent]
 clock = Clock.new()
 clock.target_framerate = 50
 
@@ -82,7 +82,7 @@ class ExpandaPanda < Panda
 	def update_image(time)
 		@delta = (@delta + time*@rate/36) % (Math::PI*2)
 		zoom = 1 + Math.sin(@delta)/2
-		@image = @@pandapic.rotozoom(0,zoom,$smooth)
+		@image = @@pandapic.zoom(zoom,$smooth)
 	end
 end
 
@@ -178,6 +178,10 @@ b.set_alpha(123)# approx. half transparent
 b.blit(background,[20,40])
 background.blit(screen,[0,0])
 
+# Refresh the screen once. During the loop, we'll use 'dirty rect' updating
+# to refresh only the parts of the screen that have changed.
+screen.update()
+
 if Joystick.num_joysticks > 0
 	Joystick.new(0)  # So that joystick events will appear on the queue
 end
@@ -220,6 +224,11 @@ catch(:rubygame_quit) do
 				when K_RIGHT
 					panda1.vx = 0
 				end
+			when ActiveEvent
+				# ActiveEvent appears when the window gains or loses focus.
+				# This helps to ensure everything is refreshed after the Rubygame
+				# window has been covered up by a different window.
+				screen.update()
 			when QuitEvent
 				throw :rubygame_quit
 			when MouseDownEvent
@@ -247,10 +256,12 @@ catch(:rubygame_quit) do
 				#puts "jaxis: %d %d"%[event.axis,event.value]
 			end
 		end
+
 		pandas.undraw(screen,background)
 		pandas.update(update_time)
-		pandas.draw(screen)
-		screen.update()
+		dirty_rects = pandas.draw(screen)
+		screen.update_rects(dirty_rects)
+
 		update_time = clock.tick()
 		unless framerate == clock.framerate
 			framerate = clock.framerate
