@@ -24,6 +24,17 @@ void rg_vector2_negate(rg_vector2 *result, rg_vector2 *a)
 	result->y = -a->y;
 }
 
+void rg_vector2_move_by(rg_vector2 *result, rg_vector2 *original, rg_vector2 *change)
+{
+	rg_vector2_add(result, original, change);
+}
+
+void rg_vector2_move_to(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, rg_vector2 *newpos)
+{
+	rg_vector2_add(result, original, newpos);
+	rg_vector2_subtract(result, result, center);
+}
+
 void rg_vector2_set_polar(rg_vector2 *result, double magnitude, double rad)
 {
 	result->x = cos(rad)*magnitude;
@@ -487,16 +498,18 @@ static VALUE rg_vector2_rb_unit_bang(VALUE self)
 
 /* returns vpivot if it's a Vector2, or a new Vector2 with
  * the default x and y if vpivot is nil. If it's anything else,
- * raises a type error. */
+ * raises a type error.
+ */
 VALUE get_pivot(VALUE vpivot, double default_x, double default_y)
 {
 	rg_vector2 *pivot;
 
 	if(NIL_P(vpivot))
 	{
-		 vpivot = Data_Make_Struct(cVector2, rg_vector2, NULL, free, pivot);
-		 pivot->x = default_x;
-		 pivot->y = default_y;
+		vpivot = Data_Make_Struct(cVector2, rg_vector2, NULL, free, pivot);
+		pivot->x = default_x;
+		pivot->y = default_y;
+		return vpivot;
 	}
 	else if( rb_obj_is_kind_of( vpivot, rb_class_real(cVector2) ) )
 	{
@@ -506,6 +519,46 @@ VALUE get_pivot(VALUE vpivot, double default_x, double default_y)
 	rb_raise( rb_eTypeError, "couldn't convert %s to Vector2",
 						rb_obj_classname(vpivot) );
 
+}
+
+/* 
+ *  call-seq:
+ *    moved_by( change )  ->  Vector2
+ *
+ *  Move the receiver by change (Vector2).
+ */
+static VALUE rg_vector2_rb_moved_by(VALUE self, VALUE vchange)
+{
+	rg_vector2 *vec, *change, *result;
+	Data_Get_Struct(self,    rg_vector2, vec);
+	Data_Get_Struct(vchange, rg_vector2, change);
+	VALUE vresult = Data_Make_Struct(cVector2, rg_vector2, NULL, free, result);
+	
+	rg_vector2_move_by(result, vec, change);
+	return vresult;
+}
+
+/* 
+ *  call-seq:
+ *    moved_to( new_position, pivot=self )  ->  Vector2
+ *
+ *  Move the receiver such that the pivot point would be at new_position.
+ *  I.e. moves the receiver by the vector (new_position - pivot).
+ */
+static VALUE rg_vector2_rb_moved_to(int argc, VALUE *argv, VALUE self)
+{
+	rg_vector2 *vec, *pivot, *newpos, *result;
+	VALUE vnewpos, vpivot, vresult;
+
+	rb_scan_args(argc, argv, "11", &vnewpos, &vpivot);
+	Data_Get_Struct(self,    rg_vector2, vec);
+	Data_Get_Struct(vnewpos, rg_vector2, newpos);
+	vpivot = get_pivot(vpivot, vec->x,vec->y);
+	Data_Get_Struct(vpivot,  rg_vector2, pivot);
+	vresult = Data_Make_Struct(cVector2, rg_vector2, NULL, free, result);
+	
+	rg_vector2_move_to(result, vec, pivot, newpos);
+	return vresult;
 }
 
 /* 
@@ -719,6 +772,8 @@ void Init_Vector2()
 	rb_define_method(cVector2, "dot",             rg_vector2_rb_dotproduct, 1);
 	rb_define_method(cVector2, "unit",            rg_vector2_rb_unit, 0);
 	rb_define_method(cVector2, "unit!",           rg_vector2_rb_unit_bang, 0);
+	rb_define_method(cVector2, "moved_by",        rg_vector2_rb_moved_by, 1);
+	rb_define_method(cVector2, "moved_to",        rg_vector2_rb_moved_to, -1);
 	rb_define_method(cVector2, "scaled_by",       rg_vector2_rb_scaled_by, -1);
 	rb_define_method(cVector2, "scaled_to",       rg_vector2_rb_scaled_to, -1);
 	rb_define_method(cVector2, "rotated_by",      rg_vector2_rb_rotated_by, -1);

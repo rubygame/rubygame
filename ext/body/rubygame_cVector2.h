@@ -17,6 +17,10 @@ void rg_vector2_subtract(rg_vector2 *result, rg_vector2 *a, rg_vector2 *b);
 // -(a,b) = (-a,-b)
 void rg_vector2_negate(rg_vector2 *result, rg_vector2 *a);
 
+void rg_vector2_move_by(rg_vector2 *result, rg_vector2 *original, rg_vector2 *change);
+
+void rg_vector2_move_to(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, rg_vector2 *newpos);
+
 // create an vector2 with magnitude magnitude and rotation rad (in radian)
 void rg_vector2_set_polar(rg_vector2 *result, double magnitude, double rad);
 
