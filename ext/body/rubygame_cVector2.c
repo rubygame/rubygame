@@ -18,6 +18,18 @@ void rg_vector2_subtract(rg_vector2 *result, rg_vector2 *a, rg_vector2 *b)
 	result->y = a->y - b->y;
 }
 
+void rg_vector2_multiply_scalar(rg_vector2 *result, rg_vector2 *a, double scalar)
+{
+	result->x = a->x * scalar;
+	result->y = a->y * scalar;
+}
+
+void rg_vector2_multiply_nonuniform(rg_vector2 *result, rg_vector2 *a, rg_vector2 *scale)
+{
+	result->x = a->x * scale->x;
+	result->y = a->y * scale->y;
+}
+
 void rg_vector2_negate(rg_vector2 *result, rg_vector2 *a)
 {
 	result->x = -a->x;
@@ -76,6 +88,24 @@ void rg_vector2_scale_to(rg_vector2 *result, rg_vector2 *original, rg_vector2 *c
 {
 	rg_vector2_subtract(result, original, center);
 	rg_vector2_set_magnitude(result, result, new_scale);
+	rg_vector2_add(result, center, result);
+}
+
+void rg_vector2_scale_by_nonuniform(result, original, center, factors)
+		 rg_vector2 *result, *original, *center, *factors;
+{
+	rg_vector2_subtract(result, original, center);
+	rg_vector2_multiply_nonuniform( result, result, factors );
+	rg_vector2_add(result, center, result);
+}
+
+void rg_vector2_scale_to_nonuniform(result, original, center, newscale)
+		 rg_vector2 *result, *original, *center, *newscale;
+{
+	/* could be optimized, but retained for clarity */
+	rg_vector2_subtract(result, original, center);
+	rg_vector2_normalize(result, result);
+	rg_vector2_multiply_nonuniform( result, result, newscale );
 	rg_vector2_add(result, center, result);
 }
 
@@ -412,6 +442,23 @@ static VALUE rg_vector2_rb_subtract(VALUE self, VALUE other)
 
 /* 
  *  call-seq:
+ *    self * scalar -> Vector2
+ *
+ *  Multiply both components of the receiver by the scalar.
+ */
+static VALUE rg_vector2_rb_scalar_multiply(VALUE self, VALUE vscalar)
+{
+	rg_vector2 *vec, *result;
+	Data_Get_Struct(self, rg_vector2, vec);
+
+	VALUE vresult = Data_Make_Struct(cVector2, rg_vector2, NULL, free, result);
+	rg_vector2_multiply_scalar(result, vec, NUM2DBL(vscalar));
+
+	return vresult;
+}
+
+/* 
+ *  call-seq:
  *    +vector2 -> Vector2
  *
  *  Returns a duplicate of self.
@@ -563,11 +610,22 @@ static VALUE rg_vector2_rb_moved_to(int argc, VALUE *argv, VALUE self)
 
 /* 
  *  call-seq:
- *    scaled_by( factor, pivot=Vector2[0,0] )  ->  Vector2
+ *    scaled_by( factor, pivot=Vector2[0,0] )  ->  result
  *
- *  Returns a duplicate of the receiver, scaled from the pivot point.
- *  Values in 0.0...1.0 will shift towards the pivot, values >1.0 will shift
- *  away from the pivot.
+ *    scale::   Uniform or non-uniform (component-wise) scale factor
+ *              [required Numeric or Vector2]
+ *    Returns:: New Vector2 with the scale applied
+ *              [Vector2]
+ *
+ *  Apply the scale to the receiver, scaling from the pivot point.
+ *
+ *  If scale is a Numeric, it is applied with scalar multiplication for
+ *  uniform transformation.
+ *
+ *  If scale is a Vector2, it is applied with component-wise multiplication for
+ *  non-uniform transformation. 
+ *  I.e. Vector2[self.x * scale.x, self.y * scale.y]
+ *  (Non-uniform transformation can change the angle of the Vector2.)
  */
 static VALUE rg_vector2_rb_scaled_by(int argc, VALUE *argv, VALUE self)
 {
@@ -579,17 +637,39 @@ static VALUE rg_vector2_rb_scaled_by(int argc, VALUE *argv, VALUE self)
 	Data_Get_Struct(self,   rg_vector2, vec);
 	Data_Get_Struct(vpivot, rg_vector2, pivot);
 	vresult = Data_Make_Struct(cVector2, rg_vector2, NULL, free, result);
-	
-	rg_vector2_scale_by(result, vec, pivot, NUM2DBL(vfactor));
+
+	if( TYPE(vfactor) == T_FIXNUM || TYPE(vfactor) == T_FLOAT )
+	{
+		rg_vector2_scale_by(result, vec, pivot, NUM2DBL(vfactor));
+	}
+	else if( rb_obj_is_kind_of( vfactor, rb_class_real(cVector2) ) )
+	{
+		rg_vector2 *factors;
+		Data_Get_Struct(vfactor, rg_vector2, factors);
+		rg_vector2_scale_by_nonuniform(result, vec, pivot, factors);
+	}
+
 	return vresult;
 }
 
 /* 
  *  call-seq:
- *    scaled_to( new_scale, pivot=Vector2[0,0] )  ->  Vector2
+ *    scaled_to( new_scale, pivot=Vector2[0,0] )  ->  result
  *
- *  Returns a duplicate of the receiver, scaled from the pivot point.
- *  The returned Vector2 will be new_scale units away from the pivot point.
+ *    new_scale:: Uniform or non-uniform (component-wise) scale factor
+ *                [required Numeric or Vector2]
+ *    Returns::   New Vector2 with the given scale
+ *                [Vector2]
+ *
+ *  Apply the scale to the receiver, scaling from the pivot point.
+ *
+ *  If scale is a Numeric, it is applied with scalar multiplication for
+ *  uniform transformation.
+ *
+ *  If scale is a Vector2, it is applied with component-wise multiplication for
+ *  non-uniform transformation. 
+ *  I.e. Vector2[self.x * scale.x, self.y * scale.y]
+ *  (Non-uniform transformation can change the angle of the Vector2.)
  */
 static VALUE rg_vector2_rb_scaled_to(int argc, VALUE *argv, VALUE self)
 {
@@ -601,8 +681,18 @@ static VALUE rg_vector2_rb_scaled_to(int argc, VALUE *argv, VALUE self)
 	Data_Get_Struct(self,   rg_vector2, vec);
 	Data_Get_Struct(vpivot, rg_vector2, pivot);
 	vresult = Data_Make_Struct(cVector2, rg_vector2, NULL, free, result);
-	
-	rg_vector2_scale_to(result, vec, pivot, NUM2DBL(vnewscale));
+
+	if( TYPE(vnewscale) == T_FIXNUM || TYPE(vnewscale) == T_FLOAT )
+	{
+		rg_vector2_scale_to(result, vec, pivot, NUM2DBL(vnewscale));
+	}
+	else if( rb_obj_is_kind_of( vnewscale, rb_class_real(cVector2) ) )
+	{
+		rg_vector2 *newscale;
+		Data_Get_Struct(vnewscale, rg_vector2, newscale);
+		rg_vector2_scale_to_nonuniform(result, vec, pivot, newscale);
+	}
+
 	return vresult;
 }
 
@@ -767,6 +857,7 @@ void Init_Vector2()
 	rb_define_method(cVector2, "angle_deg=",      rg_vector2_rb_set_angle_deg,1);
 	rb_define_method(cVector2, "+",               rg_vector2_rb_add, 1);
 	rb_define_method(cVector2, "-",               rg_vector2_rb_subtract, 1);
+	rb_define_method(cVector2, "*",               rg_vector2_rb_scalar_multiply, 1);
 	rb_define_method(cVector2, "+@",              rg_vector2_rb_unary_plus, 0);
 	rb_define_method(cVector2, "-@",              rg_vector2_rb_unary_minus, 0);
 	rb_define_method(cVector2, "dot",             rg_vector2_rb_dotproduct, 1);

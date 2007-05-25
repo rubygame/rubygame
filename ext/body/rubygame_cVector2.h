@@ -14,6 +14,10 @@ void rg_vector2_add(rg_vector2 *result, rg_vector2 *a, rg_vector2 *b);
 // difference of two vector2s
 void rg_vector2_subtract(rg_vector2 *result, rg_vector2 *a, rg_vector2 *b);
 
+void rg_vector2_multiply_scalar(rg_vector2 *result, rg_vector2 *a, double scalar);
+
+void rg_vector2_multiply_nonuniform(rg_vector2 *result, rg_vector2 *a, rg_vector2 *scale);
+
 // -(a,b) = (-a,-b)
 void rg_vector2_negate(rg_vector2 *result, rg_vector2 *a);
 
@@ -38,6 +42,10 @@ void rg_vector2_scale_by(rg_vector2 *result, rg_vector2 *original, rg_vector2 *c
 
 void rg_vector2_scale_to(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, double new_scale);
 
+void rg_vector2_scale_by_nonuniform(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, rg_vector2 *factors);
+
+void rg_vector2_scale_to_nonuniform(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, rg_vector2 *newscale);
+
 // the norm of a vector
 void rg_vector2_normalize(rg_vector2 *result, rg_vector2 *a);
 
@@ -58,6 +66,8 @@ double rg_vector2_angle_deg(rg_vector2 *a);
 
 // the angle between two vectors
 double rg_vector2_angle_between(rg_vector2 *a, rg_vector2 *b);
+
+extern VALUE get_pivot(VALUE vpivot, double default_x, double default_y);
 
 void Init_Vector2();
 
