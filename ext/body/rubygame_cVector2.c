@@ -67,8 +67,8 @@ void rg_vector2_set_angle(rg_vector2 *result, rg_vector2 *a, double rad)
 void rg_vector2_rotate_by(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, double angle)
 {
 	rg_vector2_subtract(result, original, center);
-	rg_vector2_set_angle(result, result, rg_vector2_angle(original)+angle);
-	rg_vector2_add(result, center, result);
+	rg_vector2_set_angle(result, result, rg_vector2_angle(result)+angle);
+	rg_vector2_add(result, result, center);
 }
 
 void rg_vector2_rotate_to(rg_vector2 *result, rg_vector2 *original, rg_vector2 *center, double angle)
