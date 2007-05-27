@@ -8,6 +8,8 @@ typedef struct {
 
 extern VALUE cVector2;
 
+void rg_vector2_init_copy(rg_vector2 *result, rg_vector2 *original);
+
 // sum of two vector2s
 void rg_vector2_add(rg_vector2 *result, rg_vector2 *a, rg_vector2 *b);
 

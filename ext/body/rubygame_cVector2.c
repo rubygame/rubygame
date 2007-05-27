@@ -6,6 +6,12 @@
 
 VALUE cVector2;
 
+void rg_vector2_init_copy(result, original)
+     rg_vector2 *result, *original;
+{
+	*result = *original;
+}
+
 void rg_vector2_add(rg_vector2 *result, rg_vector2 *a, rg_vector2 *b)
 {
 	result->x = a->x + b->x;
@@ -227,14 +233,14 @@ static VALUE rg_vector2_rb_initialize(VALUE self, VALUE x, VALUE y)
 /* 
  *  :nodoc:
  */
-static VALUE rg_vector2_rb_initialize_copy(VALUE self, VALUE old)
+static VALUE rg_vector2_rb_initialize_copy(VALUE self, VALUE vold)
 {
-	rg_vector2 *a, *b;
-	Data_Get_Struct(self, rg_vector2, a);
-	Data_Get_Struct(old, rg_vector2, b);
-
-	*a = *b;
+	rg_vector2 *new, *old;
+	Data_Get_Struct(self, rg_vector2, new);
+	Data_Get_Struct(vold, rg_vector2, old);
 	
+	rg_vector2_init_copy(new,old);
+
 	return self;
 }
 
