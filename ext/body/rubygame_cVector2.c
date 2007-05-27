@@ -829,6 +829,27 @@ static VALUE rg_vector2_rb_inspect(VALUE self)
 }
 
 /*
+ *  call-seq:
+ *    self == other  ->  true/false
+ *    self.eql?(other)  -> true/false
+ *
+ *  Test equality between Vector2s (compares components).
+ */
+static VALUE rg_vector2_rb_eqlp(VALUE self, VALUE other)
+{
+	rg_vector2 *a, *b;
+	Data_Get_Struct(self, rg_vector2, a);
+	Data_Get_Struct(other, rg_vector2, b);
+
+	if( FEQUAL(a->x, b->x) && FEQUAL(a->y, b->y) )
+	{
+		return Qtrue;
+	}
+
+	return Qfalse;
+}
+
+/*
  * Document-class: Rubygame::Body::Vector2
  *
  *  Vector2 (from Fake vecTOR, as it is similar to a vector but sports some
@@ -877,4 +898,6 @@ void Init_Vector2()
 	rb_define_method(cVector2, "to_a",            rg_vector2_rb_to_a, 0);
 	rb_define_method(cVector2, "to_s",            rg_vector2_rb_to_s, 0);
 	rb_define_method(cVector2, "inspect",         rg_vector2_rb_inspect, 0);
+	rb_define_method(cVector2, "eql?",            rg_vector2_rb_eqlp, 1);
+	rb_define_alias( cVector2, "==",              "eql?");
 }
