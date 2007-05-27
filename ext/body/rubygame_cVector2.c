@@ -102,10 +102,8 @@ void rg_vector2_scale_by_nonuniform(result, original, center, factors)
 void rg_vector2_scale_to_nonuniform(result, original, center, newscale)
 		 rg_vector2 *result, *original, *center, *newscale;
 {
-	/* could be optimized, but retained for clarity */
-	rg_vector2_subtract(result, original, center);
-	rg_vector2_normalize(result, result);
-	rg_vector2_multiply_nonuniform( result, result, newscale );
+	result->x = newscale->x;
+	result->y = newscale->y;
 	rg_vector2_add(result, center, result);
 }
 
