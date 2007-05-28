@@ -17,7 +17,7 @@ end
 OBJEXT = from_env_or_config("OBJEXT")
 DLEXT = from_env_or_config("DLEXT")
 
-RUBYGAME_VERSION = "2.0.0"
+RUBYGAME_VERSION = "3.0.0"
 
 spec = Gem::Specification.new do |s|
   s.name     = "rubygame"
@@ -218,32 +218,18 @@ class ExtensionModule
          ])\
     do |t|
       compile_command = "#{from_env_or_config('CC')} -c #{CFLAGS} #{t.source} -o #{t.name}"
+			puts "Compiling #{File.basename(@directory)}/#{File.basename(t.source)}"
       if( $options.verbose )
         sh compile_command
       else
-        puts "Compiling #{File.basename(@directory)}/#{File.basename(t.source)}"
         `#{compile_command}`
-      end
-    end
-  rescue
-    # Generate a .o rule for each .c file in the directory.
-    FileList.new("#{@directory}*.c").each do |source|
-      object = source.sub(".c", ".#{OBJEXT}")
-      file object => ([source] + depends_headers( source )) do |t|
-        compile_command = "#{CONFIG['CC']} -c #{CFLAGS} #{source} -o #{t.name}"
-        if( $options.verbose )
-          sh compile_command
-        else
-          puts "Compiling #{File.basename(@directory)}/#{File.basename(source)}"
-          `#{compile_command}`
-        end
       end
     end
   end
 
   # Extracts the names of all the headers that the C file depends on.
   def depends_headers( filename )
-    return []                   # workaround for a bug
+    #return []                   # workaround for a bug
     depends = []
     File.open(filename, "r") do |file|
       file.each_line do |line|
@@ -323,20 +309,23 @@ if $options.opengl
   CFLAGS << " -DHAVE_OPENGL "
 end
 
+def install_files_into(glob, directory)
+  mkdir_p directory
+  cp FileList.new(glob).to_a, directory
+end
+
 desc "Install only the extensions"
 task :install_ext do |task|
   puts "Installing extensions to #{$options.sitearchdir}"
-  cp task.prerequisites.to_a, $options.sitearchdir
+  install_files_into( task.prerequisites,         $options.sitearchdir)
 end
 
 desc "Install only the library"
 task :install_lib do |task|
   puts "Installing library to #{$options.sitelibdir}"
-  cp "./lib/rubygame.rb", $options.sitelibdir
-  mkdir_p $options.sitelibdir + "/rubygame/"
-  cp FileList.new("./lib/rubygame/*.rb").to_a, $options.sitelibdir+"/rubygame/"
-  mkdir_p $options.sitelibdir + "/rubygame/gl/"
-  cp FileList.new("./lib/rubygame/gl/*.rb").to_a, $options.sitelibdir+"/rubygame/gl/"
+  install_files_into( "./lib/rubygame.rb",        $options.sitelibdir )
+  install_files_into( "./lib/rubygame/*.rb",      $options.sitelibdir+"/rubygame/" )
+  install_files_into( "./lib/rubygame/gl/*.rb",   $options.sitelibdir+"/rubygame/gl/" )
 end
 
 desc "Install both the extensions and the library"
