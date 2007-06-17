@@ -15,9 +15,11 @@ module Shape
 	end
 
 	attr_reader :matrix
+	attr_accessor :depth
 
 	def initialize(*args)
 		@matrix = Matrix.identity(3)
+		@depth = 0
 		super
 	end
 	
