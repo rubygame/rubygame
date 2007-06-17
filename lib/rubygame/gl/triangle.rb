@@ -1,26 +1,34 @@
 require 'matricks'
 require 'sat'
+require 'shape'
 
 class Triangle
+	include Shape
+
 	def initialize( *points )
 		@a, @b, @c, junk = points
+		super()
 	end
 
-	def points
+	def parameters
 		[@a, @b, @c]
 	end
 
-	def collide_tri( other_triangle )
+	def parameters=(params)
+		@a, @b, @c = params
+	end
+
+	def collide_triangle(other)
 		pointsA = self.points
-		pointsB = other_triangle.points
+		pointsB = other.points
 
 		projection_overlap?( @b - @a, pointsA, pointsB ) and \
 		projection_overlap?( @c - @b, pointsA, pointsB ) and \
 		projection_overlap?( @a - @c, pointsA, pointsB )
 	end
 
-	def apply_matrix(m)
-		Triangle.new( m*@a, m*@b, m*@c )
+	def points
+		[@a, @b, @c].map { |point| @matrix*point }
 	end
 
 	def to_s
