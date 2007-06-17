@@ -1,18 +1,8 @@
 require 'matricks'
-
-class NoCollisionHandler < NoMethodError
-end
+require 'collider'
 
 module Shape
-	def collide( other )
-		collide_method = "collide_#{other.class.name.downcase}".to_sym
-		if respond_to? collide_method
-			return send( collide_method, other )
-		else
-			raise NoCollisionHandler
-		end
-		
-	end
+	include Collider
 
 	attr_reader :matrix
 	attr_accessor :depth
