@@ -1,6 +1,10 @@
 require 'matricks'
+require 'collider'
+require 'sat'
 
 class Boundary
+	include Collider
+
 	attr_reader :left, :right, :bottom, :top
 	def initialize( left, right, bottom, top )
 		@left, @right, @bottom, @top = left, right, bottom, top
@@ -21,6 +25,11 @@ class Boundary
 		@right - @left
 	end
 
+	def collide_boundary( other )
+		overlap?(@left, @right, other.left, other.right) and \
+		overlap?(@bottom, @top, other.bottom, other.top)
+	end
+
 	def move( v )
 		self.class.new( @left + v.x, @right + v.x,
 										@bottom + v.y, @top + v.y )
@@ -34,6 +43,11 @@ class Boundary
 	def intersect( bound )
 		self.class.new( [@left, bound.left].max, [@right, bound.right].min,
 										[@bottom, bound.bottom].max, [@top, bound.top].min )
+	end
+
+	def points
+		[Point[@left,@bottom], Point[@right,@bottom],
+		 Point[@right,@top], Point[@left, @top]]
 	end
 
 	def scale( x_factor, y_factor )
