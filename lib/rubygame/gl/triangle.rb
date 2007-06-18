@@ -18,7 +18,7 @@ class Triangle
 		@a, @b, @c = params
 	end
 
-	def collide_triangle(other)
+	def collide_has_points(other)
 		pointsA = self.points
 		pointsB = other.points
 
@@ -26,6 +26,9 @@ class Triangle
 		projection_overlap?( @c - @b, pointsA, pointsB ) and \
 		projection_overlap?( @a - @c, pointsA, pointsB )
 	end
+
+	alias :collide_boundary :collide_has_points
+	alias :collide_triangle :collide_has_points
 
 	def points
 		[@a, @b, @c].map { |point| @matrix*point }
