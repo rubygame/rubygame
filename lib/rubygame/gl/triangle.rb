@@ -5,17 +5,17 @@ require 'shape'
 class Triangle
 	include Shape
 
+	attr_reader :a, :b, :c
+	attr_writer :a, :b, :c
+
 	def initialize( *points )
 		@a, @b, @c, junk = points
 		super()
 	end
 
-	def parameters
-		[@a, @b, @c]
-	end
-
-	def parameters=(params)
-		@a, @b, @c = params
+	def initialize_copy( orig )
+		@a, @b, @c = orig.a, orig.b, orig.c
+		super
 	end
 
 	def collide_has_points(other)

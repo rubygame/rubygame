@@ -13,15 +13,9 @@ module Shape
 		super
 	end
 	
-	# subclass provides initialize
-
-	# subclass provides parameters
-
-	# subclass provides parameters=
-
 	def initialize_copy( orig )
-		self.parameters = orig.parameters
 		@matrix = orig.matrix
+		super
 	end
 
 	def transform( matrix )

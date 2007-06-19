@@ -10,6 +10,11 @@ class Boundary
 		@left, @right, @bottom, @top = left, right, bottom, top
 	end
 
+	def initialize_copy( orig )
+		@left, @right, @bottom, @top = 
+			orig.left, orig.right, orig.bottom, orig.top
+	end
+
 	def self.envelope( *points )
 		x_vals = points.collect { |p| p.x }
 		y_vals = points.collect { |p| p.y }
