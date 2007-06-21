@@ -30,6 +30,14 @@ class Group
 		return self
 	end
 
+	def bounds
+		members = evaluate_members
+		initial = members[0].bounds
+		evaluate_members[1..-1].inject(initial) do |bounds, member|
+			bounds.union(member.bounds)
+		end
+	end
+
 	def evaluate_members
 		mat = _compose_matrix()
 		@members.map { |member| member.transform( mat ) }

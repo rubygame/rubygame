@@ -1,6 +1,7 @@
 require 'matricks'
 require 'sat'
 require 'shape'
+require 'boundary'
 
 class Triangle
 	include Shape
@@ -16,6 +17,10 @@ class Triangle
 	def initialize_copy( orig )
 		@a, @b, @c = orig.a, orig.b, orig.c
 		super
+	end
+
+	def bounds
+		Boundary.envelope( *points )
 	end
 
 	def collide_has_points(other)
