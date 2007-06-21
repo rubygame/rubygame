@@ -1,6 +1,7 @@
 require 'matrix'
 
 RAD2DEG = 180 / Math::PI
+DELTA = 0.00001
 
 class Matrix
 
@@ -42,22 +43,34 @@ class Matrix
 end
 
 
-class Vector #:nodoc:
-	# More inheritance-friendly.
-	def to_s
-    "#{self.class.name}[" + @elements.join(", ") + "]"
-  end
+module VectorTweaks #:nodoc:
+	#
+	# Returns the modulus (Pythagorean distance) of the vector.
+	#   Vector[5,8,2].r => 9.643650761
+	#
+	def r
+		temp = x**2 + y**2
+		temp = temp > DELTA ? temp : 0.0
+		r = Math.sqrt(temp)
+	end
 
 	# More inheritance-friendly.
-  def inspect
-    "#{self.class.name}" + @elements.inspect
-  end
+	def to_s
+		"#{self.class.name}[" + @elements.join(", ") + "]"
+	end
+
+	# More inheritance-friendly.
+	def inspect
+		"#{self.class.name}" + @elements.inspect
+	end
 
 	def x; @elements.at(0); end
 	def y; @elements.at(1); end
 end
 
 class Vector2 < Vector
+	include VectorTweaks
+
 	alias :to_ary :to_a
 	alias :magnitude :r
 	alias :dot :inner_product
@@ -118,6 +131,8 @@ class Vector2 < Vector
 end
 
 class Point < Vector
+	include VectorTweaks
+
 	def self.[](x,y,*junk)
 		super(x,y,1)
 	end
@@ -138,6 +153,8 @@ class Point < Vector
 		case m
 		when Numeric
 			raise ArgumentError
+		else
+			super
 		end
 	end
 
