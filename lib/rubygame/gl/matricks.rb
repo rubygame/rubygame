@@ -6,7 +6,7 @@ DELTA = 0.00001
 class Matrix
 
 	# Translation matrix factory
-	def self.translate(x,y)
+	def self.translate(x,y,*junk)
 		return Matrix[[ 1, 0, x ],
 									[ 0, 1, y ],
 									[ 0, 0, 1 ]]
@@ -22,7 +22,7 @@ class Matrix
 	end
 
 	# Scale matrix factory
-	def self.scale(x,y=nil)
+	def self.scale(x,y=nil,*junk)
 		y = x unless y
 		return Matrix[[ x, 0, 0 ],
 									[ 0, y, 0 ],
