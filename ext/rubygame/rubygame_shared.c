@@ -71,6 +71,17 @@ Uint32 collapse_flags(VALUE vflags)
 	return flags;
 }
 
+VALUE convert_to_array(VALUE val)
+{
+	VALUE v = rb_check_array_type(val);
+	if( TYPE(v) != T_ARRAY )
+	{
+		rb_raise(rb_eTypeError, "can't convert %s into Array",
+						 rb_obj_classname(val));
+	}
+	return v;
+}
+
 void Init_rubygame_shared()
 {
 

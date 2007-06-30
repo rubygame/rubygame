@@ -372,14 +372,14 @@ VALUE rbgm_ttf_render(int argc, VALUE *argv, VALUE self)
 
 	Data_Get_Struct(self,TTF_Font,font);
 
-	vfg = rb_check_array_type(vfg);
+	vfg = convert_to_array(vfg);
 	fore.r = NUM2UINT(rb_ary_entry(vfg,0));
 	fore.g = NUM2UINT(rb_ary_entry(vfg,1));
 	fore.b = NUM2UINT(rb_ary_entry(vfg,2));
 
 	if( RTEST(vbg) )
 	{
-		vbg = rb_check_array_type(vbg);
+		vbg = convert_to_array(vbg);
 		back.r = NUM2UINT(rb_ary_entry(vbg,0));
 		back.g = NUM2UINT(rb_ary_entry(vbg,1));
 		back.b = NUM2UINT(rb_ary_entry(vbg,2));
@@ -437,14 +437,14 @@ VALUE rbgm_ttf_render_utf8(int argc, VALUE *argv, VALUE self)
  
  	Data_Get_Struct(self,TTF_Font,font);
  
-	vfg = rb_check_array_type(vfg);
+	vfg = convert_to_array(vfg);
 	fore.r = NUM2UINT(rb_ary_entry(vfg,0));
 	fore.g = NUM2UINT(rb_ary_entry(vfg,1));
 	fore.b = NUM2UINT(rb_ary_entry(vfg,2));
 
 	if( RTEST(vbg) )
 	{
-		vbg = rb_check_array_type(vbg);
+		vbg = convert_to_array(vbg);
 		back.r = NUM2UINT(rb_ary_entry(vbg,0));
 		back.g = NUM2UINT(rb_ary_entry(vbg,1));
 		back.b = NUM2UINT(rb_ary_entry(vbg,2));
@@ -502,14 +502,14 @@ VALUE rbgm_ttf_render_unicode(int argc, VALUE *argv, VALUE self)
  
  	Data_Get_Struct(self,TTF_Font,font);
  
-	vfg = rb_check_array_type(vfg);
+	vfg = convert_to_array(vfg);
 	fore.r = NUM2UINT(rb_ary_entry(vfg,0));
 	fore.g = NUM2UINT(rb_ary_entry(vfg,1));
 	fore.b = NUM2UINT(rb_ary_entry(vfg,2));
 
 	if( RTEST(vbg) )
 	{
-		vbg = rb_check_array_type(vbg);
+		vbg = convert_to_array(vbg);
 		back.r = NUM2UINT(rb_ary_entry(vbg,0));
 		back.g = NUM2UINT(rb_ary_entry(vbg,1));
 		back.b = NUM2UINT(rb_ary_entry(vbg,2));

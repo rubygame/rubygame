@@ -160,6 +160,7 @@ class Ftor
 	def to_a
 		[@x,@y]
 	end
+	alias :to_ary :to_a
 
   # Return the +i+th component of this Ftor, as if it were the Array
   # returned by #to_a.

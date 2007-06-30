@@ -139,7 +139,7 @@ VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 		
 
 	/* Get width and height for new surface from vsize */
-	vsize = rb_check_array_type(vsize);
+	vsize = convert_to_array(vsize);
 
 	if(RARRAY(vsize)->len >= 2)
 	{
@@ -374,7 +374,7 @@ VALUE rbgm_surface_set_colorkey( int argc, VALUE *argv, VALUE self)
 
 	if( RTEST(vcolor) )
 	{
-		vcolor = rb_check_array_type(vcolor);
+		vcolor = convert_to_array(vcolor);
 		r = NUM2UINT(rb_ary_entry(vcolor,0));
 		g = NUM2UINT(rb_ary_entry(vcolor,1));
 		b = NUM2UINT(rb_ary_entry(vcolor,2));
@@ -426,7 +426,7 @@ VALUE rbgm_surface_blit(int argc, VALUE *argv, VALUE self)
 	Data_Get_Struct(self, SDL_Surface, src);
 	Data_Get_Struct(vtarget, SDL_Surface, dest);
 
-	vdest = rb_check_array_type(vdest);
+	vdest = convert_to_array(vdest);
 	blit_x = NUM2INT(rb_ary_entry(vdest,0));
 	blit_y = NUM2INT(rb_ary_entry(vdest,1));
 
@@ -434,7 +434,7 @@ VALUE rbgm_surface_blit(int argc, VALUE *argv, VALUE self)
 	if( !NIL_P(vsource) )
 	{
 		/* it might be good to check that it's actually a rect */
-		vsource = rb_check_array_type(vsource);
+		vsource = convert_to_array(vsource);
 		src_x = NUM2INT( rb_ary_entry(vsource,0) );
 		src_y = NUM2INT( rb_ary_entry(vsource,1) );
 		src_w = NUM2INT( rb_ary_entry(vsource,2) );
@@ -503,7 +503,7 @@ VALUE rbgm_surface_fill( int argc, VALUE *argv, VALUE self )
 
 	rb_scan_args(argc, argv, "11", &vcolor, &vrect);
 
-	vcolor = rb_check_array_type(vcolor);
+	vcolor = convert_to_array(vcolor);
 	r = NUM2UINT(rb_ary_entry(vcolor,0));
 	g = NUM2UINT(rb_ary_entry(vcolor,1));
 	b = NUM2UINT(rb_ary_entry(vcolor,2));
@@ -524,7 +524,7 @@ VALUE rbgm_surface_fill( int argc, VALUE *argv, VALUE self )
 	}
 	else
 	{
-		vrect = rb_check_array_type(vrect);
+		vrect = convert_to_array(vrect);
 
 		rect = make_rect(\
 										 NUM2INT(rb_ary_entry(vrect,0)),\
@@ -707,7 +707,7 @@ VALUE rbgm_surface_set_clip( VALUE self, VALUE clip )
 	}
 	else
 	{ 
-		clip = rb_check_array_type(clip);
+		clip = convert_to_array(clip);
 		rect = make_rect(\
 		                 NUM2INT(rb_ary_entry(clip,0)),\
 		                 NUM2INT(rb_ary_entry(clip,1)),\

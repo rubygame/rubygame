@@ -96,9 +96,9 @@ class WobblyPanda < Panda
 
 	def update_image(time)
 		@delta = (@delta + time*@rate/36) % (Math::PI*2)
-		zoomx = 1.5 + Math.sin(@delta)/6
-		zoomy = 1.5 + Math.cos(@delta)/5
-		@image = @@pandapic.zoom([zoomx,zoomy],$smooth)
+		zoomx = (1.5 + Math.sin(@delta)/6) * @@pandapic.width
+		zoomy = (1.5 + Math.cos(@delta)/5) * @@pandapic.height
+		@image = @@pandapic.zoom_to(zoomx,zoomy,$smooth)
 	end
 end
 

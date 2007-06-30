@@ -107,7 +107,7 @@ VALUE rbgm_screen_setmode(int argc, VALUE *argv, VALUE module)
 
 	rb_scan_args(argc, argv, "12", &vsize, &vdepth, &vflags);
 	
-	vsize = rb_check_array_type(vsize);
+	vsize = convert_to_array(vsize);
 	w = NUM2INT(rb_ary_entry(vsize,0));
 	h = NUM2INT(rb_ary_entry(vsize,1));
 
@@ -283,7 +283,7 @@ VALUE rbgm_screen_updaterects(VALUE self, VALUE array_rects)
   Data_Get_Struct(self,SDL_Surface,screen);
 
   /* prepare an (uninitialized) array of Rects */
-  array_rects = rb_check_array_type(array_rects);
+  array_rects = convert_to_array(array_rects);
   num_rects = RARRAY(array_rects)->len;
   rects = ALLOCA_N(SDL_Rect, num_rects);
 

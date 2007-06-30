@@ -1,5 +1,8 @@
 = Compiling Rubygame on Windows
 
+(For the most up-to-date version of this document, see the Rubygame wiki:
+http://rubygame.wiki.sourceforge.net/win32_compile)
+
 This document gives some helpful guidelines to for compiling and installing
 Rubygame on Microsoft Windows. However, these instructions are not perfect,
 so they might not work for you. If you use this guide, we'd love to hear about
@@ -42,8 +45,8 @@ them, you won't be able to use certain features of Rubygame.
 - {SDL_ttf}[http://www.libsdl.org/projects/SDL_ttf/]. Again, get the
   Win32 binary package with 'devel' in the name
 - {SDL_gfx}[http://www.ferzkopp.net/joomla/content/view/19/14/].  This is
-  the trickiest dependency, because there is currently no package for a
-  precompiled version of SDL_gfx. If you are able to compile this yourself,
+  the trickiest dependency, because there is currently no official package for
+  a precompiled version of SDL_gfx. If you are able to compile this yourself,
   great! Otherwise, some nice features of Rubygame have to be disabled;
   make sure you add the --no-gfx flag when you get to the "Set up environment
   variables" section, below.
@@ -53,11 +56,9 @@ location on your hard drive.  You'll thank yourself later if you use a short
 path with no spaces in it.  For this example, we'll unzip everything under 
 <code>C:\\src\\</code>.
 
-Next, you'll want to create a directory for the DLLs and copy the .dll file
-from the <code>lib</code> subdirectory of each extracted component there
-(except SDL_gfx, as noted above).  We'll use a new directory,
-<code>C:\\dlls\\</code>.  Add this location to your system PATH -- 
-Windows searches the PATH for libraries as well as executables.
+Next, copy the *.dll file from each library's folder into 
+<code>C:\\windows\\system32\\</code>.
+This will allow the libraries to be detected properly later on.
 
 == Step 2: Get Rubygame
 
@@ -81,7 +82,7 @@ compile Rubygame.
 Create a text file in your Rubygame directory called "envsetup.bat".
 In it, use code based on the following to set your variables.
 Be sure to replace '\src\' (lines 3-7) with the path to where you unpacked
-the libraries, and '\dlls' (line 10) with the path where you put the DLLs.
+the libraries.
 
  set CC=gcc
  set CFLAGS=-DHAVE_ISINF -D_MSC_VER=1200 
@@ -91,14 +92,14 @@ the libraries, and '\dlls' (line 10) with the path where you put the DLLs.
  set CFLAGS=%CFLAGS% -I \src\SDL_mixer-1.2.7\include
  set CFLAGS=%CFLAGS% -I \src\SDL_ttf-2.0.8\include
  
- set LDSHARED=ld -shared
- set LINK_FLAGS=-L \dlls -lSDL
+ set LDSHARED=gcc -shared
+ set LINK_FLAGS=-L \windows\system32 -lSDL
  set LIBRUBYARG_SHARED=-L \ruby\bin -lmsvcrt-ruby18
 
  set RUBYGAME_CONFIG=--no-sdl-config
 
-The -L parameter for LIBRUBYARG_SHARED may be different if you installed Ruby to a
-path other than C:/ruby.
+The -L parameter for LIBRUBYARG_SHARED may be different if you installed
+Ruby to a path other than C:/ruby.
 
 IMPORTANT: If you are missing an optional library (such as SDL_gfx), you need
 to add some extra flags on to the 'RUBYGAME_CONFIG=...' line. The flags you
