@@ -25,7 +25,7 @@ end
 OBJEXT = from_env_or_config("OBJEXT")
 DLEXT = from_env_or_config("DLEXT")
 
-RUBYGAME_VERSION = "2.0.0"
+RUBYGAME_VERSION = "2.0.1"
 
 spec = Gem::Specification.new do |s|
   s.name     = "rubygame"
