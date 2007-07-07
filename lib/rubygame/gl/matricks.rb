@@ -112,20 +112,20 @@ class Vector2 < Vector
 	end
 
 	def +(v)
-		case p
+		case v
 		when Vector2
 			Vector2[x + v.x, y + v.y]
 		else
-			raise ArgumentError
+			raise ArgumentError, "can't add Vector2 with #{v.class}"
 		end
 	end
 
 	def -(v)
-		case p
+		case v
 		when Vector2
 			Vector2[x - v.x, y - v.y]
 		else
-			raise ArgumentError
+			raise ArgumentError, "can't subtract Vector2 with #{v.class}"
 		end
 	end
 end
@@ -168,11 +168,11 @@ class Point < Vector
 	end
 
 	def +(v)
-		case p
+		case v
 		when Vector2
 			Point[x + v.x, y + v.y]
 		else
-			raise ArgumentError
+			raise ArgumentError, "can't add Point with #{v.class}"
 		end
 	end
 
@@ -183,7 +183,7 @@ class Point < Vector
 		when Vector2
 			Point[x - p.x, y - p.y]
 		else
-			raise ArgumentError
+			raise ArgumentError, "can't subtract Point with #{v.class}"
 		end
 	end
 end
