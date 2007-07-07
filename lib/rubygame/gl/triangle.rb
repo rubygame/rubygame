@@ -25,7 +25,7 @@ class Triangle
 
 	def center
 		sum = points.map { |p| p.to_v }.inject { |a,b| a + b }
-		return (sum * 1.quo(3).to_f).to_p
+		return Point[sum * 1.quo(3).to_f]
 	end
 
 	def collide_has_points(other)
