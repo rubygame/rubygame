@@ -1,4 +1,4 @@
-require 'matricks'
+require 'rubygame/gl/matricks'
 
 # Separating Axis Theorem
 

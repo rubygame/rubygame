@@ -1,5 +1,5 @@
-require 'matricks'
-require 'collider'
+require 'rubygame/gl/matricks'
+require 'rubygame/gl/collider'
 
 module Shape
 	include Collider

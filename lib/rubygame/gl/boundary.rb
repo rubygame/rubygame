@@ -1,6 +1,6 @@
-require 'matricks'
-require 'collider'
-require 'sat'
+require 'rubygame/gl/matricks'
+require 'rubygame/gl/collider'
+require 'rubygame/gl/sat'
 
 class Boundary
 	include Collider

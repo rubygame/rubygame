@@ -1,7 +1,7 @@
-require 'matricks'
-require 'sat'
-require 'shape'
-require 'boundary'
+require 'rubygame/gl/matricks'
+require 'rubygame/gl/sat'
+require 'rubygame/gl/shape'
+require 'rubygame/gl/boundary'
 
 class Quadrangle
 	include Shape

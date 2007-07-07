@@ -1,6 +1,4 @@
 require 'rubygame'
-require 'rubygame_body'
-include Rubygame::Body
 
 require 'gl'
 require 'glu'
