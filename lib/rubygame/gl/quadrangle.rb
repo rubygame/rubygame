@@ -10,7 +10,7 @@ class Quadrangle
 	attr_writer :a, :b, :c, :d
 
 	def initialize( *points )
-		@a, @b, @c, @d, junk = Point.ify(points)
+		@a, @b, @c, @d, junk = Point.ify(*points)
 		super()
 	end
 
