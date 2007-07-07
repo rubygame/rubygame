@@ -54,6 +54,10 @@ module VectorTweaks #:nodoc:
 		r = Math.sqrt(temp)
 	end
 
+ 	def to_ary
+ 		[x,y]
+ 	end
+
 	# More inheritance-friendly.
 	def to_s
 		"#{self.class.name}[" + @elements.join(", ") + "]"

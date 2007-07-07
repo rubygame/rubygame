@@ -5,7 +5,10 @@ require 'glu'
 include Gl
 include GLU
 
-
+alias :_glVertex :glVertex
+def glVertex(point)
+	_glVertex(point.to_ary)
+end
 
 def pushpop_matrix(&block)
 	glPushMatrix()
