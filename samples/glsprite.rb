@@ -26,8 +26,8 @@ def main()
 		def update( time )
 			@t += time
 			@angle = 20 * Math::sin(@t / 300.0)
-			@scale = Vector2.new(1.0 + 0.05*Math::sin(@t/85.0),
-			                     1.0 + 0.05*Math::cos(@t/83.0))
+			@scale = Vector2[1.0 + 0.05*Math::sin(@t/85.0),
+			                 1.0 + 0.05*Math::cos(@t/83.0)]
 		end
 	end
 
