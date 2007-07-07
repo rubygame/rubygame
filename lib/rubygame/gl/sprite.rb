@@ -1,4 +1,5 @@
 require 'rubygame/gl/shared'
+require 'rubygame/gl/quadrangle'
 
 class GLSprite
 	attr_accessor :pos, :depth, :scale, :angle
@@ -69,6 +70,8 @@ class GLImageSprite < GLSprite
 		@size = Vector2[1,1]
 		@has_alpha = false
 		super
+ 		w, h = @size.x.div(2.0), @size.y.div(2.0)
+ 		@shape = Quadrangle.new( [-w,-h], [w,-h], [w,h], [-w,h] )
 	end
 
 	def setup_texture()
@@ -92,18 +95,18 @@ class GLImageSprite < GLSprite
 			w, h = @size.x.div(2.0), @size.y.div(2.0)
 			glBindTexture(GL_TEXTURE_2D, @tex_id)
 			glbegin(GL_TRIANGLE_FAN) do
-				glTexCoord([0.5,0.5])
-				glVertex([0,0])
-				glTexCoord([0,1]);
-				glVertex([-w, -h]);
-				glTexCoord([1,1]);
-				glVertex([w,-h]);
-				glTexCoord([1,0]);
-				glVertex([w, h]);
-				glTexCoord([0,0]);
-				glVertex([-w, h]);
-				glTexCoord([0,1]);
-				glVertex([-w, -h]);
+ 				glTexCoord([0.5,0.5])
+ 				glVertex(@shape.center)
+ 				glTexCoord([0,1])
+ 				glVertex(@shape.a)
+ 				glTexCoord([1,1])
+ 				glVertex(@shape.b)
+ 				glTexCoord([1,0])
+ 				glVertex(@shape.c)
+ 				glTexCoord([0,0])
+ 				glVertex(@shape.d)
+ 				glTexCoord([0,1])
+ 				glVertex(@shape.a)
 			end
 		end
 	end
