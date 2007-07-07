@@ -25,7 +25,7 @@ class Quadrangle
 
 	def center
 		sum = points.map { |p| p.to_v }.inject { |a,b| a + b }
-		return Point[sum * 0.25]
+		return Point[*(sum * 0.25)]
 	end
 
 	def collide_has_points(other)
