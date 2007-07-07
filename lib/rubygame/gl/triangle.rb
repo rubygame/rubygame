@@ -10,7 +10,7 @@ class Triangle
 	attr_writer :a, :b, :c
 
 	def initialize( *points )
-		@a, @b, @c, junk = points
+		@a, @b, @c, junk = Point.ify(points)
 		super()
 	end
 

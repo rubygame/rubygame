@@ -137,6 +137,15 @@ class Point < Vector
 		super(x,y,1)
 	end
 
+	# Point.ify ("Pointify")
+	# Convenience method for converting many 2-Arrays into Points.
+	# 
+	#  Point.ify( [0,0], [0,1], [3,5] )
+	#  => [ Point[0,0], Point[0,1], Point[3,5] ]
+	def self.ify( *many )
+		many.map { |array| self[*array] }
+	end
+
 	def to_p
 		return self
 	end
