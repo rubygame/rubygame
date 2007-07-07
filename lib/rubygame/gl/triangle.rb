@@ -23,6 +23,11 @@ class Triangle
 		Boundary.envelope( *points )
 	end
 
+	def center
+		sum = points.map { |p| p.to_v }.inject { |a,b| a + b }
+		return (sum * 1.quo(3).to_f).to_p
+	end
+
 	def collide_has_points(other)
 		pointsA = self.points
 		pointsB = other.points
