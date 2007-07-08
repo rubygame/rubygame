@@ -33,11 +33,13 @@ class Quadrangle
 		pointsA = self.points
 		pointsB = other.points
 
-		a,b,c,d = pointsA
-		projection_overlap?( b - a, pointsA, pointsB ) and \
-		projection_overlap?( c - b, pointsA, pointsB ) and \
-		projection_overlap?( d - c, pointsA, pointsB ) and \
-		projection_overlap?( a - d, pointsA, pointsB )		
+		[pointsA, pointsB].all? do |points|
+			a,b,c,d = points
+			projection_overlap?( b - a, pointsA, pointsB ) and \
+			projection_overlap?( c - b, pointsA, pointsB ) and \
+			projection_overlap?( d - c, pointsA, pointsB ) and \
+			projection_overlap?( a - d, pointsA, pointsB )		
+		end
 	end
 
 	alias :collide_boundary :collide_has_points
