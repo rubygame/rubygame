@@ -66,12 +66,14 @@ end
 
 class GLImageSprite < GLSprite
 	attr_accessor :surface, :size, :tex_id, :has_alpha
+	attr_accessor :shape
 	def initialize
 		@size = Vector2[1,1]
 		@has_alpha = false
 		super
  		w, h = @size.x.div(2.0), @size.y.div(2.0)
  		@shape = Quadrangle.new( [-w,-h], [w,-h], [w,h], [-w,h] )
+		@base_shape = @shape
 	end
 
 	def setup_texture()
@@ -91,7 +93,7 @@ class GLImageSprite < GLSprite
 	end
 
 	def draw()
-		shape = @shape.scale(*(@scale.to_ary[0,2])).rotate!(@angle).translate!(*(@pos.to_ary[0,2]))
+		shape = @shape
 
 		glBindTexture(GL_TEXTURE_2D, @tex_id)
 		glbegin(GL_TRIANGLE_FAN) do
@@ -111,5 +113,10 @@ class GLImageSprite < GLSprite
 			end
 
 		end
+	end
+
+	def update(*args)
+		super
+		@shape = @base_shape.scale(*(@scale.to_ary[0,2])).rotate!(@angle).translate!(*(@pos.to_ary[0,2]))
 	end
 end
