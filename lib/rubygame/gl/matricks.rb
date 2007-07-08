@@ -44,6 +44,11 @@ end
 
 
 module VectorTweaks #:nodoc:
+	# More inheritance-friendly.
+	def inspect
+		"#{self.class.name}[#{x}, #{y}]"
+	end
+
 	#
 	# Returns the modulus (Pythagorean distance) of the vector.
 	#   Vector[5,8,2].r => 9.643650761
@@ -60,12 +65,7 @@ module VectorTweaks #:nodoc:
 
 	# More inheritance-friendly.
 	def to_s
-		"#{self.class.name}[" + @elements.join(", ") + "]"
-	end
-
-	# More inheritance-friendly.
-	def inspect
-		"#{self.class.name}" + @elements.inspect
+		"#{self.class.name}[#{x}, #{y}]"
 	end
 
 	def x; @elements.at(0); end
