@@ -9,7 +9,7 @@ class GLSprite
 		@t = 0
 		@pos = Vector2[0,0]
 		@depth = 0
-		@scale = 1
+		@scale = Vector2[1,1]
 		@angle = 0
 		instance_eval(&block) if block_given?
 	end
@@ -91,23 +91,25 @@ class GLImageSprite < GLSprite
 	end
 
 	def draw()
-		with_transformation do
-			w, h = @size.x.div(2.0), @size.y.div(2.0)
-			glBindTexture(GL_TEXTURE_2D, @tex_id)
-			glbegin(GL_TRIANGLE_FAN) do
- 				glTexCoord([0.5,0.5])
- 				glVertex(@shape.center)
- 				glTexCoord([0,1])
- 				glVertex(@shape.a)
- 				glTexCoord([1,1])
- 				glVertex(@shape.b)
- 				glTexCoord([1,0])
- 				glVertex(@shape.c)
- 				glTexCoord([0,0])
- 				glVertex(@shape.d)
- 				glTexCoord([0,1])
- 				glVertex(@shape.a)
+		shape = @shape.scale(*(@scale.to_ary[0,2])).rotate!(@angle).translate!(*(@pos.to_ary[0,2]))
+
+		glBindTexture(GL_TEXTURE_2D, @tex_id)
+		glbegin(GL_TRIANGLE_FAN) do
+
+			verts = [[shape.center, [0.5,0.5]],
+			         [shape[0],     [0,1]],
+			         [shape[1],     [1,1]],
+			         [shape[2],     [1,0]],
+			         [shape[3],     [0,0]],
+ 			         [shape[0],     [0,1]]]
+
+			verts.each do |pair|
+				vert = pair[0].to_ary + [@depth]
+				tex = pair[1]
+				glTexCoord( tex )
+				glVertex( vert )
 			end
+
 		end
 	end
 end
