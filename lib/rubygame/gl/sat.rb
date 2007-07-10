@@ -18,11 +18,11 @@ end
 # Test overlap between two sets of points, projected onto an arbitrary vector.
 def projection_overlap?(vector, pointsA, pointsB)
 	pA = pointsA.map do |point| 
-		point.to_v.projected_onto(vector).magnitude 
+		point.to_v.dot(vector)
 	end
 
 	pB = pointsB.map do |point| 
-		point.to_v.projected_onto(vector).magnitude 
+		point.to_v.dot(vector)
 	end
 
 	overlap?(pA.min, pA.max, pB.min, pB.max)
