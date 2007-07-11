@@ -1,22 +1,23 @@
-require 'matricks'
-require 'sat'
-require 'shape'
-require 'boundary'
+require 'rubygame/gl/matricks'
+require 'rubygame/gl/sat'
+require 'rubygame/gl/shape'
+require 'rubygame/gl/boundary'
 
 class Triangle
 	include Shape
 
-	attr_reader :a, :b, :c
-	attr_writer :a, :b, :c
-
 	def initialize( *points )
-		@a, @b, @c, junk = Point.ify(*points)
+		@points = Point.ify(*points)[0,3]
 		super()
 	end
 
 	def initialize_copy( orig )
-		@a, @b, @c = orig.a, orig.b, orig.c
+		@points = orig.raw_points
 		super
+	end
+
+	def [](index)
+		@matrix * @points[index]
 	end
 
 	def bounds
@@ -32,23 +33,31 @@ class Triangle
 		pointsA = self.points
 		pointsB = other.points
 
-		projection_overlap?( @b - @a, pointsA, pointsB ) and \
-		projection_overlap?( @c - @b, pointsA, pointsB ) and \
-		projection_overlap?( @a - @c, pointsA, pointsB )
+		[pointsA, pointsB].all? do |points|
+			a,b,c,d = points
+			projection_overlap?( b - a, pointsA, pointsB ) and \
+			projection_overlap?( c - b, pointsA, pointsB ) and \
+			projection_overlap?( a - c, pointsA, pointsB )		
+		end
 	end
 
 	alias :collide_boundary :collide_has_points
 	alias :collide_triangle :collide_has_points
+	alias :collide_quadrangle :collide_has_points
+
+	def inspect
+		"#<Triangle:%#0x #{points.join(" ")}>"%object_id
+	end
 
 	def points
-		[@a, @b, @c].map { |point| @matrix*point }
+		@points.map { |point| @matrix * point }
+	end
+
+	def raw_points
+		@points
 	end
 
 	def to_s
-		"#<Triangle #{@a.to_s} #{@b.to_s} #{@c.to_s}>"
-	end
-
-	def inspect
-		"#<Triangle:%#0x #{@a.inspect} #{@b.inspect} #{@c.inspect}>"%object_id
+		"#<Triangle #{points.join(" ")}>"
 	end
 end
