@@ -3,11 +3,11 @@ require 'rubygame/gl/sat'
 require 'rubygame/gl/shape'
 require 'rubygame/gl/boundary'
 
-class Triangle
+class Polygon
 	include Shape
 
 	def initialize( *points )
-		@points = Point.ify(*points)[0,3]
+		@points = Point.ify(*points)
 		super()
 	end
 
@@ -26,31 +26,29 @@ class Triangle
 
 	def center
 		sum = points.map { |p| p.to_v }.inject { |a,b| a + b }
-		return Point[*(sum * 1.quo(3).to_f)]
+		return Point[*(sum * 1.quo(@points.length).to_f)]
 	end
 
-	def collide_has_points(other)
+	def collide_polygon(other)
 		pointsA = self.points
 		pointsB = other.points
 
 		[pointsA, pointsB].all? do |points|
-			a,b,c,d = points
-			projection_overlap?( b - a, pointsA, pointsB ) and \
-			projection_overlap?( c - b, pointsA, pointsB ) and \
-			projection_overlap?( a - c, pointsA, pointsB )		
+			collides = true
+			points.each_index do |i|
+				q, p = points[i], points[i-1]
+				collides &= projection_overlap?( q - p, pointsA, pointsB )
+			end
+			collides
 		end
 	end
 
-	alias :collide_boundary :collide_has_points
-	alias :collide_triangle :collide_has_points
-	alias :collide_quadrangle :collide_has_points
-
 	def inspect
-		"#<Triangle:%#0x #{points.join(" ")}>"%object_id
+		"#<#{self.class}:%#0x #{points.join(" ")}>"%object_id
 	end
 
 	def points
-		@points.map { |point| @matrix * point }
+		raw_points.map { |point| @matrix * point }
 	end
 
 	def raw_points
@@ -58,6 +56,6 @@ class Triangle
 	end
 
 	def to_s
-		"#<Triangle #{points.join(" ")}>"
+		"#<#{self.class} #{points.join(" ")}>"
 	end
 end

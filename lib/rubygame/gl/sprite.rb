@@ -1,5 +1,5 @@
 require 'rubygame/gl/shared'
-require 'rubygame/gl/quadrangle'
+require 'rubygame/gl/polygon'
 
 class GLSprite
 	attr_accessor :pos, :depth, :scale, :angle
@@ -72,7 +72,7 @@ class GLImageSprite < GLSprite
 		@has_alpha = false
 		super
  		w, h = @size.x.div(2.0), @size.y.div(2.0)
- 		@shape = Quadrangle.new( [-w,-h], [w,-h], [w,h], [-w,h] )
+ 		@shape = Polygon.new( [-w,-h], [w,-h], [w,h], [-w,h] )
 		@base_shape = @shape
 	end
 
