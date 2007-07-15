@@ -34,6 +34,15 @@ class Boundary
 		overlap?(@left, @right, other.left, other.right) and \
 		overlap?(@bottom, @top, other.bottom, other.top)
 	end
+	
+	def collide_polygon( other )
+		pointsB = other.points
+		x_values = pointsB.map { |point| point.x }
+		y_values = pointsB.map { |point| point.y }
+		
+		overlap?(@left, @right, x_values.min, x_values.max) and \
+		overlap?(@bottom, @top, y_values.min, y_values.max)
+	end
 
 	def move( v )
 		self.class.new( @left + v.x, @right + v.x,
