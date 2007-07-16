@@ -172,13 +172,14 @@ class Boundary
 	end
 
 	#  call-seq:
-	#    intersect( other )  ->  new_boundary
+	#    intersect( other )  ->  new_boundary or nil
 	# 
 	#  Create a Boundary which covers the area where this Boundary
 	#  overlaps with the other Boundary.
 	# 
 	#  other::    The other Boundary to intersect with. (Boundary, required)
-	#  Returns::  The resulting Boundary object. (Boundary)
+	#  Returns::  The resulting Boundary object, or nil if the Boundaries
+	#             do not intersect. (Boundary or nil)
 	# 
 	#  Contrast this method with #union, which creates a Boundary
 	#  surrounding both objects completely.
@@ -189,11 +190,15 @@ class Boundary
 	#  Example:
 	#    a = Boundary.new( 10, 50, 10, 30 )
 	#    b = Boundary.new( 10, 25,  0, 15 )
+	#    c = Boundary.new( 210, 225, 200, 215 )
 	#    a.intersect( b )                   # => #<Boundary (10, 25, 10, 15)>
+	#    a.intersect( c )                   # => nil
 	# 
 	def intersect( bound )
+		return nil unless self.collide_boundary( bound )
+
 		self.class.new( [@left, bound.left].max, [@right, bound.right].min,
-										[@bottom, bound.bottom].max, [@top, bound.top].min )
+		                [@bottom, bound.bottom].max, [@top, bound.top].min )
 	end
 
 	def points
