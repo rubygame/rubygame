@@ -185,7 +185,11 @@ class Rect < Array
 	def size; return self[2,2]; end
 
 	# Set the width and height of the Rect.
-	def size=(size); self[2,2] = size; return size; end
+	def size=(size)
+	 raise ArgumentError, "Rect#size= takes an Array of form [width, height]." if size.size != 2
+	 self[2,2] = size
+	 size
+	end
 
 	# Return the x coordinate of the right side of the Rect.
 	def right; return self.at(0)+self.at(2); end
@@ -213,8 +217,9 @@ class Rect < Array
 	# Set the x and y coordinates of the center of the Rect by translating the
 	# Rect (adjusting the x and y offsets).
 	def center=(center)
+	    raise ArgumentError, "Rect#center= takes an Array of the form [x,y]." if center.size != 2
 		self.centerx, self.centery = center
-		return center
+		center
 	end
 	alias c center
 	alias c= center=;
@@ -245,6 +250,7 @@ class Rect < Array
 	# Set the x and y coordinates of the top-left corner of the Rect by 
 	# translating the Rect (adjusting the x and y offsets).
 	def topleft=(topleft)
+	    raise ArgumentError, "Rect#topright= takes an Array of form [x, y]." if topleft.size != 2
 		self[0,2] = topleft
 		return topleft
 	end
@@ -258,6 +264,7 @@ class Rect < Array
 	# Set the x and y coordinates of the top-right corner of the Rect by 
 	# translating the Rect (adjusting the x and y offsets).
 	def topright=(topright)
+	    raise ArgumentError, "Rect#topright= takes an Array of form [x, y]." if topright.size != 2
 		self.right, self[1] = topright
 		return topright
 	end
@@ -271,6 +278,7 @@ class Rect < Array
 	# Set the x and y coordinates of the bottom-left corner of the Rect by 
 	# translating the Rect (adjusting the x and y offsets).
 	def bottomleft=(bottomleft)
+		raise ArgumentError, "Rect#bottomleft= takes an Array of form [x, y]." if bottomleft.size != 2
 		self[0], self.bottom = bottomleft
 		return bottomleft
 	end
@@ -284,6 +292,7 @@ class Rect < Array
 	# Set the x and y coordinates of the bottom-right corner of the Rect by 
 	# translating the Rect (adjusting the x and y offsets).
 	def bottomright=(bottomright)
+		raise ArgumentError, "Rect#bottomright= takes an Array of form [x, y]." if bottomright.size != 2
 		self.right, self.bottom = bottomright
 		return bottomright
 	end
@@ -298,6 +307,7 @@ class Rect < Array
 	# Set the x and y coordinates of the midpoint on the left side of the Rect
 	# by translating the Rect (adjusting the x and y offsets).
 	def midleft=(midleft)
+    	raise ArgumentError, "Rect#midleft= takes an Array of form [x, y]." if midleft.size != 2
 		self[0], self.centery = midleft
 		return midleft
 	end
@@ -312,6 +322,7 @@ class Rect < Array
 	# Set the x and y coordinates of the midpoint on the top side of the Rect
 	# by translating the Rect (adjusting the x and y offsets).
 	def midtop=(midtop)
+    	raise ArgumentError, "Rect#midtop= takes an Array of form [x, y]." if midtop.size != 2
 		self.centerx, self[1] = midtop
 		return midtop
 	end
@@ -326,6 +337,7 @@ class Rect < Array
 	# Set the x and y coordinates of the midpoint on the right side of the Rect
 	# by translating the Rect (adjusting the x and y offsets).
 	def midright=(midright)
+    	raise ArgumentError, "Rect#midright= takes an Array of form [x, y]." if midright.size != 2
 		self.right, self.centery = midright
 		return midright
 	end
@@ -340,6 +352,7 @@ class Rect < Array
 	# Set the x and y coordinates of the midpoint on the bottom side of the
 	# Rect by translating the Rect (adjusting the x and y offsets).
 	def midbottom=(midbottom)
+    	raise ArgumentError, "Rect#midbottom= takes an Array of form [x, y]." if midbottom.size != 2
 		self.centerx, self.bottom = midbottom
 		return midbottom
 	end
