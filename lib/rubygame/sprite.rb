@@ -370,7 +370,7 @@ module Rubygame
 			def undraw(dest,background)
 				self.each { |sprite|
 					background.blit(dest,sprite.rect,sprite.rect)
-					@dirty_rects.push(sprite.rect)
+					@dirty_rects.push(sprite.rect.dup)
 				}
 			end
 		end # module UpdateGroup
