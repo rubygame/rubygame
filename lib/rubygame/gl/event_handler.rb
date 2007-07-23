@@ -34,8 +34,13 @@ class EventHandler
 		hook = hook.dup
 		hook.delete(:block)
 		klass = hook.delete(:klass)[:klass]
-		return event.kind_of?(klass) and 
-			hook.all? { |key, value| event.send(key) == value }
+		matches = nil
+		if event.kind_of?(klass)
+			matches = hook.all? { |key, value|
+				event.send(key) == value
+			}
+		end
+		return matches
 	end
 
 	#  call-seq:
