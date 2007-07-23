@@ -2,7 +2,6 @@
 
 require 'rubygame'
 require 'rubygame/gl/scene'
-require 'rubygame/gl/view'
 require 'rubygame/gl/sprite'
 
 include Rubygame
@@ -14,6 +13,19 @@ def main()
 	Rubygame.init()
 	scene = Scene.new([WIDTH,HEIGHT])
 	scene.make_default_camera
+
+	pic_in_pic = Camera.new {
+		bound = scene.cameras.first.screen_region
+		@screen_region = bound.scale(0.25,0.25)
+		@screen_region = \
+		  @screen_region.move(Vector2[WIDTH-@screen_region.right - 20,
+																	HEIGHT-@screen_region.top - 20])
+		@world_region = bound.scale(1,1)
+		@clear_screen = true
+		@background_color = [0.3, 0.3, 0.3, 0.5]
+	}
+
+	scene.cameras << pic_in_pic 
 
 	queue = Rubygame::EventQueue.new()
 	clock = Rubygame::Clock.new { |c| c.target_framerate = 60 }
@@ -62,9 +74,6 @@ def main()
 	handler.add_hook( KeyDownEvent, :key => K_ESCAPE, &throw_quit )
 	handler.add_hook( QuitEvent, &throw_quit )	
 	
-# 	glEnable(GL_LINE_SMOOTH)
-# 	glLineWidth(3)
-
 	catch(:quit) do
 		loop do
 			queue.each do |event|
@@ -77,24 +86,13 @@ def main()
 
 			# redraw everything
 
-#  			glEnable(GL_TEXTURE_2D)
-#  			glEnable(GL_DEPTH_TEST)
-#  			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-#  			glColor([255,255,255])
+			if panda.shape.collide ruby.shape
+				glColor([255,0,0])
+			else
+				glColor([255,255,255])
+			end
 
-			scene.draw
-			
-# 			if panda.shape.collide ruby.shape
-# 				glColor([255,0,0])
-# 			else
-# 				glColor([255,255,255])
-# 			end
-#
-# 			glDisable(GL_TEXTURE_2D)
-# 			glDisable(GL_DEPTH_TEST)
-# 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
-# 			group.draw()
-
+			scene.draw()
 			scene.refresh()
 
 		end
