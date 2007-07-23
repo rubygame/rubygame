@@ -5,6 +5,8 @@ require 'rubygame/gl/scene'
 require 'rubygame/gl/view'
 require 'rubygame/gl/sprite'
 
+include Rubygame
+
 WIDTH = 640
 HEIGHT = 480
 
@@ -45,27 +47,28 @@ def main()
 	
 	scene.objects.add_children(panda,ruby)
 
+	handler = scene.event_handler
+
+	handler.add_hook( MouseMotionEvent ) do |event|
+		panda.pos = Vector2[event.pos[0], HEIGHT - event.pos[1]]
+	end
+	handler.add_hook( MouseDownEvent ) do |event|
+		ruby.pos = Vector2[event.pos[0], HEIGHT - event.pos[1]]
+	end
+
+	throw_quit = Proc.new { |event| throw :quit }
+	
+	handler.add_hook( KeyDownEvent, :key => K_Q, &throw_quit )
+	handler.add_hook( KeyDownEvent, :key => K_ESCAPE, &throw_quit )
+	handler.add_hook( QuitEvent, &throw_quit )	
+	
 # 	glEnable(GL_LINE_SMOOTH)
 # 	glLineWidth(3)
 
-	catch(:rubygame_quit) do
+	catch(:quit) do
 		loop do
 			queue.each do |event|
-				case event
-				when Rubygame::MouseMotionEvent
-					panda.pos = Vector2[event.pos[0], HEIGHT - event.pos[1]]
-				when Rubygame::MouseDownEvent
-					ruby.pos = Vector2[event.pos[0], HEIGHT - event.pos[1]]
-				when Rubygame::KeyDownEvent
-					case event.key
-					when Rubygame::K_ESCAPE
-						throw :rubygame_quit 
-					when Rubygame::K_Q
-						throw :rubygame_quit 
-					end
-				when Rubygame::QuitEvent
-					throw :rubygame_quit
-				end
+				scene.event_handler.process_event(event)
 			end
 
 			# update everything
