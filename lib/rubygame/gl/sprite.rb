@@ -71,8 +71,7 @@ class GLImageSprite < GLSprite
 		@size = Vector2[1,1]
 		@has_alpha = false
 		super
- 		w, h = @size.x.div(2.0), @size.y.div(2.0)
- 		@shape = Polygon.new( [-w,-h], [w,-h], [w,h], [-w,h] )
+ 		@shape = Polygon::UNIT_SQUARE.scale(*@size[0..1])
 		@base_shape = @shape
 	end
 
