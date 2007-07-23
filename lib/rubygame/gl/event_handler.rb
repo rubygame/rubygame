@@ -33,7 +33,7 @@ class EventHandler
 	def self.match?( event, hook )
 		hook = hook.dup
 		hook.delete(:block)
-		klass = hook.delete(:klass)[:klass]
+		klass = hook.delete(:klass)
 		matches = nil
 		if event.kind_of?(klass)
 			matches = hook.all? { |key, value|
@@ -93,7 +93,7 @@ class EventHandler
 		end
 
 		hook = Hash.new
-		hook[:class] = klass
+		hook[:klass] = klass
 		hook[:block] = block
 		hook.update(specifiers)
 		@hooks << hook
