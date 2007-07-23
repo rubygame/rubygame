@@ -1,11 +1,16 @@
 require 'rubygame/gl/shared'
 	
 class Camera
-	attr_reader :screen_region
-	attr_reader :world_region
+	attr_accessor :screen_region
+	attr_accessor :world_region
+	attr_accessor :clear_screen
+	attr_accessor :background_color
 
-	def initialize(screen_region, world_region)
+	def initialize(&block)
 		@screen_region, @world_region = screen_region, world_region
+		@clear_screen = true
+		@background_color = [0,0,0,0]
+		instance_eval(&block) if block_given?
 	end
 
 	def activate
@@ -14,17 +19,15 @@ class Camera
 		setup_projection
 	end
 
-	def background_color=(color)
-		r,g,b,a = color.to_ary
+	def clear
+		r,g,b,a = @background_color.to_ary
 		a = 0.0 unless a
 		glClearColor(r,g,b,a)
-	end
-
-	def clear
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	end	
 	
-	def draw_objects( group )
+	def draw( group )
+		clear if @clear_screen
 		group.draw
 	end
 
@@ -41,6 +44,7 @@ class Camera
 		glShadeModel(GL_SMOOTH)
 		glEnable(GL_TEXTURE_2D)
 		glEnable(GL_DEPTH_TEST)
+		glEnable(GL_SCISSOR_TEST)
 		glDepthFunc(GL_LESS)
 		glEnable(GL_BLEND)
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -50,5 +54,6 @@ class Camera
 		x,y = @screen_region.left, @screen_region.bottom
 		w,h = @screen_region.size
 		glViewport( x, y, w, h )
+		glScissor( x, y, w, h )
 	end
 end

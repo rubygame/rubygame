@@ -27,14 +27,16 @@ class Scene
 	def draw()
 		@cameras.each do |camera|
 			set_active_camera( camera )
-			camera.clear
-			camera.draw_objects( @objects )
+			camera.draw( @objects )
 		end
 	end
 	
 	def make_default_camera
 		region = Boundary.new(0, @screen.w, 0, @screen.h)		
-		camera = Camera.new( region, region )
+		camera = Camera.new {
+			@screen_region = region
+			@world_region = region
+		}
 		@cameras << camera
 		set_active_camera( camera )
 	end
