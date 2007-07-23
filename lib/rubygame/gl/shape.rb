@@ -10,7 +10,7 @@ module Shape
 	def initialize(*args)
 		@matrix = Matrix.identity(3)
 		@depth = 0
-		super
+		super()
 	end
 	
 	def initialize_copy( orig )

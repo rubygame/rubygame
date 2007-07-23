@@ -3,9 +3,23 @@ require 'rubygame/gl/sat'
 require 'rubygame/gl/shape'
 require 'rubygame/gl/boundary'
 
+
 class Polygon
 	include Shape
 
+	TWO_PI = Math::PI * 2
+	HALF_PI = Math::PI / 2
+	
+	def self.regular( sides, radius = 0.5 )
+		points = []
+		0.upto( sides - 1 ) do |n| 
+			a = TWO_PI * n / sides
+			a += HALF_PI							# 90 degree rotation
+			points << [ radius * Math.cos(a), radius * Math.sin(a) ]
+		end
+		return Polygon.new( *points )
+	end
+	
 	def initialize( *points )
 		@points = Point.ify(*points)
 		super()
@@ -58,4 +72,19 @@ class Polygon
 	def to_s
 		"#<#{self.class} #{points.join(" ")}>"
 	end
+end
+
+class Polygon
+	TRIANGLE = Polygon.regular( 3 )
+	TRIGON = TRIANGLE
+	QUADRANGLE = Polygon.regular( 4 )
+	PENTAGON = Polygon.regular( 5 )
+	HEXAGON = Polygon.regular( 6 )
+	OCTAGON = Polygon.regular( 8 )
+	ICOSAGON = Polygon.regular( 20 )
+	CENTAGON = Polygon.regular( 100 )
+	HECTAGON = CENTAGON
+	
+	UNIT_SQUARE = Polygon.new([-0.5, -0.5], [ 0.5, -0.5],
+														[ 0.5,  0.5], [-0.5,  0.5])	
 end

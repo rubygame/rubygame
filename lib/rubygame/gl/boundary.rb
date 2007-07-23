@@ -2,6 +2,18 @@ require 'rubygame/gl/matricks'
 require 'rubygame/gl/collider'
 require 'rubygame/gl/sat'
 
+
+#  Boundary implements 2D axis-aligned bounding boxes. They are used for:
+# 
+#  1. representing a rectangular region of pixels on the screen; and
+#  2. performing fast first-pass collision checks for more complex shapes.
+# 
+#  Boundaries are defined by their left, right, bottom, and top edges,
+#  which are x or y values, measured in pixels.
+# 
+#  Boundaries are cannot be rotated; they are always aligned to the screen's
+#  horizontal and vertical axes.
+# 
 class Boundary
 	include Collider
 
@@ -18,6 +30,9 @@ class Boundary
 	#  top::     y value of the Boundary's top edge. (Integer, required)
 	# 
 	#  Returns:: The newly-created Boundary object. (Boundary)
+	# 
+	#  Example:
+	#    b = Boundary.new( 0, 640, 0, 480 )
 	# 
 	def initialize( left, right, bottom, top )
 		@left, @right, @bottom, @top = left, right, bottom, top
