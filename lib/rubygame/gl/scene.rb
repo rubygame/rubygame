@@ -1,7 +1,15 @@
 require 'rubygame/gl/shared'
+require 'rubygame/gl/sprite'
+require 'rubygame/gl/camera'
+require 'rubygame/gl/boundary'
+require 'rubygame/gl/event_handler'
 
 class Scene
-	attr_accessor :screen
+	attr_accessor :cameras, :active_camera
+	attr_accessor :event_handler
+	attr_accessor :objects
+	attr_accessor :screen	
+	
 	def initialize(size)
 		Rubygame::GL.set_attrib(Rubygame::GL::RED_SIZE, 5)
 		Rubygame::GL.set_attrib(Rubygame::GL::GREEN_SIZE, 5)
@@ -9,17 +17,38 @@ class Scene
 		Rubygame::GL.set_attrib(Rubygame::GL::DEPTH_SIZE, 16)
 		Rubygame::GL.set_attrib(Rubygame::GL::DOUBLEBUFFER, 1)
 		@screen = Rubygame::Screen.new(size, 16, [Rubygame::OPENGL])
-
-		glViewport( 0, 0, size.at(0), size.at(1) )
-		glShadeModel(GL_SMOOTH)
-		glEnable(GL_TEXTURE_2D)
-		glEnable(GL_DEPTH_TEST)
-		glDepthFunc(GL_LESS)
-		glEnable(GL_BLEND)
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+		
+		@cameras = []
+		@active_camera = nil
+		@objects = GLGroup.new
+		@event_handler = EventHandler.new()
 	end
 
-	def refresh()
+	def draw()
+		@cameras.each do |camera|
+			set_active_camera( camera )
+			camera.clear
+			camera.draw_objects( @objects )
+		end
+	end
+	
+	def make_default_camera
+		region = Boundary.new(0, @screen.w, 0, @screen.h)		
+		camera = Camera.new( region, region )
+		@cameras << camera
+		set_active_camera( camera )
+	end
+
+	def refresh
 		Rubygame::GL.swap_buffers()
+	end
+	
+	def set_active_camera( camera )
+		@active_camera = camera
+		@active_camera.activate
+	end
+	
+	def update( *args )
+		@objects.update( *args )
 	end
 end
