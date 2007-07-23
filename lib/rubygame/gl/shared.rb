@@ -3,7 +3,7 @@ require 'rubygame'
 require 'gl'
 require 'glu'
 include Gl
-include GLU
+include Glu
 
 alias :_glVertex :glVertex
 def glVertex(point)
