@@ -25,7 +25,7 @@ def main()
 		@background_color = [0.3, 0.3, 0.3, 0.5]
 	}
 
-	scene.cameras << pic_in_pic 
+	scene.add_camera pic_in_pic 
 
 	queue = Rubygame::EventQueue.new()
 	clock = Rubygame::Clock.new { |c| c.target_framerate = 60 }
@@ -40,7 +40,8 @@ def main()
 	}
 
 	class << panda
-		def update( time )
+		def update( tick )
+			time = tick.passed
 			@t += time
 			@angle = 0.4 * Math::sin(@t / 300.0)
 #			@scale = Vector2[1.0 + 0.05*Math::sin(@t/85.0),
@@ -81,8 +82,8 @@ def main()
 			end
 
 			# update everything
-			time = clock.tick
-			scene.update(time)
+			tick = clock.tick
+			scene.update( tick )
 
 			# redraw everything
 

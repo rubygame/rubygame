@@ -4,6 +4,9 @@ require 'rubygame/gl/camera'
 require 'rubygame/gl/boundary'
 require 'rubygame/gl/event_handler'
 
+class DrawEvent
+end
+
 class Scene
 	attr_accessor :cameras, :active_camera
 	attr_accessor :event_handler
@@ -21,14 +24,26 @@ class Scene
 		@cameras = []
 		@active_camera = nil
 		@objects = GLGroup.new
-		@event_handler = EventHandler.new()
+		@event_handler = EventHandler.new() do
+			add_hook( TickEvent ) { |event| @objects.update( event ) }
+		end
 	end
 
-	def draw()
-		@cameras.each do |camera|
+	def add_camera( camera )
+		@cameras << camera
+		scene = self
+		@event_handler.add_hook( DrawEvent ) do |ev| 
 			set_active_camera( camera )
-			camera.draw( @objects )
+			camera.draw( scene.objects )
 		end
+	end
+	
+	def add_object( object )
+		@objects.add_child( object )
+	end
+	
+	def draw
+		@event_handler.process_event( DrawEvent.new )
 	end
 	
 	def make_default_camera
@@ -37,7 +52,7 @@ class Scene
 			@screen_region = region
 			@world_region = region
 		}
-		@cameras << camera
+		add_camera( camera )
 		set_active_camera( camera )
 	end
 
@@ -50,7 +65,7 @@ class Scene
 		@active_camera.activate
 	end
 	
-	def update( *args )
-		@objects.update( *args )
+	def update( tick )
+		@event_handler.process_event( tick )
 	end
 end
