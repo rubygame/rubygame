@@ -18,6 +18,13 @@
 #++
 
 module Rubygame
+	class TickEvent
+		attr_accessor :passed
+		def initialize( passed )
+			@passed = passed
+		end
+	end
+	
 		#  Clock provides class methods for tracking running time and delaying
 		#  execution of the program for specified time periods. This is used to
 		#  provide a consistent framerate, prevent the program from using
@@ -118,9 +125,9 @@ module Rubygame
 			def tick()
 				passed = Clock.runtime - @last_tick  # how long since the last tick?
 				if @target_frametime
-					return Clock.delay(@target_frametime - passed) + passed
+					passed = Clock.delay(@target_frametime - passed) + passed 
 				end
-				return passed
+				return TickEvent.new(passed)
 			ensure
 				@last_tick = Clock.runtime()
 				@ticks += 1
