@@ -243,11 +243,11 @@ module Rubygame
 	#          HAT_CENTERED::   0
 	#          HAT_UP::         1 
 	#          HAT_RIGHT::      2
-	#          HAT_RIGHTUP::    3
-	#          HAT_DOWN::       4 
-	#          HAT_RIGHTDOWN::  6
-	#          HAT_LEFTUP::     7
+	#          HAT_DOWN::       4 	
 	#          HAT_LEFT::       8
+	#          HAT_RIGHTUP::    3
+	#          HAT_RIGHTDOWN::  6
+	#          HAT_LEFTUP::     9
 	#          HAT_LEFTDOWN::   12
 	class JoyHatEvent < Event
 		attr_accessor :joynum,:hat,:value
