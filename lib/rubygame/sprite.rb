@@ -279,13 +279,16 @@ module Rubygame
 			def collide_group(group, killa=false, killb=false)
 				sprites = {}
 				self.each { |sprite|
-					sprites[sprite] = sprite.collide_group(group)
+					col = sprite.collide_group(group)
+					sprites[sprite] = col if col.length > 0
 				}
 				if killa
 					sprites.each_key { |sprite| sprite.kill }
 				end
 				if killb
-					sprites.each_value { |sprite| sprite.kill }
+					sprites.each_value do |array|
+						array.each { |sprite| sprite.kill }
+					end
 				end
 				return sprites
 			end
