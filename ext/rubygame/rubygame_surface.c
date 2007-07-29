@@ -58,7 +58,7 @@ VALUE rbgm_surface_displayformatalpha(VALUE);
 
 VALUE rbgm_image_savebmp(VALUE, VALUE);
 
-VALUE rbgm_transform_flip(int, VALUE*, VALUE);
+VALUE rbgm_transform_flip(VALUE, VALUE, VALUE);
 
 /* 
  *  call-seq:
@@ -105,8 +105,10 @@ VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 	SDL_Surface *self_surf;
 	SDL_PixelFormat* pixformat;
 	Uint32 flags, Rmask, Gmask, Bmask, Amask;
-	int w, h, depth, counter;
-	
+	int w, h, depth;
+	VALUE vsize, vdepth, vflags;
+
+	rb_scan_args(argc, argv, "12", &vsize, &vdepth, &vflags);
 
 	if( SDL_GetVideoSurface() )
 	{
@@ -125,10 +127,10 @@ VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 	Bmask = pixformat->Bmask;
 	Amask = pixformat->Amask;
 
-	if( (argc > 1) && (argv[1] != Qnil) && (argv[1] != 0) )
+	if( !NIL_P(vdepth) && NUM2INT(vdepth) > 0 )
 	{
 		/* TODO: We might want to check that the requested depth makes sense. */
-		depth = NUM2INT(argv[1]);
+		depth = NUM2INT(vdepth);
 	}
 	else
 	{
@@ -136,35 +138,19 @@ VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 	}
 		
 
-	/* Get width and height for new surface from argv[0] */
-	Check_Type(argv[0],T_ARRAY);
+	/* Get width and height for new surface from vsize */
+	vsize = convert_to_array(vsize);
 
-	if(RARRAY(argv[0])->len >= 2)
+	if(RARRAY(vsize)->len >= 2)
 	{
-		w = NUM2INT(rb_ary_entry(argv[0],0));
-		h = NUM2INT(rb_ary_entry(argv[0],1));
+		w = NUM2INT(rb_ary_entry(vsize,0));
+		h = NUM2INT(rb_ary_entry(vsize,1));
 	}
 	else
-		rb_raise(rb_eArgError,"wrong dimensions for Surface size (%d for 2)",\
-			RARRAY(argv[0])->len);
+		rb_raise(rb_eArgError,"Array is too short for Surface size (%d for 2)",\
+			RARRAY(vsize)->len);
 	
-
-	if(argc > 2 && argv[2] != Qnil)
-	{
-		switch( TYPE(argv[2]) ){
-			case T_ARRAY:;
-				for(counter=0;  counter < RARRAY(argv[2])->len; counter += 1)
-		    {
-		      flags |= NUM2UINT(  rb_ary_entry( argv[2],counter )  );
-		    }
-				break;
-			case T_FIXNUM:;
-				flags = NUM2UINT( argv[2] );
-				break;
-			default:;
-				rb_raise(rb_eArgError,"Wrong type for argument `flags' (wanted Fixnum or Array).");
-		}
-	}
+	flags = collapse_flags(vflags); /* in rubygame_shared */
 
 	/* Finally, we can create the new Surface! Or try, anyway... */
 	self_surf = SDL_CreateRGBSurface(flags,w,h,depth,Rmask,Gmask,Bmask,Amask);
@@ -307,28 +293,20 @@ VALUE rbgm_surface_set_alpha(int argc, VALUE *argv, VALUE self)
 	SDL_Surface *surf;
 	Uint8 alpha;
 	Uint32 flags = SDL_SRCALPHA;
+	VALUE valpha, vflags;
 
-	switch(argc)
+	rb_scan_args(argc, argv, "11", &valpha, &vflags);
+
+	if( !NIL_P(vflags) )
 	{
-		case 2: flags = NUM2UINT(argv[1]);
-			/* no break */
-		case 1: 
-		  {
-			int temp;
-			temp = NUM2INT(argv[0]);
-			if(temp<0) alpha = 0;
-			else if(temp>255) alpha = 255;
-			else alpha = (Uint8) temp;
-			break;
-		  }
-		default:
-			rb_raise(rb_eArgError,\
-				"Wrong number of args to set mode (%d for 1)",argc);
+		flags = NUM2UINT(vflags);
 	}
 
-	Data_Get_Struct(self,SDL_Surface,surf);
-	if(SDL_SetAlpha(surf,flags,alpha)!=0)
-		rb_raise(eSDLError,"%s",SDL_GetError());
+	alpha = NUM2UINT(valpha);
+
+	Data_Get_Struct(self, SDL_Surface, surf);
+	if( SDL_SetAlpha(surf,flags,alpha) != 0 )
+		rb_raise(eSDLError, "%s", SDL_GetError());
 	return self;
 }
 
@@ -376,48 +354,42 @@ VALUE rbgm_surface_set_colorkey( int argc, VALUE *argv, VALUE self)
 {
 	SDL_Surface *surf;
 	Uint32 color;
-	Uint32 flag;
+	Uint32 flags;
 	Uint8 r,g,b;
+	VALUE vcolor, vflags;
 
 	Data_Get_Struct(self, SDL_Surface, surf);
-	if(argv[0] == Qnil)
+
+	rb_scan_args(argc, argv, "11", &vcolor, &vflags);
+
+	if( !NIL_P(vflags) )
 	{
-		flag = 0;
-		color = 0;
+		flags = NUM2UINT(vflags);
 	}
 	else
 	{
-		if(argc > 1)
-			flag = NUM2UINT(argv[1]);
-		else
-			flag = SDL_SRCCOLORKEY;
-
-		r = NUM2UINT(rb_ary_entry(argv[0],0));
-		g = NUM2UINT(rb_ary_entry(argv[0],1));
-		b = NUM2UINT(rb_ary_entry(argv[0],2));
-		//printf("RGB: %d,%d,%d  ",r,g,b);
-		color = SDL_MapRGB(surf->format, r,g,b);
-		//printf("colorkey: %d\n", color);
+		flags = SDL_SRCCOLORKEY;
 	}
 
-	if(SDL_SetColorKey(surf,flag,color)!=0)
+
+	if( RTEST(vcolor) )
+	{
+		vcolor = convert_to_array(vcolor);
+		r = NUM2UINT(rb_ary_entry(vcolor,0));
+		g = NUM2UINT(rb_ary_entry(vcolor,1));
+		b = NUM2UINT(rb_ary_entry(vcolor,2));
+		color = SDL_MapRGB(surf->format, r,g,b);
+	}
+	else
+	{
+		flags = 0;
+		color = 0;
+	}
+
+	if(SDL_SetColorKey(surf,flags,color)!=0)
 		rb_raise(eSDLError,"could not set colorkey: %s",SDL_GetError());
 	return self;
 }
-
-/* Apparently it is not desirable to define these functions when
- * using Micrsoft Visual C.
- */
-#ifndef _MSC_VER
-
-static inline int max(int a, int b) {
-	return a > b ? a : b;
-}
-static inline int min(int a, int b) {
-	return a > b ? b : a;
-}
-
-#endif
 
 /* 
  *  call-seq:
@@ -447,24 +419,26 @@ VALUE rbgm_surface_blit(int argc, VALUE *argv, VALUE self)
 	SDL_Surface *src, *dest;
 	SDL_Rect *src_rect, *blit_rect;
 
-	if(argc < 2 || argc > 3)
-		rb_raise( rb_eArgError,"Wrong number of arguments to blit (%d for 2)",argc);
+	VALUE vtarget, vdest, vsource;
 
+	rb_scan_args( argc, argv, "21", &vtarget, &vdest, &vsource );
 
 	Data_Get_Struct(self, SDL_Surface, src);
-	Data_Get_Struct(argv[0], SDL_Surface, dest);
+	Data_Get_Struct(vtarget, SDL_Surface, dest);
 
-	blit_x = NUM2INT(rb_ary_entry(argv[1],0));
-	blit_y = NUM2INT(rb_ary_entry(argv[1],1));
+	vdest = convert_to_array(vdest);
+	blit_x = NUM2INT(rb_ary_entry(vdest,0));
+	blit_y = NUM2INT(rb_ary_entry(vdest,1));
 
 	/* did we get a src_rect argument or not? */
-	if(argc>2 && argv[2]!=Qnil)
+	if( !NIL_P(vsource) )
 	{
 		/* it might be good to check that it's actually a rect */
-		src_x = NUM2INT(rb_ary_entry(argv[2],0));
-		src_y = NUM2INT(rb_ary_entry(argv[2],1));
-		src_w = NUM2INT(rb_ary_entry(argv[2],2));
-		src_h = NUM2INT(rb_ary_entry(argv[2],3));
+		vsource = convert_to_array(vsource);
+		src_x = NUM2INT( rb_ary_entry(vsource,0) );
+		src_y = NUM2INT( rb_ary_entry(vsource,1) );
+		src_w = NUM2INT( rb_ary_entry(vsource,2) );
+		src_h = NUM2INT( rb_ary_entry(vsource,3) );
 	}
 	else
 	{
@@ -523,21 +497,20 @@ VALUE rbgm_surface_fill( int argc, VALUE *argv, VALUE self )
 	SDL_Rect *rect;
 	Uint32 color;
 	Uint8 r,g,b,a;
+	VALUE vcolor, vrect;
 
 	Data_Get_Struct(self, SDL_Surface, surf);
 
-	if(argc < 1)
-	{
-		rb_raise(rb_eArgError,"wrong number of arguments (%d for 1 or 2)",argc);
-	}
+	rb_scan_args(argc, argv, "11", &vcolor, &vrect);
 
-	r = NUM2UINT(rb_ary_entry(argv[0],0));
-	g = NUM2UINT(rb_ary_entry(argv[0],1));
-	b = NUM2UINT(rb_ary_entry(argv[0],2));
+	vcolor = convert_to_array(vcolor);
+	r = NUM2UINT(rb_ary_entry(vcolor,0));
+	g = NUM2UINT(rb_ary_entry(vcolor,1));
+	b = NUM2UINT(rb_ary_entry(vcolor,2));
 	/* if the array is larger than [R,G,B], it should be [R,G,B,A] */
-	if(RARRAY(argv[0])->len > 3)
+	if(RARRAY(vcolor)->len > 3)
 	{
-		a = NUM2UINT(rb_ary_entry(argv[0],3));
+		a = NUM2UINT(rb_ary_entry(vcolor,3));
 		color = SDL_MapRGBA(surf->format, r,g,b,a);
 	}
 	else
@@ -545,73 +518,72 @@ VALUE rbgm_surface_fill( int argc, VALUE *argv, VALUE self )
 		color = SDL_MapRGB(surf->format, r,g,b);
 	}
 
-	switch(argc)
+	if( NIL_P(vrect) )
 	{
-		case 1: /* fill whole thing */
-			SDL_FillRect(surf,NULL,color);
-			break;
-		case 2: /* fill a given rect */
-			rect = make_rect(\
-			                 NUM2INT(rb_ary_entry(argv[1],0)),\
-			                 NUM2INT(rb_ary_entry(argv[1],1)),\
-			                 NUM2INT(rb_ary_entry(argv[1],2)),\
-			                 NUM2INT(rb_ary_entry(argv[1],3))\
-			                 );
-			SDL_FillRect(surf,rect,color);
-			free(rect);
-			break;
-		default:
-			rb_raise( rb_eArgError,"Wrong number of arguments to fill (%d for 1 or 2)",NUM2INT(argc));
-			break;
+		SDL_FillRect(surf,NULL,color);
 	}
+	else
+	{
+		vrect = convert_to_array(vrect);
+
+		rect = make_rect(\
+										 NUM2INT(rb_ary_entry(vrect,0)),\
+										 NUM2INT(rb_ary_entry(vrect,1)),\
+										 NUM2INT(rb_ary_entry(vrect,2)),\
+										 NUM2INT(rb_ary_entry(vrect,3))\
+										 );
+		SDL_FillRect(surf,rect,color);
+		free(rect);
+	}
+
 	return self;
 }
 
 /* 
  *  call-seq: 
- *     get_at(pos)
  *     get_at(x,y)
+ *     get_at([x,y]) # deprecated
  *
  *  Return the color [r,g,b,a] of the pixel at the given coordinate. 
  *
- *  This method takes these argument:
- *  - pos:: the coordinate of the pixel to get the color of.
- *
- *  The coordinate can also be given as two arguments, separate +x+ and +y+
- *  positions.
+ *  Raises IndexError if the coordinates are out of bounds.
  */
 VALUE rbgm_surface_getat( int argc, VALUE *argv, VALUE self )
 {
 	SDL_Surface *surf;
-	int x,y;
-	int locked=0;
+	int x, y, locked;
 	Uint32 color;
 	Uint8 *pixels, *pix;
 	Uint8 r,g,b,a;
+	VALUE vx, vy;
 
 	Data_Get_Struct(self, SDL_Surface, surf);
 
-	if(argc>2)
-		rb_raise(rb_eArgError,"wrong number of arguments (%d for 1)",argc);
+	rb_scan_args(argc, argv, "11", &vx, &vy);
 
-	if(argc==1)
+	/* Still support passing position as an Array... for now. */
+	switch( TYPE(vx) )
 	{
-		x = NUM2INT(rb_ary_entry(argv[0],0));
-		y = NUM2INT(rb_ary_entry(argv[0],1));
-	}
-	else
-	{
-		x = NUM2INT(argv[0]);
-		y = NUM2INT(argv[1]);
+		case T_ARRAY: {
+			x = NUM2INT( rb_ary_entry(vx,0) );
+			y = NUM2INT( rb_ary_entry(vx,1) );
+			break;
+		}
+		default: {
+			x = NUM2INT(vx);
+			y = NUM2INT(vy);
+			break;
+		}
 	}
 
-	if(x<0 || x>surf->w)
+	if( x < 0 || x > surf->w )
 		rb_raise(rb_eIndexError,"x index out of bounds (%d, min 0, max %d)",\
 			x,surf->w);
-	if(y<0 || y>surf->h)
+	if( y < 0 || y > surf->h )
 		rb_raise(rb_eIndexError,"y index out of bounds (%d, min 0, max %d)",\
 			y,surf->h);
 
+	locked = 0;
 	/* lock surface */
 	if(SDL_MUSTLOCK(surf))
 	{
@@ -729,12 +701,13 @@ VALUE rbgm_surface_set_clip( VALUE self, VALUE clip )
 	Data_Get_Struct(self, SDL_Surface, surf);
 
 
-	if(clip == Qnil)
+	if( NIL_P(clip) )
 	{
 		SDL_SetClipRect(surf,NULL);
 	}
 	else
 	{ 
+		clip = convert_to_array(clip);
 		rect = make_rect(\
 		                 NUM2INT(rb_ary_entry(clip,0)),\
 		                 NUM2INT(rb_ary_entry(clip,1)),\
@@ -767,12 +740,15 @@ VALUE rbgm_surface_convert(int argc, VALUE *argv, VALUE self)
 {
 	SDL_Surface *surf, *othersurf, *newsurf;
   Uint32 flags = 0;
+	VALUE vother, vflags;
 
 	Data_Get_Struct(self, SDL_Surface, surf);
 
-	if(argc>0 && argv[0]!=Qnil)
+	rb_scan_args(argc, argv, "02", &vother, &vflags );
+
+	if( !NIL_P(vother) )
   {
-    Data_Get_Struct(argv[0], SDL_Surface, othersurf);
+    Data_Get_Struct(vother, SDL_Surface, othersurf);
   }
   else
   {
@@ -783,10 +759,7 @@ VALUE rbgm_surface_convert(int argc, VALUE *argv, VALUE self)
     }
   }
 
-	if(argc>1 && argv[1]!=Qnil)
-  {
-    flags = NUM2UINT(argv[1]);
-  }
+	flags = collapse_flags(vflags); /* in rubygame_shared.c */
 
   newsurf = SDL_ConvertSurface( surf, othersurf->format, flags );
 
@@ -922,7 +895,7 @@ static SDL_Surface* newsurf_fromsurf(SDL_Surface* surf, int width, int height)
  *  factors of -1 to #rotozoom (only if compiled with SDL_gfx 2.0.13 or
  *  greater). Your mileage may vary.
  */
-VALUE rbgm_transform_flip(int argc, VALUE *argv, VALUE self)
+VALUE rbgm_transform_flip(VALUE self, VALUE vhorz, VALUE vvert)
 {
   SDL_Surface *surf, *newsurf;
   int xaxis, yaxis;
@@ -931,13 +904,10 @@ VALUE rbgm_transform_flip(int argc, VALUE *argv, VALUE self)
   int pixsize, srcpitch, dstpitch;
   Uint8 *srcpix, *dstpix;
 
-  xaxis = argv[0];
-  yaxis = argv[1];
+  xaxis = RTEST(vhorz);
+  yaxis = RTEST(vvert);
 
-  if(argc < 2)
-    rb_raise(rb_eArgError,"wrong number of arguments (%d for 2)",argc);
   Data_Get_Struct(self,SDL_Surface,surf);
-
 
   /* Borrowed from Pygame: */
   newsurf = newsurf_fromsurf(surf, surf->w, surf->h);
@@ -1089,8 +1059,8 @@ void Rubygame_Init_Surface()
 	rb_define_method(cSurface,"convert",rbgm_surface_convert,-1);
 	rb_define_method(cSurface,"to_display",rbgm_surface_dispform,0);
 	rb_define_method(cSurface,"to_display_alpha",rbgm_surface_dispformalpha,0);
-	rb_define_method(cSurface,"savebmp",rbgm_image_savebmp,2);
-	rb_define_method(cSurface,"flip",rbgm_transform_flip,-1);
+	rb_define_method(cSurface,"savebmp",rbgm_image_savebmp,1);
+	rb_define_method(cSurface,"flip",rbgm_transform_flip,2);
 
 	
 	/* Surface initialization flags */

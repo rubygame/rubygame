@@ -131,15 +131,16 @@ static int accurate_delay(int ticks,int accuracy)
 VALUE rbgm_time_delay(int argc, VALUE *argv, VALUE module)
 {
   int ticks, goal, accuracy;
+  VALUE vtime, vgran;
 
-  if (argc < 1)
-    rb_raise(rb_eArgError,"wrong number of arguments (%d for 1)", argc);
-  goal = NUM2INT(argv[0]);
+  rb_scan_args(argc,argv,"11", &vtime, &vgran);
+
+  goal = NUM2INT(vtime);
   if(goal < 0)
     goal = 0;
 
-  if(argc > 1 && argv[1] != Qnil)
-    accuracy = NUM2INT(argv[1]);
+  if( RTEST(vgran) )
+    accuracy = NUM2INT(vgran);
   else
     accuracy = WORST_CLOCK_ACCURACY;
 

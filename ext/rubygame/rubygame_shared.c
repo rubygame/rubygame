@@ -40,6 +40,48 @@ SDL_Rect *make_rect(int x, int y, int w, int h)
 	return rect;
 }
 
+/* Take either nil, Numeric or an Array of Numerics, returns Uint32. */
+Uint32 collapse_flags(VALUE vflags)
+{
+	Uint32 flags = 0;
+	int i;
+
+	if( RTEST(vflags) )
+	{
+    switch( TYPE(vflags) ){
+			case T_ARRAY: {
+				int len = RARRAY(vflags)->len;
+				for(i=0;  i < len;  i++)
+        {
+          flags |= NUM2UINT(  rb_ary_entry( vflags,i )  );
+        }
+				break;
+			}
+
+			case T_FIXNUM: {
+				flags = NUM2UINT( vflags );
+				break;
+			}
+			default: {
+				rb_raise(rb_eArgError,"Wrong type for argument `flags' (wanted Fixnum or Array).");
+			}
+    }
+	}
+
+	return flags;
+}
+
+VALUE convert_to_array(VALUE val)
+{
+	VALUE v = rb_check_array_type(val);
+	if( TYPE(v) != T_ARRAY )
+	{
+		rb_raise(rb_eTypeError, "can't convert %s into Array",
+						 rb_obj_classname(val));
+	}
+	return v;
+}
+
 void Init_rubygame_shared()
 {
 

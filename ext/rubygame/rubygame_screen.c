@@ -101,39 +101,23 @@ VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
 VALUE rbgm_screen_setmode(int argc, VALUE *argv, VALUE module)
 {
   SDL_Surface *screen;
-  int w, h, depth, i;
+  int w, h, depth;
   Uint32 flags;
+	VALUE vsize, vdepth, vflags;
 
-  w = h = depth = flags = 0;
+	rb_scan_args(argc, argv, "12", &vsize, &vdepth, &vflags);
+	
+	vsize = convert_to_array(vsize);
+	w = NUM2INT(rb_ary_entry(vsize,0));
+	h = NUM2INT(rb_ary_entry(vsize,1));
 
-  if(argc < 1 || argc > 3)
-	rb_raise(rb_eArgError,"Wrong number of args to set mode(%d for 1)",argc);
-
-  if(argc >= 1)
+	depth = 0;
+  if( RTEST(vdepth) )
 	{
-	  w = NUM2INT(rb_ary_entry(argv[0],0));
-	  h = NUM2INT(rb_ary_entry(argv[0],1));
+		depth = NUM2INT(vdepth);
 	}
 
-  if(argc >= 2 && argv[1] != Qnil)
-	depth = NUM2INT(argv[1]);
-
-  if(argc >= 3 && argv[2] != Qnil)
-	{
-    switch( TYPE(argv[2]) ){
-    case T_ARRAY:;
-      for(i=0;  i < RARRAY(argv[2])->len;  i++)
-        {
-          flags |= NUM2UINT(  rb_ary_entry( argv[2],i )  );
-        }
-      break;
-    case T_FIXNUM:;
-      flags = NUM2UINT( argv[2] );
-      break;
-    default:;
-      rb_raise(rb_eArgError,"Wrong type for argument `flags' (wanted Fixnum or Array).");
-    }
-	}
+	flags = collapse_flags(vflags); /* in rubygame_shared */
 
   screen = SDL_SetVideoMode( w,h,depth,flags );
 
@@ -158,7 +142,9 @@ VALUE rbgm_screen_getsurface(VALUE module)
   SDL_Surface *surface;
   surface = SDL_GetVideoSurface();
   if(surface==NULL)
-	rb_raise(eSDLError,"Couldn't get video surface: %s",SDL_GetError());
+	{
+		rb_raise(eSDLError,"Couldn't get video surface: %s",SDL_GetError());
+	}
   return Data_Wrap_Struct( cScreen,0,0,surface );
 }
 
@@ -196,8 +182,10 @@ VALUE rbgm_screen_setcaption(VALUE self, VALUE title)
   char *title_str;
   title_str = "";				/* default to blank */
 
-	if( title != Qnil )
+	if( RTEST(title) )
+	{
 		title_str = StringValuePtr(title);
+	}
   SDL_WM_SetCaption(title_str,title_str);
   return self;
 }
@@ -222,33 +210,54 @@ VALUE rbgm_screen_update(int argc, VALUE *argv, VALUE self)
   int x,y,w,h;
   SDL_Surface *screen;
   Data_Get_Struct(self,SDL_Surface,screen);
+	VALUE vx, vy, vw, vh;
 
-  switch(argc)
+	rb_scan_args(argc, argv, "04", &vx, &vy, &vw, &vh);
+
+	x = y = w = h = 0;
+
+	if( RTEST(vx) )
 	{
-	case 0:
-	  x = y = w = h = 0;
-	  break;
-	case 1:
-	  if(argv[0]==Qnil)			/* nil */
-		x = y = w = h = 0;
-	  else						/* Array/Rect */
-		{
-		  x = NUM2INT(rb_ary_entry(argv[0],0));
-		  y = NUM2INT(rb_ary_entry(argv[0],1));
-		  w = NUM2INT(rb_ary_entry(argv[0],2));
-		  h = NUM2INT(rb_ary_entry(argv[0],3));
+		switch( TYPE(vx) ) {
+			case T_ARRAY: {
+				if( RARRAY(vx)->len < 4 )
+				{
+					rb_raise(rb_eArgError,"Array is too short to be a Rect (%s for 4)",
+									 RARRAY(vx)->len);
+				}
+				x = NUM2INT(rb_ary_entry(vx,0));
+				y = NUM2INT(rb_ary_entry(vx,1));
+				w = NUM2INT(rb_ary_entry(vx,2));
+				h = NUM2INT(rb_ary_entry(vx,3));
+				break;
+			}
+			case T_FLOAT:
+			case T_BIGNUM:
+			case T_FIXNUM: {
+				x = NUM2INT(vx);
+				y = NUM2INT(vy);
+				w = NUM2INT(vw);
+				h = NUM2INT(vh);
+				break;
+			}
+			default: {
+				rb_raise(rb_eTypeError,"Unrecognized type for x (wanted Array or Numeric).");
+				break;
+			}
 		}
-	  break;
-	case 4:
-	  x = NUM2INT(argv[0]);
-	  y = NUM2INT(argv[1]);
-	  w = NUM2INT(argv[2]);
-	  h = NUM2INT(argv[3]);
-	  break;
-	default:
-	  rb_raise(rb_eArgError,"wrong number of args to update (%d for 0)",argc);
-	  break;
 	}
+
+	Sint16 left,top,right,bottom;
+
+	left   = min( max( 0,    x    ), screen->w );
+	top    = min( max( 0,    y    ), screen->h );
+	right  = min( max( left, x + w), screen->w );
+	bottom = min( max( top,  y + h), screen->h );
+
+	x = left;
+	y = top;
+	w = right - left;
+	h = bottom - top;
 
   SDL_UpdateRect(screen,x,y,w,h);
   return self;
@@ -268,27 +277,42 @@ VALUE rbgm_screen_updaterects(VALUE self, VALUE array_rects)
   int i, num_rects;
   VALUE each_rect;
   SDL_Surface *screen;
-  SDL_Rect **rects;
+  SDL_Rect *rects;
 
   /* unwrap the Screen instance from self (VALUE) */
   Data_Get_Struct(self,SDL_Surface,screen);
 
   /* prepare an (uninitialized) array of Rects */
+  array_rects = convert_to_array(array_rects);
   num_rects = RARRAY(array_rects)->len;
-  rects = alloca(sizeof (SDL_Rect*) * num_rects);
+  rects = ALLOCA_N(SDL_Rect, num_rects);
 
   /* initialize the array of Rects from array_rects */
   for( i=0; i < num_rects; i++ )
-	{
-	  each_rect = rb_ary_entry(array_rects,i);
-	  rects[i]->x = NUM2INT(rb_ary_entry(each_rect,0));
-	  rects[i]->y = NUM2INT(rb_ary_entry(each_rect,1));
-	  rects[i]->w = NUM2INT(rb_ary_entry(each_rect,2));
-	  rects[i]->h = NUM2INT(rb_ary_entry(each_rect,3));
-	}
+  {
+    each_rect = rb_ary_entry(array_rects,i);
+
+    Sint16 x,y,left,top,right,bottom;
+    Uint16 w,h;
+
+    x = NUM2INT(rb_ary_entry(each_rect,0));
+    y = NUM2INT(rb_ary_entry(each_rect,1));
+    w = NUM2INT(rb_ary_entry(each_rect,2));
+    h = NUM2INT(rb_ary_entry(each_rect,3));
+
+		left   = min( max( 0,    x    ), screen->w );
+		top    = min( max( 0,    y    ), screen->h );
+		right  = min( max( left, x + w), screen->w );
+		bottom = min( max( top,  y + h), screen->h );
+
+    rects[i].x = left;
+    rects[i].y = top;
+    rects[i].w = right - left;
+    rects[i].h = bottom - top;
+  }
 
   /* call the SDL method to update from all these rects */
-  SDL_UpdateRects( screen, num_rects, *rects );
+  SDL_UpdateRects( screen, num_rects, rects );
 
   return self;
 }

@@ -23,7 +23,7 @@
 
 #define RUBYGAME_MAJOR_VERSION 2
 #define RUBYGAME_MINOR_VERSION 0
-#define RUBYGAME_PATCHLEVEL 0
+#define RUBYGAME_PATCHLEVEL 1
 
 extern VALUE rbgm_init(VALUE);
 extern VALUE rbgm_quit(VALUE);

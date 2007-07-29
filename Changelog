@@ -1,0 +1,114 @@
+== Changes from 2.0.0 to 2.0.1
+
+=== Bug Fixes
+
+- Fix: Segfaults in several C methods when passed an unexpected argument type.
+- Fix: Segfaults in Screen#update and Screen#update_rects when the Rect(s)
+  extended out of the Screen bounds.
+- Fix: Ftor#magnitude= behaving incorrectly.
+- Fix: Rect#clip! behaving incorrectly.
+- Fix: Sprites::Group#collide_group behaving incorrectly.
+- Fix: Surface#savebmp wanting too many arguments.
+
+=== Other Stuff
+
+- Argument handling for C methods is now more robust under the hood.
+- C methods which expect Array arguments will now also work with objects
+  that can be converted to an Array (with #to_ary), such as Ftor.
+
+== Changes from 1.1.0 to 2.0.0:
+
+*NOTICE*: version 2.0.0 is not totally backward-compatible with 1.1.0.
+You may have to update existing applications to the new syntax.
+(Hence the major version number going up.)
+
+=== API Changes
+
+==== Basic audio playback with SDL_mixer
+
+- Add: Rubygame::Mixer module (basic SDL_mixer audio playback).
+- Add: Rubygame::Mixer::Sample class (load audio samples).
+
+==== Event management system revamped
+
+- Add: Rubygame.fetch_sdl_events()
+- Add: Rubygame::EventQueue class.
+- Add: Rubygame::MailQueue mixin.
+- Retire: Rubygame::Queue class.
+
+==== Surface swallows Draw, Transform, and Image methods
+
+- Updated: Rubygame::Surface class
+  - Add: Surface.load_image() (migrated from Image).
+  - Add: ##savebmp (migrated from Image).
+  - Add: ##draw_* (migrated from Draw).
+  - Add: ##rotozoom, ##zoom (migrated from Transform).
+  - Add: ##zoom_to method.
+
+- Retire: Draw module (methods merged into Surface).
+- Retire: Transform module (methods merged into Surface).
+- Retire: Image module (methods merged into Surface).
+
+==== Clock class improved
+
+- Updated: Rubygame::Clock class
+  - Clock is now directly under Rubygame (not Rubygame::Time).
+  - Clock.new() takes no arguments, but yields self if a block is given.
+  - framerate limiting with ##tick is now much more accurate.
+  - Add: Clock.runtime(), Clock.wait(), Clock.delay() (migrated from Time)
+  - Rename: ##fps to ##framerate.
+  - Rename: ##desired_fps to ##target_framerate.
+  - Rename: ##desired_mspf to ##target_frametime.
+  - Rename: ##time to ##lifetime.
+
+- Retire: Time module (methods merged into Clock).
+
+==== Experimental classes/modules
+
+- Add: Rubygame::MediaBag class.
+- Add: Rubygame::Ftor class.
+- Add: Rubygame::Hotspot mixin.
+- Change: Rubygame::SFont class must be explicitly imported
+  (require 'rubygame/sfont').
+
+==== New system for version and capability detection
+
+- Rubygame::VERSIONS: a hash table with the version numbers of rubygame, 
+  SDL, and any SDL_* libraries that were compiled in.
+- Methods which are not supported will no be defined in the namespace; 
+  formerly, they would be defined but nonfunctional (issued a warning and
+  returned nil).
+
+==== Miscellaneous other changes and additions
+
+- Add: Rubygame.quit (cleanly exit SDL; resets resolution after fullscreen).
+
+- Updated: Rubygame::Surface class
+  - Argument list for Surface.new() has changed.
+  - Add: ##clip and ##clip=.
+  - Add: ##convert, ##to_display, and ##to_display_alpha.
+
+- Updated: Rubygame::Screen class
+  - Rename: Screen.set_mode() to Screen.new().
+  - Add: Screen.set_mode() and Screen.instance() (aliases for Screen.new()).
+  - Add: ##title, ##title= (replaces ##caption and ##set_caption)
+
+- Updated: Rubygame::TTF class
+  - Add: ##render_utf8 and ##render_unicode methods.
+  - Add: ##size_text method.
+
+=== Bug Fixes
+
+- Fix several erroneous Rect methods.
+- Fix "bignum out of range of unsigned long (RangeError)" when using
+  Rubygame::FULLSCREEN.
+
+=== Other Stuff
+
+- New build/install system with Rake.
+- Split the monolithic rubygame extension into modules:
+  rubygame_core::  main SDL interface.
+  rubygame_gfx::   SDL_gfx interface.
+  rubygame_image:: SDL_image interface.
+  rubygame_mixer:: SDL_mixer interface.
+  rubygame_ttf::   SDL_ttf interface.

@@ -21,7 +21,7 @@
 
 module Rubygame
 
-  # *NOTE*: you must `require "hotspot"' manually to gain access to
+  # *NOTE*: you must require 'rubygame/hotspot' manually to gain access to
   # Rubygame::Hotspot. It is not imported with Rubygame by default!
   # 
   # Hotspot is a mixin module to extend an object with "hotspots": custom,

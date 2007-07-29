@@ -20,7 +20,7 @@ $smooth = false
 Rubygame.init()
 
 queue = EventQueue.new() # new EventQueue with autofetch
-queue.ignore = [MouseMotionEvent, ActiveEvent]
+queue.ignore = [MouseMotionEvent]
 clock = Clock.new()
 clock.target_framerate = 50
 
@@ -31,7 +31,7 @@ end
 class Panda
 	include Sprites::Sprite
 	@@pandapic = Surface.load_image("panda.png")
-	@@pandapic.set_colorkey(@@pandapic.get_at([0,0]))
+	@@pandapic.set_colorkey(@@pandapic.get_at(0,0))
 	attr_accessor :vx, :vy, :speed
 	def initialize(x,y)
 		super()
@@ -82,7 +82,7 @@ class ExpandaPanda < Panda
 	def update_image(time)
 		@delta = (@delta + time*@rate/36) % (Math::PI*2)
 		zoom = 1 + Math.sin(@delta)/2
-		@image = @@pandapic.rotozoom(0,zoom,$smooth)
+		@image = @@pandapic.zoom(zoom,$smooth)
 	end
 end
 
@@ -96,9 +96,9 @@ class WobblyPanda < Panda
 
 	def update_image(time)
 		@delta = (@delta + time*@rate/36) % (Math::PI*2)
-		zoomx = 1.5 + Math.sin(@delta)/6
-		zoomy = 1.5 + Math.cos(@delta)/5
-		@image = @@pandapic.zoom([zoomx,zoomy],$smooth)
+		zoomx = (1.5 + Math.sin(@delta)/6) * @@pandapic.width
+		zoomy = (1.5 + Math.cos(@delta)/5) * @@pandapic.height
+		@image = @@pandapic.zoom_to(zoomx,zoomy,$smooth)
 	end
 end
 
@@ -162,6 +162,7 @@ background.draw_ellipse_s([200,150],[30,25],[250,250,250])
 background.draw_ellipse_a([200,150],[30,25],[250,250,250])
 
 # Let's make some labels
+require "rubygame/sfont"
 sfont = SFont.new("term16.png")
 sfont.render("Arrow keys move the spinning panda!").blit(background,[10,10])
 
@@ -176,6 +177,10 @@ b.fill([150,20,40])
 b.set_alpha(123)# approx. half transparent
 b.blit(background,[20,40])
 background.blit(screen,[0,0])
+
+# Refresh the screen once. During the loop, we'll use 'dirty rect' updating
+# to refresh only the parts of the screen that have changed.
+screen.update()
 
 if Joystick.num_joysticks > 0
 	Joystick.new(0)  # So that joystick events will appear on the queue
@@ -219,6 +224,11 @@ catch(:rubygame_quit) do
 				when K_RIGHT
 					panda1.vx = 0
 				end
+			when ActiveEvent
+				# ActiveEvent appears when the window gains or loses focus.
+				# This helps to ensure everything is refreshed after the Rubygame
+				# window has been covered up by a different window.
+				screen.update()
 			when QuitEvent
 				throw :rubygame_quit
 			when MouseDownEvent
@@ -246,10 +256,12 @@ catch(:rubygame_quit) do
 				#puts "jaxis: %d %d"%[event.axis,event.value]
 			end
 		end
+
 		pandas.undraw(screen,background)
 		pandas.update(update_time)
-		pandas.draw(screen)
-		screen.update()
+		dirty_rects = pandas.draw(screen)
+		screen.update_rects(dirty_rects)
+
 		update_time = clock.tick()
 		unless framerate == clock.framerate
 			framerate = clock.framerate

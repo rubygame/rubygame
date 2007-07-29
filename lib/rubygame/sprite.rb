@@ -197,6 +197,19 @@ module Rubygame
 				}
 			end
 
+
+			# call-seq: undraw(surface, background)  ->  Rect
+			# 
+			# 'Erase' the sprite from +surface+ by drawing over it with part of
+			# +background+. For best results, +background+ should be the same size
+			# as +surface+.
+			# 
+			# Returns a Rect representing the area of +surface+ which was affected.
+			# 
+			def undraw(dest, background)
+				background.blit(dest, @rect, @rect)
+			end			
+			
 			# This method is meant to be overwritten by Sprite-based classes to
 			# define meaningful behavior. It can take any number of arguments you
 			# want, be called however often you want, and do whatever you want.
@@ -266,14 +279,18 @@ module Rubygame
 			def collide_group(group, killa=false, killb=false)
 				sprites = {}
 				self.each { |sprite|
-					sprites[sprite] = sprite.collide_group(group)
+					col = sprite.collide_group(group)
+					sprites[sprite] = col if col.length > 0
 				}
 				if killa
 					sprites.each_key { |sprite| sprite.kill }
 				end
 				if killb
-					sprites.each_value { |sprite| sprite.kill }
+					sprites.each_value do |array|
+						array.each { |sprite| sprite.kill }
+					end
 				end
+				return sprites
 			end
 
 			# Remove each sprite in +sprites+ from the Group. Each sprite is notified
@@ -368,8 +385,7 @@ module Rubygame
 			# over).
 			def undraw(dest,background)
 				self.each { |sprite|
-					background.blit(dest,sprite.rect,sprite.rect)
-					@dirty_rects.push(sprite.rect)
+					@dirty_rects.push( sprite.undraw(dest, background) )
 				}
 			end
 		end # module UpdateGroup

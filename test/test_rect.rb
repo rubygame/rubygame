@@ -12,10 +12,8 @@
 # If you have the time and motivation, please consider contributing
 # a few more tests to improve this suite.
 # 
-# The following methods (of Rect if unspecified) have NO TESTS:
+# The following methods (of Rect if unspecified) have NO TESTS AT ALL:
 #  new_from_object
-#  clip
-#  clip!
 #  collide_hash
 #  collide_hash_all
 #  collide_array
@@ -28,16 +26,15 @@
 #  move!
 #  normalize
 #  normalize!
-#  union
-#  union!
 #  union_all
 #  union_all!
 #  Surface#make_rect
 # 
-# The following methods (of Rect if unspecified) have INSUFFICIENT TESTS:
-#  (no methods)
+# The following methods (of Rect if unspecified) have NOT ENOUGH TESTS:
+#  union
+#  union!
 # 
-# The following methods (of Rect if unspecified) have SUFFICIENT TESTS:
+# The following methods (of Rect if unspecified) have ENOUGH TESTS:
 #  initialize
 #  to_s
 #  inspect
@@ -65,6 +62,8 @@
 #  midtop
 #  midright
 #  midbottomX
+#  clip
+#  clip!
 #
 
 # --
@@ -78,6 +77,7 @@
 #  MIDPOINTS
 #  CLAMP
 #  INFLATE
+#  CLIP
 # ++
 
 
@@ -764,4 +764,78 @@ class TC_Rect < Test::Unit::TestCase
     assert_equal([0,0,20,20], r2.union(r1))
   end
 
+	# --
+	# CLIP
+	# ++
+
+	def test_clip_offleft
+		r1 = Rect.new([2,5,10,10])
+    r2 = Rect.new([4,1,20,20])
+		should_be = Rect.new([4,5,8,10])
+		assert_equal(should_be, r1.clip(r2))
+		assert_equal(should_be, r2.clip(r1))
+	end
+
+	def test_clip_offright
+		r1 = Rect.new([15,5,10,10])
+    r2 = Rect.new([4,1,20,20])
+		should_be = Rect.new([15,5,9,10])
+		assert_equal(should_be, r1.clip(r2))
+		assert_equal(should_be, r2.clip(r1))
+	end
+
+	def test_clip_offtop
+		r1 = Rect.new([5,2,10,10])
+    r2 = Rect.new([1,4,20,20])
+		should_be = Rect.new([5,4,10,8])
+		assert_equal(should_be, r1.clip(r2))
+		assert_equal(should_be, r2.clip(r1))
+	end
+
+	def test_clip_offbottom
+		r1 = Rect.new([5,15,10,10])
+    r2 = Rect.new([1,4,20,20])
+		should_be = Rect.new([5,15,10,9])
+		assert_equal(should_be, r1.clip(r2))
+		assert_equal(should_be, r2.clip(r1))
+	end
+
+	def test_clip_offleftandright
+		r1 = Rect.new([2,5,30,10])
+    r2 = Rect.new([4,1,20,20])
+		should_be = Rect.new([4,5,20,10])
+		assert_equal(should_be, r1.clip(r2))
+		assert_equal(should_be, r2.clip(r1))
+	end
+
+	def test_clip_offtopandbottom
+		r1 = Rect.new([2,5,10,30])
+    r2 = Rect.new([4,1,20,20])
+		should_be = Rect.new([4,5,8,16])
+		assert_equal(should_be, r1.clip(r2))
+		assert_equal(should_be, r2.clip(r1))
+	end
+
+	def test_clip_offallsides
+		r1 = Rect.new([2,5,30,30])
+    r2 = Rect.new([4,1,20,20])
+		should_be = Rect.new([4,5,20,16])
+		assert_equal(should_be, r1.clip(r2))
+		assert_equal(should_be, r2.clip(r1))
+	end
+
+	def test_clip_contained
+		r1 = Rect.new([6,3,5,5])
+    r2 = Rect.new([4,1,20,20])
+		should_be = r1
+		assert_equal(should_be, r1.clip(r2))
+		assert_equal(should_be, r2.clip(r1))
+	end
+
+	def test_clip_nooverlap
+		r1 = Rect.new([6,3,5,5])
+    r2 = Rect.new([20,1,20,20])
+		assert_equal(Rect.new([6,3,0,0]), r1.clip(r2))
+		assert_equal(Rect.new([20,1,0,0]), r2.clip(r1))
+	end
 end

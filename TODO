@@ -1,15 +1,38 @@
 = TODO / ROADMAP
 
-=== 2.0.1
+=== 2.1.0 (next minor release)
 
-- Use rb_scan_args! Better for my health! :) See: http://www.oreillynet.com/ruby/blog/2007/04/c_extension_authors_use_rb_sca_1.html
+- Mixer::Music module (patch from Johan Berntsson)
 
-- Improve argument checking for methods written in C, especially when an Array
-  is expected as an argument. See Bug 1704064 ('Many methods segfault...')
-  - Do we need to make sure color components are between 0 and 255 before
-    we pass them to SDL functions?
+- Color (representation of a color)
+  - ColorRGB and ColorHSV classes
+  - Mix/combine colors using various blending modes (add, multiply, etc.)
+  - Library of common pre-defined colors. (:red, :black, :chartreuse, etc.)
+  - Integrate with SDL/OpenGL functions (automatic conversion).
+
+=== 3.0.0 (next major release)
+
+- OpenGL-based 2D scene/view/object model.
+- Geometric primitives classes (collision detection, drawing).
+- Keyboard events keysyms to be :symbols (e.g. :uparrow, :a, :spacebar)
+- Clock class to be based on Ruby's timer (allows multi-threading). 
+  Units change to seconds (as a float), not milliseconds (as an integer).
+
+- Change Sprites::Group#collide_group to scrap the 'killa/killb' stuff,
+  take a block instead.
 
 === On the horizon...
+
+- Path (Curve?) (graphs/plots for tracing position and other uses)
+  - Can find the position N units along the path.
+  - Can draw a line showing the path.
+  - LinearPath (connect the dots, linear interpolation)
+  - BezierPath (chain of continuous cubic Bézier curves)
+  - CodePath (calculated from a code block)
+
+- Better support for non-US keyboards, particularly generating strings for
+  keypresses: (EURO, WORLD*). Will need someone with a non-US keyboard to
+  test this.
 
 - Flesh out Mixer API.
 
@@ -19,31 +42,3 @@
   - Screen#update (cannot pass object with rect attribute)
   - Screen#update_rects (same as above)
   - Why not just call the ruby function from within C?
-
-=== Off in space somewhere...
-
-- Color (representation of a color)
-  - ColorRGB and ColorHSV classes
-  - Mix/combine colors using various blending modes (add, multiply, etc.)
-  - Library of common pre-defined colors.
-  - Integrate with SDL functions (automatic conversion).
-
-- Path (Curve?) (graphs/plots for tracing position and other uses)
-  - Can find the position N units along the path.
-  - Can draw a line showing the path.
-  - LinearPath (connect the dots, linear interpolation)
-  - BezierPath (chain of continuous cubic Bézier curves)
-  - AlgorithmicPath (calculated from a code block)
-
-- Add draw_bezier (SDL_gfx's bezierRGBA)
-
-- Add hq2x, hq3x, hq4x scaling -- http://www.hiend3d.com/hq3x.html
-
-- Should UpdateGroup union highly-overlapping rectangles for efficiency? (non-unioning may be a desirable behavior)
-
-- LimitGroup#add could be more efficient (replace many sprites at the
-  same time, rather than doing it one by one.) Very low priority.
-
-- Better support for non-US keyboards, particularly generating strings for
-  keypresses: (EURO, WORLD*). Will need someone with a non-US keyboard to
-  test this.

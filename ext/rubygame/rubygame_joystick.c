@@ -29,7 +29,7 @@ VALUE cJoy;
 VALUE rbgm_joy_numjoysticks(VALUE);
 VALUE rbgm_joy_getname(VALUE, VALUE);
 
-VALUE rbgm_joystick_new(int, VALUE*, VALUE);
+VALUE rbgm_joystick_new(VALUE, VALUE);
 
 VALUE rbgm_joystick_index(VALUE);
 VALUE rbgm_joystick_name(VALUE);
@@ -76,15 +76,13 @@ VALUE rbgm_joy_getname( VALUE module, VALUE joynum )
  *  Create and initialize an interface to the nth joystick on the
  *  system. Raises SDLError if the joystick could not be opened.
  */
-VALUE rbgm_joystick_new( int argc, VALUE *argv, VALUE module)
+VALUE rbgm_joystick_new( VALUE module, VALUE vindex )
 {
 	VALUE self;
 	SDL_Joystick *joy;
 	int index;
 
-	if(argc < 1)
-		rb_raise(rb_eArgError,"wrong number of arguments (%d for 1)",argc);
-	index = NUM2INT(argv[0]);
+	index = NUM2INT(vindex);
 
 	joy = SDL_JoystickOpen(index);
 	if(joy == NULL)
@@ -93,12 +91,6 @@ VALUE rbgm_joystick_new( int argc, VALUE *argv, VALUE module)
 			index,SDL_GetError());
 	}
 	self = Data_Wrap_Struct(cJoy, 0,SDL_JoystickClose, joy);
-	rb_obj_call_init(self,argc,argv);
-	return self;
-}
-
-VALUE rbgm_joystick_initialize( int argc, VALUE *argv, VALUE self)
-{
 	return self;
 }
 
@@ -237,8 +229,7 @@ void Rubygame_Init_Joystick()
 	rb_define_singleton_method(cJoy,"num_joysticks",rbgm_joy_numjoysticks,0);
 	rb_define_singleton_method(cJoy,"get_name",rbgm_joy_getname,1);
 
-	rb_define_singleton_method(cJoy,"new",rbgm_joystick_new,-1);
-	rb_define_method(cJoy,"initialize",rbgm_joystick_initialize,-1);
+	rb_define_singleton_method(cJoy,"new",rbgm_joystick_new,1);
 	rb_define_method(cJoy,"index",rbgm_joystick_index,0);
 	rb_define_method(cJoy,"name",rbgm_joystick_name,0);
 	rb_define_method(cJoy,"axes",rbgm_joystick_numaxes,0);

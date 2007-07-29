@@ -14,6 +14,14 @@ def from_env_or_config(string)
   ([ENV[string], CONFIG[string]] - ["", nil])[0] or ""
 end
 
+def try_sdl_config( flag )
+	if $options.sdl_config
+		`sdl-config #{flag}`.chomp 
+	else
+		return ""
+	end
+end
+
 OBJEXT = from_env_or_config("OBJEXT")
 DLEXT = from_env_or_config("DLEXT")
 
@@ -30,15 +38,31 @@ spec = Gem::Specification.new do |s|
 
   candidates = Dir.glob("{lib,ext,samples,doc}/**/*")
   s.files    = candidates.delete_if do |item|
-    item.include?("svn")
+    item.include?("svn") or item =~ /\.#{OBJEXT}/
   end
 
   s.require_paths = ["lib", "lib/rubygame/", "ext/rubygame/"]
   s.autorequire = "rubygame.rb"
   s.extensions = ["Rakefile"]
 
-  s.extra_rdoc_files = ["./README", "./LICENSE", "./CREDITS",\
-    "./TODO", "./doc/getting_started.rdoc"]
+  s.extra_rdoc_files = Dir.glob("doc/*.rdoc")
+  s.extra_rdoc_files += ["README",
+                         "LICENSE",
+                         "CREDITS",
+                         "TODO",
+                         "Changelog"]
+end
+
+task :linux do
+	spec.platform = Gem::Platform::LINUX_586
+end
+
+task :macosx do
+	spec.platform = Gem::Platform::DARWIN
+end
+
+task :win32 do
+	spec.platform = Gem::Platform::WIN32
 end
 
 Rake::GemPackageTask.new(spec) do |pkg| 
@@ -49,16 +73,16 @@ Rake::RDocTask.new do |rd|
   rd.main = "README"
   rd.title = "Rubygame #{RUBYGAME_VERSION} Docs"
   rd.rdoc_files.include("ext/rubygame/*.c",
-                        "lib/rubygame/**/*.rb",
+                        "lib/rubygame/**/**/*.rb",
                         "doc/*.rdoc",
-                        "./README",
-                        "./LICENSE",
-                        "./CREDITS",
-                        "./TODO")
+                        "README",
+                        "LICENSE",
+                        "CREDITS",
+                        "TODO",
+                        "Changelog")
 end
 
 task :default => [:build]
-task :extension => [:build]
 desc "Compile all of the extensions"
 task :build
 
@@ -82,6 +106,14 @@ $options = OpenStruct.new(:gfx         => true,
                          :sitearchdir => CONFIG["sitearchdir"],
                          :sitelibdir  => CONFIG["sitelibdir"]
                          )
+
+# Default behavior for win32 is to skip sdl-config,
+# since it's usually not available. It can still be
+# enabled through the options, though.
+if PLATFORM =~ /win32/
+	$options.sdl_config = false
+end
+
 require 'optparse'
 optparse = OptionParser.new
 
@@ -146,13 +178,14 @@ rule( /RUBYLIBDIR/ ) do |t|
 end
 
 CFLAGS = [from_env_or_config("CFLAGS"),
-          (`sdl-config --cflags`.chomp if $options.sdl_config),
+          $options.cflags,
+          try_sdl_config("--cflags"),
           "-I. -I#{CONFIG['topdir']}",
           ("-g" if $options.debug) ].join(" ")
 
 LINK_FLAGS = [from_env_or_config("LIBRUBYARG_SHARED"),
-              ENV["LINK_FLAGS"],
-              (`sdl-config --libs`.chomp if $options.sdl_config)].join(" ")
+              from_env_or_config("LINK_FLAGS"),
+              try_sdl_config("--libs")].join(" ")
 
 DEFALUT_EXTDIR = File.join('ext','rubygame','')
 
@@ -184,23 +217,37 @@ class ExtensionModule
   end
 
   # Create a file task for each dynamic library (.so) we want to generate.
+  # 
+  # The file task invokes another task which does the actual compiling, and
+  # has the true prerequisites.
+  # 
+  # This is done so that the prerequisites don't have to be compiled when 
+  # the final product already exists (such as in the precompiled win32 gem).
+	# 
   def create_dl_task
-    dynlib_full  = "#{@directory}#{@dynlib}.#{DLEXT}"
-    objs_full = @objs.collect { |obj| "#{@directory}#{obj}.#{OBJEXT}" }
+    dynlib_full  = File.join( @directory, "#{dynlib}.#{DLEXT}" )
+    objs_full = @objs.collect { |obj|
+      File.join( @directory, "#{obj}.#{OBJEXT}" )
+    }
 
-    file dynlib_full => objs_full do |task|
-      link_command = "#{from_env_or_config('LDSHARED')} #{LINK_FLAGS} #{@lflags} -o #{task.name} #{task.prerequisites.join(' ')}"
+    taskname = @dynlib.gsub('rubygame_','')
+
+    file dynlib_full do
+      Rake::Task[taskname].invoke
+    end
+
+    desc "Compile the #{@dynlib} extension"
+    task taskname => objs_full do |task|
+      link_command = "#{from_env_or_config('LDSHARED')} #{LINK_FLAGS} #{@lflags} -o #{dynlib_full} #{task.prerequisites.join(' ')}"
       if( $options.verbose )
         sh link_command
       else
-        puts "Linking compiled files to create #{File.basename(@directory)}/#{File.basename(task.name)}"
+        puts "Linking compiled files to create #{File.basename(@directory)}/#{File.basename(dynlib_full)}"
         `#{link_command}`
       end
     end
-    taskname = @dynlib.gsub('rubygame_','').intern
-    desc "Compile the #{@dynlib} extension"
-    task  taskname => [dynlib_full]
-    task :build => [taskname]   # Add this as a prereq of the build
+
+    task :build => [dynlib_full]   # Add this as a prereq of the build
     task :install_ext => [dynlib_full] # ...and install_ext tasks
   end
 
@@ -312,6 +359,20 @@ end
 def install_files_into(glob, directory)
   mkdir_p directory
   cp FileList.new(glob).to_a, directory
+end
+
+desc "(Called when installing via Rubygems)"
+task :extension => [:fix_filenames, :build]
+
+task :fix_filenames do
+	unless DLEXT == 'so'
+		Rake::Task[:install_ext].prerequisites.each do |prereq|
+			prereq = prereq.ext('so')
+			if File.exist? prereq
+				mv prereq, prereq.ext(DLEXT)
+			end
+		end
+	end
 end
 
 desc "Install only the extensions"

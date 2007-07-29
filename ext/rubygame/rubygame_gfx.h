@@ -63,6 +63,8 @@
 #endif
 
 extern void Init_rubygame_gfx();
+extern void extract_color(VALUE, Uint8*, Uint8*, Uint8*, Uint8*);
+extern void extract_xy(VALUE, Sint16*, Sint16*);
 
 extern void draw_line(VALUE, VALUE, VALUE, VALUE, int);
 extern VALUE rbgm_draw_line(VALUE, VALUE, VALUE, VALUE);
