@@ -262,7 +262,7 @@ catch(:rubygame_quit) do
 		dirty_rects = pandas.draw(screen)
 		screen.update_rects(dirty_rects)
 
-		update_time = clock.tick()
+		update_time = clock.tick() * 1000.0
 		unless framerate == clock.framerate
 			framerate = clock.framerate
 			screen.title = "Rubygame test [%d fps]"%framerate
