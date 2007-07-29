@@ -28,7 +28,6 @@ def main()
 	scene.add_camera pic_in_pic 
 
 	queue = Rubygame::EventQueue.new()
-	clock = Rubygame::Clock.new { |c| c.target_framerate = 60 }
 
 	panda = GLImageSprite.new {
 		@surface = Rubygame::Surface.load_image('big_panda.png')
@@ -44,8 +43,8 @@ def main()
 			time = tick.passed
 			@t += time
 			@angle = 0.4 * Math::sin(@t / 300.0)
-#			@scale = Vector2[1.0 + 0.05*Math::sin(@t/85.0),
-#			                 1.0 + 0.05*Math::cos(@t/83.0)]
+			@scale = Vector2[1.0 + 0.05*Math::sin(@t/85.0),
+			                 1.0 + 0.05*Math::cos(@t/83.0)]
 			super
 		end
 	end
@@ -82,8 +81,7 @@ def main()
 			end
 
 			# update everything
-			tick = clock.tick
-			scene.update( tick )
+			scene.update()
 
 			# redraw everything
 

@@ -12,6 +12,7 @@ class Scene
 	attr_accessor :event_handler
 	attr_accessor :objects
 	attr_accessor :screen	
+	attr_accessor :clock
 	
 	def initialize(size)
 		Rubygame::GL.set_attrib(Rubygame::GL::RED_SIZE, 5)
@@ -20,12 +21,15 @@ class Scene
 		Rubygame::GL.set_attrib(Rubygame::GL::DEPTH_SIZE, 16)
 		Rubygame::GL.set_attrib(Rubygame::GL::DOUBLEBUFFER, 1)
 		@screen = Rubygame::Screen.new(size, 16, [Rubygame::OPENGL])
+		@clock = Rubygame::Clock.new { |c| c.target_framerate = 60 }
 		
 		@cameras = []
 		@active_camera = nil
 		@objects = GLGroup.new
+
+		scene = self
 		@event_handler = EventHandler.new() do
-			add_hook( TickEvent ) { |event| @objects.update( event ) }
+			add_hook( TickEvent ) { |event| scene.objects.update( event ) }
 		end
 	end
 
@@ -65,7 +69,7 @@ class Scene
 		@active_camera.activate
 	end
 	
-	def update( tick )
-		@event_handler.process_event( tick )
+	def update
+		@event_handler.process_event( @clock.tick )
 	end
 end
