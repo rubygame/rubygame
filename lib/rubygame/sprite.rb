@@ -197,6 +197,19 @@ module Rubygame
 				}
 			end
 
+
+			# call-seq: undraw(surface, background)  ->  Rect
+			# 
+			# 'Erase' the sprite from +surface+ by drawing over it with part of
+			# +background+. For best results, +background+ should be the same size
+			# as +surface+.
+			# 
+			# Returns a Rect representing the area of +surface+ which was affected.
+			# 
+			def undraw(dest, background)
+				background.blit(dest, @rect, @rect)
+			end			
+			
 			# This method is meant to be overwritten by Sprite-based classes to
 			# define meaningful behavior. It can take any number of arguments you
 			# want, be called however often you want, and do whatever you want.
@@ -369,8 +382,7 @@ module Rubygame
 			# over).
 			def undraw(dest,background)
 				self.each { |sprite|
-					background.blit(dest,sprite.rect,sprite.rect)
-					@dirty_rects.push(sprite.rect.dup)
+					@dirty_rects.push( sprite.undraw(dest, background) )
 				}
 			end
 		end # module UpdateGroup

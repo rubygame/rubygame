@@ -35,6 +35,11 @@
   Date::          received 2007-03-04; applied 2007-04-13 (r235).
 
 - <b>Johan Berntsson</b>
-  Email::         johan@microheaven.com
+  Email::         johan at microheaven.com
   Contribution::  Patch to add Mixer::Music class (music playback).
   Date::          2007-04-27 (r304).
+
+- <b>Daniel Neis Araujo</b> / danielneis
+  Email::         danielneis at gmail.com
+  Contribution::  Patch to add Sprite#undraw (based on UpdateGroup#undraw).
+  Date::          2007-07-29 (r460).
