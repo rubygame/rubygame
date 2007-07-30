@@ -27,6 +27,7 @@ VALUE cSurface;
 VALUE cRect;
 VALUE eSDLError;
 SDL_Rect *make_rect(int, int, int, int);
+VALUE make_symbol( char* );
 void Init_rubygame_shared();
 
 SDL_Rect *make_rect(int x, int y, int w, int h)
@@ -80,6 +81,11 @@ VALUE convert_to_array(VALUE val)
 						 rb_obj_classname(val));
 	}
 	return v;
+}
+
+VALUE make_symbol( char *str )
+{
+	return ID2SYM( rb_intern( str ) );
 }
 
 void Init_rubygame_shared()

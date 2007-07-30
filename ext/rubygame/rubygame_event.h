@@ -44,5 +44,6 @@ extern VALUE convert_keymod(SDLMod);
 extern VALUE convert_mousebuttons(Uint8);
 extern VALUE rbgm_convert_sdlevent(SDL_Event);
 extern VALUE rbgm_fetchevents(VALUE);
+extern VALUE keysymbol_lookup( SDLKey );
 
 #endif

@@ -30,7 +30,7 @@ module Rubygame
 	# will be made uppercase or alternate, based on U.S. keyboard layout.
 	# E.g. "a" becomes "A", "1" becomes "!", and "/" becomes "?".
 	def Rubygame.key2str( sym, mods )
-		if (mods.include? K_LSHIFT) or (mods.include? K_RSHIFT)
+		if (mods.include? :left_shift) or (mods.include? :right_shift)
 			return (Rubygame::Key::KEY2UPPER[sym]\
 				or Rubygame::Key::KEY2ASCII[sym] or "")
 		else
@@ -96,7 +96,7 @@ module Rubygame
 		# key::  either an integer keysym (e.g. Rubygame::K_A) or string (e.g. "a")
 		# mods:: array of modifier keysyms
 		def initialize(key,mods)
-			if key.kind_of? Integer
+			if key.kind_of? Symbol
 				@key = key
 				@string = Rubygame.key2str(key, mods) #a string or nil
 			elsif key.kind_of? String
@@ -104,7 +104,7 @@ module Rubygame
 				if @key != nil
 					@string = key
 				else
-					raise(ArgumentError,"First argument of KeyDownEvent.new() must be an Integer KeySym (like K_A) or a ASCII-like String (like \"a\" or \"A\"). Got %s (%s)"%[key,key.class])
+					raise(ArgumentError,"First argument of KeyDownEvent.new() must be a symbol (like :a) or a ASCII-like String (like \"a\" or \"A\"). Got %s (%s)"%[key,key.class])
 				end
 			end
 			@mods = mods
@@ -117,7 +117,7 @@ module Rubygame
 	class KeyUpEvent < Event
 		attr_accessor :string,:key,:mods
 		def initialize(key,mods)
-			if key.kind_of? Integer
+			if key.kind_of? Symbol
 				@key = key
 				@string = Rubygame.key2str(key, mods) #a string or nil
 			elsif key.kind_of? String
@@ -125,7 +125,7 @@ module Rubygame
 				if @key != nil
 					@string = key
 				else
-					raise(ArgumentError,"First argument of KeyUpEvent.new() must be an Integer KeySym (like K_A) or a ASCII-like String (like \"a\" or \"A\"). Got %s (%s)"%[key,key.class])
+					raise(ArgumentError,"First argument of KeyUpEvent.new() must be a symbol (like :a) or a ASCII-like String (like \"a\" or \"A\"). Got %s (%s)"%[key,key.class])
 				end
 			end
 			@mods = mods
