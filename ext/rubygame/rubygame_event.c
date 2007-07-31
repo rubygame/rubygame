@@ -603,25 +603,6 @@ void Rubygame_Init_Event()
   cResizeEvent =  rb_define_class_under(mRubygame,"ResizeEvent",cEvent);
   cExposeEvent =  rb_define_class_under(mRubygame,"ExposeEvent",cEvent);
 
-	/* Event constants */
-	rb_define_const(mRubygame,"NOEVENT",UINT2NUM(SDL_NOEVENT));
-	rb_define_const(mRubygame,"ACTIVEEVENT",UINT2NUM(SDL_ACTIVEEVENT));
-	rb_define_const(mRubygame,"KEYDOWN",UINT2NUM(SDL_KEYDOWN));
-	rb_define_const(mRubygame,"KEYUP",UINT2NUM(SDL_KEYUP));
-	rb_define_const(mRubygame,"MOUSEMOTION",UINT2NUM(SDL_MOUSEMOTION));
-	rb_define_const(mRubygame,"MOUSEBUTTONDOWN",UINT2NUM(SDL_MOUSEBUTTONDOWN));
-	rb_define_const(mRubygame,"MOUSEBUTTONUP",UINT2NUM(SDL_MOUSEBUTTONUP));
-	rb_define_const(mRubygame,"JOYAXISMOTION",UINT2NUM(SDL_JOYAXISMOTION));
-	rb_define_const(mRubygame,"JOYBALLMOTION",UINT2NUM(SDL_JOYBALLMOTION));
-	rb_define_const(mRubygame,"JOYHATMOTION",UINT2NUM(SDL_JOYHATMOTION));
-	rb_define_const(mRubygame,"JOYBUTTONDOWN",UINT2NUM(SDL_JOYBUTTONDOWN));
-	rb_define_const(mRubygame,"JOYBUTTONUP",UINT2NUM(SDL_JOYBUTTONUP));
-	rb_define_const(mRubygame,"QUIT",UINT2NUM(SDL_QUIT));
-	rb_define_const(mRubygame,"SYSWMEVENT",UINT2NUM(SDL_SYSWMEVENT));
-	rb_define_const(mRubygame,"VIDEORESIZE",UINT2NUM(SDL_VIDEORESIZE));
-	rb_define_const(mRubygame,"VIDEOEXPOSE",UINT2NUM(SDL_VIDEOEXPOSE));
-	rb_define_const(mRubygame,"USEREVENT",UINT2NUM(SDL_USEREVENT));
- 
 	/* Joystick constants */	
 	rb_define_const(mRubygame,"HAT_CENTERED",UINT2NUM(SDL_HAT_CENTERED));
 	rb_define_const(mRubygame,"HAT_UP",UINT2NUM(SDL_HAT_UP));
@@ -638,9 +619,5 @@ void Rubygame_Init_Event()
 	rb_define_const(mRubygame,"MOUSE_LEFT",UINT2NUM(SDL_BUTTON_LEFT));
 	rb_define_const(mRubygame,"MOUSE_MIDDLE",UINT2NUM(SDL_BUTTON_MIDDLE));
 	rb_define_const(mRubygame,"MOUSE_RIGHT",UINT2NUM(SDL_BUTTON_RIGHT));
-	rb_define_const(mRubygame,"MOUSE_LMASK",UINT2NUM(SDL_BUTTON_LMASK));
-	rb_define_const(mRubygame,"MOUSE_MMASK",UINT2NUM(SDL_BUTTON_MMASK));
-	rb_define_const(mRubygame,"MOUSE_RMASK",UINT2NUM(SDL_BUTTON_RMASK));
-
 }
 
