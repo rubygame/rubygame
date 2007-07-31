@@ -60,7 +60,7 @@ VALUE rbgm_ttf_render_unicode(int , VALUE*, VALUE);
  */
 VALUE rbgm_ttf_setup(VALUE module)
 {
-	if(TTF_Init()!=0)
+	if(!TTF_WasInit() && TTF_Init()!=0)
 		rb_raise(eSDLError,"could not setup TTF class: %s",TTF_GetError());
 	return Qnil;
 }
