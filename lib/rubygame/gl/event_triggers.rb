@@ -6,10 +6,19 @@ class AttrTrigger
 	end
 	
 	def match?( event )
-		attrs = @attributes.dup
-		klass = attrs.delete(:klass)
-		if event.kind_of?(klass)
-			attrs.all? { |key, value| event.send(key) == value }
+		@attributes.all? { |key, value| event.send(key) == value }
+	end
+end
+
+class InstanceTrigger
+	def initialize( klass, attributes={} )
+		@klass = klass
+		@attributes = attributes
+	end
+	
+	def match?( event )
+		if event.kind_of?( @klass )
+			@attributes.all? { |key, value| event.send(key) == value }
 		else
 			false
 		end
