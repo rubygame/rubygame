@@ -3,6 +3,7 @@
 require 'rubygame'
 require 'rubygame/gl/scene'
 require 'rubygame/gl/sprite'
+require 'rubygame/gl/event_hook'
 
 include Rubygame
 
@@ -40,11 +41,11 @@ def main()
 
 	class << panda
 		def update( tick )
-			time = tick.passed
+			time = tick.seconds
 			@t += time
-			@angle = 0.4 * Math::sin(@t / 300.0)
-			@scale = Vector2[1.0 + 0.05*Math::sin(@t/85.0),
-			                 1.0 + 0.05*Math::cos(@t/83.0)]
+			@angle = 0.4 * Math::sin(@t / 0.3)
+			@scale = Vector2[1.0 + 0.05*Math::sin(@t/0.085),
+			                 1.0 + 0.05*Math::cos(@t/0.083)]
 			super
 		end
 	end
@@ -61,23 +62,44 @@ def main()
 
 	handler = scene.event_handler
 
-	handler.add_hook( MouseMotionEvent ) do |event|
-		panda.pos = Vector2[event.pos[0], HEIGHT - event.pos[1]]
+	set_pos_action = BlockAction.new do |owner, event|
+		owner.pos = Vector2[event.pos[0], HEIGHT - event.pos[1]]
 	end
-	handler.add_hook( MouseDownEvent ) do |event|
-		ruby.pos = Vector2[event.pos[0], HEIGHT - event.pos[1]]
+	
+	handler.add_hook( Hook.new(panda) do
+		@trigger = InstanceTrigger.new( MouseMotionEvent )
+		@action = set_pos_action
+	end )
+	
+	handler.add_hook( Hook.new(ruby) do
+		@trigger = MouseClickTrigger.new()
+		@action = set_pos_action
+	end )
+
+	throw_quit_action = BlockAction.new do |owner, event|
+		throw :quit
 	end
 
-	throw_quit = Proc.new { |event| throw :quit }
-	
-	handler.add_hook( KeyDownEvent, :key => K_Q, &throw_quit )
-	handler.add_hook( KeyDownEvent, :key => K_ESCAPE, &throw_quit )
-	handler.add_hook( QuitEvent, &throw_quit )	
+	handler.add_hook( Hook.new(nil) do
+		@trigger = KeyPressTrigger.new( :q )
+		@action = throw_quit_action
+	end )
+
+	handler.add_hook( Hook.new(nil) do
+		@trigger = KeyPressTrigger.new( :escape )
+		@action = throw_quit_action
+	end )
+
+
+	handler.add_hook( Hook.new(nil) do
+		@trigger = InstanceTrigger.new( QuitEvent )
+		@action = throw_quit_action
+	end )
 	
 	catch(:quit) do
 		loop do
 			queue.each do |event|
-				scene.event_handler.process_event(event)
+				scene.event_handler.handle(event)
 			end
 
 			# update everything
