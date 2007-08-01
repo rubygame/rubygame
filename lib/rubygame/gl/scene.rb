@@ -27,25 +27,25 @@ class Scene
 		@active_camera = nil
 		@objects = GLGroup.new
 
-		scene = self
-		@event_handler = EventHandler.new() do
-			add_hook( Hook.new(scene.objects) do 
-				@trigger = InstanceTrigger.new( TickEvent )
-				@action = MethodAction.new( :update, true )
-			end )
+		@event_handler = EventHandler.new()
+
+		@event_handler.add_hook( @objects ) do 
+			@trigger = InstanceTrigger.new( TickEvent )
+			@action = MethodAction.new( :update, true )
 		end
+
 	end
 
 	def add_camera( camera )
 		@cameras << camera
 		scene = self
-		@event_handler.add_hook( Hook.new(camera) do
+		@event_handler.add_hook( camera ) do
 			@trigger = InstanceTrigger.new( DrawEvent )
 			@action = BlockAction.new do |owner, event| 
 				scene.set_active_camera( owner )
 				owner.draw( scene.objects )
 			end 
-		end )
+		end
 	end
 	
 	def add_object( object )

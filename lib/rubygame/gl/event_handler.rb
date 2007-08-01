@@ -13,50 +13,81 @@ class EventHandler
 
 	# For testing purposes. Remove for production?
 	attr_accessor :hooks
+
+	# 
+	#  Takes either a Hook instance, or parameters to pass to Hook.new.
+	#  Returns a Hook instance either way!
+	# 
+	def _return_or_create_hook( hook_or_owner, block ) # :nodoc:
+		if hook_or_owner.kind_of?(Hook)
+			return hook_or_owner
+		else
+			return Hook.new(hook_or_owner, &block )
+		end			
+	end
+	private :_return_or_create_hook
 	
 	#  call-seq:
-	#    add_hook( hook, prepend=false )  ->  nil
+	#    append_hook( hook )  ->  hook
+	#    append_hook( owner, &block )  ->  hook
 	# 
-	#  Add a hook to perform an action when a matching event is processed.
-	#  If the EventHandler already has that hook, this method will only keep
-	#  the first one.
-	#  See Hook and #process_event.
+	#  Puts a Hook at the bottom of the stack (it will be handled last).
+	#  If the EventHandler already has that hook, it is moved to the bottom.
+	#  See Hook and #handle. 
 	# 
-	#  hook::     the hook to add. (Hook, required)
-	#  prepend::  if true, add the hook at the top of the stack,
-	#             otherwise it's added at the bottom. (boolean, optional)
+	#  This method has two distinct forms. The first form adds an existing Hook
+	#  instance; the second form constructs a new Hook instance and adds it.
 	# 
-	#  Returns::  nil
+	#  hook::     the hook to add. (Hook, for first form only)
 	# 
-	def add_hook( hook, prepend=false )
-		if prepend
-			@hooks = [hook] | @hooks
-		else
-			@hooks = @hooks | [hook]
-		end
+	#  owner::    the new hook's owner. (Object, for second form only)
+	#  block::    a block to initialize the hook. (Proc, for second form only)
+	# 
+	#  Returns::  the hook that was added. (Hook)
+	# 
+	#  Contrast this method with #prepend, which puts the Hook at
+	#  the top of the stack.
+	# 
+	def add_hook( hook_or_owner, &block )
+		hook = _return_or_create_hook( hook_or_owner, block )
+		@hooks = @hooks | [hook]
+		return hook
+	end
 
-		return nil
+	#  call-seq:
+	#    prepend_hook( hook )  ->  hook
+	#    prepend_hook( owner, &block )  ->  hook
+	# 
+	#  Exactly like #append_hook, except that the Hook is put at the
+	#  top of the stack (it will be handled first).
+	#  If the EventHandler already has that hook, it is moved to the top.
+	# 
+	def prepend_hook( hook_or_owner )
+		hook = _return_or_create_hook( hook_or_owner, block )
+		@hooks = [hook] | @hooks
+		return hook
 	end
 	
 	#  call-seq:
-	#    remove_hook( hook )  ->  nil
+	#    remove_hook( hook )  ->  hook
 	# 
 	#  Remove a hook from the EventHandler, if that hook exists.
 	#  If the EventHandler doesn't have that hook, this method will do nothing.
 	# 
 	#  hook::     the hook to remove. (Hook, required) 
 	# 
-	#  Returns::  nil
+	#  Returns::  the hook that was removed. (Hook)
 	# 
 	def remove_hook( hook )
 		@hooks -= [hook]
-		return nil
+		return hook
 	end
 
 	#  call-seq:
 	#    handle( event )  ->  nil
 	#  
-	#  Triggers every hook which matches the given event. See Hook.
+	#  Triggers every hook in the stack which matches the given event.
+	#  See Hook.
 	#  
 	#  event:     the event to handle. (Object, required)
 	# 
