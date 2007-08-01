@@ -277,7 +277,7 @@ def main
 				return			# break out of the main function
 			when Rubygame::KeyDownEvent
 				case event.key 
-				when Rubygame::K_ESCAPE
+				when :escape
 					return			# break out of the main function
 				end
 			when Rubygame::MouseMotionEvent

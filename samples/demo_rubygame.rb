@@ -195,19 +195,19 @@ catch(:rubygame_quit) do
 			case event
 			when KeyDownEvent
 				case event.key
-				when K_ESCAPE
+				when :escape
 					throw :rubygame_quit 
-				when K_Q
+				when :q
 					throw :rubygame_quit 
-				when K_UP
+				when :up
 					panda1.vy = -1
-				when K_DOWN
+				when :down
 					panda1.vy = 1
-				when K_LEFT
+				when :left
 					panda1.vx = -1
-				when K_RIGHT
+				when :right
 					panda1.vx = 1
-				when K_S
+				when :s
 					$smooth = !$smooth
 					puts "#{$smooth?'En':'Dis'}abling smooth scale/rotate."
 				else
@@ -215,13 +215,13 @@ catch(:rubygame_quit) do
 				end
 			when KeyUpEvent
 				case event.key
-				when K_UP
+				when :up
 					panda1.vy = 0
-				when K_DOWN
+				when :down
 					panda1.vy = 0
-				when K_LEFT
+				when :left
 					panda1.vx = 0
-				when K_RIGHT
+				when :right
 					panda1.vx = 0
 				end
 			when ActiveEvent
@@ -262,7 +262,7 @@ catch(:rubygame_quit) do
 		dirty_rects = pandas.draw(screen)
 		screen.update_rects(dirty_rects)
 
-		update_time = clock.tick() * 1000.0
+		update_time = clock.tick().seconds * 1000.0
 		unless framerate == clock.framerate
 			framerate = clock.framerate
 			screen.title = "Rubygame test [%d fps]"%framerate

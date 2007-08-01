@@ -66,35 +66,35 @@ def main()
 		owner.pos = Vector2[event.pos[0], HEIGHT - event.pos[1]]
 	end
 	
-	handler.add_hook( Hook.new(panda) do
+	handler.append_hook( panda ) do
 		@trigger = InstanceTrigger.new( MouseMotionEvent )
 		@action = set_pos_action
-	end )
+	end
 	
-	handler.add_hook( Hook.new(ruby) do
+	handler.append_hook( ruby ) do
 		@trigger = MouseClickTrigger.new()
 		@action = set_pos_action
-	end )
+	end
 
 	throw_quit_action = BlockAction.new do |owner, event|
 		throw :quit
 	end
 
-	handler.add_hook( Hook.new(nil) do
+	handler.append_hook( scene ) do
 		@trigger = KeyPressTrigger.new( :q )
 		@action = throw_quit_action
-	end )
+	end
 
-	handler.add_hook( Hook.new(nil) do
+	handler.append_hook( scene ) do
 		@trigger = KeyPressTrigger.new( :escape )
 		@action = throw_quit_action
-	end )
+	end
 
 
-	handler.add_hook( Hook.new(nil) do
+	handler.append_hook( scene ) do
 		@trigger = InstanceTrigger.new( QuitEvent )
 		@action = throw_quit_action
-	end )
+	end
 	
 	catch(:quit) do
 		loop do
