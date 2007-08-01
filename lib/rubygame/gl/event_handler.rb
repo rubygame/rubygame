@@ -48,7 +48,7 @@ class EventHandler
 	#  Contrast this method with #prepend, which puts the Hook at
 	#  the top of the stack.
 	# 
-	def add_hook( hook_or_owner, &block )
+	def append_hook( hook_or_owner, &block )
 		hook = _return_or_create_hook( hook_or_owner, block )
 		@hooks = @hooks | [hook]
 		return hook
