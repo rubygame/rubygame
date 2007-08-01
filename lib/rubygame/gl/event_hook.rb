@@ -1,5 +1,5 @@
-require 'rubygame/event_triggers'
-require 'rubygame/event_actions'
+require 'rubygame/gl/event_triggers'
+require 'rubygame/gl/event_actions'
 
 class Hook
 	attr_accessor :owner, :trigger, :action
@@ -9,8 +9,8 @@ class Hook
 		instance_eval(&block) if block_given?
 	end
 
-	def matches?( event )
-		@trigger.matches?( event )
+	def match?( event )
+		@trigger.match?( event )
 	end
 	
 	def perform( event )
