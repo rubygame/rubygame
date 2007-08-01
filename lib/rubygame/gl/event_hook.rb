@@ -4,9 +4,13 @@ require 'rubygame/gl/event_actions'
 class Hook
 	attr_accessor :owner, :trigger, :action
 	
-	def initialize( owner, trigger=nil, action=nil, &block )
-		@owner, @trigger, @action = owner, trigger, action
-		instance_eval(&block) if block_given?
+	def initialize( &block )
+		@owner, @trigger, @action = nil
+		instance_eval(&block)
+		unless (@trigger and @action)
+			# @owner is allowed to be nil, I think
+			raise( ArgumentError, "must set @trigger and @action")
+		end
 	end
 
 	def match?( event )
