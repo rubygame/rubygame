@@ -29,17 +29,23 @@ class Scene
 
 		scene = self
 		@event_handler = EventHandler.new() do
-			add_hook( TickEvent ) { |event| scene.objects.update( event ) }
+			add_hook( Hook.new(scene.objects) do 
+				@trigger = InstanceTrigger.new( TickEvent )
+				@action = MethodAction.new( :update, true )
+			end )
 		end
 	end
 
 	def add_camera( camera )
 		@cameras << camera
 		scene = self
-		@event_handler.add_hook( DrawEvent ) do |ev| 
-			set_active_camera( camera )
-			camera.draw( scene.objects )
-		end
+		@event_handler.add_hook( Hook.new(camera) do
+			@trigger = InstanceTrigger.new( DrawEvent )
+			@action = BlockAction.new do |owner, event| 
+				scene.set_active_camera( owner )
+				owner.draw( scene.objects )
+			end 
+		end )
 	end
 	
 	def add_object( object )
@@ -47,7 +53,7 @@ class Scene
 	end
 	
 	def draw
-		@event_handler.process_event( DrawEvent.new )
+		@event_handler.handle( DrawEvent.new )
 	end
 	
 	def make_default_camera
@@ -70,6 +76,6 @@ class Scene
 	end
 	
 	def update
-		@event_handler.process_event( @clock.tick )
+		@event_handler.handle( @clock.tick )
 	end
 end
