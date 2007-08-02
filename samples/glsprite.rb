@@ -78,29 +78,14 @@ def main()
 		@action = set_pos_action
 	end
 
-	throw_quit_action = BlockAction.new do |owner, event|
-		throw :quit
-	end
-
 	handler.append_hook do
 		@owner = scene
-		@trigger = KeyPressTrigger.new( :q )
-		@action = throw_quit_action
+		@trigger = AnyTrigger.new(KeyPressTrigger.new( :q ),
+															KeyPressTrigger.new( :escape ),
+															InstanceTrigger.new( QuitEvent ))
+		@action = BlockAction.new { |owner, event| throw :quit }
 	end
 
-	handler.append_hook do
-		@owner = scene
-		@trigger = KeyPressTrigger.new( :escape )
-		@action = throw_quit_action
-	end
-
-
-	handler.append_hook do
-		@owner = scene
-		@trigger = InstanceTrigger.new( QuitEvent )
-		@action = throw_quit_action
-	end
-	
 	catch(:quit) do
 		loop do
 			queue.each do |event|

@@ -1,5 +1,26 @@
 require 'rubygame'
 
+
+class AllTrigger
+	def initialize( *triggers )
+		@triggers = triggers
+	end
+	
+	def match?( event )
+		@triggers.all? { |trigger| trigger.match? event }
+	end
+end
+
+class AnyTrigger
+	def initialize( *triggers )
+		@triggers = triggers
+	end
+	
+	def match?( event )
+		@triggers.any? { |trigger| trigger.match? event }
+	end
+end
+
 class AttrTrigger
 	def initialize( attributes )
 		@attributes = attributes
@@ -7,6 +28,16 @@ class AttrTrigger
 	
 	def match?( event )
 		@attributes.all? { |key, value| event.send(key) == value }
+	end
+end
+
+class BlockTrigger
+	def initialize( &block )
+		@block = block
+	end
+	
+	def match?( event )
+		@block.call( event )
 	end
 end
 
