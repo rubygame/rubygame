@@ -1,4 +1,5 @@
 require 'matrix'
+require 'rubygame/gl/collider'
 
 RAD2DEG = 180 / Math::PI
 DELTA = 0.00001
@@ -111,6 +112,10 @@ class Vector2 < Vector
 		Math.acos( self.udot(other) )
 	end
 
+	def perp
+		Vector2[-y, x]
+	end
+	
 	def projected_onto(v)
 		Vector2[*((v * v.dot(self) * (1/v.magnitude**2))[0..1])]
 	end
@@ -136,6 +141,7 @@ end
 
 class Point < Vector
 	include VectorTweaks
+	include Collider
 
 	def self.[](x,y,*junk)
 		super(x,y,1)

@@ -43,6 +43,17 @@ class Polygon
 		return Point[*(sum * 1.quo(@points.length).to_f)]
 	end
 
+	def collide_point( other )
+		pointsA = self.points
+
+		collides = true
+		pointsA.each_index do |i|
+			q, p = pointsA[i], pointsA[i-1]
+			collides &= projection_overlap?( (q - p).perp, pointsA, [other] )
+		end
+		collides
+	end
+	
 	def collide_polygon(other)
 		pointsA = self.points
 		pointsB = other.points
@@ -51,7 +62,7 @@ class Polygon
 			collides = true
 			points.each_index do |i|
 				q, p = points[i], points[i-1]
-				collides &= projection_overlap?( q - p, pointsA, pointsB )
+				collides &= projection_overlap?( (q - p).perp, pointsA, pointsB )
 			end
 			collides
 		end

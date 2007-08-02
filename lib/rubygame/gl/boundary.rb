@@ -105,6 +105,26 @@ class Boundary
 		overlap?(@left, @right, other.left, other.right) and \
 		overlap?(@bottom, @top, other.bottom, other.top)
 	end
+
+	#  call-seq:
+	#    collide_point( other )
+	# 
+	#  Perform a collision check between this Boundary and a Point.
+	#  See Collider#collide.
+	#  
+	#  other::    The Point to check collision with. (Point, required)
+	# 
+	#  Returns::  true iff this Boundary overlaps or touches the Point. (boolean)
+	#  
+	#  Example:
+	#    a = Boundary.new( 10, 50, 10, 30 )
+	#    b = Point[15,20]
+	#    a.collide_point( b )               # => true
+	# 	
+	def collide_point( other )
+		overlap?( @left, @right, other.x, other.x ) and \
+		overlap?( @bottom, @top, other.y, other.y )
+	end
 	
 	#  call-seq:
 	#    collide_polygon( other )
