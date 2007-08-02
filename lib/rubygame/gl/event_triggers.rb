@@ -42,17 +42,39 @@ class KeyPressTrigger
 end
 
 class MouseClickTrigger
-	def initialize( button=:any )
+	def initialize( button=:any, bounds=:anywhere )
 		@button = button
+		@bounds = bounds
 	end
 	
 	def match?( event )
 		if event.kind_of?( Rubygame::MouseDownEvent )
-			if (@button == :any) or (event.button == @button)
-				true
-			end
+			((@button == :any) or (event.button == @button)) and \
+			((@bounds == :anywhere) or (@bounds.collide( Point[*event.pos] )))
 		else
 			false
 		end
+	end
+end
+
+class MouseHoverTrigger
+	def initialize( button=:any, bounds=:anywhere )
+		@button = button
+		@bounds = bounds
+	end
+	
+	def match?( event )
+		if event.kind_of?( Rubygame::MouseMotionEvent )
+			(@button == :any or event.buttons.include?(@button)) and \
+			(@bounds == :anywhere or @bounds.collide( Point[*event.pos] ))
+		else
+			false
+		end
+	end
+end
+
+class TickTrigger
+	def match?( event )
+		event.kind_of?( Rubygame::TickEvent )
 	end
 end

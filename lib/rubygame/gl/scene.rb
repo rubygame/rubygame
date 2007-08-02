@@ -32,7 +32,7 @@ class Scene
 		scene = self
 		@event_handler.append_hook do 
 			@owner = scene.objects
-			@trigger = InstanceTrigger.new( TickEvent )
+			@trigger = TickTrigger.new
 			@action = MethodAction.new( :update, true )
 		end
 

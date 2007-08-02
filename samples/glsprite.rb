@@ -68,13 +68,13 @@ def main()
 	
 	handler.append_hook do
 		@owner = panda
-		@trigger = InstanceTrigger.new( MouseMotionEvent )
+		@trigger = MouseHoverTrigger.new
 		@action = set_pos_action
 	end
 	
 	handler.append_hook do
 		@owner = ruby
-		@trigger = MouseClickTrigger.new()
+		@trigger = MouseClickTrigger.new
 		@action = set_pos_action
 	end
 
