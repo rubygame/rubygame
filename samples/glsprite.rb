@@ -112,7 +112,7 @@ def main()
 
 			# redraw everything
 
-			if panda.shape.collide ruby.shape
+			if panda.collides_with? ruby
 				glColor([255,0,0])
 			else
 				glColor([255,255,255])

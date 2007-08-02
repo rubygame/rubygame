@@ -90,6 +90,10 @@ class GLImageSprite < GLSprite
 		glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	end
+	
+	def collides_with?( other )
+		self.shape.collide( other.shape )
+	end
 
 	def draw()
 		shape = @shape
