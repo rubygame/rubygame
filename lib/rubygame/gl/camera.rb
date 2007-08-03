@@ -1,5 +1,6 @@
 require 'rubygame/gl/shared'
-	
+require 'rubygame/gl/event_types'
+
 class Camera
 	attr_accessor :screen_region
 	attr_accessor :world_region
@@ -25,6 +26,27 @@ class Camera
 		glClearColor(r,g,b,a)
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	end	
+
+	def screen_to_world
+		# Assuming the default camera, for now.
+		Matrix.scale(1,-1) * Matrix.translate(0, -@screen_region.height)
+	end
+	
+	def convert_to_worldspace( pos )
+		screen_to_world() * Point[*pos]
+	end
+
+	def make_mouseclick( event )
+		MouseClickEvent.new(event.button,
+		                    convert_to_worldspace(event.pos) )
+	end
+	
+	def make_mousehover( event )
+		MouseHoverEvent.new(event.buttons, 
+		                    convert_to_worldspace(event.pos),
+		                    convert_to_worldspace(event.rel) )
+	end
+
 	
 	def draw( group )
 		clear if @clear_screen

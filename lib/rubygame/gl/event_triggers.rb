@@ -1,5 +1,6 @@
 require 'rubygame'
-
+require 'rubygame/gl/event_types'
+require 'rubygame/gl/matricks'
 
 class AllTrigger
 	def initialize( *triggers )
@@ -79,9 +80,9 @@ class MouseClickTrigger
 	end
 	
 	def match?( event )
-		if event.kind_of?( Rubygame::MouseDownEvent )
+		if event.kind_of?( MouseClickEvent )
 			((@button == :any) or (event.button == @button)) and \
-			((@bounds == :anywhere) or (@bounds.collide( Point[*event.pos] )))
+			((@bounds == :anywhere) or (@bounds.collide( event.world_pos )))
 		else
 			false
 		end
@@ -95,9 +96,9 @@ class MouseHoverTrigger
 	end
 	
 	def match?( event )
-		if event.kind_of?( Rubygame::MouseMotionEvent )
+		if event.kind_of?( MouseHoverEvent )
 			(@button == :any or event.buttons.include?(@button)) and \
-			(@bounds == :anywhere or @bounds.collide( Point[*event.pos] ))
+			(@bounds == :anywhere or @bounds.collide( event.world_pos ))
 		else
 			false
 		end

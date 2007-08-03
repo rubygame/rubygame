@@ -19,8 +19,8 @@ def main()
 		bound = scene.cameras.first.screen_region
 		@screen_region = bound.scale(0.25,0.25)
 		@screen_region = \
-		  @screen_region.move(Vector2[WIDTH-@screen_region.right - 20,
-																	HEIGHT-@screen_region.top - 20])
+			@screen_region.move(Vector2[WIDTH-@screen_region.right - 20,
+			                            HEIGHT-@screen_region.top - 20])
 		@world_region = bound.scale(1,1)
 		@clear_screen = true
 		@background_color = [0.3, 0.3, 0.3, 0.5]
@@ -35,7 +35,6 @@ def main()
 		@has_alpha = true
 		@pos = Point[WIDTH/2, HEIGHT/2]
 		@angle = 0.4
-#		@scale = Vector2[0.5,0.5]
 		setup_texture()
 	}
 
@@ -63,7 +62,7 @@ def main()
 	handler = scene.event_handler
 
 	set_pos_action = BlockAction.new do |owner, event|
-		owner.pos = Vector2[event.pos[0], HEIGHT - event.pos[1]]
+		owner.pos = event.world_pos
 	end
 	
 	handler.append_hook do
@@ -85,7 +84,23 @@ def main()
 															InstanceTrigger.new( QuitEvent ))
 		@action = BlockAction.new { |owner, event| throw :quit }
 	end
-
+	
+	handler.append_hook do
+		@owner = scene.cameras[0]
+		@trigger = InstanceTrigger.new( Rubygame::MouseDownEvent )
+		@action = BlockAction.new do |owner, event|
+			scene.event_handler.handle( owner.make_mouseclick(event) )
+		end
+	end
+	
+	handler.append_hook do
+		@owner = scene.cameras[0]
+		@trigger = InstanceTrigger.new( Rubygame::MouseMotionEvent )
+		@action = BlockAction.new do |owner, event|
+			scene.event_handler.handle( owner.make_mousehover(event) )
+		end
+	end
+	
 	catch(:quit) do
 		loop do
 			queue.each do |event|
