@@ -3,9 +3,7 @@ require 'rubygame/gl/sprite'
 require 'rubygame/gl/camera'
 require 'rubygame/gl/boundary'
 require 'rubygame/gl/event_handler'
-
-class DrawEvent
-end
+require 'rubygame/gl/event_types'
 
 class Scene
 	attr_accessor :cameras, :active_camera
