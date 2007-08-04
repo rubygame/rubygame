@@ -1,8 +1,8 @@
 require 'rubygame/gl/matricks'
-require 'rubygame/gl/collider'
+require 'rubygame/gl/collidable'
 
 module Shape
-	include Collider
+	include Collidable
 
 	attr_reader :matrix
 	attr_accessor :depth

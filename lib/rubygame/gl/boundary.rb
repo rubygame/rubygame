@@ -1,5 +1,5 @@
 require 'rubygame/gl/matricks'
-require 'rubygame/gl/collider'
+require 'rubygame/gl/collidable'
 require 'rubygame/gl/sat'
 
 
@@ -15,7 +15,7 @@ require 'rubygame/gl/sat'
 #  horizontal and vertical axes.
 # 
 class Boundary
-	include Collider
+	include Collidable
 
 	attr_reader :left, :right, :bottom, :top
 	
@@ -90,7 +90,7 @@ class Boundary
 	#    collide_boundary( other )
 	# 
 	#  Perform a collision check between this Boundary and another Boundary.
-	#  See Collider#collide.
+	#  See Collidable#collide.
 	#  
 	#  other::    The other Boundary to check collision with. (Boundary, required)
 	# 
@@ -110,7 +110,7 @@ class Boundary
 	#    collide_point( other )
 	# 
 	#  Perform a collision check between this Boundary and a Point.
-	#  See Collider#collide.
+	#  See Collidable#collide.
 	#  
 	#  other::    The Point to check collision with. (Point, required)
 	# 
@@ -130,7 +130,7 @@ class Boundary
 	#    collide_polygon( other )
 	# 
 	#  Perform a collision check between this Boundary and a Polygon.
-	#  See Collider#collide.	
+	#  See Collidable#collide.	
 	#  
 	#  other::    The Polygon to check collision with. (Polygon, required)
 	# 

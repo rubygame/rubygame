@@ -1,4 +1,4 @@
-module Collider
+module Collidable
 	def collide( other )
 		collide_method = "collide_#{other.class.name.downcase}".to_sym
 		return send( collide_method, other )

@@ -1,10 +1,10 @@
 require 'matricks'
 require 'shape'
-require 'collider'
+require 'collidable'
 
 class Group
 	include Shape
-	include Collider
+	include Collidable
 
 	attr_accessor :members
 	attr_accessor :pos, :angle, :scale

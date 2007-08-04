@@ -1,5 +1,5 @@
 require 'matrix'
-require 'rubygame/gl/collider'
+require 'rubygame/gl/collidable'
 
 RAD2DEG = 180 / Math::PI
 DELTA = 0.00001
@@ -83,7 +83,7 @@ class Vector2 < Vector
 	def self.[](x,y,*junk)
 		super(x,y,0)
 	end
-
+	
 	def to_p
 		Point[x,y]
 	end
@@ -141,7 +141,7 @@ end
 
 class Point < Vector
 	include VectorTweaks
-	include Collider
+	include Collidable
 
 	def self.[](x,y,*junk)
 		super(x,y,1)
