@@ -93,11 +93,11 @@ K_UP => [nil, "up"],\
 K_DOWN => [nil, "down"],\
 K_RIGHT => [nil, "right"],\
 K_LEFT => [nil, "left"],\
-K_INSERT => [nil, "insert", "ins"]\
+K_INSERT => [nil, "insert", "ins"],\
 K_HOME => [nil, "home"],\
 K_END => [nil, "end"],\
-K_PAGEUP => [nil, "page_up", "pgup"]\
-K_PAGEDOWN => [nil, "page_down", "pgdn"]\
+K_PAGEUP => [nil, "page_up", "pgup"],\
+K_PAGEDOWN => [nil, "page_down", "pgdn"],\
 K_F1 => [nil, "f1", "function_1"],\
 K_F2 => [nil, "f2", "function_2"],\
 K_F3 => [nil, "f3", "function_3"],\
@@ -134,8 +134,7 @@ K_BREAK => [nil, "break"],\
 K_MENU => [nil, "menu"],\
 K_POWER => [nil, "power"],\
 # I have no idea how to get a Euro symbol here!
-K_EURO => ["\u20ac", "euro"],\ 
-
+K_EURO => ["\u20ac", "euro"],\
 # just K_WORLD_0 to K_WORLD_95 after this
 K_WORLD_0 => [nil, "world_0"],\
 K_WORLD_1 => [nil, "world_1"],\

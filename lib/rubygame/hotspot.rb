@@ -177,7 +177,7 @@ module Rubygame
         hotspot(a[2],x+a[0],y+a[1])
       end
     rescue NoMethodError => e
-      unless defined? @hotspots
+      if not(defined? @hotspots)
         return nil
       elsif a.nil?
         smartspot(label,x,y)
