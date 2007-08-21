@@ -32,6 +32,23 @@ VALUE rbgm_init(VALUE);
 VALUE rbgm_quit(VALUE);
 void Define_Rubygame_Constants();
 
+/* 
+ *  call-seq:
+ *    key_name(sym) -> string
+ *
+ *  Given the sym of a key, returns a printable representation.  This
+ *  differs from key2str in that this will always return something
+ *  printable (i.e. K_ENTER becomes 'Enter')
+ */
+VALUE rbgm_keyname(VALUE self, VALUE sym)
+{
+  SDLKey key = NUM2INT(sym); /* I hope this works */
+  char *result = SDL_GetKeyName(key);
+
+  return rb_str_new2(result);
+}
+
+
 /*
  *  call-seq:
  *     init  ->  nil
@@ -76,6 +93,7 @@ void Init_rubygame_core()
 
 	rb_define_module_function(mRubygame,"init",rbgm_init,0);
 	rb_define_module_function(mRubygame,"quit",rbgm_quit,0);
+	rb_define_singleton_method(mRubygame,"key_name",rbgm_keyname, 1);
 	cRect = rb_define_class_under(mRubygame,"Rect",rb_cArray);
 
   rb_hash_aset(rb_ivar_get(mRubygame,rb_intern("VERSIONS")),
