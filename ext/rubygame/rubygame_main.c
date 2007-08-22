@@ -38,14 +38,26 @@ void Define_Rubygame_Constants();
  *
  *  Given the sym of a key, returns a printable representation.  This
  *  differs from key2str in that this will always return something
- *  printable (i.e. K_ENTER becomes 'Enter')
+ *  printable.
+ *
+ *  Example:
+ *    Rubygame.key_name( Rubygame::K_A )       # => "a"
+ *    Rubygame.key_name( Rubygame::K_RETURN )  # => "return"
+ *    Rubygame.key_name( Rubygame::K_LEFT )    # => "left"
  */
 VALUE rbgm_keyname(VALUE self, VALUE sym)
 {
-  SDLKey key = NUM2INT(sym); /* I hope this works */
-  char *result = SDL_GetKeyName(key);
+	SDLKey key = NUM2INT(sym);
 
-  return rb_str_new2(result);
+	/* SDL_GetKeyName only works when VIDEO has been initialized. */
+	if( SDL_WasInit(SDL_INIT_VIDEO) == 0 )
+	{
+		SDL_Init(SDL_INIT_VIDEO);
+	}
+
+	char *result = SDL_GetKeyName(key);
+
+	return rb_str_new2(result);
 }
 
 
