@@ -22,12 +22,26 @@ class Matrix
 									[ 0, 0, 1 ]]
 	end
 
+	def self.rotate_from(theta, point)
+		point = point.to_v
+		return self.translate(*(-point)) * 
+			self.rotate(theta) *
+			self.translate(*point)
+	end
+	
 	# Scale matrix factory
 	def self.scale(x,y=nil,*junk)
 		y = x unless y
 		return Matrix[[ x, 0, 0 ],
 									[ 0, y, 0 ],
 									[ 0, 0, 1 ]]
+	end
+	
+	def self.scale_from(scale, point)
+		point = point.to_v
+		return self.translate(*(-point)) * 
+			self.scale(*scale) *
+			self.translate(*point)
 	end
 
 	alias :old_mult :*
@@ -84,6 +98,10 @@ class Vector2 < Vector
 		super(x,y,0)
 	end
 	
+	def -@
+		Vector2[-x,-y]
+	end
+
 	def to_p
 		Point[x,y]
 	end
