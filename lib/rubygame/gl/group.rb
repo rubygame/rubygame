@@ -1,6 +1,6 @@
-require 'matricks'
-require 'shape'
-require 'collidable'
+require 'rubygame/gl/matricks'
+require 'rubygame/gl/shape'
+require 'rubygame/gl/collidable'
 
 class Group
 	include Shape
@@ -30,6 +30,10 @@ class Group
 		return self
 	end
 
+	def draw()
+		@members.each { |child| child.draw }
+	end
+
 	def bounds
 		members = evaluate_members
 		initial = members[0].bounds
@@ -51,6 +55,10 @@ class Group
 		evaluate_members.any? do |member|
 			member.collide( other )
 		end
+	end
+	
+	def update( time )
+		@members.each { |member| member.update(time) }
 	end
 
 	alias :collide_group :per_members_collide

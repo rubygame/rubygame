@@ -37,33 +37,6 @@ class GLSprite
 	end
 end
 
-class GLGroup < GLSprite
-	attr_accessor :children
-
-	def initialize(&block)
-		@children = []
-		super
-	end
-
-	def draw()
-		@children.each { |child| child.draw }
-	end
-
-	def update( time )
-		@children.each { |child| child.update(time) }
-	end
-
-	def add_children(*children)
-		@children |= children
-		sort_children()
-	end
-
-	def sort_children()
-		@children.sort!{ |a,b| a.depth <=> b.depth }
-	end
-
-end
-
 class GLImageSprite < GLSprite
 	attr_accessor :surface, :size, :tex_id, :has_alpha
 	attr_accessor :shape

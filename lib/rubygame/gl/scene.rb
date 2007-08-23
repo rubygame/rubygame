@@ -4,6 +4,7 @@ require 'rubygame/gl/camera'
 require 'rubygame/gl/boundary'
 require 'rubygame/gl/event_handler'
 require 'rubygame/gl/event_types'
+require 'rubygame/gl/group'
 
 class Scene
 	attr_accessor :cameras, :active_camera
@@ -23,7 +24,7 @@ class Scene
 		
 		@cameras = []
 		@active_camera = nil
-		@objects = GLGroup.new
+		@objects = Group.new
 
 		@event_handler = EventHandler.new()
 
@@ -49,8 +50,8 @@ class Scene
 		end
 	end
 	
-	def add_object( object )
-		@objects.add_child( object )
+	def add_objects( *objects )
+		@objects.add_members( *objects )
 	end
 	
 	def draw
