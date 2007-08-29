@@ -1,6 +1,26 @@
 
-# Signals that objects have collided.
+# Signals that objects have begun colliding.
+class CollisionStartEvent
+	attr_accessor :objects
+	
+	def initialize( *objects )
+		@objects = objects
+	end
+end
+
+# Signals that objects are still colliding.
+# This will be periodically emitted while the objects
+# are colliding with each other.
 class CollisionEvent
+	attr_accessor :objects
+	
+	def initialize( *objects )
+		@objects = objects
+	end
+end
+
+# Signals that objects are no longer colliding.
+class CollisionEndEvent
 	attr_accessor :objects
 	
 	def initialize( *objects )
@@ -14,10 +34,12 @@ end
 class CollisionHandler
 	
 	# for debugging; remove later
-	attr_accessor :layers
+	attr_accessor :layers, :colliding_pairs, :event_outbox
 	
 	def initialize
 		@layers = {}
+		@colliding_pairs = []
+		@event_outbox = []
 	end
 	
 	def [](key)
@@ -36,25 +58,44 @@ class CollisionHandler
 		@layers[layer] -= objects		
 	end
 	
-	def find_collisions
-		@pairs = []
+	def handle
+		check_existing_collisions
+		find_new_collisions
+		flush_events
+	end
 
+	def check_existing_collisions
+		pairs = @colliding_pairs
+		pairs.each do |pair|
+
+			a, b = *pair
+			if a.collides_with? b
+				@event_outbox << CollisionEvent.new(*pair)
+			else
+				@event_outbox << CollisionEndEvent.new(*pair)
+				@colliding_pairs.delete(pair)
+			end
+
+		end
+	end
+	
+	def find_new_collisions
 		@layers.each_value do |objects|
 			objects.each_with_index do |a, index|
 
-				# We only want to check against objects appearing *after* this one.
-				# Otherwise, we'd be doing lots of redundant checks.
-
+				# We only need to check against objects appearing *after* this one.
 				objects.slice( ((index+1)..-1) ).each do |b|
 
 					if a.collides_with? b
 
-						# We'll add this pair, but not if it has already been added
-						# (i.e. on another layer). We sort by object_id to make sure
-						# [A, B] and [B, A] are considered as the same pair.
-						
+						# We sort by object_id to make [A, B] and [B, A] the same.
 						sorted = [a, b].sort_by { |o| o.object_id }
-						@pairs |= [sorted]
+
+						# Don't do anything if we're already watching
+						unless @colliding_pairs.include? sorted
+							@colliding_pairs << sorted
+							@event_outbox << CollisionStartEvent.new(*sorted)
+						end
 
 					end
 
@@ -62,7 +103,10 @@ class CollisionHandler
 
 			end
 		end
-		
-		return @pairs.collect { |pair| CollisionEvent.new(*pair) }
+	end
+	
+	def flush_events
+		outbox, @event_outbox = @event_outbox, []
+		return outbox
 	end
 end
