@@ -258,6 +258,103 @@ VALUE rbgm_mixchan_resume( VALUE self, VALUE chanv )
 }
 
 
+/* --
+ * MUSIC
+ * ++
+ */
+
+/* call-seq:
+ *  load_audio( filename )  ->  Music
+ *
+ *  Load music from a file.
+ *
+ *  Raises SDLError if the music could not be loaded.
+ */
+VALUE rbgm_mixmusic_new(VALUE class, VALUE filev)
+{
+  VALUE self;
+  Mix_Music* music;
+
+  music = Mix_LoadMUS( StringValuePtr(filev) );
+
+  if( music == NULL )
+  { 
+    rb_raise(eSDLError, "Error loading audio music from file `%s': %s",
+             StringValuePtr(filev), Mix_GetError());
+  }
+	self = Data_Wrap_Struct( cMusic, 0, Mix_FreeMusic, music );
+
+	//rb_obj_call_init(self,argc,argv);
+
+  return self;
+}
+
+/* call-seq:
+ *  play(sample, repeats )
+ *
+ *  Play music, repeating a certain number
+ *  of extra times.
+ *
+ *  Raises SDLError if something goes wrong.
+ *  
+ *  This method takes these arguments:
+ *  sample::      what Sample to play
+ *  repeats::     how many extra times to repeat the sample.
+ *                Can be -1 to repeat forever until it is stopped.
+ */
+VALUE rbgm_mixmusic_play( VALUE musicv, VALUE loopsv )
+{
+  Mix_Music* music;
+  int loops, result;
+
+  Data_Get_Struct( musicv, Mix_Music, music );
+  loops = NUM2INT(loopsv);
+  
+  result = Mix_PlayMusic(music, loops);
+
+  if ( result < 0 )
+  {
+    rb_raise(eSDLError, "Error playing music: %s", 
+             Mix_GetError());
+  }
+
+  return Qnil;
+}
+
+/* call-seq:
+ *  stop
+ *
+ *  Stop playback of music.
+ *  See also #play
+ */
+VALUE rbgm_mixmusic_stop( VALUE self )
+{
+  Mix_HaltMusic();
+  return Qnil;
+}
+
+/* call-seq:
+ *  volume
+ *
+ *  Returns the current volume level of the music.
+ */
+VALUE rbgm_mixmusic_getvolume( VALUE self )
+{
+  return INT2NUM(Mix_VolumeMusic(-1));
+}
+
+/* call-seq:
+ *  volume = new_volume
+ *
+ *  Sets the volume level of the music.
+ */
+VALUE rbgm_mixmusic_setvolume( VALUE self, VALUE volumev )
+{
+  Mix_VolumeMusic(NUM2INT(volumev));
+  return Qnil;
+}
+
+
 void Init_rubygame_mixer()
 {
 
@@ -302,4 +399,12 @@ void Init_rubygame_mixer()
   rb_define_module_function(mMixer,"pause", rbgm_mixchan_pause, 1);
   rb_define_module_function(mMixer,"resume", rbgm_mixchan_resume, 1);
 
+
+  /* Stores music audio data. */
+  cMusic = rb_define_class_under(mMixer, "Music", rb_cObject);
+  rb_define_singleton_method(cMusic, "load_audio", rbgm_mixmusic_new, 1);
+  rb_define_method(cMusic,"play", rbgm_mixmusic_play, 1);
+  rb_define_method(cMusic,"stop", rbgm_mixmusic_stop, 0);
+  rb_define_method(cMusic,"volume", rbgm_mixmusic_getvolume, 0);
+  rb_define_method(cMusic,"volume=", rbgm_mixmusic_setvolume, 1);
 }
