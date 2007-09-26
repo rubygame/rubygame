@@ -31,7 +31,6 @@
 VALUE rbgm_init(VALUE);
 VALUE rbgm_quit(VALUE);
 void Define_Rubygame_Constants();
-int init_video_system();
 
 /* 
  *  call-seq:
@@ -99,31 +98,6 @@ VALUE rbgm_quit(VALUE module)
 {
 	SDL_Quit();
 	return Qnil;
-}
-
-
-/* --
- *
- *  call-seq:
- *     init_video_system()  ->  int
- *
- *  Initialize SDL's video subsystem.
- *  Return 0 (zero) on success, non-zero on failure.
- *
- *  If it has already been initialized, return 0 immediately.
- *
- * ++
- */
-int init_video_system()
-{
-	if( SDL_WasInit(SDL_INIT_VIDEO) == 0 )
-	{
-		return SDL_Init(SDL_INIT_VIDEO);
-	}
-	else
-	{
-		return 0;
-	}
 }
 
 

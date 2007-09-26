@@ -27,6 +27,7 @@ VALUE cSurface;
 VALUE cRect;
 VALUE eSDLError;
 SDL_Rect *make_rect(int, int, int, int);
+int init_video_system();
 void Init_rubygame_shared();
 
 SDL_Rect *make_rect(int x, int y, int w, int h)
@@ -81,6 +82,31 @@ VALUE convert_to_array(VALUE val)
 	}
 	return v;
 }
+
+/* --
+ *
+ *  call-seq:
+ *     init_video_system()  ->  int
+ *
+ *  Initialize SDL's video subsystem.
+ *  Return 0 (zero) on success, non-zero on failure.
+ *
+ *  If it has already been initialized, return 0 immediately.
+ *
+ * ++
+ */
+int init_video_system()
+{
+	if( SDL_WasInit(SDL_INIT_VIDEO) == 0 )
+	{
+		return SDL_Init(SDL_INIT_VIDEO);
+	}
+	else
+	{
+		return 0;
+	}
+}
+
 
 void Init_rubygame_shared()
 {
