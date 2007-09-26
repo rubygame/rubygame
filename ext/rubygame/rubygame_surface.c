@@ -71,18 +71,15 @@ VALUE rbgm_transform_flip(VALUE, VALUE, VALUE);
  *  class), Surfaces can be blit to the screen; this is the most common way
  *  to display images on the screen.
  *
- *  Currently, you must create a display window (see Screen#set_mode) before
- *  creating a new Surface.
+ *  This method may raise SDLError if the SDL video subsystem could
+ *  not be initialized for some reason.
  *
  *  This function takes these arguments:
  *  size::  requested surface size; an array of the form [width, height].
  *  depth:: requested color depth (in bits per pixel). If depth is 0 (default),
- *          use the color depth of the current Screen mode.
- *--
  *          automatically choose a color depth: either the depth of the Screen
  *          mode (if one has been set), or the greatest color depth available
  *          on the system.
- *++
  *  flags:: an Array or Bitwise-OR'd list of zero or more of the following 
  *          flags (located in the Rubygame module, e.g. Rubygame::SWSURFACE).
  *          This argument may be omitted, in which case the Surface 
@@ -117,9 +114,17 @@ VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 	}
 	else
 	{
-		rb_raise(eSDLError,"Cannot create Surface before the Screen mode is set!");
-		/* The following code causes an inexplicable segfault? :(  -j */
-		/* pixformat = SDL_GetVideoInfo()->vfmt; */ 
+		/* We can only get the system color depth when the video system
+		 * has been initialized. */
+		if( init_video_system() == 0 )
+		{
+			pixformat = SDL_GetVideoInfo()->vfmt;
+		}
+		else
+		{
+			rb_raise(eSDLError,"Could not initialize SDL video subsystem.");
+			return Qnil;
+		}
 	}
 
 	Rmask = pixformat->Rmask;
