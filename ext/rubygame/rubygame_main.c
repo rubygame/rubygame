@@ -31,14 +31,18 @@
 VALUE rbgm_init(VALUE);
 VALUE rbgm_quit(VALUE);
 void Define_Rubygame_Constants();
+int init_video_system();
 
 /* 
  *  call-seq:
  *    key_name(sym) -> string
  *
  *  Given the sym of a key, returns a printable representation.  This
- *  differs from key2str in that this will always return something
- *  printable.
+ *  differs from key2str in that this will return a printable string
+ *  for any key, even non-printable keys such as the arrow keys.
+ *
+ *  This method may raise SDLError if the SDL video subsystem could
+ *  not be initialized for some reason.
  *
  *  Example:
  *    Rubygame.key_name( Rubygame::K_A )       # => "a"
@@ -47,17 +51,18 @@ void Define_Rubygame_Constants();
  */
 VALUE rbgm_keyname(VALUE self, VALUE sym)
 {
-	SDLKey key = NUM2INT(sym);
-
-	/* SDL_GetKeyName only works when VIDEO has been initialized. */
-	if( SDL_WasInit(SDL_INIT_VIDEO) == 0 )
+	/* SDL_GetKeyName only works when video system has been initialized. */
+	if( init_video_system() == 0 )
 	{
-		SDL_Init(SDL_INIT_VIDEO);
+		SDLKey key = NUM2INT(sym);
+		char *result = SDL_GetKeyName(key);
+		return rb_str_new2(result);		
 	}
-
-	char *result = SDL_GetKeyName(key);
-
-	return rb_str_new2(result);
+	else
+	{
+		rb_raise(eSDLError,"Could not initialize SDL video subsystem.");
+		return Qnil;
+	}
 }
 
 
@@ -94,6 +99,31 @@ VALUE rbgm_quit(VALUE module)
 {
 	SDL_Quit();
 	return Qnil;
+}
+
+
+/* --
+ *
+ *  call-seq:
+ *     init_video_system()  ->  int
+ *
+ *  Initialize SDL's video subsystem.
+ *  Return 0 (zero) on success, non-zero on failure.
+ *
+ *  If it has already been initialized, return 0 immediately.
+ *
+ * ++
+ */
+int init_video_system()
+{
+	if( SDL_WasInit(SDL_INIT_VIDEO) == 0 )
+	{
+		return SDL_Init(SDL_INIT_VIDEO);
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 
