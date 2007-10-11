@@ -76,11 +76,12 @@ module Rubygame
 		# 
 		module Sprite
 			attr_reader :groups
-			attr_accessor :image, :rect
+			attr_accessor :image, :rect, :depth
 	
-			# Initialize the Sprite, defining @groups.
+			# Initialize the Sprite, defining @groups and @depth.
 			def initialize
 				@groups = []
+				@depth = 0
 			end
 
 			# Add the Sprite to each given Group.
@@ -434,5 +435,43 @@ module Rubygame
 			end
 		end # module LimitGroup
 
+		# DepthSortGroup is a mix-in module that extends Group to sort its
+		# sprites by their @depth attribute, so that sprites with low depths
+		# will appear on top of sprites with higher depths. A sprite's depth
+		# can be any Numeric, or nil (which will be counted as 0).
+		# 
+		# If two sprites have exactly the same depth, there is no guarantee about
+		# which one will be drawn on top of the other. (But, whichever one is on
+		# top will stay on top, at least until the group is re-sorted.)
+		# 
+		# If a sprite's depth changes after it has been added to the group, you
+		# must use the #sort_sprites method for the change to have any effect.
+		# 
+		module DepthSortGroup
+			# Add a single sprite to the group. For efficiency reasons, this
+			# method doesn't re-sort sprites afterwards. You should use #sort_sprites
+			# after you're done adding sprites. Or, better yet, just use #push.
+			def <<(sprite)
+				super
+			end
+			
+			# Add multiple sprites to the group, then re-sort all sprites.
+			def push(*sprites)
+				sprites.each { |sprite|
+					self << sprite
+				}
+				sort_sprites()
+				return self
+			end
+			
+			# Sort sprites by depth, in descending order, so that sprites with low depths
+			# will be drawn on top of sprites with high depths.
+			# 
+			# If a sprite has a depth of nil, it is sorted as if its depth were 0 (zero).
+			def sort_sprites
+				self.sort! { |a,b| (b.depth or 0) <=> (a.depth or 0) }
+			end
+		end
+		
 	end #module Sprite
 end # module Rubygame

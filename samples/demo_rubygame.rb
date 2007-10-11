@@ -104,6 +104,7 @@ end
 
 pandas = Sprites::Group.new
 pandas.extend(Sprites::UpdateGroup)
+pandas.extend(Sprites::DepthSortGroup)
 
 # Create the SDL window
 screen = Screen.set_mode([320,240])
@@ -114,6 +115,10 @@ screen.show_cursor = false;
 panda1 = SpinnyPanda.new(100,50)
 panda2 = ExpandaPanda.new(150,50)
 panda3 = WobblyPanda.new(200,50,0.5)
+
+panda1.depth = 0        # in between the others
+panda2.depth = 10       # behind both of the others
+panda3.depth = -10      # in front of both of the others
 
 # Put the pandas in a sprite group
 pandas.push(panda1,panda2,panda3)
