@@ -245,7 +245,7 @@ class Rect < Array
 	alias cy= centery=;
 
 	# Return the x and y coordinates of the top-left corner of the Rect
-	def topleft; return self[0,2]; end
+	def topleft; return self[0,2].to_a; end
 
 	# Set the x and y coordinates of the top-left corner of the Rect by 
 	# translating the Rect (adjusting the x and y offsets).
