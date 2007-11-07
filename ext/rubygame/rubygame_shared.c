@@ -58,13 +58,16 @@ Uint32 collapse_flags(VALUE vflags)
         }
 				break;
 			}
-
+			case T_BIGNUM: {
+				flags = rb_big2uint( vflags );
+				break;
+            }
 			case T_FIXNUM: {
 				flags = NUM2UINT( vflags );
 				break;
 			}
 			default: {
-				rb_raise(rb_eArgError,"Wrong type for argument `flags' (wanted Fixnum or Array).");
+				rb_raise(rb_eArgError,"Wrong type for argument `flags' (wanted Number or Array).");
 			}
     }
 	}

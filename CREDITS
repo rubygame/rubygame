@@ -43,3 +43,8 @@
   Email::         danielneis at gmail.com
   Contribution::  Patch to add Sprite#undraw (based on UpdateGroup#undraw).
   Date::          2007-07-29 (r460).
+
+- <b>Bjorn De Meyer</b> / beoran
+	Email::         beoran@gmail.com
+	Contribution::  Patch to handle Bignum flags.
+	Date::          2007-10-27 (r500)
