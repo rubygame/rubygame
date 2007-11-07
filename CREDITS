@@ -50,3 +50,6 @@
 	Date::          received 2007-10-27; applied 2007-11-07 (r500)
 	Contribution::  Patch to add many new methods to Mixer and Mixer::Music.
 	Date::          received 2007-10-27; applied 2007-11-07 (r501)
+	Contribution::  Patch to improve rbgm_joy_getname and add RBGM_JoystickClose.
+	Date::          received 2007-10-27; applied 2007-11-07 (r502)
+

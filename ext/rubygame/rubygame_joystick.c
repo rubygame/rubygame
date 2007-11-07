@@ -60,14 +60,22 @@ VALUE rbgm_joy_numjoysticks( VALUE module )
  */
 VALUE rbgm_joy_getname( VALUE module, VALUE joynum )
 {
-	char *name;
-	int n;
-	int size=1024;
-
-	name = (char *)malloc(size);
-	n = snprintf(name,size,"%s",SDL_JoystickName(NUM2INT(joynum)));;
-	return rb_str_new(name,n);
+	return rb_str_new2(SDL_JoystickName(NUM2INT(joynum)));
 }
+
+
+/*
+* Internal function to safely deallocate the joystick, that is,
+*  only if SDL Joystick module is still initialised.
+*/
+static void RBGM_JoystickClose(SDL_Joystick *joy) 
+{
+	if(SDL_WasInit(SDL_INIT_JOYSTICK)) 
+	{
+		SDL_JoystickClose(joy);
+	}
+}
+
 
 /* 
  *  call-seq:
