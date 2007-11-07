@@ -30,6 +30,7 @@ VALUE rbgm_mixer_openaudio(VALUE, VALUE, VALUE, VALUE, VALUE);
 VALUE rbgm_mixer_closeaudio(VALUE);
 VALUE rbgm_mixer_getmixchans();
 VALUE rbgm_mixer_setmixchans(VALUE, VALUE);
+VALUE rbgm_mixer_getdrivername(VALUE);
 
 VALUE cSample;
 VALUE rbgm_sample_new(VALUE, VALUE);
@@ -44,6 +45,26 @@ VALUE rbgm_mixmusic_play( VALUE, VALUE );
 VALUE rbgm_mixmusic_stop( VALUE );
 VALUE rbgm_mixmusic_getvolume( VALUE );
 VALUE rbgm_mixmusic_setvolume( VALUE, VALUE );
+
+VALUE rbgm_mixmusic_setcommand(VALUE , VALUE); 
+
+VALUE rbgm_mixmusic_rewind(VALUE );
+VALUE rbgm_mixmusic_resume(VALUE );
+VALUE rbgm_mixmusic_pause(VALUE );
+
+VALUE rbgm_mixmusic_fadein(VALUE, VALUE, VALUE);
+VALUE rbgm_mixmusic_fadeinpos(VALUE, VALUE, VALUE, VALUE);
+VALUE rbgm_mixmusic_fadeout(VALUE, VALUE);
+
+VALUE rbgm_mixmusic_setposition(VALUE, VALUE);
+
+VALUE rbgm_mixmusic_fading(VALUE);
+VALUE rbgm_mixmusic_fadingin(VALUE);
+VALUE rbgm_mixmusic_fadingout(VALUE);
+VALUE rbgm_mixmusic_paused(VALUE);
+VALUE rbgm_mixmusic_playing(VALUE);
+
+
 
 /* --
  * SETUP AND INITIALIZATION
@@ -147,6 +168,24 @@ VALUE rbgm_mixer_setmixchans(VALUE module, VALUE channelsv)
   return INT2NUM(allocated);
 }
 
+/* call-seq:
+ *  driver_name -> string 
+ *
+ *  Returns the name of the audio driver that SDL is using.
+ *
+ *  May raise an SDLError if initialization fails.
+ */
+
+VALUE rbgm_mixer_getdrivername(VALUE module)
+{
+  char driver_name[1024];
+  if(SDL_AudioDriverName(driver_name, sizeof(driver_name)) == NULL)
+  {	
+    rb_raise(eSDLError, "Error fetrching audio driver name: %s", SDL_GetError());
+  }
+  return rb_str_new2(driver_name);
+}
+
 
 
 /* --
@@ -174,9 +213,9 @@ VALUE rbgm_sample_new(VALUE class, VALUE filev)
     rb_raise(eSDLError, "Error loading audio Sample from file `%s': %s",
              StringValuePtr(filev), Mix_GetError());
   }
-	self = Data_Wrap_Struct( cSample, 0, Mix_FreeChunk, sample );
+  self = Data_Wrap_Struct( cSample, 0, Mix_FreeChunk, sample );
 
-	//rb_obj_call_init(self,argc,argv);
+  //rb_obj_call_init(self,argc,argv);
 
   return self;
 }
@@ -355,6 +394,251 @@ VALUE rbgm_mixmusic_setvolume( VALUE self, VALUE volumev )
 }
 
 
+/* call-seq:
+ *  set_music_command(command)  ->  integer
+ *
+ *  Sets the external command used to play music. 
+ *
+ *  Raises SDLError if something goes wrong.
+ *
+ *  This method takes these arguments:
+ *  command::     what command to use to play the music. 
+ *
+ */
+VALUE rbgm_mixmusic_setcommand(VALUE class, VALUE commandv) 
+{
+  int result;	
+  result = Mix_SetMusicCMD(StringValuePtr(commandv));
+  if( result < 0 )
+  {
+    rb_raise(eSDLError, "Error setting music player commando to `%s': %s",
+             StringValuePtr(commandv), Mix_GetError());
+  }
+  return INT2NUM( result );
+}
+
+
+
+/* call-seq:
+ *  fade_in(music, loops, speed)  ->  integer
+ *
+ *  Play an audio Music from a certain position, fading in and repeating a certain number of times. 
+ *
+ *  Raises SDLError if something goes wrong.
+ *  
+ *  music::       Music to play
+ *  loops::       Number of times to play through the music.
+ *                -1 plays the music forever until it is stopped.
+ *  speed::       Speed in milliseconds for the fade-in effect to complete. 
+ *  position::    Posistion to play from, percentual double value. 
+ */
+VALUE rbgm_mixmusic_fadein(VALUE musicv, VALUE loopsv, VALUE speedv )
+{
+  Mix_Music* music;
+  int loops, speed, result;
+  Data_Get_Struct( musicv, Mix_Music, music );
+  loops     = NUM2INT(loopsv);
+  speed     = NUM2INT(speedv);
+  
+  result = Mix_FadeInMusic(music, loops, speed);
+  if ( result < 0 )
+  {
+    rb_raise(eSDLError, "Error fading in music: %s", Mix_GetError());
+  }
+  return Qnil;
+}
+
+
+/* call-seq:
+ *  fade_in_position(music, loops, speed, position)  ->  integer
+ *
+ *  Play an audio Music from a certain position, fading in and repeating a certain number of times. 
+ *
+ *  Raises SDLError if something goes wrong.
+ *  
+ *  music::       Music to play
+ *  loops::       Number of times to play through the music.
+ *                -1 plays the music forever until it is stopped.
+ *  speed::       Speed in milliseconds for the fade-in effect to complete. 
+ *  position::    Posistion to play from, percentual double value. 
+ */
+VALUE rbgm_mixmusic_fadeinpos(VALUE musicv, VALUE loopsv, VALUE speedv, VALUE positionv )
+{
+  Mix_Music* music;
+  int loops, speed, result;
+  double position;
+
+  Data_Get_Struct( musicv, Mix_Music, music );
+  loops     = NUM2INT(loopsv);
+  speed     = NUM2INT(speedv);
+  position  = NUM2DBL(positionv);
+  result = Mix_FadeInMusicPos(music, loops, speed, position);
+  if ( result < 0 )
+  {
+    rb_raise(eSDLError, "Error fading in music to position: %s", Mix_GetError());
+  }
+  return Qnil;
+}
+
+/* call-seq:
+ *  pause_music()
+ *
+ *  Pause playback of the playing music.
+ *  Only music that is currently playing can be paused.
+ *  See also #play_music.
+ */
+VALUE rbgm_mixmusic_pause(VALUE self)
+{
+  Mix_PauseMusic();
+  return Qnil;
+}
+
+/* call-seq:
+ *  resume_music()
+ *
+ *  Resume playback of paused, halted, or playing music.
+ *  See also #play_music.
+ */
+VALUE rbgm_mixmusic_resume(VALUE self)
+{
+  Mix_ResumeMusic();
+  return Qnil;
+}
+
+/* call-seq:
+ *  rewind_music()
+ *
+ *  Rewind the music to the start. This is safe to use on halted, paused, and already playing music. 
+ *  It is not useful to rewind the music immediately after starting playback, because it starts 
+ *  at the beginning by default. This function only works for these streams: MOD, OGG, MP3, Native MIDI.
+ * 
+ *  See also #play_music.
+ */
+VALUE rbgm_mixmusic_rewind(VALUE self)
+{
+  Mix_RewindMusic();
+  return Qnil;
+}
+
+
+/* call-seq:
+ *  music_position(position) -> integer
+ *
+ *  Set the position of the currently playing music in seconds from the beginning for OGG AND MP3 music. 
+ *  Sets the position to the track number in MOD music. Does not work for other kinds of music
+ *  For other music types, the music will sipmly be rewound to the beginning.
+ *
+ *  Raises SDLError if something goes wrong.
+ *
+ *  position:: Position in music, in seconds from the beginning.
+ *
+ */
+VALUE rbgm_mixmusic_setposition(VALUE self, VALUE positionv)
+{
+  int position, result;
+  position = NUM2DBL(positionv);
+  Mix_RewindMusic(); // Needed for MP3, and OK with OGG
+  result = Mix_SetMusicPosition(position);  
+  if ( result < 0 )
+  {
+    rb_raise(eSDLError, "Error setting music position: %s", Mix_GetError());
+  }
+  return INT2NUM(result);	
+} 	
+
+
+/* call-seq:
+ *  music_fadeout(ms)  ->  integer
+ *
+ *  Gradually fade out the music over ms milliseconds starting from now. The music will be halted after 
+ *  the fade out is completed. Only when music is playing and not fading already are set to fade out, 
+ *  including paused channels. 
+ *
+ *  Raises SDLError if something goes wrong.
+ *
+ *  ms::         Milliseconds of time that the fade-out effect should take to go to silence, starting now. 
+ */
+VALUE rbgm_mixmusic_fadeout(VALUE self, VALUE speedv )
+{
+  int speed, result;
+  speed  = NUM2INT(speedv);
+  result = Mix_FadeOutMusic(speed);
+  if ( result < 0 )
+  {
+    rb_raise(eSDLError, "Error fading out music: %s", Mix_GetError());
+  }
+  return INT2NUM(result);
+}
+
+/* call-seq:
+ *  playing?()  ->  boolean
+ *
+ *  Checks if the music is playing. Return true if so, false if not. 
+ *
+ */
+VALUE rbgm_mixmusic_playing(VALUE self)
+{
+  int result;
+  result = Mix_PlayingMusic();
+  return result ? Qtrue : Qfalse;
+}
+
+/* call-seq:
+ *  paused.()  ->  boolean
+ *
+ *  Checks if the music is paused. Return true if so, false if not.
+ *
+ */
+VALUE rbgm_mixmusic_paused(VALUE self)
+{
+  int result;
+  result = Mix_PausedMusic();
+  return result ? Qtrue : Qfalse;
+}
+
+/* call-seq:
+ *  fading?()  ->  boolean
+ *
+ *  Checks if the music is fading in or fading out. 
+ *
+ */
+VALUE rbgm_mixmusic_fading(VALUE self)
+{
+  int result;
+  result = Mix_FadingMusic();
+  return (result == MIX_NO_FADING) ? Qfalse: Qtrue ;
+}
+
+/* call-seq:
+ *  fading_in?()  ->  boolean
+ *
+ *  Checks if the music is fading in. 
+ *  This is a low level function, not for general use.
+ *
+ */
+VALUE rbgm_mixmusic_fadingin(VALUE self)
+{
+  int result;
+  result = Mix_FadingMusic();
+  return (result == MIX_FADING_IN) ? Qtrue: Qfalse ;
+}
+
+
+/* call-seq:
+ *  fading_out?()  ->  boolean
+ *
+ *  Checks if the music is fading out. 
+ *
+ */
+VALUE rbgm_mixmusic_fadingout(VALUE self)
+{
+  int result;
+  result = Mix_FadingMusic();
+  return (result == MIX_FADING_OUT) ? Qtrue: Qfalse ;
+}
+
+
+
 void Init_rubygame_mixer()
 {
 
@@ -380,15 +664,35 @@ void Init_rubygame_mixer()
 	 */
   mMixer = rb_define_module_under(mRubygame, "Mixer");
 
-  rb_define_const(mMixer, "AUDIO_U8", INT2NUM(AUDIO_U8));
-  rb_define_const(mMixer, "AUDIO_S8", INT2NUM(AUDIO_S8));
-  rb_define_const(mMixer, "AUDIO_U16SYS", INT2NUM(AUDIO_U16SYS));
-  rb_define_const(mMixer, "AUDIO_S16SYS", INT2NUM(AUDIO_S16SYS));
+  rb_define_const(mMixer,"AUDIO_U8", INT2NUM(AUDIO_U8));
+  rb_define_const(mMixer,"AUDIO_S8", INT2NUM(AUDIO_S8));
+  rb_define_const(mMixer,"AUDIO_U16",UINT2NUM(AUDIO_U16));
+  rb_define_const(mMixer,"AUDIO_S16",UINT2NUM(AUDIO_S16));
+  rb_define_const(mMixer,"AUDIO_U16SYS", INT2NUM(AUDIO_U16SYS));
+  rb_define_const(mMixer,"AUDIO_S16SYS", INT2NUM(AUDIO_S16SYS));
+  rb_define_const(mMixer,"AUDIO_U16LSB",UINT2NUM(AUDIO_U16LSB));
+  rb_define_const(mMixer,"AUDIO_S16LSB",UINT2NUM(AUDIO_S16LSB));
+  rb_define_const(mMixer,"AUDIO_U16MSB",UINT2NUM(AUDIO_U16MSB));
+  rb_define_const(mMixer,"AUDIO_S16MSB",UINT2NUM(AUDIO_S16MSB));
+
+  rb_define_const(mMixer,"CHANNELS",INT2NUM(MIX_CHANNELS));
+  rb_define_const(mMixer,"DEFAULT_FREQUENCY",INT2NUM(MIX_DEFAULT_FREQUENCY));
+  rb_define_const(mMixer,"DEFAULT_FORMAT",UINT2NUM(MIX_DEFAULT_FORMAT));
+  rb_define_const(mMixer,"DEFAULT_CHANNELS",UINT2NUM(MIX_DEFAULT_CHANNELS));
+  rb_define_const(mMixer,"MAX_VOLUME",INT2NUM(MIX_MAX_VOLUME));
+
+  rb_define_const(mMixer,"NO_FADING", INT2NUM(MIX_NO_FADING));
+  rb_define_const(mMixer,"FADING_OUT", INT2NUM(MIX_FADING_OUT));
+  rb_define_const(mMixer,"FADING_IN", INT2NUM(MIX_FADING_IN));
+
+
 
   rb_define_module_function(mMixer,"open_audio",rbgm_mixer_openaudio, 4);
   rb_define_module_function(mMixer,"close_audio",rbgm_mixer_closeaudio, 0);
   rb_define_module_function(mMixer,"mix_channels",rbgm_mixer_getmixchans, 0);
   rb_define_module_function(mMixer,"mix_channels=",rbgm_mixer_setmixchans, 1);
+  rb_define_module_function(mMixer,"driver_name", rbgm_mixer_getdrivername, 0);
+
 
 
   /* Stores audio data to play with Mixer.play() */

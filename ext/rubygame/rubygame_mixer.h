@@ -31,6 +31,7 @@ extern VALUE rbgm_mixer_openaudio(VALUE, VALUE, VALUE, VALUE, VALUE);
 extern VALUE rbgm_mixer_closeaudio(VALUE);
 extern VALUE rbgm_mixer_getmixchans();
 extern VALUE rbgm_mixer_setmixchans(VALUE, VALUE);
+extern VALUE rbgm_mixer_getdrivername(VALUE);
 
 extern VALUE cSample;
 extern VALUE rbgm_sample_new(VALUE, VALUE);
