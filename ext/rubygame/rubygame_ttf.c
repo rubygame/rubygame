@@ -44,7 +44,10 @@ VALUE rbgm_ttf_height(VALUE);
 VALUE rbgm_ttf_ascent(VALUE);
 VALUE rbgm_ttf_descent(VALUE);
 VALUE rbgm_ttf_lineskip(VALUE);
+
 VALUE rbgm_ttf_sizetext(VALUE, VALUE);
+VALUE rbgm_ttf_size_utf8(VALUE, VALUE);
+VALUE rbgm_ttf_size_unicode(VALUE, VALUE);
 
 VALUE rbgm_ttf_render(int, VALUE*, VALUE);
 VALUE rbgm_ttf_render_utf8(int , VALUE*, VALUE);
@@ -291,6 +294,57 @@ VALUE rbgm_ttf_sizetext(VALUE self, VALUE string)
 	result = rb_ary_new();
 	
 	TTF_SizeText(font,StringValuePtr(string),&w,&h);
+	
+	rb_ary_push(result, INT2NUM(w));
+	rb_ary_push(result, INT2NUM(h));
+	
+	return result;
+}
+
+/*
+ * call-seq:
+ *   size_utf8(text) -> [ width, height ]
+ * 
+ * The width and height the UTF-8 encoded text would be if
+ * it were rendered, without the overhead of
+ * actually rendering it.
+ */
+ 
+VALUE rbgm_ttf_size_utf8(VALUE self, VALUE string)
+{
+	TTF_Font *font;
+	int w;
+	int h;
+	VALUE result;
+	Data_Get_Struct(self, TTF_Font,font);
+	result = rb_ary_new();
+	
+	TTF_SizeUTF8(font,StringValuePtr(string),&w,&h);
+	
+	rb_ary_push(result, INT2NUM(w));
+	rb_ary_push(result, INT2NUM(h));
+	
+	return result;
+}
+
+/*
+ * call-seq:
+ *   size_unicode(text) -> [ width, height ]
+ * 
+ * The width and height the UNICODE encoded text would be if
+ * it were rendered, without the overhead of
+ * actually rendering it.
+ */
+ 
+VALUE rbgm_ttf_size_unicode(VALUE self, VALUE string)
+{
+	TTF_Font *font;
+	int w;
+	int h;
+	VALUE result;
+	Data_Get_Struct(self, TTF_Font,font);
+	result = rb_ary_new();
+	TTF_SizeUNICODE(font,(Uint16*)StringValuePtr(string),&w,&h);
 	
 	rb_ary_push(result, INT2NUM(w));
 	rb_ary_push(result, INT2NUM(h));
@@ -552,6 +606,8 @@ void Init_rubygame_ttf()
 	rb_define_method(cTTF,"descent",rbgm_ttf_descent,0);
 	rb_define_method(cTTF,"line_skip",rbgm_ttf_lineskip,0);
 	rb_define_method(cTTF,"size_text",rbgm_ttf_sizetext,1);
+	rb_define_method(cTTF,"size_utf8",rbgm_ttf_size_utf8, 1);
+	rb_define_method(cTTF,"size_unicode",rbgm_ttf_size_unicode, 1);
 	rb_define_method(cTTF,"render",rbgm_ttf_render,-1);
 	rb_define_method(cTTF,"render_utf8",rbgm_ttf_render_utf8,-1);
 	rb_define_method(cTTF,"render_unicode",rbgm_ttf_render_unicode,-1);
