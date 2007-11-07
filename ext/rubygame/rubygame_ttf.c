@@ -113,16 +113,53 @@ VALUE rbgm_ttf_initialize(int argc, VALUE *argv, VALUE self)
 	return self;
 }
 
-/*
- *--
- * TODO:
- *   Don't Repeat Yourself - bold/italic/underline = much repeated code.
- *   - Make a getter which takes the current style and a TTF_STYLE_* flag
- *     and checks if it is that style.
- *   - Make a setter which takes the font, a TTF_STYLE_* flag, and the
- *     true/false argument, and sets the style.
- *++
- */
+
+/*--
+* Checks to see if the TTF font wrapped in the self VALUE  has the style in the parameter style.
+* ++
+*/ 
+static VALUE RBGM_ttf_get_style(VALUE self, int style) 
+{
+	TTF_Font *font;
+	int mystyle;
+
+	Data_Get_Struct(self, TTF_Font, font);
+	mystyle = TTF_GetFontStyle(font);
+
+	if ((mystyle & style) == style) return Qtrue;
+	return Qfalse;
+}
+
+
+/*--
+* Sets or unsets the style in int style for the TTF font wrapped in the self VALUE,
+* using enable to determine what to do. If enable is Qtrue, the style is set, if it is 
+* Qfalse, the style is unset. 
+* ++
+*/ 
+static VALUE RBGM_ttf_set_style(VALUE self, VALUE enable, int style) 
+{
+	int oldstyle;	
+	TTF_Font *font;
+
+	Data_Get_Struct(self,TTF_Font,font);
+	oldstyle = TTF_GetFontStyle(font);
+	
+	if(((oldstyle & style) ==style) && !RTEST(enable)) 
+		{   /* The style is set but we want to remove it. */
+			TTF_SetFontStyle(font,oldstyle^style);
+			return Qtrue;
+			/* The old value */
+		} 
+	else if( RTEST(enable) )  
+		{   /* The style is not set and we want to add it. */
+			TTF_SetFontStyle(font,oldstyle|style);
+			return Qfalse;			
+			/* The old value */
+		}
+
+	return enable;
+}
 
 /*  call-seq:
  *    bold  ->  Bool
@@ -131,15 +168,7 @@ VALUE rbgm_ttf_initialize(int argc, VALUE *argv, VALUE self)
  */
 VALUE rbgm_ttf_getbold(VALUE self)
 {
-	TTF_Font *font;
-	int style;
-
-	Data_Get_Struct(self,TTF_Font,font);
-	style = TTF_GetFontStyle(font);
-	if((style & TTF_STYLE_BOLD) == TTF_STYLE_BOLD)
-		return Qtrue;
-	else
-		return Qfalse;
+	return RBGM_ttf_get_style(self, TTF_STYLE_BOLD); 
 }
 
 /*  call-seq:
@@ -147,28 +176,9 @@ VALUE rbgm_ttf_getbold(VALUE self)
  *
  *  Set whether bolding is enabled for this font. Returns the old value.
  */
-VALUE rbgm_ttf_setbold(VALUE self,VALUE bold)
+VALUE rbgm_ttf_setbold(VALUE self, VALUE bold)
 {
-	TTF_Font *font;
-	int style;
-
-	Data_Get_Struct(self,TTF_Font,font);
-	style = TTF_GetFontStyle(font);
-
-	/* Font is currently bold, and we want it to be not bold. */
-	if((style & TTF_STYLE_BOLD) == TTF_STYLE_BOLD && !RTEST(bold))
-	  {
-		TTF_SetFontStyle(font,style^TTF_STYLE_BOLD);
-		return Qtrue;			/* The old value */
-	  }
-	/* Font is not currently bold, and we want it to be bold. */
-	else if( RTEST(bold) )
-	  {
-		TTF_SetFontStyle(font,style|TTF_STYLE_BOLD);
-		return Qfalse;			/* The old value */
-	  }
-	/* No changes were necessary. */
-	return bold;				/* Same as old value */
+	return RBGM_ttf_set_style(self, bold, TTF_STYLE_BOLD); 
 }
 
 /*  call-seq:
@@ -178,15 +188,7 @@ VALUE rbgm_ttf_setbold(VALUE self,VALUE bold)
  */
 VALUE rbgm_ttf_getitalic(VALUE self)
 {
-	TTF_Font *font;
-	int style;
-
-	Data_Get_Struct(self,TTF_Font,font);
-	style = TTF_GetFontStyle(font);
-	if((style & TTF_STYLE_ITALIC) == TTF_STYLE_ITALIC)
-		return Qtrue;
-	else
-		return Qfalse;
+	return RBGM_ttf_get_style(self, TTF_STYLE_ITALIC); 
 }
 
 /*  call-seq:
@@ -196,26 +198,7 @@ VALUE rbgm_ttf_getitalic(VALUE self)
  */
 VALUE rbgm_ttf_setitalic(VALUE self,VALUE italic)
 {
-	TTF_Font *font;
-	int style;
-
-	Data_Get_Struct(self,TTF_Font,font);
-	style = TTF_GetFontStyle(font);
-
-	/* Font is currently italic, and we want it to be not italic. */
-	if((style & TTF_STYLE_ITALIC) == TTF_STYLE_ITALIC && !RTEST(italic))
-	  {
-		TTF_SetFontStyle(font,style^TTF_STYLE_ITALIC);
-		return Qtrue;			/* The old value */
-	  }
-	/* Font is not currently italic, and we want it to be italic. */
-	else if(RTEST(italic))
-	  {
-		TTF_SetFontStyle(font,style|TTF_STYLE_ITALIC);
-		return Qfalse;			/* The old value */
-	  }
-	/* No changes were necessary. */
-	return italic;				/* Same as old value */
+	return RBGM_ttf_set_style(self, italic, TTF_STYLE_ITALIC); 
 }
 
 /*  call-seq:
@@ -225,15 +208,7 @@ VALUE rbgm_ttf_setitalic(VALUE self,VALUE italic)
  */
 VALUE rbgm_ttf_getunderline(VALUE self)
 {
-	TTF_Font *font;
-	int style;
-
-	Data_Get_Struct(self,TTF_Font,font);
-	style = TTF_GetFontStyle(font);
-	if((style & TTF_STYLE_UNDERLINE) == TTF_STYLE_UNDERLINE)
-		return Qtrue;
-	else
-		return Qfalse;
+	return RBGM_ttf_get_style(self, TTF_STYLE_UNDERLINE); 
 }
 
 /*  call-seq:
@@ -241,28 +216,9 @@ VALUE rbgm_ttf_getunderline(VALUE self)
  *
  *  Set whether underlining is enabled for this font. Returns the old value.
  */
-VALUE rbgm_ttf_setunderline(VALUE self,VALUE underline)
+VALUE rbgm_ttf_setunderline(VALUE self, VALUE underline)
 {
-	TTF_Font *font;
-	int style;
-
-	Data_Get_Struct(self,TTF_Font,font);
-	style = TTF_GetFontStyle(font);
-
-	/* Font is currently underlined, and we want it to be not underlined. */
-	if((style & TTF_STYLE_UNDERLINE) == TTF_STYLE_UNDERLINE && !RTEST(underline))
-	  {
-		TTF_SetFontStyle(font,style^TTF_STYLE_UNDERLINE);
-		return Qtrue;			/* The old value */
-	  }
-	/* Font is not currently underlined, and we want it to be underlined. */
-	else if(RTEST(underline))
-	  {
-		TTF_SetFontStyle(font,style|TTF_STYLE_UNDERLINE);
-		return Qfalse;			/* The old value */
-	  }
-	/* No changes were necessary. */
-	return underline;			/* Same as old value */
+	return RBGM_ttf_set_style(self, underline, TTF_STYLE_UNDERLINE); 
 }
 
 /*  call-seq:
@@ -542,7 +498,7 @@ VALUE rbgm_ttf_render_unicode(int argc, VALUE *argv, VALUE self)
  	return Data_Wrap_Struct(cSurface,0,SDL_FreeSurface,surf);
 }
 
-/* 
+/*
  *  Document-class: Rubygame::TTF
  *
  *  TTF provides an interface to SDL_ttf, allowing TrueType Font files to be
@@ -577,10 +533,10 @@ void Init_rubygame_ttf()
 	rb_define_singleton_method(cTTF,"new",rbgm_ttf_new,2);
 	rb_define_singleton_method(cTTF,"setup",rbgm_ttf_setup,0);
 	rb_define_singleton_method(cTTF,"quit",rbgm_ttf_quit,0);
-
+	
 	rb_define_method(cTTF,"initialize",rbgm_ttf_initialize,-1);
-	rb_define_method(cTTF,"bold",rbgm_ttf_getitalic,0);
-	rb_define_method(cTTF,"bold=",rbgm_ttf_setitalic,1);
+	rb_define_method(cTTF,"bold",rbgm_ttf_getbold,0);
+	rb_define_method(cTTF,"bold=",rbgm_ttf_setbold,1);
 	rb_define_alias( cTTF,"b","bold");
 	rb_define_alias( cTTF,"b=","bold=");
 	rb_define_method(cTTF,"italic",rbgm_ttf_getitalic,0);

@@ -52,4 +52,6 @@
 	Date::          received 2007-10-27; applied 2007-11-07 (r501)
 	Contribution::  Patch to improve rbgm_joy_getname and add RBGM_JoystickClose.
 	Date::          received 2007-10-27; applied 2007-11-07 (r502)
+	Contribution::  Patch to refactor TTF style handling.
+	Date::          received 2007-11-06; applied 2007-11-07 (r504)
 
