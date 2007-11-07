@@ -47,4 +47,6 @@
 - <b>Bjorn De Meyer</b> / beoran
 	Email::         beoran@gmail.com
 	Contribution::  Patch to handle Bignum flags.
-	Date::          2007-10-27 (r500)
+	Date::          received 2007-10-27; applied 2007-11-07 (r500)
+	Contribution::  Patch to add many new methods to Mixer and Mixer::Music.
+	Date::          received 2007-10-27; applied 2007-11-07 (r501)

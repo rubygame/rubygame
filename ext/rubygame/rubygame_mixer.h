@@ -46,4 +46,23 @@ extern VALUE rbgm_mixmusic_stop( VALUE );
 extern VALUE rbgm_mixmusic_getvolume( VALUE );
 extern VALUE rbgm_mixmusic_setvolume( VALUE, VALUE );
 
+extern VALUE rbgm_mixmusic_setcommand(VALUE , VALUE); 
+
+extern VALUE rbgm_mixmusic_rewind(VALUE );
+extern VALUE rbgm_mixmusic_resume(VALUE );
+extern VALUE rbgm_mixmusic_pause(VALUE );
+
+extern VALUE rbgm_mixmusic_fadein(VALUE, VALUE, VALUE);
+extern VALUE rbgm_mixmusic_fadeinpos(VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_mixmusic_fadeout(VALUE, VALUE);
+
+extern VALUE rbgm_mixmusic_setposition(VALUE, VALUE);
+
+extern VALUE rbgm_mixmusic_fading(VALUE);
+extern VALUE rbgm_mixmusic_fadingin(VALUE);
+extern VALUE rbgm_mixmusic_fadingout(VALUE);
+extern VALUE rbgm_mixmusic_paused(VALUE);
+extern VALUE rbgm_mixmusic_playing(VALUE);
+
+
 #endif
