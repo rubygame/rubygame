@@ -353,6 +353,20 @@ VALUE rbgm_ttf_size_unicode(VALUE self, VALUE string)
 }
 
 /*
+* Helper function for color handling for the rendering functions.
+*/
+
+static void RBGM_array_to_color(SDL_Color * color, VALUE arr) {
+	if( RTEST(arr) )
+	{
+		arr = convert_to_array(arr);
+		color->r = NUM2UINT(rb_ary_entry(arr, 0));
+		color->g = NUM2UINT(rb_ary_entry(arr, 1));
+		color->b = NUM2UINT(rb_ary_entry(arr, 2));
+	}
+}
+
+/*
  *--
  * TODO: Refactor/integrate #render, #render_utf8, and #render_unicode 
  *++

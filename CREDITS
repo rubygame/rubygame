@@ -56,4 +56,6 @@
 	Date::          received 2007-11-06; applied 2007-11-07 (r504)
 	Contribution::  Patch to add TTF#size_utf8 and TTF#size_unicode.
 	Date::          received 2007-11-06; applied 2007-11-07 (r505)
+	Contribution::  Patch to refactor Array -> color conversion in TTF.
+	Date::          received 2007-11-06; applied 2007-11-07 (r506)
 
