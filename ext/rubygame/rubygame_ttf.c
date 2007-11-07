@@ -396,18 +396,8 @@ VALUE rbgm_ttf_render(int argc, VALUE *argv, VALUE self)
 
 	Data_Get_Struct(self,TTF_Font,font);
 
-	vfg = convert_to_array(vfg);
-	fore.r = NUM2UINT(rb_ary_entry(vfg,0));
-	fore.g = NUM2UINT(rb_ary_entry(vfg,1));
-	fore.b = NUM2UINT(rb_ary_entry(vfg,2));
-
-	if( RTEST(vbg) )
-	{
-		vbg = convert_to_array(vbg);
-		back.r = NUM2UINT(rb_ary_entry(vbg,0));
-		back.g = NUM2UINT(rb_ary_entry(vbg,1));
-		back.b = NUM2UINT(rb_ary_entry(vbg,2));
-	}
+	RBGM_array_to_color(&fore, vfg);
+	RBGM_array_to_color(&back, vbg);
 
 	if( RTEST(vaa) ) /* anti-aliasing enabled */
 	{
@@ -461,18 +451,8 @@ VALUE rbgm_ttf_render_utf8(int argc, VALUE *argv, VALUE self)
  
  	Data_Get_Struct(self,TTF_Font,font);
  
-	vfg = convert_to_array(vfg);
-	fore.r = NUM2UINT(rb_ary_entry(vfg,0));
-	fore.g = NUM2UINT(rb_ary_entry(vfg,1));
-	fore.b = NUM2UINT(rb_ary_entry(vfg,2));
-
-	if( RTEST(vbg) )
-	{
-		vbg = convert_to_array(vbg);
-		back.r = NUM2UINT(rb_ary_entry(vbg,0));
-		back.g = NUM2UINT(rb_ary_entry(vbg,1));
-		back.b = NUM2UINT(rb_ary_entry(vbg,2));
-	}
+	RBGM_array_to_color(&fore, vfg);
+	RBGM_array_to_color(&back, vbg);
 
 	if( RTEST(vaa) ) /* anti-aliasing enabled */
  	{
@@ -525,20 +505,10 @@ VALUE rbgm_ttf_render_unicode(int argc, VALUE *argv, VALUE self)
 	rb_scan_args(argc, argv, "31", &vstring, &vaa, &vfg, &vbg);
  
  	Data_Get_Struct(self,TTF_Font,font);
+
+	RBGM_array_to_color(&fore, vfg);
+	RBGM_array_to_color(&back, vbg);
  
-	vfg = convert_to_array(vfg);
-	fore.r = NUM2UINT(rb_ary_entry(vfg,0));
-	fore.g = NUM2UINT(rb_ary_entry(vfg,1));
-	fore.b = NUM2UINT(rb_ary_entry(vfg,2));
-
-	if( RTEST(vbg) )
-	{
-		vbg = convert_to_array(vbg);
-		back.r = NUM2UINT(rb_ary_entry(vbg,0));
-		back.g = NUM2UINT(rb_ary_entry(vbg,1));
-		back.b = NUM2UINT(rb_ary_entry(vbg,2));
-	}
-
 	if( RTEST(vaa) ) /* anti-aliasing enabled */
  	{
  		if( RTEST(vbg) ) /* background color provided */
