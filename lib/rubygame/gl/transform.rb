@@ -1,24 +1,52 @@
 require 'rubygame/gl/matricks'
+require 'rubygame/gl/matrix3'
 
 # Transform stores transformation information as attributes:
 # 
-# angle:: rotation about the forward axis. A Numeric.
+# angle:: rotation about the forward axis. A Numeric, in radians.
 # scale:: scaling factor on X and Y. A Vector2.
 # shear:: shearing amount on X and Y. A Vector2.
 # shift:: translation, i.e. movement, on X and Y. A Vector2.
+# pivot:: apply the operations with this as the origin. A Point2.
 # 
-# It can (eventually) be applied to a Vector2 or Point as-is,
-# composited with other Transforms,
-# or converted to a 3x3 Matrix if needed.
+# It can be converted to a Matrix3 to composite transformations or
+# apply the transformation to a Vector2 or Point2.
 # 
 class Transform
-	attr_accessor :angle, :scale, :shear, :shift
+	attr_accessor :angle, :scale, :shear, :shift, :pivot
+
+	class << self
+		def translate( shift )
+			self.new( :shift => shift )
+		end
+		
+		alias :shift :translate
+		alias :move  :translate
+		
+		def rotate( angle )
+			self.new( :angle => angle )
+		end
+		
+		def scale( scale )
+			self.new( :scale => scale )
+		end
+		
+		def rotate_from( angle, pivot )
+			self.new( :angle => angle, :pivot => pivot )
+		end
+		
+		def scale_from( scale, pivot )
+			self.new( :scale => scale, :pivot => pivot )
+		end
+		
+	end
 	
 	def initialize( description = {} )
-		@angle = (description[:angle] or 0)
-		@scale = (description[:scale] or [1,1])
-		@shear = (description[:shear] or [0,0])
-		@shift = (description[:shift] or [0,0])
+		@angle = (description[:angle])
+		@scale = (description[:scale])
+		@shear = (description[:shear])
+		@shift = (description[:shift])
+		@pivot = (description[:pivot])
 		
 		# Scale is allowed to be 1 number for uniform scale,
 		# or an Array of 2 numbers for nonuniform scale.
@@ -29,26 +57,61 @@ class Transform
 			@scale = Vector2[*@scale]
 		end
 		
-		@shear = Vector2[*@shear]
-		@shift = Vector2[*@shift]
+		@shear = @shear ? Vector2(*@shear) : nil
+		@shift = @shift ? Vector2(*@shift) : nil
+		@pivot = @pivot ?  Point2(*@pivot) : nil
+	end
+	
+	# Apply the 
+	def *( other )
+		c = Math.cos(@angle)
+		s = Math.sin(@angle)
+		
+		case other
+		when Vector2
+			return self.to_m*other
+		when Point2
+			return self.to_m*other
+		when Matrix2
+			return self.to_m*other
+		end
 	end
 	
 	# Convert to 3x3 transformation matrix
 	def to_m
-		c = Math.cos(@angle)
-		s = Math.sin(@angle)
+		result = Matrix3.identity
 		
-		Matrix[[c*@scale.x          + -s*@scale.y*@shear.y,
-						c*@scale.x*@shear.x + -s*@scale.y,
-						@shift.x],
-					 [s*@scale.x          + c*@scale.y*@shear.y,
-						s*@scale.x*@shear.x + c*@scale.y,
-						@shift.y],
-					 [0, 0, 1]]
-	end
+		# Apply the pivot shift
+		if @pivot
+			reverse_pivot = -(@pivot.to_v)
+			result = Matrix3.translate(*reverse_pivot) * result
+		end
 
-	# Should be equivalent to #to_m
-	def to_m2
-		return Matrix.translate(*@shift) * Matrix.rotate(@angle) * Matrix.scale(*@scale) * Matrix.shear(*@shear)
+		# Apply shearing
+		if @shear
+			result = Matrix3.shear(*@shear) * result
+		end
+		
+		# Apply scaling
+		if @scale
+			result = Matrix3.scale(*@scale) * result
+		end
+		
+		# Apply rotation
+		if @rotate
+			result = Matrix3.rotate(*@rotate) * result
+		end
+		
+		# Apply translation
+		if @shift
+			result = Matrix3.translate(*@shift) * result
+		end
+		
+		# Undo the pivot shift
+		if @pivot
+			result = Matrix3.translate(*@pivot) * result
+		end		
+		
+		return result
 	end
 end
