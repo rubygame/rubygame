@@ -1,4 +1,5 @@
-require 'rubygame/gl/matricks'
+require 'rubygame/gl/point2'
+require 'rubygame/gl/vector2'
 
 # A 3x3 matrix class. Primarily used for representing 2D
 # transformations. See also Transform.
