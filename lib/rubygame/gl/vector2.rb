@@ -10,7 +10,7 @@ class Vector2
 		end
 		
 		def ify( *pairs )
-			pairs.collect { |pair| self.class.new(*pair) }
+			pairs.collect { |pair| self.new(*pair) }
 		end
 	end
 	
@@ -24,6 +24,14 @@ class Vector2
 	
 	def -( other )
 		self.class.new( @x - other.x,   @y - other.y  )
+	end
+	
+	def *( scalar )
+		self.class.new( @x * scalar,    @y * scalar   )
+	end
+	
+	def []( index )
+		self.to_ary[index]
 	end
 	
 	def angle

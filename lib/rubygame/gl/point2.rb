@@ -10,7 +10,7 @@ class Point2
 		end
 		
 		def ify( *pairs )
-			pairs.collect { |pair| self.class.new(*pair) }
+			pairs.collect { |pair| self.new(*pair) }
 		end
 	end
 	
@@ -24,6 +24,10 @@ class Point2
 	
 	def -( other )
 		   Vector2.new( @x - other.x,   @y - other.y  )
+	end
+	
+	def []( index )
+		self.to_ary[index]
 	end
 	
 	def projected_onto( v )
