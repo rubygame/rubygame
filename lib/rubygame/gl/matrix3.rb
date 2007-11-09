@@ -1,4 +1,5 @@
 require 'rubygame/gl/point2'
+require 'rubygame/gl/transform2'
 require 'rubygame/gl/vector2'
 
 # A 3x3 matrix class. Primarily used for representing 2D
@@ -64,7 +65,9 @@ class Matrix3
 		when Point2
 			x, y = other.x, other.y
 			return (other.class)[ (@a*x + @b*y + @c), (@d*x + @e*y + @f) ]
-		when Matrix3
+		when Matrix3, Transform2
+			other = other.to_m
+
 			a,b,c,\
 			d,e,f,\
 			g,h,i = other.to_ary.flatten!
@@ -87,6 +90,10 @@ class Matrix3
 	# Represent as a string.
 	def to_s
 		return "#<Matrix3 [[%f, %f, %f], [%f, %f, %f], [%f, %f, %f]]>"%self.to_ary.flatten!
+	end
+	
+	def to_m
+		return self
 	end
 	
 	alias :inspect :to_s
