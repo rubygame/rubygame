@@ -1,7 +1,8 @@
-require 'rubygame/gl/matricks'
 require 'rubygame/gl/matrix3'
+require 'rubygame/gl/point2'
+require 'rubygame/gl/vector2'
 
-# Transform stores transformation information as attributes:
+# Transform2 stores 2D transformation information as attributes:
 # 
 # angle:: rotation about the forward axis. A Numeric, in radians.
 # scale:: scaling factor on X and Y. A Vector2.
@@ -12,7 +13,7 @@ require 'rubygame/gl/matrix3'
 # It can be converted to a Matrix3 to composite transformations or
 # apply the transformation to a Vector2 or Point2.
 # 
-class Transform
+class Transform2
 	attr_accessor :angle, :scale, :shear, :shift, :pivot
 
 	class << self
