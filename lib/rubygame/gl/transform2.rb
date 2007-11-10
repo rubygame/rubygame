@@ -58,9 +58,9 @@ class Transform2
 			@scale = Vector2[*@scale]
 		end
 		
-		@shear = @shear ? Vector2(*@shear) : nil
-		@shift = @shift ? Vector2(*@shift) : nil
-		@pivot = @pivot ?  Point2(*@pivot) : nil
+		@shear = @shear ? Vector2[*@shear] : nil
+		@shift = @shift ? Vector2[*@shift] : nil
+		@pivot = @pivot ?  Point2[*@pivot] : nil
 	end
 	
 	# Apply the 
