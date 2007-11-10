@@ -98,7 +98,7 @@ VALUE rbgm_joystick_new( VALUE module, VALUE vindex )
 		rb_raise(eSDLError,"Could not open joystick %d: %s",\
 			index,SDL_GetError());
 	}
-	self = Data_Wrap_Struct(cJoy, 0,SDL_JoystickClose, joy);
+	self = Data_Wrap_Struct(cJoy, 0, RBGM_JoystickClose, joy);
 	return self;
 }
 
