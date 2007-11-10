@@ -44,7 +44,7 @@ class Matrix3
 		
 		# Create a shearing matrix.
 		def shear(x,y)
-			self.new( [0,x,0], [y,0,0], [0,0,1] )
+			self.new( [1,x,0], [y,1,0], [0,0,1] )
 		end
 	end
 
