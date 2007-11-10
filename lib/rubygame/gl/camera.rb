@@ -30,8 +30,17 @@ class Camera
 	end	
 
 	def screen_to_world
-		# Assuming the default camera, for now.
-		Matrix3.scale(1,-1) * Matrix3.translate(0, -@screen_region.height)
+		s, w = @screen_region, @world_region
+
+		shift1 = Matrix3.translate( -s.center.to_v.x, -1 * s.center.to_v.y )
+		
+		normalize = Matrix3.scale(  1/s.width.to_f, -1/s.height.to_f )
+
+		resize = Matrix3.scale( w.width, w.height )
+		
+		shift2 = Matrix3.translate( *(w.center.to_v) )
+
+		return  shift2 * resize * normalize * shift1
 	end
 	
 	def convert_to_worldspace( pos )
