@@ -631,11 +631,11 @@ VALUE rbgm_surface_getat( int argc, VALUE *argv, VALUE self )
 		locked -= 1;
 	}
 
-	if((int *)color == NULL)
-	{
-		VALUE zero = INT2NUM(0);
-		return rb_ary_new3(4,zero,zero,zero,zero);
-	}
+/* 	if((int *)color == NULL) */
+/* 	{ */
+/* 		VALUE zero = INT2NUM(0); */
+/* 		return rb_ary_new3(4,zero,zero,zero,zero); */
+/* 	} */
 
 	SDL_GetRGBA(color, surf->format, &r, &g, &b, &a);
 	return rb_ary_new3(4,UINT2NUM(r),UINT2NUM(g),UINT2NUM(b),UINT2NUM(a));
