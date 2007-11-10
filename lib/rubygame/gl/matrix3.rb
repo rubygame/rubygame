@@ -77,7 +77,7 @@ class Matrix3
 			g,h,i = other.to_ary.flatten!
 
 			row1 = [@a*a + @b*d + @c*g,  @a*b + @b*e + @c*h, @a*c + @b*f + @c*i ]
-			row2 = [@d*a + @e*d + @e*g,  @d*b + @e*e + @e*h, @d*c + @e*f + @e*i ]
+			row2 = [@d*a + @e*d + @f*g,  @d*b + @e*e + @f*h, @d*c + @e*f + @f*i ]
 			row3 = [@g*a + @h*d + @i*g,  @g*b + @h*e + @i*h, @g*c + @h*f + @i*i ]
 			
 			return (other.class)[row1, row2, row3]
