@@ -1,8 +1,7 @@
-require 'rubygame/gl/matricks'
+require 'rubygame/gl/boundary'
+require 'rubygame/gl/point2'
 require 'rubygame/gl/sat'
 require 'rubygame/gl/shape'
-require 'rubygame/gl/boundary'
-
 
 class Polygon
 	include Shape
@@ -21,7 +20,7 @@ class Polygon
 	end
 	
 	def initialize( *points )
-		@points = Point.ify(*points)
+		@points = Point2.ify(*points)
 		super()
 	end
 
@@ -40,7 +39,7 @@ class Polygon
 
 	def center
 		sum = points.map { |p| p.to_v }.inject { |a,b| a + b }
-		return Point[*(sum * 1.quo(@points.length).to_f)]
+		return Point2[*(sum * 1.quo(@points.length).to_f)]
 	end
 
 	def collide_point( other )

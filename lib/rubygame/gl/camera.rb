@@ -1,5 +1,7 @@
 require 'rubygame/gl/shared'
 require 'rubygame/gl/event_types'
+require 'rubygame/gl/matrix3'
+require 'rubygame/gl/point2'
 
 class Camera
 	attr_accessor :screen_region
@@ -29,11 +31,11 @@ class Camera
 
 	def screen_to_world
 		# Assuming the default camera, for now.
-		Matrix.scale(1,-1) * Matrix.translate(0, -@screen_region.height)
+		Matrix3.scale(1,-1) * Matrix3.translate(0, -@screen_region.height)
 	end
 	
 	def convert_to_worldspace( pos )
-		screen_to_world() * Point[*pos]
+		screen_to_world() * Point2[*pos]
 	end
 
 	def make_mouseclick( event )

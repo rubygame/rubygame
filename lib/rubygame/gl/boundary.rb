@@ -1,6 +1,7 @@
-require 'rubygame/gl/matricks'
 require 'rubygame/gl/collidable'
+require 'rubygame/gl/point2'
 require 'rubygame/gl/sat'
+require 'rubygame/gl/vector2'
 
 
 #  Boundary implements 2D axis-aligned bounding boxes. They are used for:
@@ -109,16 +110,16 @@ class Boundary
 	#  call-seq:
 	#    collide_point( other )
 	# 
-	#  Perform a collision check between this Boundary and a Point.
+	#  Perform a collision check between this Boundary and a Point2.
 	#  See Collidable#collide.
 	#  
-	#  other::    The Point to check collision with. (Point, required)
+	#  other::    The Point2 to check collision with. (Point2, required)
 	# 
-	#  Returns::  true iff this Boundary overlaps or touches the Point. (boolean)
+	#  Returns::  true iff this Boundary overlaps or touches the Point2. (boolean)
 	#  
 	#  Example:
 	#    a = Boundary.new( 10, 50, 10, 30 )
-	#    b = Point[15,20]
+	#    b = Point2[15,20]
 	#    a.collide_point( b )               # => true
 	# 	
 	def collide_point( other )
@@ -237,8 +238,8 @@ class Boundary
 	end
 
 	def points
-		[Point[@left,@bottom], Point[@right,@bottom],
-		 Point[@right,@top], Point[@left, @top]]
+		[Point2[@left,@bottom], Point2[@right,@bottom],
+		 Point2[@right,@top],   Point2[@left, @top]]
 	end
 
 	def to_s
@@ -276,7 +277,7 @@ class Boundary
 		y_grow = height * (y - 1.0) * 0.5
 		grow( x_grow, y_grow )
 	end
-
+	
 	#  call-seq:
 	#    union( other )  ->  new_boundary
 	# 

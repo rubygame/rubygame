@@ -1,5 +1,5 @@
-require 'rubygame/gl/matricks'
 require 'rubygame/gl/collidable'
+require 'rubygame/gl/matrix3'
 
 module Shape
 	include Collidable
@@ -8,7 +8,7 @@ module Shape
 	attr_accessor :depth
 
 	def initialize(*args)
-		@matrix = Matrix.identity(3)
+		@matrix = Matrix3.identity
 		@depth = 0
 		super()
 	end
@@ -29,26 +29,26 @@ module Shape
 	end
 
 	def translate( x, y )
-		transform( Matrix.translate(x,y) )
+		transform( Matrix3.translate(x,y) )
 	end
 
 	def translate!( x, y )
-		transform!( Matrix.translate(x,y) )
+		transform!( Matrix3.translate(x,y) )
 	end
 
 	def rotate( theta )
-		transform( Matrix.rotate(theta) )
+		transform( Matrix3.rotate(theta) )
 	end
 
 	def rotate!( theta )
-		transform!( Matrix.rotate(theta) )
+		transform!( Matrix3.rotate(theta) )
 	end
 
 	def scale( x, y=nil )
-		transform( Matrix.scale(x,y) )
+		transform( Matrix3.scale(x,y) )
 	end
 
 	def scale!( x, y=nil )
-		transform!( Matrix.scale(x,y) )
+		transform!( Matrix3.scale(x,y) )
 	end
 end

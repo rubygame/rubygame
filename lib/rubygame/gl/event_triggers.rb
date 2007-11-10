@@ -1,6 +1,5 @@
 require 'rubygame'
 require 'rubygame/gl/event_types'
-require 'rubygame/gl/matricks'
 
 class AllTrigger
 	def initialize( *triggers )

@@ -1,5 +1,3 @@
-require 'rubygame/gl/matricks'
-
 # Separating Axis Theorem
 
 # Test overlap between range AB and range CD

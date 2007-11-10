@@ -1,6 +1,7 @@
-require 'rubygame/gl/matricks'
+require 'rubygame/gl/point2'
 require 'rubygame/gl/sat'
 require 'rubygame/gl/shape'
+require 'rubygame/gl/vector2'
 require 'rubygame/gl/boundary'
 
 class Ellipse
@@ -10,7 +11,7 @@ class Ellipse
 	attr_accessor :detail
 
 	def initialize( center, rx, ry )
-		@center, @rx, @ry = Point[*center], rx, ry
+		@center, @rx, @ry = Point2[*center], rx, ry
 		@detail = 20
 		super()
 	end

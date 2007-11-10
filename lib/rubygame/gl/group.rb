@@ -1,6 +1,8 @@
-require 'rubygame/gl/matricks'
-require 'rubygame/gl/shape'
 require 'rubygame/gl/collidable'
+require 'rubygame/gl/matrix3'
+require 'rubygame/gl/point2'
+require 'rubygame/gl/shape'
+require 'rubygame/gl/vector2'
 
 class Group
 	include Shape
@@ -11,10 +13,10 @@ class Group
 
 	def initialize( *members )
 		@members = members
-		@pos = Vector2[0,0]
+		@pos = Point2[0,0]
 		@angle = 0
 		@scale = Vector2[1,1]
-		@temp_matrix = Matrix.identity(3)
+		@temp_matrix = Matrix3.identity
 		super()
 	end
 
@@ -67,9 +69,9 @@ class Group
 	#private
 
 	def _generate_matrix
-		Matrix.translate( *@pos ) *
-			Matrix.rotate( @angle ) *
-			Matrix.scale( *@scale )
+		Matrix3.translate( *@pos ) *
+			Matrix3.rotate( @angle ) *
+			Matrix3.scale( *@scale )
 	end
 
 	def _compose_matrix
