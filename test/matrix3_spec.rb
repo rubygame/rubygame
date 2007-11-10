@@ -1,4 +1,7 @@
 require 'rubygame/gl/matrix3'
+require 'rubygame/gl/point2'
+require 'rubygame/gl/vector2'
+require 'rubygame/gl/transform2'
 
 include Math
 
@@ -48,6 +51,20 @@ describe Matrix3 do
 		result = @translate * @sample
 		result.should be_instance_of(Matrix3)
 		result.should == Matrix3[[71,82,93],[109,125,141],[7,8,9]]
+	end
+	
+	it "should support multiplication with a Point2" do 
+		(@translate * Point2[5,10]).should == Point2[15,25]
+		(@scale * Point2[5,10]).should == Point2[20,30]
+	end
+	
+	it "should support multiplication with a Vector2" do 
+		(@translate * Vector2[5,10]).should == Vector2[5,10] # Vector2's don't translate
+		(@scale * Vector2[5,10]).should == Vector2[20,30]
+	end
+	
+	it "should support multiplication with a Transform2" do 
+		(@identity * Transform2.new(:shift => [10,15])).should == @translate
 	end
 	
 	it "should be convertible to nested Arrays" do 
