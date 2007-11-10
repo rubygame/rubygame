@@ -59,6 +59,12 @@ class Matrix3
 		self.to_ary == other.to_ary
 	end
 	
+	# Read the contents of the cell at the given row and column.
+	# NOTE: The first row and column have index 0, not 1.
+	def []( row, column )
+		self.to_ary[row][column]
+	end
+	
 	# Multiply this Matrix3 with a Vector2, a Point2, or
 	# another Matrix3.
 	def *( other )

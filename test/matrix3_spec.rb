@@ -44,7 +44,12 @@ describe Matrix3 do
 	end
 	
 	it "should have an equality (==) operator" do 
-		@identity.should == @identity
+		(@identity == @identity).should be_true
+		(@identity == @sample).should be_false
+	end
+	
+	it "should have an [] operator" do
+		@sample[2,2].should == 9
 	end
 	
 	it "should support matrix multiplication with other Matrix3's" do 
