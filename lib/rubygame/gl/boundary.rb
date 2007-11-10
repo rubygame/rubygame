@@ -87,6 +87,11 @@ class Boundary
 		[width, height]
 	end
 
+	def center
+		Point2[(@left + @right) / 2.0,
+		       (@top + @bottom) / 2.0]
+	end
+	
 	#  call-seq:
 	#    collide_boundary( other )
 	# 
@@ -278,6 +283,11 @@ class Boundary
 		grow( x_grow, y_grow )
 	end
 	
+	def scale_from( x, y, pivot )
+		v = Vector2[*pivot]
+		move(-v).scale(x,y).move(v)
+	end
+
 	#  call-seq:
 	#    union( other )  ->  new_boundary
 	# 
