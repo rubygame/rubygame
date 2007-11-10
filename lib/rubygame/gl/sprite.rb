@@ -68,8 +68,8 @@ class GLImageSprite < GLSprite
 		self.shape.collide( other.shape )
 	end
 
-	def draw()
-		shape = @shape
+	def draw( matrix=Matrix3.identity )
+		shape = @shape.transform( matrix )
 
 		glBindTexture(GL_TEXTURE_2D, @tex_id)
 		glbegin(GL_TRIANGLE_FAN) do

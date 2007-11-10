@@ -32,8 +32,9 @@ class Group
 		return self
 	end
 
-	def draw()
-		@members.each { |child| child.draw }
+	def draw( matrix=Matrix3.identity )
+		matrix = matrix * _compose_matrix()
+		@members.each { |child| child.draw( matrix ) }
 	end
 
 	def bounds
