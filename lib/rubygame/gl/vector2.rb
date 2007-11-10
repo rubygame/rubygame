@@ -30,6 +30,10 @@ class Vector2
 		self.class.new( @x * scalar,    @y * scalar   )
 	end
 	
+	def ==( other )
+		self.to_ary == other.to_ary
+	end
+	
 	def []( index )
 		self.to_ary[index]
 	end

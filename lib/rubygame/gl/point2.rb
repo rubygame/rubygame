@@ -25,6 +25,10 @@ class Point2
 	def -( other )
 		   Vector2.new( @x - other.x,   @y - other.y  )
 	end
+
+	def ==( other )
+		self.to_ary == other.to_ary
+	end
 	
 	def []( index )
 		self.to_ary[index]
