@@ -1,3 +1,4 @@
+require 'rubygame/gl/shared'
 require 'rubygame/gl/vector2'
 require 'rubygame/gl/transform2'
 
@@ -27,7 +28,7 @@ class Point2
 	end
 
 	def ==( other )
-		self.to_ary == other.to_ary
+		@x.nearly_equal?(other.x) and @y.nearly_equal?(other.y)
 	end
 	
 	def []( index )

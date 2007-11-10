@@ -21,3 +21,9 @@ def glbegin(type, &block)
 	block.call()
 	glEnd()
 end
+
+class Numeric
+	def nearly_equal?(other, threshold=0.00000000001 )
+		return (self - other).abs <= threshold
+	end
+end
