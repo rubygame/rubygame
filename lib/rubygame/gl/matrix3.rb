@@ -55,6 +55,10 @@ class Matrix3
 		@g, @h, @i = row3
 	end
 
+	def ==( other )
+		self.to_ary == other.to_ary
+	end
+	
 	# Multiply this Matrix3 with a Vector2, a Point2, or
 	# another Matrix3.
 	def *( other )
