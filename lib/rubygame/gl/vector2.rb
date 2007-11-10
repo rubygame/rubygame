@@ -26,6 +26,10 @@ class Vector2
 	def -( other )
 		self.class.new( @x - other.x,   @y - other.y  )
 	end
+
+	def -@
+		self.class.new( -@x, -@y )
+	end
 	
 	def *( scalar )
 		self.class.new( @x * scalar,    @y * scalar   )
