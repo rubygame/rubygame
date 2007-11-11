@@ -1,3 +1,4 @@
+require 'rubygame/gl/shared'
 require 'rubygame/gl/point2'
 require 'rubygame/gl/transform2'
 require 'rubygame/gl/vector2'
@@ -56,7 +57,8 @@ class Matrix3
 	end
 
 	def ==( other )
-		self.to_ary == other.to_ary
+		pairs = self.to_ary.flatten!.zip( other.to_ary.flatten! )
+		pairs.all? { |pair| pair[0].nearly_equal?( pair[1] ) }
 	end
 	
 	# Read the contents of the cell at the given row and column.
