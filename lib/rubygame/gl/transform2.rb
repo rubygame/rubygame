@@ -84,9 +84,6 @@ class Transform2
 	# transformation will occur **after** the other one.
 	# See Matrix3#* for more information.
 	def *( other )
-		c = Math.cos(@angle)
-		s = Math.sin(@angle)
-		
 		case other
 		when Vector2
 			return self.to_m*other
