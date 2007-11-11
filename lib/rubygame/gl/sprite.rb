@@ -14,22 +14,6 @@ class GLSprite
 		instance_eval(&block) if block_given?
 	end
 
-	def with_transformation(&block)
-		glMatrixMode( GL_MODELVIEW )
-		glLoadIdentity()
-		pushpop_matrix do
-			glTranslate(@pos.x, @pos.y, @depth)
-			glRotate(@angle, 0, 0, 1)
-			case @scale
-			when Vector2
-				glScale(@scale.x, @scale.y, 1)
-			when Numeric
-				glScale(@scale,   @scale,   1)
-			end
-			block.call()
-		end
-	end
-
 	def draw()
 	end
 
