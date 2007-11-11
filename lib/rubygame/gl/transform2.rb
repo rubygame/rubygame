@@ -77,7 +77,12 @@ class Transform2
 		false
 	end
 	
-	# Apply the 
+	# Apply the transformation to a Vector2 or Point2, or
+	# combine transformations with a Matrix3 or Transform2.
+	# 
+	# NOTE: When combining transformations, the effect of this
+	# transformation will occur **after** the other one.
+	# See Matrix3#* for more information.
 	def *( other )
 		c = Math.cos(@angle)
 		s = Math.sin(@angle)
@@ -87,8 +92,10 @@ class Transform2
 			return self.to_m*other
 		when Point2
 			return self.to_m*other
-		when Matrix2
+		when Matrix3
 			return self.to_m*other
+		when Transform2
+			return self.to_m*other.to_m
 		end
 	end
 	
