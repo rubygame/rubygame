@@ -62,6 +62,16 @@ class Transform2
 		@shift = @shift ? Vector2[*@shift] : nil
 		@pivot = @pivot ?  Point2[*@pivot] : nil
 	end
+
+	def ==( other )
+		@angle == other.angle and\
+		@scale == other.scale and\
+		@shear == other.shear and\
+		@shift == other.shift and\
+		@pivot == other.pivot
+	rescue NoMethodError
+		false
+	end
 	
 	# Apply the 
 	def *( other )
