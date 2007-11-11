@@ -1,3 +1,23 @@
+== Changes from 2.0.1 to 2.1.0
+
+=== Features
+
+- New Mixer::Music module (thanks to Johan Berntsson and Bjorn De Meyer)
+- New Mixer.driver_name method (thanks to Bjorn De Meyer)
+
+=== Bug Fixes
+
+- [Bug 1820237]: Segfaults when Joysticks are garbage-collected
+                 after Rubygame has quit.
+
+=== Known Issues
+
+- Build system (for compiling) won't detect changed source files and
+  recompile as necessary; you must "rake clobber build" after a change.
+
+
+
+
 == Changes from 2.0.0 to 2.0.1
 
 === Bug Fixes
@@ -15,6 +35,9 @@
 - Argument handling for C methods is now more robust under the hood.
 - C methods which expect Array arguments will now also work with objects
   that can be converted to an Array (with #to_ary), such as Ftor.
+
+
+
 
 == Changes from 1.1.0 to 2.0.0:
 

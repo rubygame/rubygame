@@ -1,8 +1,6 @@
 = TODO / ROADMAP
 
-=== 2.1.0 (next minor release)
-
-- Mixer::Music module (patch from Johan Berntsson)
+=== 2.2.0 (next minor release)
 
 - Color (representation of a color)
   - ColorRGB and ColorHSV classes
@@ -12,11 +10,14 @@
 
 === 3.0.0 (next major release)
 
-- OpenGL-based 2D scene/view/object model.
-- Geometric primitives classes (collision detection, drawing).
-- Keyboard events keysyms to be :symbols (e.g. :uparrow, :a, :spacebar)
+- New scene/camera/sprite sytem.
+- New geometric primitives classes (for collision detection, drawing).
+- New hook-based event handler system.
+
+- Keyboard events to be :symbols (e.g. :uparrow, :a, :spacebar)
+
 - Clock class to be based on Ruby's timer (allows multi-threading). 
-  Units change to seconds (as a float), not milliseconds (as an integer).
+- New TickEvent returned from Clock#tick.
 
 - Change Sprites::Group#collide_group to scrap the 'killa/killb' stuff,
   take a block instead.
