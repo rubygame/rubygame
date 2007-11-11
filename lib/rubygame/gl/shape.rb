@@ -1,5 +1,6 @@
 require 'rubygame/gl/collidable'
 require 'rubygame/gl/matrix3'
+require 'rubygame/gl/transform2'
 
 module Shape
 	include Collidable
@@ -18,13 +19,18 @@ module Shape
 		super
 	end
 
-	def transform( matrix )
+	def transform( transform )
 		s = self.dup
-		s.transform!( matrix )
+		s.transform!( transform )
 	end
 
-	def transform!( matrix )
-		@matrix = matrix * @matrix
+	def transform!( transform )
+		case transform
+		when Transform2, Matrix3
+			@matrix = transform * @matrix
+		when Hash
+			@matrix = Transform2.new(transform) * @matrix
+		end
 		return self
 	end
 
