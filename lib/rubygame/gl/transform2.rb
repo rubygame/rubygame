@@ -43,6 +43,10 @@ class Transform2
 	end
 	
 	def initialize( description = {} )
+		unless description.kind_of? Hash
+			raise ArgumentError, "#{self.class.name}.new takes 1 Hash argument. Got #{description.class.name}."
+		end
+		
 		@angle = (description[:angle])
 		@scale = (description[:scale])
 		@shear = (description[:shear])
