@@ -120,8 +120,8 @@ class Transform2
 		end
 		
 		# Apply rotation
-		if @rotate
-			result = Matrix3.rotate(*@rotate) * result
+		if @angle
+			result = Matrix3.rotate(@angle) * result
 		end
 		
 		# Apply translation
