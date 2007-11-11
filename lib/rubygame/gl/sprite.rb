@@ -2,18 +2,25 @@ require 'rubygame/gl/shared'
 require 'rubygame/gl/polygon'
 
 class GLSprite
-	attr_accessor :pos, :depth, :scale, :angle
+	attr_accessor :depth
 	attr_accessor :parents
 
 	def initialize(&block)
 		@t = 0
-		@pos = Vector2[0,0]
+		@transform = Transform2.new()
 		@depth = 0
-		@scale = Vector2[1,1]
-		@angle = 0
 		instance_eval(&block) if block_given?
 	end
 
+	def angle; @transform.angle; end
+	def angle=( new_angle ); @transform.angle = new_angle; end
+	
+	def pos; @transform.shift; end
+	def pos=( new_pos ); @transform.shift = new_pos; end
+	
+	def scale; @transform.scale; end
+	def scale=( new_scale ); @transform.scale = new_scale; end
+	
 	def draw()
 	end
 
@@ -77,6 +84,6 @@ class GLImageSprite < GLSprite
 
 	def update(*args)
 		super
-		@shape = @base_shape.scale(*(@scale.to_ary[0,2])).rotate!(@angle).translate!(*(@pos.to_ary[0,2]))
+		@shape = @base_shape.transform( @transform )
 	end
 end
