@@ -52,6 +52,12 @@ describe Matrix3 do
 		@sample[2,2].should == 9
 	end
 	
+	it "should have an attribute reader for each component" do 
+		[@sample.a, @sample.b, @sample.c].should == [1,2,3]
+		[@sample.d, @sample.e, @sample.f].should == [4,5,6]
+		[@sample.g, @sample.h, @sample.i].should == [7,8,9]
+	end
+	
 	it "should support matrix multiplication with other Matrix3's" do 
 		result = @translate * @sample
 		result.should be_instance_of(Matrix3)
