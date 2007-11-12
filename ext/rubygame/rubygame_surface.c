@@ -631,11 +631,11 @@ VALUE rbgm_surface_getat( int argc, VALUE *argv, VALUE self )
 		locked -= 1;
 	}
 
-/* 	if((int *)color == NULL) */
-/* 	{ */
-/* 		VALUE zero = INT2NUM(0); */
-/* 		return rb_ary_new3(4,zero,zero,zero,zero); */
-/* 	} */
+	if((int *)color == NULL)
+	{
+		VALUE zero = INT2NUM(0);
+		return rb_ary_new3(4,zero,zero,zero,zero);
+	}
 
 	SDL_GetRGBA(color, surf->format, &r, &g, &b, &a);
 	return rb_ary_new3(4,UINT2NUM(r),UINT2NUM(g),UINT2NUM(b),UINT2NUM(a));
@@ -766,7 +766,14 @@ VALUE rbgm_surface_convert(int argc, VALUE *argv, VALUE self)
 
 	flags = collapse_flags(vflags); /* in rubygame_shared.c */
 
-  newsurf = SDL_ConvertSurface( surf, othersurf->format, flags );
+  if( init_video_system() == 0 )
+  {
+    newsurf = SDL_ConvertSurface( surf, othersurf->format, flags );
+  }
+  else
+  {
+    newsurf = NULL;
+  }
 
   if( newsurf == NULL )
   {
@@ -796,7 +803,14 @@ VALUE rbgm_surface_dispform(VALUE self)
 	SDL_Surface *surf, *newsurf;
 	Data_Get_Struct(self, SDL_Surface, surf);
 
-  newsurf = SDL_DisplayFormat( surf );
+  if( init_video_system() == 0 )
+  {
+    newsurf = SDL_DisplayFormat( surf );
+  }
+  else
+  {
+    newsurf = NULL;
+  }
 
   if( newsurf == NULL )
   {
@@ -825,7 +839,14 @@ VALUE rbgm_surface_dispformalpha(VALUE self)
 	SDL_Surface *surf, *newsurf;
 	Data_Get_Struct(self, SDL_Surface, surf);
 
-  newsurf = SDL_DisplayFormatAlpha( surf );
+  if( init_video_system() == 0 )
+  {
+    newsurf = SDL_DisplayFormatAlpha( surf );
+  }
+  else
+  {
+    newsurf = NULL;
+  }
 
   if( newsurf == NULL )
   {

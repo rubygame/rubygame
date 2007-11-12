@@ -7,8 +7,10 @@
 
 === Bug Fixes
 
-- [Bug 1820237]: Segfaults when Joysticks are garbage-collected
-                 after Rubygame has quit.
+- Segfaults when Joysticks are garbage-collected after Rubygame has quit.
+	[Bug 1820237] (Thanks to Bjorn De Meyer)
+- Segfaults when using Surface#convert, #to_display, or #to_display_alpha
+  when no video mode has been set.
 
 === Known Issues
 
