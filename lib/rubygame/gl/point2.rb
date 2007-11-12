@@ -1,8 +1,10 @@
 require 'rubygame/gl/shared'
+require 'rubygame/gl/collidable'
 require 'rubygame/gl/vector2'
 require 'rubygame/gl/transform2'
 
 class Point2
+	include Collidable
 	attr_reader :x, :y
 	
 	class << self

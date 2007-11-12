@@ -42,7 +42,7 @@ class Polygon
 		return Point2[*(sum * 1.quo(@points.length).to_f)]
 	end
 
-	def collide_point( other )
+	def collide_point2( other )
 		pointsA = self.points
 
 		collides = true

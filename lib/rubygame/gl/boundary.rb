@@ -113,7 +113,7 @@ class Boundary
 	end
 
 	#  call-seq:
-	#    collide_point( other )
+	#    collide_point2( other )
 	# 
 	#  Perform a collision check between this Boundary and a Point2.
 	#  See Collidable#collide.
@@ -125,9 +125,9 @@ class Boundary
 	#  Example:
 	#    a = Boundary.new( 10, 50, 10, 30 )
 	#    b = Point2[15,20]
-	#    a.collide_point( b )               # => true
+	#    a.collide_point2( b )               # => true
 	# 	
-	def collide_point( other )
+	def collide_point2( other )
 		overlap?( @left, @right, other.x, other.x ) and \
 		overlap?( @bottom, @top, other.y, other.y )
 	end
