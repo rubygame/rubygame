@@ -4,6 +4,7 @@ require 'rubygame'
 require 'rubygame/gl/scene'
 require 'rubygame/gl/sprite'
 require 'rubygame/gl/event_hook'
+require 'rubygame/gl/collision_handler'
 
 include Rubygame
 
@@ -44,7 +45,7 @@ def main()
 			@t += time
 			self.angle = 0.4 * Math::sin(@t / 0.3)
 			self.scale = Vector2[1.0 + 0.05*Math::sin(@t/0.085),
-			                 1.0 + 0.05*Math::cos(@t/0.083)]
+			                     1.0 + 0.05*Math::cos(@t/0.083)]
 			super
 		end
 	end
@@ -60,6 +61,8 @@ def main()
 	scene.add_objects(panda,ruby)
 
 	handler = scene.event_handler
+	collision = CollisionHandler.new()
+	collision[:main] = [panda, ruby]
 
 	set_pos_action = BlockAction.new do |owner, event|
 		owner.pos = event.world_pos
@@ -101,6 +104,30 @@ def main()
 		end
 	end
 	
+	handler.append_hook do
+		@owner = scene
+		@trigger = InstanceTrigger.new( CollisionStartEvent )
+		@action = BlockAction.new do |owner, event|
+			glColor([1,0,0])
+		end
+	end
+	
+	handler.append_hook do
+		@owner = scene
+		@trigger = InstanceTrigger.new( CollisionEndEvent )
+		@action = BlockAction.new do |owner, event|
+			glColor([1,1,1])
+		end
+	end
+	
+	handler.append_hook do
+		@owner = scene
+		@trigger = InstanceTrigger.new( CollisionEvent )
+		@action = BlockAction.new do |owner, event|
+			glColor([0.9+rand*0.1, rand*0.2, rand*0.2])
+		end
+	end
+	
 	catch(:quit) do
 		loop do
 			queue.each do |event|
@@ -112,11 +139,9 @@ def main()
 
 			# redraw everything
 
-			if panda.collides_with? ruby
-				glColor([255,0,0])
-			else
-				glColor([255,255,255])
-			end
+			collision.handle.each do |event|
+ 				scene.event_handler.handle(event)
+ 			end
 
 			scene.draw()
 			scene.refresh()
