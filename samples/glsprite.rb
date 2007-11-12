@@ -134,15 +134,14 @@ def main()
 				scene.event_handler.handle(event)
 			end
 
+			collision.handle.each do |event|
+ 				scene.event_handler.handle(event)
+ 			end
+			
 			# update everything
 			scene.update()
 
 			# redraw everything
-
-			collision.handle.each do |event|
- 				scene.event_handler.handle(event)
- 			end
-
 			scene.draw()
 			scene.refresh()
 
