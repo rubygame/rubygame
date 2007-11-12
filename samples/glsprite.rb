@@ -33,8 +33,8 @@ def main()
 	panda = GLImageSprite.new {
 		@surface = Rubygame::Surface.load_image('big_panda.png')
 		@has_alpha = true
-		@pos = Point[WIDTH/2, HEIGHT/2]
-		@angle = 0.4
+		self.pos = Point2[WIDTH/2, HEIGHT/2]
+		self.angle = 0.4
 		setup_texture()
 	}
 
@@ -42,8 +42,8 @@ def main()
 		def update( tick )
 			time = tick.seconds
 			@t += time
-			@angle = 0.4 * Math::sin(@t / 0.3)
-			@scale = Vector2[1.0 + 0.05*Math::sin(@t/0.085),
+			self.angle = 0.4 * Math::sin(@t / 0.3)
+			self.scale = Vector2[1.0 + 0.05*Math::sin(@t/0.085),
 			                 1.0 + 0.05*Math::cos(@t/0.083)]
 			super
 		end
@@ -52,12 +52,12 @@ def main()
 	ruby = GLImageSprite.new {
 		@surface = Rubygame::Surface.load_image('ruby.png')
 		setup_texture()
-		@pos = Vector2[100,300]
-		@depth = -0.1
-		@angle = -0.2
+		self.pos = Vector2[100,300]
+		self.depth = -0.1
+		self.angle = -0.2
 	}
 	
-	scene.objects.add_children(panda,ruby)
+	scene.add_objects(panda,ruby)
 
 	handler = scene.event_handler
 
