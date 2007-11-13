@@ -4,13 +4,34 @@
 
 - New Mixer::Music module (thanks to Johan Berntsson and Bjorn De Meyer)
 - New Mixer.driver_name method (thanks to Bjorn De Meyer)
+- Added TTF#size_utf8 and TTF#size_unicode.
+- Added Sprite#undraw.
+- Added Sprite@depth attribute, and DepthSortGroup mixin module for Group.
+- Added Rubygame.key_name, a key-to-description translator, 
+  that auto-initializes SDL video if needed.
+- Improved Joystick#get_name.
+
+=== Miscellaneous other changes and additions
+- New Surfaces can be created before a Screen mode has been set.
+- Refactored TTF style handling and array to color conversion in C.
+- Added init_video_system() function in C for internal use.
+- Added RBGM_JoystickClose() on the C side.
 
 === Bug Fixes
 
-- Segfaults when Joysticks are garbage-collected after Rubygame has quit.
-	[Bug 1820237] (Thanks to Bjorn De Meyer)
-- Segfaults when using Surface#convert, #to_display, or #to_display_alpha
+- Fix: Segfaults when Joysticks are garbage-collected after Rubygame has quit.
+  [Bug 1820237] (Thanks to Bjorn De Meyer)
+- Fix: Segfaults when using Surface#convert, #to_display, or #to_display_alpha
   when no video mode has been set.
+- Fix: TTF.setup won't re-setup if it's already setup.
+- Fix: Bug with dirty rectangles in UpdateGroup. 
+- Fix: Rect#topleft was returning a Rect type instead of Array.
+- Fix: A quick and dirty fix for Surface#get_at returning [0,0,0,0] when it 
+  shouldn't.
+- Fix: docs error for joy-hat direction value.
+- Fix: Rubygame::Screen.new can now handle Bignum flags correctly.
+- Fix: Added argument checks to #center=, #topleft=, and similar methods 
+  in Rect.
 
 === Known Issues
 
