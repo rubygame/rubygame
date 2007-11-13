@@ -6,7 +6,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 # This is a translation of an example application from
-# pygame (http://www.pygame.org), translated to rubygame.
+# pygame (http://www.pygame.org), translated to Rubygame.
 # The original application had this to say:
 # 
 #   This simple example is used for the line-by-line tutorial
@@ -21,7 +21,7 @@
 # As much as possible, this is a straight port of the pygame example,
 # without any real improvements in style. Significant deviations are
 # noted by comments. As such, this might serve as something of a
-# Rosetta Stone for a pygame user switching to rubygame.
+# Rosetta Stone for a pygame user switching to Rubygame.
 
 require "rubygame"
 
@@ -34,7 +34,7 @@ puts 'Warning, sound disabled' unless
 
 # Functions to create our resources:
 def load_image(name, colorkey=nil)
-    # Rubygame::Image.load has been replaced with Surface
+	# Rubygame::Image.load has been replaced with Surface
 	image = Rubygame::Surface.load_image(name)
 	if colorkey != nil
 		if colorkey == -1
@@ -46,14 +46,14 @@ def load_image(name, colorkey=nil)
 end
 
 def load_sound(name)
-    return nil unless $sound_ok
-    begin
-        sound = Rubygame::Mixer::Sample.load_audio(name)
-        return sound
-    rescue Rubygame::SDLError
-        puts "Cannot load sound " + name
-        exit
-    end
+	return nil unless $sound_ok
+	begin
+		sound = Rubygame::Mixer::Sample.load_audio(name)
+		return sound
+	rescue Rubygame::SDLError => e
+		warn "Cannot load sound #{name}. (#{e})\nContinuing anyway..."
+		return nil
+	end
 end
 
 # Classes for our game objects:
@@ -72,7 +72,7 @@ class Fist
 	end
 
 	# This is a small departure from the pygame example. Instead
-	# of polling the mouse for cursor position etc. (which rubygame
+	# of polling the mouse for cursor position etc. (which Rubygame
 	# doesn't do, as of February 2006), we receive notification
 	# of mouse movements from a global event queue and store it
 	# in @mpos for later use in Fist#update().
@@ -196,28 +196,35 @@ def main
 	screen = Rubygame::Screen.set_mode([468, 60])
 	screen.title = 'Monkey Fever'
 	screen.show_cursor = false;
-	# In rubygame, you make an EventQueue object; pygame just uses functions
+	# In Rubygame, you make an EventQueue object; pygame just uses functions
 	queue = Rubygame::EventQueue.new()
 
-    # Not in the pygame version - for Rubygame, we need to 
-    # explicitly open the audio device.
-    # Args are:
-    #   Frequency - Sampling frequency in samples per second (Hz).
-    #               22050 is recommended for most games; 44100 is
-    #               CD audio rate. The larger the value, the more
-    #               processing required.
-    #   Format - Output sample format.  This is one of the
-    #            AUDIO_* constants in Rubygame::Mixer
-    #   Channels -output sound channels. Use 2 for stereo,
-    #             1 for mono. (this option does not affect number
-    #             of mixing channels) 
-    #   Samplesize - Bytes per output sample. Specifically, this
-    #                determines the size of the buffer that the
-    #                sounds will be mixed in.
-    Rubygame::Mixer::open_audio( 22050, 
-                                 Rubygame::Mixer::AUDIO_U8,
-                                 2,
-                                 1024 )
+	begin
+		# Not in the pygame version - for Rubygame, we need to 
+		# explicitly open the audio device.
+		# Args are:
+		#   Frequency - Sampling frequency in samples per second (Hz).
+		#               22050 is recommended for most games; 44100 is
+		#               CD audio rate. The larger the value, the more
+		#               processing required.
+		#   Format - Output sample format.  This is one of the
+		#            AUDIO_* constants in Rubygame::Mixer
+		#   Channels -output sound channels. Use 2 for stereo,
+		#             1 for mono. (this option does not affect number
+		#             of mixing channels) 
+		#   Samplesize - Bytes per output sample. Specifically, this
+		#                determines the size of the buffer that the
+		#                sounds will be mixed in.
+		Rubygame::Mixer::open_audio( 22050, 
+		                             Rubygame::Mixer::AUDIO_U8,
+		                             2,
+		                             1024 )
+	rescue Rubygame::SDLError => e
+		warn e
+		$sound_ok = false
+		warn "Continuing without sound..."
+	end
+	
 	# Create The Background
 	background = Rubygame::Surface.new(screen.size)
 	background.fill([250,250,250])
@@ -238,7 +245,7 @@ def main
 		textpos.centerx = background.width/2
 		# ATTENTION: Note that the "actor" is reversed from the pygame usage.
 		# In pygame, a surface "pulls" another surface's data onto itself.
-		# In rubygame, a surface "pushes" its own data onto another surface.
+		# In Rubygame, a surface "pushes" its own data onto another surface.
 		text.blit(background,textpos)
 	end
 
@@ -283,12 +290,13 @@ def main
 			when Rubygame::MouseMotionEvent
 				fist.tell(event)
 			when Rubygame::MouseDownEvent
-				# can't play sound yet, we'll have to commentate
 				if fist.punch(chimp)
-					Rubygame::Mixer::play(punch_sound,-1,0)
 					chimp.punched()
+					# Only try to play the sound if it isn't nil
+					Rubygame::Mixer::play(punch_sound,-1,0) if punch_sound
 				else
-				    Rubygame::Mixer::play(whiff_sound,-1,0)
+					# Only try to play the sound if it isn't nil
+					Rubygame::Mixer::play(whiff_sound,-1,0) if whiff_sound
 				end
 			when Rubygame::MouseUpEvent
 				fist.unpunch()
