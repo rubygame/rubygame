@@ -98,8 +98,6 @@ $options = OpenStruct.new(:gfx         => true,
                          :ttf         => true,
                          :mixer       => true,
                          :opengl      => true,
-                         :cflags      => "-Wall",
-                         :lflags      => "",
                          :sdl_config  => true,
                          :debug       => false,
                          :verbose     => false,
@@ -141,12 +139,6 @@ end
 optparse.on("--[no-]opengl", "Enable OpenGL support.") do |val|
   $options.opengl = val
 end
-optparse.on("--cflags FLAGS", "Pass these FLAGS to the C compiler.") do |val|
-  $options.cflags = val
-end
-optparse.on("--lflags FLAGS", "Pass these FLAGS to the C linker.") do |val|
-  $options.lflags = val
-end
 optparse.on("--[no-]sdl-config",
             "Feed results from `sdl-config' to \\",
             "\tthe compiler and linker or not.") do |val|
@@ -178,13 +170,12 @@ rule( /RUBYLIBDIR/ ) do |t|
 end
 
 CFLAGS = [from_env_or_config("CFLAGS"),
-          $options.cflags,
           try_sdl_config("--cflags"),
           "-I. -I#{CONFIG['topdir']}",
           ("-g" if $options.debug) ].join(" ")
 
 LINK_FLAGS = [from_env_or_config("LIBRUBYARG_SHARED"),
-              from_env_or_config("LINK_FLAGS"),
+              from_env_or_config("LDFLAGS"),
               try_sdl_config("--libs")].join(" ")
 
 DEFALUT_EXTDIR = File.join('ext','rubygame','')
