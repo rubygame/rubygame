@@ -266,7 +266,7 @@ def main
 	chimp = Chimp.new()
 	fist = Fist.new()
 	allsprites = Rubygame::Sprites::Group.new()
-	allsprites.push(fist, chimp)
+	allsprites.push(chimp, fist)
 	
 	#Main Loop
 	loop do
