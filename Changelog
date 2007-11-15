@@ -32,9 +32,11 @@
 
 === Acknowledgements
 
-- Johan Berntsson for adding Mixer::Music
-- Daniel Neis Araujo for adding Sprite#undraw
-- Bjorn De Meyer for numerous patches and improvements
+- Johan Berntsson for adding Mixer::Music.
+- Daniel Neis Araujo for adding Sprite#undraw.
+- Roger Ostrander (denor) for and bug fixes and adding Rubygame.key_name.
+- Bjorn De Meyer (beoran) for numerous patches and improvements.
+
  
 
 == Changes from 2.0.0 to 2.0.1
