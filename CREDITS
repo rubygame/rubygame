@@ -20,6 +20,11 @@
   Role::  Assistant developer
   Date::  2007 - present
 
+- <b>Bjorn De Meyer</b> / beoran
+  Email:: beoran at gmail.com
+  Role::  Assistant developer
+  Date::  Nov 2007 - present
+
 == Other Source Contributors
 
 - <b>Randy Eckenrode</b>
@@ -43,19 +48,3 @@
   Email::         danielneis at gmail.com
   Contribution::  Patch to add Sprite#undraw (based on UpdateGroup#undraw).
   Date::          2007-07-29 (r460).
-
-- <b>Bjorn De Meyer</b> / beoran
-	Email::         beoran@gmail.com
-	Contribution::  Patch to handle Bignum flags.
-	Date::          received 2007-10-27; applied 2007-11-07 (r500)
-	Contribution::  Patch to add many new methods to Mixer and Mixer::Music.
-	Date::          received 2007-10-27; applied 2007-11-07 (r501)
-	Contribution::  Patch to improve rbgm_joy_getname and add RBGM_JoystickClose.
-	Date::          received 2007-10-27; applied 2007-11-07 (r502)
-	Contribution::  Patch to refactor TTF style handling.
-	Date::          received 2007-11-06; applied 2007-11-07 (r504)
-	Contribution::  Patch to add TTF#size_utf8 and TTF#size_unicode.
-	Date::          received 2007-11-06; applied 2007-11-07 (r505)
-	Contribution::  Patch to refactor Array -> color conversion in TTF.
-	Date::          received 2007-11-06; applied 2007-11-07 (r506)
-
