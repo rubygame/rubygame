@@ -31,6 +31,7 @@ extern VALUE eSDLError;
 extern VALUE cSurface;
 extern VALUE cRect;
 extern SDL_Rect *make_rect(int, int, int, int);
+extern VALUE make_symbol(char *);
 extern Uint32 collapse_flags(VALUE);
 extern VALUE convert_to_array(VALUE);
 extern int init_video_system();

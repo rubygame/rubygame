@@ -41,6 +41,11 @@ SDL_Rect *make_rect(int x, int y, int w, int h)
 	return rect;
 }
 
+VALUE make_symbol(char *string)
+{
+	return ID2SYM(rb_intern(string));
+}
+
 /* Take either nil, Numeric or an Array of Numerics, returns Uint32. */
 Uint32 collapse_flags(VALUE vflags)
 {
