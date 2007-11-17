@@ -388,28 +388,6 @@ VALUE rbgm_mixmusic_stop( VALUE self )
 }
 
 /* call-seq:
- *  volume
- *
- *  Returns the current volume level of the music.
- */
-VALUE rbgm_mixmusic_getvolume( VALUE self )
-{
-  return INT2NUM(Mix_VolumeMusic(-1));
-}
-
-/* call-seq:
- *  volume = new_volume
- *
- *  Sets the volume level of the music.
- */
-VALUE rbgm_mixmusic_setvolume( VALUE self, VALUE volumev )
-{
-  Mix_VolumeMusic(NUM2INT(volumev));
-  return Qnil;
-}
-
-
-/* call-seq:
  *  set_music_command(command)  ->  integer
  *
  *  Sets the external command used to play music. 
@@ -432,7 +410,29 @@ VALUE rbgm_mixmusic_setcommand(VALUE class, VALUE commandv)
   return INT2NUM( result );
 }
 
+/*  call-seq:
+ *     volume
+ *
+ *  Returns the current volume level of the music.
+ *  0.0 is total silence, 1.0 is maximum volume.
+ */
+VALUE rbgm_mixmusic_getvolume(VALUE self)
+{
+  return rb_float_new( (double)(Mix_VolumeMusic(-1)) / MIX_MAX_VOLUME );
+}
 
+/*  call-seq:
+ *     volume = new_volume
+ *
+ *  Sets the volume level of the music.
+ *  0.0 is total silence, 1.0 is maximum volume.
+ */
+VALUE rbgm_mixmusic_setvolume(VALUE self, VALUE volumev)
+{
+  double volume = NUM2DBL(volumev);
+  Mix_VolumeMusic( (int)(volume * MIX_MAX_VOLUME) );
+  return volumev;
+}
 
 /* call-seq:
  *  fade_in(music, loops, speed)  ->  integer
