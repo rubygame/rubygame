@@ -328,28 +328,43 @@ VALUE rbgm_mixmusic_new(VALUE class, VALUE filev)
   return self;
 }
 
-/* call-seq:
- *  play(sample, repeats )
+/*  call-seq:
+ *     play( repeats = 0 )
  *
- *  Play music, repeating a certain number
- *  of extra times.
+ *  Play music, repeating a certain number of extra times.
  *
  *  Raises SDLError if something goes wrong.
  *  
  *  This method takes these arguments:
- *  sample::      what Sample to play
- *  repeats::     how many extra times to repeat the sample.
+ *  repeats::     how many extra times to play the music.
  *                Can be -1 to repeat forever until it is stopped.
  */
-VALUE rbgm_mixmusic_play( VALUE musicv, VALUE loopsv )
+VALUE rbgm_mixmusic_play(int argc, VALUE *argv, VALUE self)
 {
   Mix_Music* music;
-  int loops, result;
+  int reps, result;
+  VALUE repsv;
 
-  Data_Get_Struct( musicv, Mix_Music, music );
-  loops = NUM2INT(loopsv);
+  Data_Get_Struct( self, Mix_Music, music );
+
+  rb_scan_args(argc, argv, "01", &repsv);
+
+  if( RTEST(repsv) )
+  {
+    reps = NUM2INT(repsv);
+  }
+  else
+  {
+    reps = 0;
+  }
   
-  result = Mix_PlayMusic(music, loops);
+  if( reps > -1 )
+  {
+    /* Adjust so repeats means the same as it does for Samples */
+    reps += 1;
+  }
+  
+  result = Mix_PlayMusic(music, reps);
 
   if ( result < 0 )
   {
@@ -709,7 +724,7 @@ void Init_rubygame_mixer()
   rb_define_singleton_method(cMusic, "load_audio"  , rbgm_mixmusic_new, 1);
   rb_define_singleton_method(cMusic, "set_command" , rbgm_mixmusic_setcommand, 1);
 	
-  rb_define_method(cMusic,"play"   , rbgm_mixmusic_play, 1);
+  rb_define_method(cMusic, "play",      rbgm_mixmusic_play,       -1);
   rb_define_method(cMusic,"stop"   , rbgm_mixmusic_stop, 0);
   rb_define_method(cMusic,"volume" , rbgm_mixmusic_getvolume, 0);
   rb_define_method(cMusic,"volume=", rbgm_mixmusic_setvolume, 1);

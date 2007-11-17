@@ -42,7 +42,8 @@ extern VALUE rbgm_mixchan_resume( VALUE, VALUE );
 
 extern VALUE cMusic;
 extern VALUE rbgm_mixmusic_new(VALUE, VALUE);
-extern VALUE rbgm_mixmusic_play( VALUE, VALUE );
+
+extern VALUE rbgm_mixmusic_play(int, VALUE*, VALUE);
 extern VALUE rbgm_mixmusic_stop( VALUE );
 extern VALUE rbgm_mixmusic_getvolume( VALUE );
 extern VALUE rbgm_mixmusic_setvolume( VALUE, VALUE );
