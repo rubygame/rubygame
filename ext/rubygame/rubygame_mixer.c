@@ -299,6 +299,29 @@ VALUE rbgm_mixchan_resume( VALUE self, VALUE chanv )
  */
 
 /* call-seq:
+ *  set_music_command(command)  ->  integer
+ *
+ *  Sets the external command used to play music. 
+ *
+ *  Raises SDLError if something goes wrong.
+ *
+ *  This method takes these arguments:
+ *  command::     what command to use to play the music. 
+ *
+ */
+VALUE rbgm_mixmusic_setcommand(VALUE class, VALUE commandv) 
+{
+  int result;	
+  result = Mix_SetMusicCMD(StringValuePtr(commandv));
+  if( result < 0 )
+  {
+    rb_raise(eSDLError, "Error setting music player commando to `%s': %s",
+             StringValuePtr(commandv), Mix_GetError());
+  }
+  return INT2NUM( result );
+}
+
+/* call-seq:
  *  load_audio( filename )  ->  Music
  *
  *  Load music from a file.
@@ -381,29 +404,6 @@ VALUE rbgm_mixmusic_stop( VALUE self )
 {
   Mix_HaltMusic();
   return Qnil;
-}
-
-/* call-seq:
- *  set_music_command(command)  ->  integer
- *
- *  Sets the external command used to play music. 
- *
- *  Raises SDLError if something goes wrong.
- *
- *  This method takes these arguments:
- *  command::     what command to use to play the music. 
- *
- */
-VALUE rbgm_mixmusic_setcommand(VALUE class, VALUE commandv) 
-{
-  int result;	
-  result = Mix_SetMusicCMD(StringValuePtr(commandv));
-  if( result < 0 )
-  {
-    rb_raise(eSDLError, "Error setting music player commando to `%s': %s",
-             StringValuePtr(commandv), Mix_GetError());
-  }
-  return INT2NUM( result );
 }
 
 /* call-seq:
@@ -705,7 +705,7 @@ void Init_rubygame_mixer()
   /* Stores music audio data. */
   cMusic = rb_define_class_under(mMixer, "Music"   , rb_cObject);
   rb_define_singleton_method(cMusic, "load_audio"  , rbgm_mixmusic_new, 1);
-  rb_define_singleton_method(cMusic, "set_command" , rbgm_mixmusic_setcommand, 1);
+  //rb_define_singleton_method(cMusic, "set_command" , rbgm_mixmusic_setcommand, 1);
 	
   rb_define_method(cMusic, "play",      rbgm_mixmusic_play,       -1);
   rb_define_method(cMusic,"stop"   , rbgm_mixmusic_stop, 0);
