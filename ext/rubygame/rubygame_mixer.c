@@ -65,7 +65,7 @@ VALUE rbgm_mixmusic_fading(int, VALUE*, VALUE);
  */
 
 /* call-seq:
- *  open_audio( frequency=22050, format=AUDIO_U16SYS, channels=2, buffer=4096)
+ *  open_audio( frequency=22050, format=AUDIO_U16SYS, channels=2, buffer=1024)
  *  
  *  Initializes the audio device. You must call this before using the other
  *  mixer functions. See also #close_audio().
@@ -89,10 +89,10 @@ VALUE rbgm_mixmusic_fading(int, VALUE*, VALUE);
  *  channels::   output sound channels. Use 2 (default) for stereo, 1 for mono.
  *               (this option does not affect number of mixing channels)
  *
- *  buffer::     size of the sound buffer, in bytes. 4096 (default) is good for
- *               most games. Smaller values have less delay before playing a
- *               sound, but require more CPU usage (and might have skipping
- *               on slow systems). Larger values are the opposite way.
+ *  buffer::     size of the sound buffer, in bytes. 1024 (default) is good for
+ *               most games. Larger values have more delay before playing a
+ *               sound, but require less CPU usage (and have less skipping
+ *               on slow systems).
  *
  */
 VALUE rbgm_mixer_openaudio(int argc, VALUE *argv, VALUE module)
@@ -101,7 +101,7 @@ VALUE rbgm_mixer_openaudio(int argc, VALUE *argv, VALUE module)
   int freq = 22050;
   Uint16 format = AUDIO_S16SYS;
   int channels = 2;
-  int buffer = 4096;
+  int buffer = 1024;
 
   rb_scan_args(argc, argv, "04", &vfreq, &vformat, &vchannels, &vbuffer);
 
