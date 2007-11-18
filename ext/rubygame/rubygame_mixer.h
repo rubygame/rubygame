@@ -56,6 +56,7 @@ extern VALUE rbgm_mixmusic_pause(VALUE );
 
 extern VALUE rbgm_mixmusic_fadein(int, VALUE*, VALUE);
 extern VALUE rbgm_mixmusic_fadeout(VALUE, VALUE);
+extern VALUE rbgm_mixmusic_fading(int, VALUE*, VALUE);
 
 extern VALUE rbgm_mixmusic_setposition(VALUE, VALUE);
 

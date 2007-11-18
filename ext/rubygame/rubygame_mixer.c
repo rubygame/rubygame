@@ -53,12 +53,10 @@ VALUE rbgm_mixmusic_resume(VALUE );
 VALUE rbgm_mixmusic_pause(VALUE );
 
 VALUE rbgm_mixmusic_fadeout(VALUE, VALUE);
+VALUE rbgm_mixmusic_fading(int, VALUE*, VALUE);
 
 VALUE rbgm_mixmusic_setposition(VALUE, VALUE);
 
-VALUE rbgm_mixmusic_fading(VALUE);
-VALUE rbgm_mixmusic_fadingin(VALUE);
-VALUE rbgm_mixmusic_fadingout(VALUE);
 VALUE rbgm_mixmusic_paused(VALUE);
 VALUE rbgm_mixmusic_playing(VALUE);
 
@@ -576,6 +574,35 @@ VALUE rbgm_mixmusic_fadeout(VALUE self, VALUE speedv )
     rb_raise(eSDLError, "Error fading out music: %s", Mix_GetError());
   }
   return INT2NUM(result);
+}
+
+/*  call-seq:
+ *     fading?( direction = nil )  ->  true or false
+ *
+ *  True if the music is fading in or out (or either). You can
+ *  specify +direction+ as :in/:out to check only fading in/out;
+ *  otherwise, it will return true if it's fading either way.
+ *
+ *  direction::  :in, :out, or nil if you don't care which.
+ *  Returns::    true if the music is fading in the given direction.
+ */
+VALUE rbgm_mixmusic_fading(int argc, VALUE *argv, VALUE self)
+{
+  VALUE dirv;
+  rb_scan_args(argc, argv, "01", &dirv);
+
+  if( dirv == make_symbol("in") )
+  {
+    return ( (Mix_FadingMusic() == MIX_FADING_IN)  ? Qtrue : Qfalse );
+  }
+  else if( dirv == make_symbol("out") )
+  {
+    return ( (Mix_FadingMusic() == MIX_FADING_OUT) ? Qtrue : Qfalse );
+  }
+  else
+  {
+    return ( (Mix_FadingMusic() != MIX_NO_FADING)  ? Qtrue : Qfalse );
+  }
 }
 
 /* call-seq:
