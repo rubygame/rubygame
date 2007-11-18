@@ -394,20 +394,20 @@ VALUE rbgm_mixmusic_play(int argc, VALUE *argv, VALUE self)
   return Qnil;
 }
 
-/* call-seq:
- *  stop
+/*  call-seq:
+ *     stop
  *
  *  Stop playback of music.
  *  See also #play
  */
-VALUE rbgm_mixmusic_stop( VALUE self )
+VALUE rbgm_mixmusic_stop(VALUE self)
 {
   Mix_HaltMusic();
   return Qnil;
 }
 
-/* call-seq:
- *  pause_music()
+/*  call-seq:
+ *     pause
  *
  *  Pause playback of the playing music.
  *  Only music that is currently playing can be paused.
@@ -419,11 +419,11 @@ VALUE rbgm_mixmusic_pause(VALUE self)
   return Qnil;
 }
 
-/* call-seq:
- *  resume_music()
+/*  call-seq:
+ *     resume
  *
- *  Resume playback of paused, halted, or playing music.
- *  See also #play_music.
+ *  Resume playback of stopped or paused music. Safe to use on already-playing music.
+ *  See also #play.
  */
 VALUE rbgm_mixmusic_resume(VALUE self)
 {
@@ -431,14 +431,12 @@ VALUE rbgm_mixmusic_resume(VALUE self)
   return Qnil;
 }
 
-/* call-seq:
- *  rewind_music()
+/*  call-seq:
+ *     rewind
  *
- *  Rewind the music to the start. This is safe to use on halted, paused, and already playing music. 
- *  It is not useful to rewind the music immediately after starting playback, because it starts 
- *  at the beginning by default. This function only works for these streams: MOD, OGG, MP3, Native MIDI.
+ *  Rewind the music to the start. This is safe to use on stopped, paused, and playing music. 
+ *  Only works for MOD, OGG, MP3, and MIDI (but not WAV).
  * 
- *  See also #play_music.
  */
 VALUE rbgm_mixmusic_rewind(VALUE self)
 {
