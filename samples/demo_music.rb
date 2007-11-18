@@ -16,7 +16,7 @@ def test_music()
 		end
 	end
 
-	mix.open_audio( mix::DEFAULT_FREQUENCY, mix::DEFAULT_FORMAT, 2, 1024)
+	mix.open_audio
 	puts "Using audio driver:" + mix.driver_name
 	music = mix::Music
 
