@@ -664,6 +664,7 @@ void Init_rubygame_mixer()
 	 *  good enough to load and play WAV files on multiple mix channels.
 	 *
 	 *  See the Sample class for loading audio files.
+	 *  See the Music class for streaming music from a file.
 	 */
   mMixer = rb_define_module_under(mRubygame, "Mixer");
 
@@ -707,7 +708,18 @@ void Init_rubygame_mixer()
   rb_define_module_function(mMixer,"resume", rbgm_mixchan_resume, 1);
 
 
-  /* Stores music audio data. */
+/*  The Music class is used for playing music from a file. It supports
+ *  WAVE, MOD, MIDI, OGG, and MP3 files. There are two important differences
+ *  between Music and Sample:
+ *
+ *  1. Music streams the music from disk, which means it can start faster and
+ *     uses less memory than Sample, which loads the entire file into memory.
+ *     This is especially important for music files, which are often several
+ *     minutes long.
+ *  2. There can only be one Music instance playing at once, while there can
+ *     be many Samples playing at once. If you play a second Music while one
+ *     is already playing, the first one will be stopped. See #play.
+ */
   cMusic = rb_define_class_under(mMixer, "Music", rb_cObject);
   rb_define_singleton_method(cMusic, "load_audio", rbgm_mixmusic_new, 1);
 
