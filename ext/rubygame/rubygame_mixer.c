@@ -48,7 +48,7 @@ VALUE rbgm_mixmusic_stop(VALUE);
 VALUE rbgm_mixmusic_resume(VALUE);
 VALUE rbgm_mixmusic_pause(VALUE);
 VALUE rbgm_mixmusic_rewind(VALUE);
-VALUE rbgm_mixmusic_setposition(VALUE, VALUE);
+VALUE rbgm_mixmusic_jump(VALUE, VALUE);
 VALUE rbgm_mixmusic_paused(VALUE);
 VALUE rbgm_mixmusic_playing(VALUE);
 
@@ -478,21 +478,21 @@ VALUE rbgm_mixmusic_rewind(VALUE self)
 }
 
 /*  call-seq:
- *     position = new_position
+ *     jump( time )
  *
- *  Set the current position of the music to the new position.
+ *  Jump to a certain time in the music.
  *  Only works when music is playing or paused (but not stopped).
  *  Only works for OGG and MP3 files.
  *
  *  Raises SDLError if something goes wrong, or if the music type does not
  *  support setting the position.
  *
- *  new_position::  Position in music, in seconds from the beginning.
+ *  time::  Time to jump to, in seconds from the beginning.
  *
  */
-VALUE rbgm_mixmusic_setposition(VALUE self, VALUE positionv)
+VALUE rbgm_mixmusic_jump(VALUE self, VALUE vtime)
 {
-  double position = NUM2DBL(positionv);
+  double time = NUM2DBL(vtime);
 
   switch( Mix_GetMusicType(NULL) )
 	{
@@ -500,19 +500,19 @@ VALUE rbgm_mixmusic_setposition(VALUE self, VALUE positionv)
     case MUS_MP3:
       Mix_RewindMusic(); // Needed for MP3, and OK with OGG
 
-      int result = Mix_SetMusicPosition(position);  
+      int result = Mix_SetMusicPosition(time);
       if( result < 0 )
       {
-        rb_raise(eSDLError, "Error setting music position: %s", Mix_GetError());
+        rb_raise(eSDLError, "Error jumping to time in music: %s", Mix_GetError());
       }
 
-      return positionv;
+      return Qnil;
 
     case MUS_NONE:
-      rb_raise(eSDLError, "Cannot set position when no music is playing.");
+      rb_raise(eSDLError, "Cannot jump when no music is playing.");
 
     default:
-      rb_raise(eSDLError, "Music type does not support setting position.");
+      rb_raise(eSDLError, "Music type does not support jumping.");
   }
 } 	
 
@@ -762,7 +762,7 @@ void Init_rubygame_mixer()
   rb_define_method(cMusic, "pause",     rbgm_mixmusic_pause,       0);
   rb_define_method(cMusic, "resume",    rbgm_mixmusic_resume,      0);
   rb_define_method(cMusic, "rewind",    rbgm_mixmusic_rewind,      0);
-  rb_define_method(cMusic, "position=", rbgm_mixmusic_setposition, 1);
+  rb_define_method(cMusic, "jump",      rbgm_mixmusic_jump,        1);
   rb_define_method(cMusic, "paused?",   rbgm_mixmusic_paused,      0);
   rb_define_method(cMusic, "playing?",  rbgm_mixmusic_playing,     0);
 
