@@ -476,6 +476,9 @@ VALUE rbgm_mixmusic_setposition(VALUE self, VALUE positionv)
 
       return positionv;
 
+    case MUS_NONE:
+      rb_raise(eSDLError, "Cannot set position when no music is playing.");
+
     default:
       rb_raise(eSDLError, "Music type does not support setting position.");
   }
@@ -541,6 +544,8 @@ VALUE rbgm_mixmusic_setvolume(VALUE self, VALUE volumev)
  *               Defaults to 0, play only once (no repeats).
  *  start::      Time to start from, in seconds since the beginning.
  *               Defaults to 0, the beginning of the song.
+ *               Non-zero values only work for OGG and MP3; other
+ *               music types will raise SDLError.
  */
 VALUE rbgm_mixmusic_fadein(int argc, VALUE *argv, VALUE self)
 {
@@ -568,8 +573,8 @@ VALUE rbgm_mixmusic_fadein(int argc, VALUE *argv, VALUE self)
     reps += 1;
   }
   
-  if( !RTEST(startv) )
-	{
+  if( !RTEST(startv) || NUM2DBL(startv) == 0.0 )
+  {
 		result = Mix_FadeInMusic(music, reps, fade);
   }
   else
