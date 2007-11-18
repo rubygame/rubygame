@@ -494,7 +494,29 @@ VALUE rbgm_mixmusic_setposition(VALUE self, VALUE positionv)
     rb_raise(eSDLError, "Error setting music position: %s", Mix_GetError());
   }
   return INT2NUM(result);	
-} 	
+}
+
+/*  call-seq:
+ *     playing?  ->  true or false
+ *
+ *  Returns true if the music is currently playing.
+ *
+ */
+VALUE rbgm_mixmusic_playing(VALUE self)
+{
+  return Mix_PlayingMusic() ? Qtrue : Qfalse;
+}
+
+/*  call-seq:
+ *     paused?  ->  true or false
+ *
+ *  Returns true if the music is currently paused.
+ *
+ */
+VALUE rbgm_mixmusic_paused(VALUE self)
+{
+  return Mix_PausedMusic() ? Qtrue : Qfalse;
+}
 
 /*  call-seq:
  *     fade_in( fade_time, repeats=0, start=0 )
@@ -602,32 +624,6 @@ VALUE rbgm_mixmusic_fading(int argc, VALUE *argv, VALUE self)
   {
     return ( (Mix_FadingMusic() != MIX_NO_FADING)  ? Qtrue : Qfalse );
   }
-}
-
-/* call-seq:
- *  playing?()  ->  boolean
- *
- *  Checks if the music is playing. Return true if so, false if not. 
- *
- */
-VALUE rbgm_mixmusic_playing(VALUE self)
-{
-  int result;
-  result = Mix_PlayingMusic();
-  return result ? Qtrue : Qfalse;
-}
-
-/* call-seq:
- *  paused.()  ->  boolean
- *
- *  Checks if the music is paused. Return true if so, false if not.
- *
- */
-VALUE rbgm_mixmusic_paused(VALUE self)
-{
-  int result;
-  result = Mix_PausedMusic();
-  return result ? Qtrue : Qfalse;
 }
 
 
