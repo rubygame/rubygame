@@ -41,27 +41,22 @@ extern VALUE rbgm_mixchan_pause( VALUE, VALUE );
 extern VALUE rbgm_mixchan_resume( VALUE, VALUE );
 
 extern VALUE cMusic;
+extern VALUE rbgm_mixmusic_setcommand(VALUE, VALUE); 
 extern VALUE rbgm_mixmusic_new(VALUE, VALUE);
 
 extern VALUE rbgm_mixmusic_play(int, VALUE*, VALUE);
-extern VALUE rbgm_mixmusic_stop( VALUE );
-extern VALUE rbgm_mixmusic_getvolume( VALUE );
-extern VALUE rbgm_mixmusic_setvolume( VALUE, VALUE );
-
-extern VALUE rbgm_mixmusic_setcommand(VALUE , VALUE); 
-
-extern VALUE rbgm_mixmusic_rewind(VALUE );
-extern VALUE rbgm_mixmusic_resume(VALUE );
-extern VALUE rbgm_mixmusic_pause(VALUE );
-
-extern VALUE rbgm_mixmusic_fadein(int, VALUE*, VALUE);
-extern VALUE rbgm_mixmusic_fadeout(VALUE, VALUE);
-extern VALUE rbgm_mixmusic_fading(int, VALUE*, VALUE);
-
+extern VALUE rbgm_mixmusic_stop(VALUE);
+extern VALUE rbgm_mixmusic_resume(VALUE);
+extern VALUE rbgm_mixmusic_pause(VALUE);
+extern VALUE rbgm_mixmusic_rewind(VALUE);
 extern VALUE rbgm_mixmusic_setposition(VALUE, VALUE);
-
 extern VALUE rbgm_mixmusic_paused(VALUE);
 extern VALUE rbgm_mixmusic_playing(VALUE);
 
+extern VALUE rbgm_mixmusic_getvolume(VALUE);
+extern VALUE rbgm_mixmusic_setvolume(VALUE, VALUE);
+extern VALUE rbgm_mixmusic_fadein(int, VALUE*, VALUE);
+extern VALUE rbgm_mixmusic_fadeout(VALUE, VALUE);
+extern VALUE rbgm_mixmusic_fading(int, VALUE*, VALUE);
 
 #endif

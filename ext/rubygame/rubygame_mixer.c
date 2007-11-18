@@ -40,26 +40,23 @@ VALUE rbgm_mixchan_pause( VALUE, VALUE );
 VALUE rbgm_mixchan_resume( VALUE, VALUE );
 
 VALUE cMusic;
+VALUE rbgm_mixmusic_setcommand(VALUE, VALUE); 
 VALUE rbgm_mixmusic_new(VALUE, VALUE);
-VALUE rbgm_mixmusic_play( VALUE, VALUE );
-VALUE rbgm_mixmusic_stop( VALUE );
-VALUE rbgm_mixmusic_getvolume( VALUE );
-VALUE rbgm_mixmusic_setvolume( VALUE, VALUE );
 
-VALUE rbgm_mixmusic_setcommand(VALUE , VALUE); 
-
-VALUE rbgm_mixmusic_rewind(VALUE );
-VALUE rbgm_mixmusic_resume(VALUE );
-VALUE rbgm_mixmusic_pause(VALUE );
-
-VALUE rbgm_mixmusic_fadeout(VALUE, VALUE);
-VALUE rbgm_mixmusic_fading(int, VALUE*, VALUE);
-
+VALUE rbgm_mixmusic_play(int, VALUE*, VALUE);
+VALUE rbgm_mixmusic_stop(VALUE);
+VALUE rbgm_mixmusic_resume(VALUE);
+VALUE rbgm_mixmusic_pause(VALUE);
+VALUE rbgm_mixmusic_rewind(VALUE);
 VALUE rbgm_mixmusic_setposition(VALUE, VALUE);
-
 VALUE rbgm_mixmusic_paused(VALUE);
 VALUE rbgm_mixmusic_playing(VALUE);
 
+VALUE rbgm_mixmusic_getvolume(VALUE);
+VALUE rbgm_mixmusic_setvolume(VALUE, VALUE);
+VALUE rbgm_mixmusic_fadein(int, VALUE*, VALUE);
+VALUE rbgm_mixmusic_fadeout(VALUE, VALUE);
+VALUE rbgm_mixmusic_fading(int, VALUE*, VALUE);
 
 
 /* --
@@ -324,7 +321,7 @@ VALUE rbgm_mixmusic_setcommand(VALUE class, VALUE commandv)
 /* call-seq:
  *  load_audio( filename )  ->  Music
  *
- *  Load music from a file.
+ *  Load music from a file. Supports WAVE, MOD, MIDI, OGG, and MP3 formats.
  *
  *  Raises SDLError if the music could not be loaded.
  */
@@ -478,7 +475,6 @@ VALUE rbgm_mixmusic_setposition(VALUE self, VALUE positionv)
       rb_raise(eSDLError, "Music type does not support setting position.");
   }
 } 	
-
 
 /*  call-seq:
  *     playing?  ->  true or false
@@ -701,24 +697,25 @@ void Init_rubygame_mixer()
 
 
   /* Stores music audio data. */
-  cMusic = rb_define_class_under(mMixer, "Music"   , rb_cObject);
-  rb_define_singleton_method(cMusic, "load_audio"  , rbgm_mixmusic_new, 1);
-  //rb_define_singleton_method(cMusic, "set_command" , rbgm_mixmusic_setcommand, 1);
+  cMusic = rb_define_class_under(mMixer, "Music", rb_cObject);
+  rb_define_singleton_method(cMusic, "load_audio", rbgm_mixmusic_new, 1);
+
+  //rb_define_singleton_method(cMusic, "set_command", rbgm_mixmusic_setcommand, 1);
 	
   rb_define_method(cMusic, "play",      rbgm_mixmusic_play,       -1);
-  rb_define_method(cMusic,"stop"   , rbgm_mixmusic_stop, 0);
-  rb_define_method(cMusic,"volume" , rbgm_mixmusic_getvolume, 0);
-  rb_define_method(cMusic,"volume=", rbgm_mixmusic_setvolume, 1);
-  
-  rb_define_method(cMusic, "fade_out"        , rbgm_mixmusic_fadeout , 1);
-  rb_define_method(cMusic, "rewind"          , rbgm_mixmusic_rewind  , 0);
-  rb_define_method(cMusic, "resume"          , rbgm_mixmusic_resume  , 0);
-  rb_define_method(cMusic, "pause"           , rbgm_mixmusic_pause   , 0);
-  rb_define_method(cMusic, "position="       , rbgm_mixmusic_setposition, 1);
-  rb_define_method(cMusic, "paused?"         , rbgm_mixmusic_paused   , 0);
-  rb_define_method(cMusic, "playing?"        , rbgm_mixmusic_playing  , 0);
-  
-  
+  rb_define_method(cMusic, "stop",      rbgm_mixmusic_stop,        0);
+  rb_define_method(cMusic, "pause",     rbgm_mixmusic_pause,       0);
+  rb_define_method(cMusic, "resume",    rbgm_mixmusic_resume,      0);
+  rb_define_method(cMusic, "rewind",    rbgm_mixmusic_rewind,      0);
+  rb_define_method(cMusic, "position=", rbgm_mixmusic_setposition, 1);
+  rb_define_method(cMusic, "paused?",   rbgm_mixmusic_paused,      0);
+  rb_define_method(cMusic, "playing?",  rbgm_mixmusic_playing,     0);
+
+  rb_define_method(cMusic, "volume",    rbgm_mixmusic_getvolume,   0);
+  rb_define_method(cMusic, "volume=",   rbgm_mixmusic_setvolume,   1);
+  rb_define_method(cMusic, "fade_in",   rbgm_mixmusic_fadein,     -1);
+  rb_define_method(cMusic, "fade_out",  rbgm_mixmusic_fadeout,     1);
+  rb_define_method(cMusic, "fading?",   rbgm_mixmusic_fading,     -1);
 }
 
 
