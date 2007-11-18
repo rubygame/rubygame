@@ -553,27 +553,26 @@ VALUE rbgm_mixmusic_fadein(int argc, VALUE *argv, VALUE self)
   return Qnil;
 }
 
-/* call-seq:
- *  music_fadeout(ms)  ->  integer
+/*  call-seq:
+ *     fade_out( fade_time )
  *
- *  Gradually fade out the music over ms milliseconds starting from now. The music will be halted after 
- *  the fade out is completed. Only when music is playing and not fading already are set to fade out, 
- *  including paused channels. 
+ *  Gradually fade the music to silence over +fade_length+ seconds.
+ *  After the fade is complete, the music will be automatically stopped.
  *
  *  Raises SDLError if something goes wrong.
  *
- *  ms::         Milliseconds of time that the fade-out effect should take to go to silence, starting now. 
+ *  fade_time::    Time until the music is totally silent, in seconds.
  */
-VALUE rbgm_mixmusic_fadeout(VALUE self, VALUE speedv )
+VALUE rbgm_mixmusic_fadeout(VALUE self, VALUE fadev)
 {
-  int speed, result;
-  speed  = NUM2INT(speedv);
-  result = Mix_FadeOutMusic(speed);
+  int fade = (int)(NUM2DBL(fadev) * 1000);
+  int result = Mix_FadeOutMusic(fade);
+
   if ( result < 0 )
   {
     rb_raise(eSDLError, "Error fading out music: %s", Mix_GetError());
   }
-  return INT2NUM(result);
+  return Qnil;
 }
 
 /*  call-seq:
