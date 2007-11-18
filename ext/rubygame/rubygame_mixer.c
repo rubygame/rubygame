@@ -347,7 +347,9 @@ VALUE rbgm_mixmusic_new(VALUE class, VALUE filev)
 /*  call-seq:
  *     play( repeats = 0 )
  *
- *  Play music, repeating a certain number of extra times.
+ *  Play music, repeating a certain number of extra times. If
+ *  any music was already playing, that music will be stopped
+ *  first, and this music will start.
  *
  *  Raises SDLError if something goes wrong.
  *  
@@ -394,7 +396,7 @@ VALUE rbgm_mixmusic_play(int argc, VALUE *argv, VALUE self)
 /*  call-seq:
  *     stop
  *
- *  Stop playback of music.
+ *  Stop playback of music. 
  *  See also #play
  */
 VALUE rbgm_mixmusic_stop(VALUE self)
@@ -406,8 +408,9 @@ VALUE rbgm_mixmusic_stop(VALUE self)
 /*  call-seq:
  *     pause
  *
- *  Pause playback of the playing music.
- *  Only music that is currently playing can be paused.
+ *  Pause playback of the playing music. You can later #resume
+ *  playback from the point where you paused.
+ *  Safe to use on already-paused music.
  *  See also #play_music.
  */
 VALUE rbgm_mixmusic_pause(VALUE self)
@@ -419,7 +422,8 @@ VALUE rbgm_mixmusic_pause(VALUE self)
 /*  call-seq:
  *     resume
  *
- *  Resume playback of stopped or paused music. Safe to use on already-playing music.
+ *  Resume playback of paused music from the point it was paused.
+ *  Safe to use on already-playing music.
  *  See also #play.
  */
 VALUE rbgm_mixmusic_resume(VALUE self)
@@ -445,6 +449,7 @@ VALUE rbgm_mixmusic_rewind(VALUE self)
  *     position = new_position
  *
  *  Set the current position of the music to the new position.
+ *  Only works when music is playing or paused (but not stopped).
  *  Only works for OGG and MP3 files.
  *
  *  Raises SDLError if something goes wrong, or if the music type does not
@@ -525,7 +530,8 @@ VALUE rbgm_mixmusic_setvolume(VALUE self, VALUE volumev)
 /*  call-seq:
  *     fade_in( fade_time, repeats=0, start=0 )
  *
- *  Play an audio Music, fading in and repeating a certain number of times.
+ *  Play the music, fading in and repeating a certain number of times.
+ *  See also #play.
  *
  *  Raises SDLError if something goes wrong.
  *  
