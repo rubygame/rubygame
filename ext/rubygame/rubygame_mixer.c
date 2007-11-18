@@ -377,7 +377,7 @@ VALUE rbgm_mixmusic_new(VALUE class, VALUE filev)
 }
 
 /*  call-seq:
- *     play( repeats = 0 )
+ *     play( repeats = 0 )  ->  self
  *
  *  Play music, repeating a certain number of extra times. If
  *  any music was already playing, that music will be stopped
@@ -422,11 +422,11 @@ VALUE rbgm_mixmusic_play(int argc, VALUE *argv, VALUE self)
              Mix_GetError());
   }
 
-  return Qnil;
+  return self;
 }
 
 /*  call-seq:
- *     stop
+ *     stop()  -> self
  *
  *  Stop playback of music. 
  *  See also #play
@@ -434,11 +434,11 @@ VALUE rbgm_mixmusic_play(int argc, VALUE *argv, VALUE self)
 VALUE rbgm_mixmusic_stop(VALUE self)
 {
   Mix_HaltMusic();
-  return Qnil;
+  return self;
 }
 
 /*  call-seq:
- *     pause
+ *     pause()  -> self
  *
  *  Pause playback of the playing music. You can later #resume
  *  playback from the point where you paused.
@@ -448,11 +448,11 @@ VALUE rbgm_mixmusic_stop(VALUE self)
 VALUE rbgm_mixmusic_pause(VALUE self)
 {
   Mix_PauseMusic();
-  return Qnil;
+  return self;
 }
 
 /*  call-seq:
- *     resume
+ *     resume()  ->  self
  *
  *  Resume playback of paused music from the point it was paused.
  *  Safe to use on already-playing music.
@@ -461,11 +461,11 @@ VALUE rbgm_mixmusic_pause(VALUE self)
 VALUE rbgm_mixmusic_resume(VALUE self)
 {
   Mix_ResumeMusic();
-  return Qnil;
+  return self;
 }
 
 /*  call-seq:
- *     rewind
+ *     rewind()  ->  self
  *
  *  Rewind the music to the start. This is safe to use on stopped, paused, and playing music. 
  *  Only works for MOD, OGG, MP3, and MIDI (but not WAV).
@@ -474,11 +474,11 @@ VALUE rbgm_mixmusic_resume(VALUE self)
 VALUE rbgm_mixmusic_rewind(VALUE self)
 {
   Mix_RewindMusic();
-  return Qnil;
+  return self;
 }
 
 /*  call-seq:
- *     jump( time )
+ *     jump( time )  ->  self
  *
  *  Jump to a certain time in the music.
  *  Only works when music is playing or paused (but not stopped).
@@ -506,7 +506,7 @@ VALUE rbgm_mixmusic_jump(VALUE self, VALUE vtime)
         rb_raise(eSDLError, "Error jumping to time in music: %s", Mix_GetError());
       }
 
-      return Qnil;
+      return self;
 
     case MUS_NONE:
       rb_raise(eSDLError, "Cannot jump when no music is playing.");
@@ -563,7 +563,7 @@ VALUE rbgm_mixmusic_setvolume(VALUE self, VALUE volumev)
 }
 
 /*  call-seq:
- *     fade_in( fade_time, repeats=0, start=0 )
+ *     fade_in( fade_time, repeats=0, start=0 )  ->  self
  *
  *  Play the music, fading in and repeating a certain number of times.
  *  See also #play.
@@ -619,11 +619,11 @@ VALUE rbgm_mixmusic_fadein(int argc, VALUE *argv, VALUE self)
     rb_raise(eSDLError, "Error fading in music: %s", Mix_GetError());
   }
 
-  return Qnil;
+  return self;
 }
 
 /*  call-seq:
- *     fade_out( fade_time )
+ *     fade_out( fade_time )  ->  self
  *
  *  Gradually fade the music to silence over +fade_length+ seconds.
  *  After the fade is complete, the music will be automatically stopped.
@@ -641,7 +641,7 @@ VALUE rbgm_mixmusic_fadeout(VALUE self, VALUE fadev)
   {
     rb_raise(eSDLError, "Error fading out music: %s", Mix_GetError());
   }
-  return Qnil;
+  return self;
 }
 
 /*  call-seq:
