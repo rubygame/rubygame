@@ -498,6 +498,62 @@ VALUE rbgm_mixmusic_setposition(VALUE self, VALUE positionv)
   return INT2NUM(result);	
 } 	
 
+/*  call-seq:
+ *     fade_in( fade_time, repeats=0, start=0 )
+ *
+ *  Play an audio Music, fading in and repeating a certain number of times.
+ *
+ *  Raises SDLError if something goes wrong.
+ *  
+ *  fade_time::  Time in seconds for the fade-in effect to complete.
+ *  repeats::    Number of extra times to play through the music.
+ *               -1 plays the music forever until it is stopped.
+ *               Defaults to 0, play only once (no repeats).
+ *  start::      Time to start from, in seconds since the beginning.
+ *               Defaults to 0, the beginning of the song.
+ */
+VALUE rbgm_mixmusic_fadein(int argc, VALUE *argv, VALUE self)
+{
+  VALUE fadev, repsv, startv;
+  rb_scan_args(argc, argv, "12", &fadev, &repsv, &startv);
+
+  Mix_Music* music;
+  Data_Get_Struct( self, Mix_Music, music );
+
+  int fade, reps, result;
+  fade = (int)(NUM2DBL(fadev) * 1000); /* convert to milliseconds */
+
+  if( RTEST(repsv) )
+  {
+    reps = NUM2INT(repsv);
+  }
+  else
+  {
+    reps = 0;
+  }
+
+  if( reps > -1 )
+  {
+    /* Adjust so repeats means the same as it does for Samples */
+    reps += 1;
+  }
+  
+  if( !RTEST(startv) )
+	{
+		result = Mix_FadeInMusic(music, reps, fade);
+  }
+  else
+	{
+    result = Mix_FadeInMusicPos(music, reps, fade, NUM2DBL(startv));
+  }
+
+  if( result < 0 )
+  {
+    rb_raise(eSDLError, "Error fading in music: %s", Mix_GetError());
+  }
+
+  return Qnil;
+}
 
 /* call-seq:
  *  music_fadeout(ms)  ->  integer
