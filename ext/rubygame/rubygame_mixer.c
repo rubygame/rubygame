@@ -446,6 +446,40 @@ VALUE rbgm_mixmusic_rewind(VALUE self)
   return Qnil;
 }
 
+/*  call-seq:
+ *     position = new_position
+ *
+ *  Set the current position of the music to the new position.
+ *  Only works for OGG and MP3 files.
+ *
+ *  Raises SDLError if something goes wrong, or if the music type does not
+ *  support setting the position.
+ *
+ *  new_position::  Position in music, in seconds from the beginning.
+ *
+ */
+VALUE rbgm_mixmusic_setposition(VALUE self, VALUE positionv)
+{
+  double position = NUM2DBL(positionv);
+
+  switch( Mix_GetMusicType(NULL) )
+	{
+    case MUS_OGG:
+    case MUS_MP3:
+      Mix_RewindMusic(); // Needed for MP3, and OK with OGG
+
+      int result = Mix_SetMusicPosition(position);  
+      if( result < 0 )
+      {
+        rb_raise(eSDLError, "Error setting music position: %s", Mix_GetError());
+      }
+
+      return positionv;
+
+    default:
+      rb_raise(eSDLError, "Music type does not support setting position.");
+  }
+} 	
 
 
 /*  call-seq:
