@@ -447,30 +447,6 @@ VALUE rbgm_mixmusic_rewind(VALUE self)
 }
 
 
-/* call-seq:
- *  music_position(position) -> integer
- *
- *  Set the position of the currently playing music in seconds from the beginning for OGG AND MP3 music. 
- *  Sets the position to the track number in MOD music. Does not work for other kinds of music
- *  For other music types, the music will sipmly be rewound to the beginning.
- *
- *  Raises SDLError if something goes wrong.
- *
- *  position:: Position in music, in seconds from the beginning.
- *
- */
-VALUE rbgm_mixmusic_setposition(VALUE self, VALUE positionv)
-{
-  int position, result;
-  position = NUM2DBL(positionv);
-  Mix_RewindMusic(); // Needed for MP3, and OK with OGG
-  result = Mix_SetMusicPosition(position);  
-  if ( result < 0 )
-  {
-    rb_raise(eSDLError, "Error setting music position: %s", Mix_GetError());
-  }
-  return INT2NUM(result);	
-}
 
 /*  call-seq:
  *     playing?  ->  true or false
