@@ -27,7 +27,7 @@
 extern void Init_rubygame_mixer();
 extern VALUE mMixer;
 
-extern VALUE rbgm_mixer_openaudio(VALUE, VALUE, VALUE, VALUE, VALUE);
+extern VALUE rbgm_mixer_openaudio(int, VALUE*, VALUE);
 extern VALUE rbgm_mixer_closeaudio(VALUE);
 extern VALUE rbgm_mixer_getmixchans();
 extern VALUE rbgm_mixer_setmixchans(VALUE, VALUE);

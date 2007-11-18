@@ -26,7 +26,7 @@
 void Init_rubygame_mixer();
 VALUE mMixer;
 
-VALUE rbgm_mixer_openaudio(VALUE, VALUE, VALUE, VALUE, VALUE);
+VALUE rbgm_mixer_openaudio(int, VALUE*, VALUE);
 VALUE rbgm_mixer_closeaudio(VALUE);
 VALUE rbgm_mixer_getmixchans();
 VALUE rbgm_mixer_setmixchans(VALUE, VALUE);
@@ -65,7 +65,7 @@ VALUE rbgm_mixmusic_fading(int, VALUE*, VALUE);
  */
 
 /* call-seq:
- *  open_audio( frequency, format, channels, buffer)
+ *  open_audio( frequency=22050, format=AUDIO_U16SYS, channels=2, buffer=4096)
  *  
  *  Initializes the audio device. You must call this before using the other
  *  mixer functions. See also #close_audio().
@@ -73,30 +73,59 @@ VALUE rbgm_mixmusic_fading(int, VALUE*, VALUE);
  *  Returns nil. May raise an SDLError if initialization fails.
  *  
  *  This method takes these arguments:
+ *
  *  frequency::  output sampling frequency in samples per second (Hz).
- *               22050 is recommended for most games; 44100 is CD audio
+ *               22050 (default) is recommended for most games; 44100 is CD
  *               rate. The larger the value, the more processing required.
- *  format::     output sample format.
- *  channels::   output sound channels. Use 2 for stereo, 1 for mono.
+ *
+ *  format::     output sample format. One of these integer constants,
+ *               located in the Rubygame::Mixer module.
+ *
+ *               AUDIO_U16SYS:: unsigned 16-bit samples (default)
+ *               AUDIO_S16SYS:: signed 16-bit samples
+ *               AUDIO_U8::     unsigned 8-bit samples.
+ *               AUDIO_S8::     signed 8-bit samples.
+ *
+ *  channels::   output sound channels. Use 2 (default) for stereo, 1 for mono.
  *               (this option does not affect number of mixing channels)
- *  buffer::     size of the sound buffer, in bytes. 4096 is recommended for
+ *
+ *  buffer::     size of the sound buffer, in bytes. 4096 (default) is good for
  *               most games. Smaller values have less delay before playing a
  *               sound, but require more CPU usage (and might have skipping
  *               on slow systems). Larger values are the opposite way.
  *
  */
-VALUE rbgm_mixer_openaudio(VALUE module, VALUE frequencyv, VALUE formatv, 
-                           VALUE channelsv, VALUE samplesizev)
+VALUE rbgm_mixer_openaudio(int argc, VALUE *argv, VALUE module)
 {
-  int frequency, channels, samplesize;
-  Uint16 format;
-  
-  frequency = NUM2INT(frequencyv);
-  format = NUM2UINT(formatv);
-  channels = NUM2INT(channelsv);
-  samplesize = NUM2INT(samplesizev);
+  VALUE vfreq, vformat, vchannels, vbuffer;
+  int freq = 22050;
+  Uint16 format = AUDIO_S16SYS;
+  int channels = 2;
+  int buffer = 4096;
 
-  if ( Mix_OpenAudio(frequency, format, channels, samplesize) < 0 )
+  rb_scan_args(argc, argv, "04", &vfreq, &vformat, &vchannels, &vbuffer);
+
+  if( RTEST(vfreq) )
+  {
+    freq = NUM2INT(vfreq);
+  }
+
+  if( RTEST(vformat) )
+  {
+    format = NUM2UINT(vformat);
+  }
+
+  if( RTEST(vchannels) )
+  {
+    channels = NUM2INT(vchannels);
+  }
+
+  if( RTEST(vbuffer) )
+  {
+    buffer = NUM2INT(vbuffer);
+  }
+
+  if ( Mix_OpenAudio(freq, format, channels, buffer) < 0 )
   {
     rb_raise(eSDLError, "Error initializing SDL_mixer: %s", Mix_GetError());
   }
@@ -694,7 +723,7 @@ void Init_rubygame_mixer()
 
 
 
-  rb_define_module_function(mMixer,"open_audio",rbgm_mixer_openaudio, 4);
+  rb_define_module_function(mMixer,"open_audio",rbgm_mixer_openaudio, -1);
   rb_define_module_function(mMixer,"close_audio",rbgm_mixer_closeaudio, 0);
   rb_define_module_function(mMixer,"mix_channels",rbgm_mixer_getmixchans, 0);
   rb_define_module_function(mMixer,"mix_channels=",rbgm_mixer_setmixchans, 1);
