@@ -52,8 +52,6 @@ VALUE rbgm_mixmusic_rewind(VALUE );
 VALUE rbgm_mixmusic_resume(VALUE );
 VALUE rbgm_mixmusic_pause(VALUE );
 
-VALUE rbgm_mixmusic_fadein(VALUE, VALUE, VALUE);
-VALUE rbgm_mixmusic_fadeinpos(VALUE, VALUE, VALUE, VALUE);
 VALUE rbgm_mixmusic_fadeout(VALUE, VALUE);
 
 VALUE rbgm_mixmusic_setposition(VALUE, VALUE);
@@ -435,67 +433,6 @@ VALUE rbgm_mixmusic_setvolume(VALUE self, VALUE volumev)
 }
 
 /* call-seq:
- *  fade_in(music, loops, speed)  ->  integer
- *
- *  Play an audio Music from a certain position, fading in and repeating a certain number of times. 
- *
- *  Raises SDLError if something goes wrong.
- *  
- *  music::       Music to play
- *  loops::       Number of times to play through the music.
- *                -1 plays the music forever until it is stopped.
- *  speed::       Speed in milliseconds for the fade-in effect to complete. 
- *  position::    Posistion to play from, percentual double value. 
- */
-VALUE rbgm_mixmusic_fadein(VALUE musicv, VALUE loopsv, VALUE speedv )
-{
-  Mix_Music* music;
-  int loops, speed, result;
-  Data_Get_Struct( musicv, Mix_Music, music );
-  loops     = NUM2INT(loopsv);
-  speed     = NUM2INT(speedv);
-  
-  result = Mix_FadeInMusic(music, loops, speed);
-  if ( result < 0 )
-  {
-    rb_raise(eSDLError, "Error fading in music: %s", Mix_GetError());
-  }
-  return Qnil;
-}
-
-
-/* call-seq:
- *  fade_in_position(music, loops, speed, position)  ->  integer
- *
- *  Play an audio Music from a certain position, fading in and repeating a certain number of times. 
- *
- *  Raises SDLError if something goes wrong.
- *  
- *  music::       Music to play
- *  loops::       Number of times to play through the music.
- *                -1 plays the music forever until it is stopped.
- *  speed::       Speed in milliseconds for the fade-in effect to complete. 
- *  position::    Posistion to play from, percentual double value. 
- */
-VALUE rbgm_mixmusic_fadeinpos(VALUE musicv, VALUE loopsv, VALUE speedv, VALUE positionv )
-{
-  Mix_Music* music;
-  int loops, speed, result;
-  double position;
-
-  Data_Get_Struct( musicv, Mix_Music, music );
-  loops     = NUM2INT(loopsv);
-  speed     = NUM2INT(speedv);
-  position  = NUM2DBL(positionv);
-  result = Mix_FadeInMusicPos(music, loops, speed, position);
-  if ( result < 0 )
-  {
-    rb_raise(eSDLError, "Error fading in music to position: %s", Mix_GetError());
-  }
-  return Qnil;
-}
-
-/* call-seq:
  *  pause_music()
  *
  *  Pause playback of the playing music.
@@ -729,8 +666,6 @@ void Init_rubygame_mixer()
   rb_define_method(cMusic,"volume" , rbgm_mixmusic_getvolume, 0);
   rb_define_method(cMusic,"volume=", rbgm_mixmusic_setvolume, 1);
   
-  rb_define_method(cMusic, "fade_in"      	 , rbgm_mixmusic_fadein  , 2);
-  rb_define_method(cMusic, "fade_in_position", rbgm_mixmusic_fadeinpos, 2);
   rb_define_method(cMusic, "fade_out"        , rbgm_mixmusic_fadeout , 1);
   rb_define_method(cMusic, "rewind"          , rbgm_mixmusic_rewind  , 0);
   rb_define_method(cMusic, "resume"          , rbgm_mixmusic_resume  , 0);
