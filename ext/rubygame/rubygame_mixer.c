@@ -604,48 +604,6 @@ VALUE rbgm_mixmusic_paused(VALUE self)
   return result ? Qtrue : Qfalse;
 }
 
-/* call-seq:
- *  fading?()  ->  boolean
- *
- *  Checks if the music is fading in or fading out. 
- *
- */
-VALUE rbgm_mixmusic_fading(VALUE self)
-{
-  int result;
-  result = Mix_FadingMusic();
-  return (result == MIX_NO_FADING) ? Qfalse: Qtrue ;
-}
-
-/* call-seq:
- *  fading_in?()  ->  boolean
- *
- *  Checks if the music is fading in. 
- *  This is a low level function, not for general use.
- *
- */
-VALUE rbgm_mixmusic_fadingin(VALUE self)
-{
-  int result;
-  result = Mix_FadingMusic();
-  return (result == MIX_FADING_IN) ? Qtrue: Qfalse ;
-}
-
-
-/* call-seq:
- *  fading_out?()  ->  boolean
- *
- *  Checks if the music is fading out. 
- *
- */
-VALUE rbgm_mixmusic_fadingout(VALUE self)
-{
-  int result;
-  result = Mix_FadingMusic();
-  return (result == MIX_FADING_OUT) ? Qtrue: Qfalse ;
-}
-
-
 
 void Init_rubygame_mixer()
 {
@@ -727,8 +685,6 @@ void Init_rubygame_mixer()
   rb_define_method(cMusic, "resume"          , rbgm_mixmusic_resume  , 0);
   rb_define_method(cMusic, "pause"           , rbgm_mixmusic_pause   , 0);
   rb_define_method(cMusic, "position="       , rbgm_mixmusic_setposition, 1);
-  rb_define_method(cMusic, "fading_in?"      , rbgm_mixmusic_fadingin , 0);
-  rb_define_method(cMusic, "fading_out?"     , rbgm_mixmusic_fadingout, 0);
   rb_define_method(cMusic, "paused?"         , rbgm_mixmusic_paused   , 0);
   rb_define_method(cMusic, "playing?"        , rbgm_mixmusic_playing  , 0);
   

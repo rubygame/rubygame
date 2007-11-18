@@ -59,9 +59,6 @@ extern VALUE rbgm_mixmusic_fadeout(VALUE, VALUE);
 
 extern VALUE rbgm_mixmusic_setposition(VALUE, VALUE);
 
-extern VALUE rbgm_mixmusic_fading(VALUE);
-extern VALUE rbgm_mixmusic_fadingin(VALUE);
-extern VALUE rbgm_mixmusic_fadingout(VALUE);
 extern VALUE rbgm_mixmusic_paused(VALUE);
 extern VALUE rbgm_mixmusic_playing(VALUE);
 
