@@ -8,13 +8,11 @@
 - Add: Sprite#undraw.
 - Add: TTF#size_utf8 and TTF#size_unicode.
 - Add: Rubygame.key_name (returns a printable string for any key).
-- Imp: Surfaces can be created with no Screen mode set.
 
 === Bug Fixes
 
 - Fix: Bug with dirty rectangles in UpdateGroup.
 - Fix: Incorrect docs for joy-hat direction value.
-- Fix: Added argument checks to several Rect methods.
 - Fix: Rect#topleft was returning a Rect type instead of Array.
 - Fix: Segfaults when Joysticks are garbage-collected after Rubygame has quit.
   [Bug 1820237]
@@ -29,6 +27,14 @@
 
 - Build system won't detect changed source files and recompile as necessary;
   you must "rake clobber build" after a change.
+
+=== Other Stuff
+
+- Added argument checks to several Rect methods.
+- Surfaces can be created with no Screen mode set.
+- Mixer.open_audio has default values.
+- TTF style getting/setting refactored under the hood.
+- Added demo_music.rb and a sample song.ogg to try out music.
 
 === Acknowledgements
 
