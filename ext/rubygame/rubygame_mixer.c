@@ -702,26 +702,8 @@ void Init_rubygame_mixer()
 
   rb_define_const(mMixer,"AUDIO_U8", INT2NUM(AUDIO_U8));
   rb_define_const(mMixer,"AUDIO_S8", INT2NUM(AUDIO_S8));
-  rb_define_const(mMixer,"AUDIO_U16",UINT2NUM(AUDIO_U16));
-  rb_define_const(mMixer,"AUDIO_S16",UINT2NUM(AUDIO_S16));
   rb_define_const(mMixer,"AUDIO_U16SYS", INT2NUM(AUDIO_U16SYS));
   rb_define_const(mMixer,"AUDIO_S16SYS", INT2NUM(AUDIO_S16SYS));
-  rb_define_const(mMixer,"AUDIO_U16LSB",UINT2NUM(AUDIO_U16LSB));
-  rb_define_const(mMixer,"AUDIO_S16LSB",UINT2NUM(AUDIO_S16LSB));
-  rb_define_const(mMixer,"AUDIO_U16MSB",UINT2NUM(AUDIO_U16MSB));
-  rb_define_const(mMixer,"AUDIO_S16MSB",UINT2NUM(AUDIO_S16MSB));
-
-  rb_define_const(mMixer,"CHANNELS",INT2NUM(MIX_CHANNELS));
-  rb_define_const(mMixer,"DEFAULT_FREQUENCY",INT2NUM(MIX_DEFAULT_FREQUENCY));
-  rb_define_const(mMixer,"DEFAULT_FORMAT",UINT2NUM(MIX_DEFAULT_FORMAT));
-  rb_define_const(mMixer,"DEFAULT_CHANNELS",UINT2NUM(MIX_DEFAULT_CHANNELS));
-  rb_define_const(mMixer,"MAX_VOLUME",INT2NUM(MIX_MAX_VOLUME));
-
-  rb_define_const(mMixer,"NO_FADING", INT2NUM(MIX_NO_FADING));
-  rb_define_const(mMixer,"FADING_OUT", INT2NUM(MIX_FADING_OUT));
-  rb_define_const(mMixer,"FADING_IN", INT2NUM(MIX_FADING_IN));
-
-
 
   rb_define_module_function(mMixer,"open_audio",rbgm_mixer_openaudio, -1);
   rb_define_module_function(mMixer,"close_audio",rbgm_mixer_closeaudio, 0);
