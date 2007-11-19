@@ -65,7 +65,7 @@ VALUE rbgm_mixmusic_fading(int, VALUE*, VALUE);
  */
 
 /* call-seq:
- *  open_audio( frequency=22050, format=AUDIO_U16SYS, channels=2, buffer=1024)
+ *  open_audio( frequency=nil, format=nil, channels=nil, buffer=nil)
  *  
  *  Initializes the audio device. You must call this before using the other
  *  mixer functions. See also #close_audio().
@@ -74,23 +74,29 @@ VALUE rbgm_mixmusic_fading(int, VALUE*, VALUE);
  *  
  *  This method takes these arguments:
  *
- *  frequency::  output sampling frequency in samples per second (Hz).
- *               22050 (default) is recommended for most games; 44100 is CD
- *               rate. The larger the value, the more processing required.
+ *  frequency::  output sample rate in audio samples per second (Hz).
+ *               Affects the quality of the sound output, at the expense of
+ *               CPU usage. If nil, the default (22050) is used. 22050 is 
+ *               recommended for most games. For reference, 44100 is CD quality.
+ *               The larger the value, the more processing required.
  *
- *  format::     output sample format. One of these integer constants,
- *               located in the Rubygame::Mixer module.
+ *  format::     output sample format. If nil, the default recommended system
+ *               format is used. It's _highly_ recommended you leave this nil!
  *
- *               AUDIO_U16SYS:: unsigned 16-bit samples (default)
- *               AUDIO_S16SYS:: signed 16-bit samples
+ *               But if you're feeling reckless, you can use one of these
+ *               constants located in the Rubygame::Mixer module:
+ *
+ *               AUDIO_U16SYS:: unsigned 16-bit samples.
+ *               AUDIO_S16SYS:: signed 16-bit samples.
  *               AUDIO_U8::     unsigned 8-bit samples.
  *               AUDIO_S8::     signed 8-bit samples.
  *
- *  channels::   output sound channels. Use 2 (default) for stereo, 1 for mono.
- *               (this option does not affect number of mixing channels)
+ *  channels::   output sound channels. Use 2 for stereo, 1 for mono.
+ *               If nil, the default (2) is used.
+ *               This option is not related to mixing channels.
  *
- *  buffer::     size of the sound buffer, in bytes. 1024 (default) is good for
- *               most games. Larger values have more delay before playing a
+ *  buffer::     size of the sound buffer, in bytes. If nil, the default (1024)
+ *               is used. Larger values have more delay before playing a
  *               sound, but require less CPU usage (and have less skipping
  *               on slow systems).
  *
@@ -98,8 +104,8 @@ VALUE rbgm_mixmusic_fading(int, VALUE*, VALUE);
 VALUE rbgm_mixer_openaudio(int argc, VALUE *argv, VALUE module)
 {
   VALUE vfreq, vformat, vchannels, vbuffer;
-  int freq = 22050;
-  Uint16 format = AUDIO_S16SYS;
+  int freq = MIX_DEFAULT_FREQUENCY;
+  Uint16 format = MIX_DEFAULT_FORMAT;
   int channels = 2;
   int buffer = 1024;
 
