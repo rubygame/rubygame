@@ -1052,7 +1052,9 @@ VALUE rbgm_transform_flip(VALUE self, VALUE vhorz, VALUE vvert)
 }
 
 /* 
- *  Document-class: Rubygame::Surface
+ *  See rubygame_image.c for the Surface class overview docs.
+ *  I hate RDoc's C parser.
+ *
  */
 void Rubygame_Init_Surface()
 {

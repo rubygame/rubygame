@@ -72,20 +72,19 @@ VALUE rbgm_image_load( VALUE class, VALUE filename )
 	return Data_Wrap_Struct( cSurface,0,SDL_FreeSurface,surf );
 }
 
-/*  
- *  Document-module: Rubygame::Image
+/* 
+ *  Document-class: Rubygame::Surface
  *
- *  The Image module contains methods for saving and loading image files
- *  to Surfaces.
+ *  Surface represents an image, a block of colored pixels arranged in a 2D grid.
+ *  You can load image files to a new Surface with #load_image, or create
+ *  an empty one with Surface.new and draw shapes on it with #draw_line,
+ *  #draw_circle, and all the rest.
  *
- *  The #load method is only usable if Rubygame was compiled with the SDL_image
- *  library. You may test if this feature is available with the #usable?
- *  method. If you need more flexibility, you can check the library version
- *  that Rubygame was compiled against with the #version method.
- *  
- *  At this time, no method is available to load BMP files without SDL_image,
- *  so it must be present to do any sort of image file loading. This will be
- *  remedied in the future.
+ *  One of the most important Surface concepts is #blit, copying image
+ *  data from one Surface onto another. By blitting Surfaces onto the
+ *  Screen (which is a special type of Surface) and then using Screen#update,
+ *  you can make images appear for the player to see.
+ *
  */
 void Init_rubygame_image()
 {
