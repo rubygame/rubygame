@@ -111,6 +111,7 @@ VALUE rbgm_ttf_new(VALUE class, VALUE vfile, VALUE vsize)
 	return self;
 }
 
+/* :nodoc: */
 VALUE rbgm_ttf_initialize(int argc, VALUE *argv, VALUE self)
 { 
 	return self;

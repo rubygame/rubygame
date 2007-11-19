@@ -171,7 +171,7 @@ VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 	return self;
 }
 
-
+/* :nodoc: */
 VALUE rbgm_surface_initialize(int argc, VALUE *argv, VALUE self)
 {
 	return self;
