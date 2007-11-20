@@ -7,15 +7,13 @@
 - Add: Depth sorting for sprites.
 - Add: Sprite#undraw.
 - Add: TTF#size_utf8 and TTF#size_unicode.
-- Add: Rubygame.key_name (returns a printable string for any key).
+- Add: Rubygame.key_name.
 
 === Bug Fixes
 
 - Fix: Bug with dirty rectangles in UpdateGroup.
 - Fix: Incorrect docs for joy-hat direction value.
-- Fix: Rect#topleft was returning a Rect type instead of Array.
 - Fix: Segfaults when Joysticks are garbage-collected after Rubygame has quit.
-  [Bug 1820237]
 - Fix: Segfaults when using Surface#convert, #to_display, or #to_display_alpha
   when no video mode has been set.
 - Fix: Surface#get_at returning [0,0,0,0] when it shouldn't.
