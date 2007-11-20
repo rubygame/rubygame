@@ -1,14 +1,15 @@
 = TODO / ROADMAP
 
-=== 2.2.0 (next minor release)
+=== 2.1.x (next minor release)
+- Bugfixes only
+
+=== 3.0.0 (next major release)
 
 - Color (representation of a color)
   - ColorRGB and ColorHSV classes
   - Mix/combine colors using various blending modes (add, multiply, etc.)
   - Library of common pre-defined colors. (:red, :black, :chartreuse, etc.)
   - Integrate with SDL/OpenGL functions (automatic conversion).
-
-=== 3.0.0 (next major release)
 
 - New scene/camera/sprite sytem.
 - New geometric primitives classes (for collision detection, drawing).
@@ -43,3 +44,8 @@
   - Screen#update (cannot pass object with rect attribute)
   - Screen#update_rects (same as above)
   - Why not just call the ruby function from within C?
+
+- Add a putpixel method to Surface 
+
+- Implement automatic boundary detection and collision 
+  detection based upon it, in the spirit of Clanlib.
