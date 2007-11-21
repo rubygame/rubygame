@@ -271,26 +271,60 @@ module Rubygame
 				sprite.collide_group(self)
 			end
 
-			# call-seq: collide_group(group, klla=false, killb=false)  ->  Hash
+			# call-seq:
+			#    collide_group(group, &block)  ->  Hash
+			#    collide_group(group, killa=false, killb=false) -> Hash # deprecated
 			# 
 			# Check collision between each member of the calling Group and each 
 			# member of +group+. Returns a Hash table with each member of the calling
 			# Group as a key, and as a value an Array of all members of +group+ that
 			# it collided with.
-			def collide_group(group, killa=false, killb=false)
+			# 
+			# If a block is given, that block is executed for every pair of colliding
+			# sprites. For example, if a1 collides with b1 and b2, the block will
+			# be called twice: once with [ a1, b1 ] and once with [ a1, b2 ].
+			# 
+			# Example: 
+			# 
+			#     # 'kills' both sprites when they collide
+			# 
+			#     groupA,collide_group(groupB) do |a, b|
+			#       a.kill
+			#       b.kill
+			#     end
+			# 
+			# *NOTE*: +killa+ and +killb+ are deprecated and will be removed in the future.
+			# It is highly recommended that you use the block argument instead.
+			# 
+			# *IMPORTANT*: +killa+ and +killb+ will be ignored if a block is given!
+			# 
+			# If +killa+ is true and a sprite in group A collides with a sprite in group B,
+			# the sprite in group A will have its #kill method called; the same goes for
+			# +killb+ and group B.
+			# 
+			def collide_group(group, killa=false, killb=false, &block)
 				sprites = {}
 				self.each { |sprite|
 					col = sprite.collide_group(group)
 					sprites[sprite] = col if col.length > 0
 				}
-				if killa
-					sprites.each_key { |sprite| sprite.kill }
-				end
-				if killb
-					sprites.each_value do |array|
-						array.each { |sprite| sprite.kill }
+				
+				if block_given?
+					sprites.each_pair do |a, bs|
+						bs.each { |b| yield(a, b) }
+					end
+				else
+					# killa and killb only work if no block is given
+					if killa
+						sprites.each_key { |sprite| sprite.kill }
+					end
+					if killb
+						sprites.each_value do |array|
+							array.each { |sprite| sprite.kill }
+						end
 					end
 				end
+				
 				return sprites
 			end
 
