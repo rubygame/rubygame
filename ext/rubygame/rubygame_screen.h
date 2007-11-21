@@ -31,6 +31,8 @@ extern VALUE rbgm_screen_getsurface(VALUE);
 extern VALUE rbgm_screen_getcaption(VALUE);
 extern VALUE rbgm_screen_setcaption(VALUE, VALUE);
 
+extern VALUE rbgm_screen_seticon(VALUE, VALUE);
+
 extern VALUE rbgm_screen_update(int, VALUE*, VALUE);
 extern VALUE rbgm_screen_updaterects(VALUE, VALUE);
 extern VALUE rbgm_screen_flip(VALUE);

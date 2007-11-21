@@ -35,6 +35,8 @@ VALUE rbgm_screen_getsurface(VALUE);
 VALUE rbgm_screen_getcaption(VALUE);
 VALUE rbgm_screen_setcaption(VALUE, VALUE);
 
+VALUE rbgm_screen_seticon(VALUE, VALUE);
+
 VALUE rbgm_screen_update(int, VALUE*, VALUE);
 VALUE rbgm_screen_updaterects(VALUE, VALUE);
 VALUE rbgm_screen_flip(VALUE);
@@ -187,6 +189,26 @@ VALUE rbgm_screen_setcaption(VALUE self, VALUE title)
 		title_str = StringValuePtr(title);
 	}
   SDL_WM_SetCaption(title_str,title_str);
+  return self;
+}
+
+/*  call-seq:
+ *    icon = icon
+ *
+ *  Sets the window icon for the Screen.
+ *
+ *  icon::    a Rubygame::Surface to be displayed at the top of the Rubygame
+ *            window (when not in fullscreen mode), and in other OS-specific
+ *            areas (like the taskbar entry). If omitted or +nil+, no icon
+ *            will be shown at all.
+ */
+VALUE rbgm_screen_seticon(VALUE self, VALUE data)
+{
+  SDL_Surface *icon;
+  
+  Data_Get_Struct(data, SDL_Surface, icon);
+  SDL_WM_SetIcon(icon, NULL);
+  
   return self;
 }
 
@@ -404,6 +426,7 @@ void Rubygame_Init_Screen()
   /* Screen methods */
   rb_define_method(cScreen,"title",rbgm_screen_getcaption,0);
   rb_define_method(cScreen,"title=",rbgm_screen_setcaption,1);
+  rb_define_method(cScreen,"icon=",rbgm_screen_seticon,1);
   rb_define_method(cScreen,"update",rbgm_screen_update,-1);
   rb_define_method(cScreen,"update_rects",rbgm_screen_updaterects,1);
   rb_define_method(cScreen,"flip",rbgm_screen_flip,0);

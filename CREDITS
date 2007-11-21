@@ -50,8 +50,13 @@
   Date::          2007-07-29 (r460).
 
 - <b>ippa</a>
-  Email::         admin@rubylicio.us
+  Email::         admin at rubylicio.us
   Contribution::  Patch to optimize Rect#collide_rect?
-  Date::          2007-11-21 (595)
+  Date::          2007-11-21 (r595)
   Contribution::  Patch to add ScrollGroup (scrolling sprites group)
-  Date::          2007-11-21 (596)
+  Date::          2007-11-21 (r596)
+
+- <b>Michael Swiger</b> / mokkan
+  Email::         mokkan at users.sourceforge.net
+  Contribution::  Patch to add Screen.icon=
+  Date::          2007-11-21 (r597)
