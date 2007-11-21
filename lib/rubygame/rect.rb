@@ -498,10 +498,8 @@ class Rect < Array
 	def collide_rect?(rect)
 		nself = self.normalize
 		rect  = Rect.new_from_object(rect).normalize!
-		return ((( (rect.l)..(rect.r) ).include?(nself.l)  or\
-						 ((nself.l)..(nself.r)).include?( rect.l)) and\
-						(( (rect.t)..(rect.b) ).include?(nself.t)  or\
-						 ((nself.t)..(nself.b)).include?( rect.t)))
+		return ((nself.l >= rect.l && nself.l <= rect.r) or (rect.l >= nself.l && rect.l <= nself.r)) &&
+		       ((nself.t >= rect.t && nself.t <= rect.b) or (rect.t >= nself.t && rect.t <= nself.b))
 	end
 
 	# True if the given Rect is totally within the caller. Borders may

@@ -48,3 +48,8 @@
   Email::         danielneis at gmail.com
   Contribution::  Patch to add Sprite#undraw (based on UpdateGroup#undraw).
   Date::          2007-07-29 (r460).
+
+- <b>ippa</a>
+  Email::         admin@rubylicio.us
+  Contribution::  Patch to optimize Rect#collide_rect?
+  Date::          2007-11-21 (595)
