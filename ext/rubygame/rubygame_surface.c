@@ -380,9 +380,7 @@ VALUE rbgm_surface_set_colorkey( int argc, VALUE *argv, VALUE self)
 	if( RTEST(vcolor) )
 	{
 		vcolor = convert_to_array(vcolor);
-		r = NUM2UINT(rb_ary_entry(vcolor,0));
-		g = NUM2UINT(rb_ary_entry(vcolor,1));
-		b = NUM2UINT(rb_ary_entry(vcolor,2));
+		extract_rgb_u8_as_u8(vcolor, &r, &g, &b);
 		color = SDL_MapRGB(surf->format, r,g,b);
 	}
 	else
@@ -509,19 +507,8 @@ VALUE rbgm_surface_fill( int argc, VALUE *argv, VALUE self )
 	rb_scan_args(argc, argv, "11", &vcolor, &vrect);
 
 	vcolor = convert_to_array(vcolor);
-	r = NUM2UINT(rb_ary_entry(vcolor,0));
-	g = NUM2UINT(rb_ary_entry(vcolor,1));
-	b = NUM2UINT(rb_ary_entry(vcolor,2));
-	/* if the array is larger than [R,G,B], it should be [R,G,B,A] */
-	if(RARRAY(vcolor)->len > 3)
-	{
-		a = NUM2UINT(rb_ary_entry(vcolor,3));
-		color = SDL_MapRGBA(surf->format, r,g,b,a);
-	}
-	else
-	{
-		color = SDL_MapRGB(surf->format, r,g,b);
-	}
+	extract_rgba_u8_as_u8(vcolor, &r, &g, &b, &a);
+	color = SDL_MapRGBA(surf->format, r,g,b,a);
 
 	if( NIL_P(vrect) )
 	{
