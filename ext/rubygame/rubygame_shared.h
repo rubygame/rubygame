@@ -30,10 +30,16 @@ extern VALUE mRubygame;
 extern VALUE eSDLError;
 extern VALUE cSurface;
 extern VALUE cRect;
+
 extern SDL_Rect *make_rect(int, int, int, int);
 extern VALUE make_symbol(char *);
 extern Uint32 collapse_flags(VALUE);
 extern VALUE convert_to_array(VALUE);
+
+extern SDL_Color make_sdl_color(VALUE);
+extern void extract_rgb_u8_as_u8(VALUE, Uint8*, Uint8*, Uint8*);
+extern void extract_rgba_u8_as_u8(VALUE, Uint8*, Uint8*, Uint8*, Uint8*);
+
 extern int init_video_system();
 extern void Init_rubygame_shared();
 

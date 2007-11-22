@@ -27,6 +27,7 @@ VALUE cSurface;
 VALUE cRect;
 VALUE eSDLError;
 SDL_Rect *make_rect(int, int, int, int);
+SDL_Color make_sdl_color(VALUE);
 int init_video_system();
 void Init_rubygame_shared();
 
@@ -89,6 +90,37 @@ VALUE convert_to_array(VALUE val)
 						 rb_obj_classname(val));
 	}
 	return v;
+}
+
+SDL_Color make_sdl_color(VALUE arr)
+{
+	SDL_Color color;
+	arr = convert_to_array(arr);
+	extract_rgb_u8_as_u8(arr, &(color.r), &(color.g), &(color.b));
+	return color;
+}
+
+void extract_rgb_u8_as_u8(VALUE color, Uint8 *r, Uint8 *g, Uint8 *b)
+{
+	*r = NUM2UINT(rb_ary_entry(color, 0));
+	*g = NUM2UINT(rb_ary_entry(color, 1));
+	*b = NUM2UINT(rb_ary_entry(color, 2));
+}
+
+void extract_rgba_u8_as_u8(VALUE color, Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a)
+{
+	*r = NUM2UINT(rb_ary_entry(color, 0));
+	*g = NUM2UINT(rb_ary_entry(color, 1));
+	*b = NUM2UINT(rb_ary_entry(color, 2));
+
+	if( RARRAY(color)->len > 3 )
+	{
+		*a = NUM2UINT(rb_ary_entry(color, 3));
+	}
+	else
+	{
+		*a = 255;
+	}
 }
 
 /* --

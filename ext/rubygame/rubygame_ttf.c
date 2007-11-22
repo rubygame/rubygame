@@ -353,19 +353,6 @@ VALUE rbgm_ttf_size_unicode(VALUE self, VALUE string)
 	return result;
 }
 
-/*
-* Helper function for color handling for the rendering functions.
-*/
-
-static void RBGM_array_to_color(SDL_Color * color, VALUE arr) {
-	if( RTEST(arr) )
-	{
-		arr = convert_to_array(arr);
-		color->r = NUM2UINT(rb_ary_entry(arr, 0));
-		color->g = NUM2UINT(rb_ary_entry(arr, 1));
-		color->b = NUM2UINT(rb_ary_entry(arr, 2));
-	}
-}
 
 /*
  *--
@@ -397,8 +384,12 @@ VALUE rbgm_ttf_render(int argc, VALUE *argv, VALUE self)
 
 	Data_Get_Struct(self,TTF_Font,font);
 
-	RBGM_array_to_color(&fore, vfg);
-	RBGM_array_to_color(&back, vbg);
+	fore = make_sdl_color(vfg);
+
+	if( RTEST(vbg) )
+	{
+		back = make_sdl_color(vbg);
+	}
 
 	if( RTEST(vaa) ) /* anti-aliasing enabled */
 	{
@@ -452,8 +443,12 @@ VALUE rbgm_ttf_render_utf8(int argc, VALUE *argv, VALUE self)
  
  	Data_Get_Struct(self,TTF_Font,font);
  
-	RBGM_array_to_color(&fore, vfg);
-	RBGM_array_to_color(&back, vbg);
+	fore = make_sdl_color(vfg);
+
+	if( RTEST(vbg) )
+	{
+		back = make_sdl_color(vbg);
+	}
 
 	if( RTEST(vaa) ) /* anti-aliasing enabled */
  	{
@@ -507,8 +502,12 @@ VALUE rbgm_ttf_render_unicode(int argc, VALUE *argv, VALUE self)
  
  	Data_Get_Struct(self,TTF_Font,font);
 
-	RBGM_array_to_color(&fore, vfg);
-	RBGM_array_to_color(&back, vbg);
+	fore = make_sdl_color(vfg);
+
+	if( RTEST(vbg) )
+	{
+		back = make_sdl_color(vbg);
+	}
  
 	if( RTEST(vaa) ) /* anti-aliasing enabled */
  	{
