@@ -721,6 +721,7 @@ VALUE rbgm_surface_set_clip( VALUE self, VALUE clip )
 		                 );
 
 		SDL_SetClipRect(surf,rect);
+		free(rect);
 	}
 
 	return self;
