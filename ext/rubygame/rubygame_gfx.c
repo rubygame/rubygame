@@ -59,21 +59,6 @@ VALUE rbgm_draw_fillpolygon(VALUE, VALUE, VALUE);
  *  Clean up this ugly mess of code!
  */
 
-void extract_color(VALUE rgba, Uint8* r, Uint8* g, Uint8* b, Uint8* a)
-{
-  rgba = convert_to_array(rgba);
-  if(RARRAY(rgba)->len < 3)
-    rb_raise(rb_eArgError,"color must be [r,g,b] or [r,g,b,a] form");
-  *r = NUM2UINT(rb_ary_entry(rgba,0));
-  *g = NUM2UINT(rb_ary_entry(rgba,1));
-  *b = NUM2UINT(rb_ary_entry(rgba,2));
-  
-  if(RARRAY(rgba)->len > 3)
-    *a = NUM2UINT(rb_ary_entry(rgba,3));
-  else
-    *a = 255;
-}
-
 void extract_xy(VALUE point, Sint16* x, Sint16* y)
 {
 	point = convert_to_array(point);
@@ -97,7 +82,7 @@ void draw_line(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int aa)
   extract_xy(pt1, &x1, &y1);
   extract_xy(pt2, &x2, &y2);
   
-  extract_color(rgba, &r, &g, &b, &a);
+  extract_rgba_u8_as_u8(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
   //printf("dest: %dx%d\n",dest->w,dest->h);
@@ -171,7 +156,7 @@ void draw_rect(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int fill)
   extract_xy(pt1, &x1, &y1);
   extract_xy(pt2, &x2, &y2);
   
-  extract_color(rgba, &r, &g, &b, &a);
+  extract_rgba_u8_as_u8(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
   //printf("dest: %dx%d\n",dest->w,dest->h);
@@ -235,7 +220,7 @@ void draw_circle(VALUE target, VALUE center, VALUE radius, VALUE rgba, int aa, i
   extract_xy(center, &x, &y);
   rad = NUM2INT(radius);
   
-  extract_color(rgba, &r, &g, &b, &a);
+  extract_rgba_u8_as_u8(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
   //printf("dest: %dx%d\n",dest->w,dest->h);
@@ -318,7 +303,7 @@ void draw_ellipse(VALUE target, VALUE center, VALUE radii, VALUE rgba, int aa, i
   extract_xy(center, &x, &y);
   extract_xy(radii, &radx, &rady);
   
-  extract_color(rgba, &r, &g, &b, &a);
+  extract_rgba_u8_as_u8(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
 
@@ -403,7 +388,7 @@ void draw_pie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba
   extract_xy(angles, &start, &end);
   rad = NUM2INT(radius);
   
-  extract_color(rgba, &r, &g, &b, &a);
+  extract_rgba_u8_as_u8(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
 
@@ -499,7 +484,7 @@ void draw_polygon(VALUE target, VALUE points, VALUE rgba, int aa, int fill)
     extract_xy(each_point, &(x[loop]), &(y[loop]));
   }
 
-  extract_color(rgba, &r, &g, &b, &a);
+  extract_rgba_u8_as_u8(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
 
