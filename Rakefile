@@ -321,7 +321,7 @@ rubygame_gfx = ExtensionModule.new do |gfx|
   gfx.add_lib( 'SDL_gfx' )
   gfx.add_header( 'SDL_gfxPrimitives.h')
   gfx.add_header( 'SDL_rotozoom.h' )
-  gfx.create_all_tasks() if $options[:gfx]
+  gfx.create_all_tasks() if $options[:"sdl-gfx"]
 end
 
 rubygame_image = ExtensionModule.new do |image|
@@ -329,7 +329,7 @@ rubygame_image = ExtensionModule.new do |image|
   image.objs = ['rubygame_shared', 'rubygame_image']
   image.add_lib('SDL_image')
   image.add_header('SDL_image.h')
-  image.create_all_tasks() if $options[:image]
+  image.create_all_tasks() if $options[:"sdl-image"]
 end
 
 rubygame_mixer = ExtensionModule.new do |mixer|
@@ -337,7 +337,7 @@ rubygame_mixer = ExtensionModule.new do |mixer|
   mixer.objs = ['rubygame_shared', 'rubygame_mixer']
   mixer.add_lib('SDL_mixer')
   mixer.add_header('SDL_mixer.h')
-  mixer.create_all_tasks() if $options[:mixer]
+  mixer.create_all_tasks() if $options[:"sdl-mixer"]
 end
 
 rubygame_ttf = ExtensionModule.new do |ttf|
@@ -345,7 +345,7 @@ rubygame_ttf = ExtensionModule.new do |ttf|
   ttf.add_lib('SDL_ttf')
   ttf.objs = ['rubygame_shared', 'rubygame_ttf']
   ttf.add_header('SDL_ttf.h')
-  ttf.create_all_tasks() if $options[:ttf]
+  ttf.create_all_tasks() if $options[:"sdl-ttf"]
 end
 
 if $options[:opengl]
