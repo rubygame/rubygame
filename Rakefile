@@ -15,7 +15,7 @@ def from_env_or_config(string)
 end
 
 def try_sdl_config( flag )
-	if $options.sdl_config
+	if $options[:sdl_config]
 		`sdl-config #{flag}`.chomp 
 	else
 		return ""
@@ -177,7 +177,7 @@ string_option :sitelibdir
 CFLAGS = [from_env_or_config("CFLAGS"),
           try_sdl_config("--cflags"),
           "-I. -I#{CONFIG['topdir']}",
-          ("-g" if $options.debug) ].join(" ")
+          ("-g" if $options[:debug]) ].join(" ")
 
 LINK_FLAGS = [from_env_or_config("LIBRUBYARG_SHARED"),
               from_env_or_config("LDFLAGS"),
@@ -235,7 +235,7 @@ class ExtensionModule
     desc "Compile the #{@dynlib} extension"
     task taskname => objs_full do |task|
       link_command = "#{from_env_or_config('LDSHARED')} #{LINK_FLAGS} #{@lflags} -o #{dynlib_full} #{task.prerequisites.join(' ')}"
-      if( $options.verbose )
+      if( $options[:verbose] )
         sh link_command
       else
         puts "Linking compiled files to create #{File.basename(@directory)}/#{File.basename(dynlib_full)}"
@@ -261,7 +261,7 @@ class ExtensionModule
          ])\
     do |t|
       compile_command = "#{from_env_or_config('CC')} -c #{CFLAGS} #{t.source} -o #{t.name}"
-      if( $options.verbose )
+      if( $options[:verbose] )
         sh compile_command
       else
         puts "Compiling #{File.basename(@directory)}/#{File.basename(t.source)}"
@@ -274,7 +274,7 @@ class ExtensionModule
       object = source.sub(".c", ".#{OBJEXT}")
       file object => ([source] + depends_headers( source )) do |t|
         compile_command = "#{CONFIG['CC']} -c #{CFLAGS} #{source} -o #{t.name}"
-        if( $options.verbose )
+        if( $options[:verbose] )
           sh compile_command
         else
           puts "Compiling #{File.basename(@directory)}/#{File.basename(source)}"
@@ -321,7 +321,7 @@ rubygame_gfx = ExtensionModule.new do |gfx|
   gfx.add_lib( 'SDL_gfx' )
   gfx.add_header( 'SDL_gfxPrimitives.h')
   gfx.add_header( 'SDL_rotozoom.h' )
-  gfx.create_all_tasks() if $options.gfx
+  gfx.create_all_tasks() if $options[:gfx]
 end
 
 rubygame_image = ExtensionModule.new do |image|
@@ -329,7 +329,7 @@ rubygame_image = ExtensionModule.new do |image|
   image.objs = ['rubygame_shared', 'rubygame_image']
   image.add_lib('SDL_image')
   image.add_header('SDL_image.h')
-  image.create_all_tasks() if $options.image
+  image.create_all_tasks() if $options[:image]
 end
 
 rubygame_mixer = ExtensionModule.new do |mixer|
@@ -337,7 +337,7 @@ rubygame_mixer = ExtensionModule.new do |mixer|
   mixer.objs = ['rubygame_shared', 'rubygame_mixer']
   mixer.add_lib('SDL_mixer')
   mixer.add_header('SDL_mixer.h')
-  mixer.create_all_tasks() if $options.mixer
+  mixer.create_all_tasks() if $options[:mixer]
 end
 
 rubygame_ttf = ExtensionModule.new do |ttf|
@@ -345,10 +345,10 @@ rubygame_ttf = ExtensionModule.new do |ttf|
   ttf.add_lib('SDL_ttf')
   ttf.objs = ['rubygame_shared', 'rubygame_ttf']
   ttf.add_header('SDL_ttf.h')
-  ttf.create_all_tasks() if $options.ttf
+  ttf.create_all_tasks() if $options[:ttf]
 end
 
-if $options.opengl
+if $options[:opengl]
   CFLAGS << " -DHAVE_OPENGL "
 end
 
@@ -368,17 +368,17 @@ end
 
 desc "Install only the extensions"
 task :install_ext do |task|
-  puts "Installing extensions to #{$options.sitearchdir}"
-  mkdir_p $options.sitearchdir
-  cp task.prerequisites.to_a, $options.sitearchdir
+  puts "Installing extensions to #{$options[:sitearchdir]}"
+  mkdir_p $options[:sitearchdir]
+  cp task.prerequisites.to_a, $options[:sitearchdir]
 end
 
 desc "Install only the library"
 task :install_lib do |task|
-  puts "Installing library to #{$options.sitelibdir}"
-  mkdir_p $options.sitelibdir + "/rubygame/"
-  cp "./lib/rubygame.rb", $options.sitelibdir
-  cp FileList.new("./lib/rubygame/*.rb").to_a, $options.sitelibdir+"/rubygame/"
+  puts "Installing library to #{$options[:sitelibdir]}"
+  mkdir_p $options[:sitelibdir] + "/rubygame/"
+  cp "./lib/rubygame.rb", $options[:sitelibdir]
+  cp FileList.new("./lib/rubygame/*.rb").to_a, $options[:sitelibdir]+"/rubygame/"
 end
 
 desc "Install both the extensions and the library"
