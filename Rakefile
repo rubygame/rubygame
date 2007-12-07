@@ -183,13 +183,13 @@ LINK_FLAGS = [from_env_or_config("LIBRUBYARG_SHARED"),
               from_env_or_config("LDFLAGS"),
               try_sdl_config("--libs")].join(" ")
 
-DEFALUT_EXTDIR = File.join('ext','rubygame','')
+DEFAULT_EXTDIR = File.join('ext','rubygame','')
 
 class ExtensionModule
   @@libflag = " -l%s " # compiler flag for giving linked libraries
   attr_accessor :dynlib, :objs, :libs, :cflags, :lflags, :directory
   def initialize(&block)
-    @directory = DEFALUT_EXTDIR
+    @directory = DEFAULT_EXTDIR
     @dynlib = ""
     @objs = []
     @libs = []
