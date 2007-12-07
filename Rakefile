@@ -90,6 +90,90 @@ require 'rake/clean'
 task(:clean) { puts "Cleaning out temporary generated files" }
 task(:clobber) { puts "Cleaning out final generated files" }
 
+##############################
+##      BUILD  OPTIONS      ##
+##############################
+
+$options = {
+	:"sdl-gfx"   => true,
+	:"sdl-image" => true,
+	:"sdl-ttf"   => true,
+	:"sdl-mixer" => true,
+	:opengl      => true,
+	:sdl_config  => true,
+	:debug       => false,
+	:verbose     => false,
+	:sitearchdir => CONFIG["sitearchdir"],
+	:sitelibdir  => CONFIG["sitelibdir"]
+}
+
+# Default behavior for win32 is to skip sdl_config,
+# since it's usually not available. It can still be
+# enabled through the options, though.
+if PLATFORM =~ /win32/
+	$options[:sdl_config] = false
+end
+
+# Define tasks to enable and disable bool options.
+# 
+#     rake option
+#     rake no-option
+# 
+#   task_name::   the task name to use
+#   option_name:: the option name (if different from
+#                 the task name)
+#   desc::        a longer description, to fill
+#                 "Enable ________.", if different
+#                 from the task name.
+# 
+def bool_option( task_name, option_name=nil, desc=nil )
+	option_name = task_name unless option_name
+	desc = task_name unless desc
+	notask_name = "no-#{task_name.to_s}".intern
+
+	is_true = $options[option_name]
+	
+	desc "Enable #{desc} #{'(default)' if is_true}"
+	task(task_name)   { $options[option_name] = true  }
+
+	desc "Disable #{desc} #{'(default)' unless is_true}"
+	task(notask_name) { $options[option_name] = false }
+end
+
+# Define a rule to set an option to a string:
+# 
+#     rake option="the value of the option"
+# 
+#   task_name::   the task name to use
+#   option_name:: the option name (if different from
+#                 the task name)
+# 
+def string_option( task_name, option_name=nil )
+	option_name = option_name or task_name
+
+	regexp = Regexp.new("#{task_name}=\"(.+?)\"")
+
+	rule( regexp ) do |t|
+		$options[option_name] = t.name.split("=")[1]
+	end
+end
+
+bool_option :"sdl-gfx",   nil,  "SDL_gfx support"
+bool_option :"sdl-image", nil,  "SDL_image support"
+bool_option :"sdl-mixer", nil,  "SDL_mixer support"
+bool_option :"sdl-ttf",   nil,  "SDL_ttf support"
+bool_option :opengl,      nil,  "OpenGL support"
+bool_option :sdl_config,  nil,  "guess compiler flags for SDL"
+bool_option :debug,       nil,  "compil with debug symbols"
+bool_option :verbose,     nil,  "show compiler commands"
+
+string_option :RUBYARCHDIR, :sitearchdir
+string_option :sitearchdir
+
+string_option :RUBYLIBDIR, :sitelibdir
+string_option :sitelibdir
+
+
 CFLAGS = [from_env_or_config("CFLAGS"),
           try_sdl_config("--cflags"),
           "-I. -I#{CONFIG['topdir']}",
