@@ -365,19 +365,17 @@ task :fix_filenames do
 	end
 end
 
-desc "Install only the extensions"
+desc "Install just the extensions"
 task :install_ext do |task|
   puts "Installing extensions to #{$options[:sitearchdir]}"
   mkdir_p $options[:sitearchdir]
   cp task.prerequisites.to_a, $options[:sitearchdir]
 end
 
-desc "Install only the library"
+desc "Install just the library"
 task :install_lib do |task|
   puts "Installing library to #{$options[:sitelibdir]}"
-  mkdir_p $options[:sitelibdir] + "/rubygame/"
-  cp "./lib/rubygame.rb", $options[:sitelibdir]
-  cp FileList.new("./lib/rubygame/*.rb").to_a, $options[:sitelibdir]+"/rubygame/"
+  cp_r FileList.new("./lib/rubygame*"), $options[:sitelibdir]
 end
 
 desc "Install both the extensions and the library"
