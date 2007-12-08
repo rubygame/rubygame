@@ -1,19 +1,12 @@
 require 'rubygame/color'
 include Rubygame::Color
 
-# Uses RSpec. See http://rspec.rubyforge.org/
-
-# TODO:
-# - Test all maths with other types
-# - Make it more DRY
-
 # Make Float quite fuzzy
 class Float
 	def ==( other )
 		(self - other).abs <= 0.1
 	end
 end
-
 
 # Some sample colors in RGB, HSV, and HSL forms
 $colors = {
@@ -212,7 +205,7 @@ describe "ColorRGB divided with another ColorRGB" do
 		@color2 = ColorRGB.new( [0.1, 0.2, 0.4, 0.4] ) 
 
 		@result = @color1 / @color2
-		@expect = [0.25 / 0.04, 0.25 / 0.08, 0.25 / 0.12, 0.5]
+		@expect = [0.05 / 0.04, 0.05 / 0.08, 0.05 / 0.16, 0.5]
 		@expect = @expect.collect { |f| clamp(f) }
 	end
 	
