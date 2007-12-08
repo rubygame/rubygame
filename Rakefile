@@ -154,7 +154,7 @@ def string_option( task_name, option_name=nil )
 	option_name = task_name unless option_name
 	option_name = option_name.intern if option_name.kind_of? String
 
-	$options[option_name] = ENV["#{task_name}"]
+	$options[option_name] = ENV["#{task_name}"] if ENV["#{task_name}"]
 end
 
 bool_option :"sdl-gfx",   nil,  "SDL_gfx support"
