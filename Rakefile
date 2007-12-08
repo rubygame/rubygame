@@ -127,7 +127,10 @@ end
 # 
 def bool_option( task_name, option_name=nil, desc=nil )
 	option_name = task_name unless option_name
-	desc = task_name unless desc
+	option_name = option_name.intern if option_name.kind_of? String
+
+	desc = task_name.to_s unless desc
+  
 	notask_name = "no-#{task_name.to_s}".intern
 
 	is_true = $options[option_name]
@@ -139,7 +142,7 @@ def bool_option( task_name, option_name=nil, desc=nil )
 	task(notask_name) { $options[option_name] = false }
 end
 
-# Define a rule to set an option to a string:
+# Gather a string option from an environment variable:
 # 
 #     rake option="the value of the option"
 # 
@@ -148,13 +151,10 @@ end
 #                 the task name)
 # 
 def string_option( task_name, option_name=nil )
-	option_name = option_name or task_name
+	option_name = task_name unless option_name
+	option_name = option_name.intern if option_name.kind_of? String
 
-	regexp = Regexp.new("#{task_name}=\"(.+?)\"")
-
-	rule( regexp ) do |t|
-		$options[option_name] = t.name.split("=")[1]
-	end
+	$options[option_name] = ENV["#{task_name}"]
 end
 
 bool_option :"sdl-gfx",   nil,  "SDL_gfx support"
@@ -166,10 +166,10 @@ bool_option :sdl_config,  nil,  "guess compiler flags for SDL"
 bool_option :debug,       nil,  "compil with debug symbols"
 bool_option :verbose,     nil,  "show compiler commands"
 
-string_option :RUBYARCHDIR, :sitearchdir
+string_option "RUBYARCHDIR", :sitearchdir
 string_option :sitearchdir
 
-string_option :RUBYLIBDIR, :sitelibdir
+string_option "RUBYLIBDIR", :sitelibdir
 string_option :sitelibdir
 
 
