@@ -36,21 +36,20 @@ spec = Gem::Specification.new do |s|
   s.summary  = "Clean and powerful library for game programming"
   s.has_rdoc = true
 
-  candidates = Dir.glob("{lib,ext,samples,doc}/**/*")
-  s.files    = candidates.delete_if do |item|
-    item.include?("svn") or item =~ /\.#{OBJEXT}/
+  s.files = FileList.new do |fl|
+    fl.include("{lib,ext,samples,doc}/**/*")
+    fl.exclude(/svn/)
+    fl.exclude(/\.#{OBJEXT}/)
   end
 
   s.require_paths = ["lib", "lib/rubygame/", "ext/rubygame/"]
   s.autorequire = "rubygame.rb"
   s.extensions = ["Rakefile"]
 
-  s.extra_rdoc_files = Dir.glob("doc/*.rdoc")
-  s.extra_rdoc_files += ["README",
-                         "LICENSE",
-                         "CREDITS",
-                         "TODO",
-                         "Changelog"]
+  s.extra_rdoc_files = FileList.new do |fl|
+    fl.include "doc/*.rdoc"
+    fl.include "README", "LICENSE", "CREDITS", "TODO", "Changelog"
+  end
 end
 
 task :linux do
@@ -73,7 +72,7 @@ Rake::RDocTask.new do |rd|
   rd.main = "README"
   rd.title = "Rubygame #{RUBYGAME_VERSION} Docs"
   rd.rdoc_files.include("ext/rubygame/*.c",
-                        "lib/rubygame/*.rb",
+                        "lib/rubygame/**/*.rb",
                         "doc/*.rdoc",
                         "README",
                         "LICENSE",
