@@ -15,7 +15,7 @@ def from_env_or_config(string)
 end
 
 def try_sdl_config( flag )
-	if $options[:sdl_config]
+	if $options[:"sdl-config"]
 		`sdl-config #{flag}`.chomp 
 	else
 		return ""
@@ -94,23 +94,23 @@ task(:clobber) { puts "Cleaning out final generated files" }
 ##############################
 
 $options = {
-	:"sdl-gfx"   => true,
-	:"sdl-image" => true,
-	:"sdl-ttf"   => true,
-	:"sdl-mixer" => true,
-	:opengl      => true,
-	:sdl_config  => true,
-	:debug       => false,
-	:verbose     => false,
-	:sitearchdir => CONFIG["sitearchdir"],
-	:sitelibdir  => CONFIG["sitelibdir"]
+	:"sdl-gfx"    => true,
+	:"sdl-image"  => true,
+	:"sdl-ttf"    => true,
+	:"sdl-mixer"  => true,
+	:opengl       => true,
+	:"sdl-config" => true,
+	:debug        => false,
+	:verbose      => false,
+	:sitearchdir  => CONFIG["sitearchdir"],
+	:sitelibdir   => CONFIG["sitelibdir"]
 }
 
 # Default behavior for win32 is to skip sdl_config,
 # since it's usually not available. It can still be
 # enabled through the options, though.
 if PLATFORM =~ /win32/
-	$options[:sdl_config] = false
+	$options[:"sdl-config"] = false
 end
 
 # Define tasks to enable and disable bool options.
@@ -157,14 +157,14 @@ def string_option( task_name, option_name=nil )
 	$options[option_name] = ENV["#{task_name}"] if ENV["#{task_name}"]
 end
 
-bool_option :"sdl-gfx",   nil,  "SDL_gfx support"
-bool_option :"sdl-image", nil,  "SDL_image support"
-bool_option :"sdl-mixer", nil,  "SDL_mixer support"
-bool_option :"sdl-ttf",   nil,  "SDL_ttf support"
-bool_option :opengl,      nil,  "OpenGL support"
-bool_option :sdl_config,  nil,  "guess compiler flags for SDL"
-bool_option :debug,       nil,  "compil with debug symbols"
-bool_option :verbose,     nil,  "show compiler commands"
+bool_option :"sdl-gfx",    nil,  "SDL_gfx support"
+bool_option :"sdl-image",  nil,  "SDL_image support"
+bool_option :"sdl-mixer",  nil,  "SDL_mixer support"
+bool_option :"sdl-ttf",    nil,  "SDL_ttf support"
+bool_option :"sdl-config", nil,  "guess compiler flags for SDL"
+bool_option :opengl,       nil,  "OpenGL support"
+bool_option :debug,        nil,  "compil with debug symbols"
+bool_option :verbose,      nil,  "show compiler commands"
 
 string_option "RUBYARCHDIR", :sitearchdir
 string_option :sitearchdir
