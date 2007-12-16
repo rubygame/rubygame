@@ -8,18 +8,41 @@ require 'rake/rdoctask'
 require "rbconfig"
 include Config
 
+require 'English'
+
+class ShellCommandError < RuntimeError
+end
+
+# Execute the block (which is supposed to perform a shell command),
+# then raise ShellCommandError if the command failed.
+def try_shell( &block )
+  result = yield
+  
+  unless $CHILD_STATUS.exitstatus == 0
+    raise ShellCommandError, "Command failed. Aborting."
+  end
+  
+  return result
+end
+
+def try_sdl_config( flag )
+  begin
+    if $options[:"sdl-config"]
+      return try_shell { `sdl-config #{flag}`.chomp }
+    else
+      return String.new
+    end
+  rescue ShellCommandError
+    warn "WARNING: 'sdl-config' failed."
+    warn "Continuing anyway, but compile may fail."
+    return String.new
+  end
+end
+
 # Get a variable from ENV or CONFIG, with ENV having precedence.
 # Returns "" if the variable didn't exist at all.
 def from_env_or_config(string)
   ([ENV[string], CONFIG[string]] - ["", nil])[0] or ""
-end
-
-def try_sdl_config( flag )
-	if $options[:"sdl-config"]
-		`sdl-config #{flag}`.chomp 
-	else
-		return ""
-	end
 end
 
 OBJEXT = from_env_or_config("OBJEXT")
@@ -235,10 +258,10 @@ class ExtensionModule
     task taskname => objs_full do |task|
       link_command = "#{from_env_or_config('LDSHARED')} #{LINK_FLAGS} #{@lflags} -o #{dynlib_full} #{task.prerequisites.join(' ')}"
       if( $options[:verbose] )
-        sh link_command
+        try_shell { sh link_command }
       else
         puts "Linking compiled files to create #{File.basename(@directory)}/#{File.basename(dynlib_full)}"
-        `#{link_command}`
+        try_shell { `#{link_command}` }
       end
     end
 
@@ -261,10 +284,10 @@ class ExtensionModule
     do |t|
       compile_command = "#{from_env_or_config('CC')} -c #{CFLAGS} #{t.source} -o #{t.name}"
       if( $options[:verbose] )
-        sh compile_command
+        try_shell { sh compile_command }
       else
         puts "Compiling #{File.basename(@directory)}/#{File.basename(t.source)}"
-        `#{compile_command}`
+        try_shell { `#{compile_command}` }
       end
     end
   rescue
@@ -274,10 +297,10 @@ class ExtensionModule
       file object => ([source] + depends_headers( source )) do |t|
         compile_command = "#{CONFIG['CC']} -c #{CFLAGS} #{source} -o #{t.name}"
         if( $options[:verbose] )
-          sh compile_command
+          try_shell { sh compile_command }
         else
           puts "Compiling #{File.basename(@directory)}/#{File.basename(source)}"
-          `#{compile_command}`
+          try_shell { `#{compile_command}` }
         end
       end
     end
