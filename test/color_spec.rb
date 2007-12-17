@@ -10,6 +10,10 @@ $colors = {
 	:chocolate =>  { :rgb => [0.38, 0.2500, 0.1300], :hsv => [ 30, 0.67, 0.38], :hsl => [ 30, 0.50, 0.25] }
 }
 
+##############################
+##    RGB  SHARED  SPECS    ##
+##############################
+
 describe "ColorRGB (shared)", :shared => true do 
 	it "should have a 'r' (red) component which is a Float" do
 		@color.should respond_to(:r)
@@ -60,7 +64,7 @@ describe "ColorRGB with expected values (shared)", :shared => true do
 end
 
 ##############################
-##      SPECIFICATIONS      ##
+##   RGB  INITIALIZATION    ##
 ##############################
 
 describe "ColorRGB initialized from a 3-Array" do
@@ -129,7 +133,7 @@ describe "ColorRGB initialized from a ColorHSL" do
 	before(:each) do
 		@r, @g, @b = $colors[:ruby][:rgb]
 		@a = 0.5
-		@source = ColorHSV.new( $colors[:ruby][:hsl] + [@a] )
+		@source = ColorHSL.new( $colors[:ruby][:hsl] + [@a] )
 		@color  = ColorRGB.new( @source )
 	end
 
@@ -141,12 +145,6 @@ end
 ##############################
 #         RGB MATHS          #
 ##############################
-
-def clamp(v, min=0.0, max=1.0)
-	v = min if v < min
-	v = max if v > max
-	return v		
-end
 
 describe "ColorRGB added with another ColorRGB" do 
 	before(:each) do
