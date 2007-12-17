@@ -420,10 +420,10 @@ void draw_pie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba
  *
  *  Draw a non-solid arc (part of a circle), given the coordinates of
  *  its center, radius, and starting/ending angles.
- *  See also #draw_arc_s
+ *  See also #draw_pie_s
  *
  *  *IMPORTANT:* This method will only be defined if Rubygame was compiled
- *  with SDL_gfx-2.0.11 or greater. (Note: #draw_arc_s does not have
+ *  with SDL_gfx-2.0.11 or greater. (Note: #draw_pie_s does not have
  *  this requirement.)
  *
  *  This method takes these arguments:
@@ -447,11 +447,11 @@ VALUE rbgm_draw_pie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALU
 
 /* 
  *  call-seq:
- *    draw_arc_s(center, radius, angles, color)
+ *    draw_pie_s(center, radius, angles, color)
  *
- * Like #draw_arc, but the shape is solid, instead an outline.
+ * Like #draw_pie, but the shape is solid, instead an outline.
  * (This method does not require SDL_gfx 2.0.11 or greater, 
- * but #draw_arc does.)
+ * but #draw_pie does.)
  */
 VALUE rbgm_draw_fillpie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba)
 {
