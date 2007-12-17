@@ -14,14 +14,27 @@ $colors = {
 ##      SHARED  SPECS       ##
 ##############################
 
-describe "Color with expected RGBA array (shared)", :shared => true do 
-	it "should have the expected RGBA Array" do 
-		r, g, b, a = @color.to_rgba_ary
-
-		r.should be_close( @r.to_f, DELTA )
-		g.should be_close( @g.to_f, DELTA )
-		b.should be_close( @b.to_f, DELTA )
-		a.should be_close( @a.to_f, DELTA )
+describe "Color with RGBA array (shared)", :shared => true do 
+	it "should have an RGBA array with 4 components" do 
+		@color.should respond_to(:to_rgba_ary)
+		@color.to_rgba_ary.should be_instance_of( Array )
+		@color.to_rgba_ary.should have_exactly(4).components
+	end
+	
+	it "should have the expected red component" do 
+		@color.to_rgba_ary.at(0).should be_close( @r.to_f, DELTA )
+	end
+	
+	it "should have the expected green component" do 
+		@color.to_rgba_ary.at(1).should be_close( @g.to_f, DELTA )
+	end
+	
+	it "should have the expected blue component" do 
+		@color.to_rgba_ary.at(2).should be_close( @b.to_f, DELTA )
+	end
+	
+	it "should have the expected alpha compenent" do 
+		@color.to_rgba_ary.at(3).should be_close( @a.to_f, DELTA )
 	end
 end
 
@@ -84,7 +97,7 @@ describe "ColorRGB initialized from a 3-Array" do
 	end
 	
 	it_should_behave_like "ColorRGB (shared)"
-	it_should_behave_like "Color with expected RGBA array (shared)"
+	it_should_behave_like "Color with RGBA array (shared)"
 	
 end
 
@@ -96,7 +109,7 @@ describe "ColorRGB initialized from a 4-Array" do
 	end
 	
 	it_should_behave_like "ColorRGB (shared)"
-	it_should_behave_like "Color with expected RGBA array (shared)"
+	it_should_behave_like "Color with RGBA array (shared)"
 	
 end
 
@@ -109,7 +122,7 @@ describe "ColorRGB initialized from an Array of integers" do
 	end
 	
 	it_should_behave_like "ColorRGB (shared)"
-	it_should_behave_like "Color with expected RGBA array (shared)"
+	it_should_behave_like "Color with RGBA array (shared)"
 	
 end
 
@@ -122,7 +135,7 @@ describe "ColorRGB initialized from a ColorRGB" do
 	end
 	
 	it_should_behave_like "ColorRGB (shared)"
-	it_should_behave_like "Color with expected RGBA array (shared)"
+	it_should_behave_like "Color with RGBA array (shared)"
 	
 end
 
@@ -135,7 +148,7 @@ describe "ColorRGB initialized from a ColorHSV" do
 	end
 	
 	it_should_behave_like "ColorRGB (shared)"
-	it_should_behave_like "Color with expected RGBA array (shared)"
+	it_should_behave_like "Color with RGBA array (shared)"
 
 end
 
@@ -148,7 +161,7 @@ describe "ColorRGB initialized from a ColorHSL" do
 	end
 
 	it_should_behave_like "ColorRGB (shared)"
-	it_should_behave_like "Color with expected RGBA array (shared)"
+	it_should_behave_like "Color with RGBA array (shared)"
 	
 end
 
@@ -167,7 +180,7 @@ describe "ColorRGB added with another ColorRGB" do
 	end
 	
 	it_should_behave_like "ColorRGB (shared)"
-	it_should_behave_like "Color with expected RGBA array (shared)"
+	it_should_behave_like "Color with RGBA array (shared)"
 	
 end
 
@@ -182,7 +195,7 @@ describe "ColorRGB subtracted with another ColorRGB" do
 	end
 	
 	it_should_behave_like "ColorRGB (shared)"
-	it_should_behave_like "Color with expected RGBA array (shared)"
+	it_should_behave_like "Color with RGBA array (shared)"
 	
 end
 
@@ -197,7 +210,7 @@ describe "ColorRGB multiplied with another ColorRGB" do
 	end
 	
 	it_should_behave_like "ColorRGB (shared)"
-	it_should_behave_like "Color with expected RGBA array (shared)"
+	it_should_behave_like "Color with RGBA array (shared)"
 	
 end
 
@@ -212,6 +225,7 @@ describe "ColorRGB divided with another ColorRGB" do
 	end
 	
 	it_should_behave_like "ColorRGB (shared)"
-	it_should_behave_like "Color with expected RGBA array (shared)"
+	it_should_behave_like "Color with RGBA array (shared)"
 	
 end
+
