@@ -1,12 +1,7 @@
 require 'rubygame/color'
 include Rubygame::Color
 
-# Make Float quite fuzzy
-class Float
-	def ==( other )
-		(self - other).abs <= 0.1
-	end
-end
+DELTA = 0.01
 
 # Some sample colors in RGB, HSV, and HSL forms
 $colors = {
@@ -39,27 +34,34 @@ end
 
 describe "ColorRGB with expected values (shared)", :shared => true do 
 	it "should have the expected red component" do
-		@color.r.should == @r.to_f
+		@color.r.should be_close( @r.to_f, DELTA )
 	end
 	
 	it "should have the expected green component" do
-		@color.g.should == @g.to_f
+		@color.g.should be_close( @g.to_f, DELTA )
 	end
 	
 	it "should have the expected blue component" do
-		@color.b.should == @b.to_f
+		@color.b.should be_close( @b.to_f, DELTA )
 	end
 	
 	it "should have the expected alpha component" do
-		@color.a.should == @a.to_f
+		@color.a.should be_close( @a.to_f, DELTA )
+	end
+	
+	it "should have the expected RGBA Array" do 
+		r, g, b, a = @color.to_rgba_ary
+
+		r.should be_close( @r.to_f, DELTA )
+		g.should be_close( @g.to_f, DELTA )
+		b.should be_close( @b.to_f, DELTA )
+		a.should be_close( @a.to_f, DELTA )
 	end
 end
 
-describe "Color with expected RGBA Array (shared)", :shared => true do 
-	it "should have the expected RGBA Array" do 
-		@color.to_rgba_ary.should == [@r, @g, @b, @a]
-	end
-end
+##############################
+##      SPECIFICATIONS      ##
+##############################
 
 describe "ColorRGB initialized from a 3-Array" do
 	before(:each) do
@@ -146,28 +148,18 @@ def clamp(v, min=0.0, max=1.0)
 	return v		
 end
 
-
-describe "ColorRGB math (shared)", :shared => true do
-	it "should have the expected result" do 
-		@result.to_rgba_ary.should == @expect
-	end	
-	
-	it "should be a ColorRGB" do 
-		@result.should be_instance_of( ColorRGB )
-	end
-end
-
 describe "ColorRGB added with another ColorRGB" do 
 	before(:each) do
 		@color1 = ColorRGB.new( [0.5, 0.5, 0.5, 0.5] )
 		@color2 = ColorRGB.new( [0.1, 0.2, 0.3, 0.4] ) 
 
-		@result = @color1 + @color2
-		@expect = [0.25 + 0.04, 0.25 + 0.08, 0.25 + 0.12, 0.5]
-		@expect = @expect.collect { |f| clamp(f) }
+		@color = @color1 + @color2
+		
+		@r, @g, @b, @a = 0.29, 0.33, 0.37, 0.5
 	end
 	
-	it_should_behave_like "ColorRGB math (shared)"
+	it_should_behave_like "ColorRGB (shared)"
+	it_should_behave_like "ColorRGB with expected values (shared)"
 	
 end
 
@@ -176,12 +168,13 @@ describe "ColorRGB subtracted with another ColorRGB" do
 		@color1 = ColorRGB.new( [0.5, 0.5, 0.5, 0.5] )
 		@color2 = ColorRGB.new( [0.1, 0.2, 0.3, 0.4] ) 
 
-		@result = @color1 - @color2
-		@expect = [0.25 - 0.04, 0.25 - 0.08, 0.25 - 0.12, 0.5]
-		@expect = @expect.collect { |f| clamp(f) }
+		@color = @color1 - @color2
+
+		@r, @g, @b, @a = 0.21, 0.17, 0.13, 0.5
 	end
 	
-	it_should_behave_like "ColorRGB math (shared)"
+	it_should_behave_like "ColorRGB (shared)"
+	it_should_behave_like "ColorRGB with expected values (shared)"
 	
 end
 
@@ -190,12 +183,13 @@ describe "ColorRGB multiplied with another ColorRGB" do
 		@color1 = ColorRGB.new( [0.5, 0.5, 0.5, 0.5] )
 		@color2 = ColorRGB.new( [0.1, 0.2, 0.3, 0.4] ) 
 
-		@result = @color1 * @color2
-		@expect = [0.25 * 0.04, 0.25 * 0.08, 0.25 * 0.12, 0.5]
-		@expect = @expect.collect { |f| clamp(f) }
+		@color = @color1 * @color2
+
+		@r, @g, @b, @a = 0.01, 0.02, 0.03, 0.5
 	end
 	
-	it_should_behave_like "ColorRGB math (shared)"
+	it_should_behave_like "ColorRGB (shared)"
+	it_should_behave_like "ColorRGB with expected values (shared)"
 	
 end
 
@@ -204,11 +198,12 @@ describe "ColorRGB divided with another ColorRGB" do
 		@color1 = ColorRGB.new( [0.1, 0.1, 0.1, 0.5] )
 		@color2 = ColorRGB.new( [0.1, 0.2, 0.4, 0.4] ) 
 
-		@result = @color1 / @color2
-		@expect = [0.05 / 0.04, 0.05 / 0.08, 0.05 / 0.16, 0.5]
-		@expect = @expect.collect { |f| clamp(f) }
+		@color = @color1 / @color2
+
+		@r, @g, @b, @a = 1.0, 0.625, 0.3125, 0.5
 	end
 	
-	it_should_behave_like "ColorRGB math (shared)"
+	it_should_behave_like "ColorRGB (shared)"
+	it_should_behave_like "ColorRGB with expected values (shared)"
 	
 end
