@@ -111,6 +111,7 @@ module Rubygame
 				
 				# Perform some arcane math to calculate a color component.
 				def calculate_component(p, q, tc) # :nodoc:
+					tc %= 1.0
 					if tc < 1.quo(6)
 						p + (q - p) * tc * 6.0
 					elsif tc < 0.5
