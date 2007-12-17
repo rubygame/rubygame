@@ -229,3 +229,137 @@ describe "ColorRGB divided with another ColorRGB" do
 	
 end
 
+
+##############################
+##    HSV  SHARED  SPECS    ##
+##############################
+
+describe "ColorHSV (shared)", :shared => true do 
+	it "should have a 'h' (hue) component which is a Float" do
+		@color.should respond_to(:h)
+		@color.h.should be_instance_of( Float )
+	end
+	
+	it "should have a 's' (saturation) component which is a Float" do
+		@color.should respond_to(:s)
+		@color.s.should be_instance_of( Float )
+	end
+	
+	it "should have a 'v' (value) component which is a Float" do
+		@color.should respond_to(:v)
+		@color.v.should be_instance_of( Float )
+	end
+	
+	it "should have an 'a' (alpha) component which is a Float" do
+		@color.should respond_to(:a)
+		@color.a.should be_instance_of( Float )
+	end
+
+	it "should have the expected hue component" do
+		@color.h.should be_close( @h.to_f, DELTA )
+	end
+	
+	it "should have the expected saturation component" do
+		@color.s.should be_close( @s.to_f, DELTA )
+	end
+	
+	it "should have the expected value component" do
+		@color.v.should be_close( @v.to_f, DELTA )
+	end
+	
+	it "should have the expected alpha component" do
+		@color.a.should be_close( @a.to_f, DELTA )
+	end
+end
+
+##############################
+##   HSV  INITIALIZATION    ##
+##############################
+
+describe "ColorHSV initialized from a 3-Array" do
+	before(:each) do
+		@h, @s, @v = $colors[:ruby][:hsv]
+		@r, @g, @b = $colors[:ruby][:rgb]
+		@a = 1.0
+		@color = ColorHSV.new( [@h, @s, @v] )
+	end
+	
+	it "should have full opacity" do 
+		@color.a.should == 1.0
+	end
+	
+	it_should_behave_like "ColorHSV (shared)"
+	it_should_behave_like "Color with RGBA array (shared)"
+	
+end
+
+describe "ColorHSV initialized from a 4-Array" do
+	before(:each) do
+		@h, @s, @v = $colors[:ruby][:hsv]
+		@r, @g, @b = $colors[:ruby][:rgb]
+		@a = 0.5
+		@color = ColorHSV.new( [@h, @s, @v, @a] )
+	end
+	
+	it_should_behave_like "ColorHSV (shared)"
+	it_should_behave_like "Color with RGBA array (shared)"
+	
+end
+
+# describe "ColorHSV initialized from an Array of integers" do 
+# 	before(:each) do
+# 		@h, @s, @v = $colors[:ruby][:hsv]
+# 		@a = 1.0
+# 		@color = ColorHSV.new( [@h, @s, @v, @a] )
+# 	end
+#	
+# 	it_should_behave_like "ColorHSV (shared)"
+# 	it_should_behave_like "Color with RGBA array (shared)"
+#	
+# end
+
+describe "ColorHSV initialized from a ColorRGB" do 
+	before(:each) do
+		@h, @s, @v = $colors[:ruby][:hsv]
+		@r, @g, @b = $colors[:ruby][:rgb]
+		@a = 0.5
+
+		@source = ColorRGB.new( $colors[:ruby][:rgb] + [@a] )
+		@color  = ColorHSV.new( @source )
+	end
+	
+	it_should_behave_like "ColorHSV (shared)"
+	it_should_behave_like "Color with RGBA array (shared)"
+	
+end
+
+describe "ColorHSV initialized from a ColorHSV" do 
+	before(:each) do
+		@h, @s, @v = $colors[:ruby][:hsv]
+		@r, @g, @b = $colors[:ruby][:rgb]
+		@a = 0.5
+		
+		
+		@source = ColorHSV.new( $colors[:ruby][:hsv] + [@a] )
+		@color  = ColorHSV.new( @source )
+	end
+	
+	it_should_behave_like "ColorHSV (shared)"
+	it_should_behave_like "Color with RGBA array (shared)"
+	
+end
+
+describe "ColorHSV initialized from a ColorHSL" do 
+	before(:each) do
+		@h, @s, @v = $colors[:ruby][:hsv]
+		@r, @g, @b = $colors[:ruby][:rgb]
+		@a = 0.5
+
+		@source = ColorHSL.new( $colors[:ruby][:hsl] + [@a] )
+		@color  = ColorHSV.new( @source )
+	end
+	
+	it_should_behave_like "ColorHSV (shared)"
+	it_should_behave_like "Color with RGBA array (shared)"
+	
+end
