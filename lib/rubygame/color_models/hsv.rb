@@ -19,7 +19,7 @@ module Rubygame
 			# (of any type). If the alpha (opacity) component is omitted
 			# from the array, full opacity will be used.
 			# 
-			# h, s, v, a values are expected to range from 0.0 to 1.0.
+			# All color components range from 0.0 to 1.0.
 			# 
 			def initialize( color )
 				if color.kind_of?(Array)
