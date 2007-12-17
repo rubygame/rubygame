@@ -10,9 +10,9 @@ module Rubygame
 			attr_reader :r, :g, :b, :a
 
 			# call-seq:
-			#   new( [r,g,b,a] )  ->  ColorHSV
-			#   new( [r,g,b] )  ->  ColorHSV
-			#   new( color )  ->  ColorHSV
+			#   new( [r,g,b,a] )  ->  ColorRGB
+			#   new( [r,g,b] )  ->  ColorRGB
+			#   new( color )  ->  ColorRGB
 			# 
 			# Create a new instance from an Array or an existing color
 			# (of any type). If the alpha (opacity) component is omitted
