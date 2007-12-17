@@ -19,8 +19,7 @@ module Rubygame
 			# (of any type). If the alpha (opacity) component is omitted
 			# from the array, full opacity will be used.
 			# 
-			# h value is expected to range from 0 to 360.
-			# s, l, a values are expected to range from 0.0 to 1.0.
+			# All color components range from 0.0 to 1.0.
 			# 
 			def initialize( color )
 				if color.kind_of?(Array)
@@ -67,13 +66,13 @@ module Rubygame
 						h = 0 
 						# Undefined in this case, but set it to zero
 					elsif max == r and g >= b
-						h = (60 * (g - b) / (max - min)) + 0
+						h = (1.quo(6) * (g - b) / (max - min)) + 0
 					elsif max == r and g < b
-						h = (60 * (g - b) / (max - min)) + 360
+						h = (1.quo(6) * (g - b) / (max - min)) + 1.0
 					elsif max == g
-						h = (60 * (b - r) / (max - min)) + 120
+						h = (1.quo(6) * (b - r) / (max - min)) + 1.quo(3)
 					elsif max == b
-						h = (60 * (r - g) / (max - min)) + 240
+						h = (1.quo(6) * (r - g) / (max - min)) + 2.quo(3)
 					else 
 						raise "Should never happen"
 					end 
@@ -97,12 +96,9 @@ module Rubygame
 					# p helper value
 					p = (2.0 * l) - q
 
-					# hue normalized to [0...1) 
-					hn = h / 360.0
-
-					r = calculate_component( p, q, hn + 1.quo(3) )
-					g = calculate_component( p, q, hn            )
-					b = calculate_component( p, q, hn - 1.quo(3) )
+					r = calculate_component( p, q, h + 1.quo(3) )
+					g = calculate_component( p, q, h            )
+					b = calculate_component( p, q, h - 1.quo(3) )
 
 					return [r,g,b,a]
 				end

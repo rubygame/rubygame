@@ -19,8 +19,7 @@ module Rubygame
 			# (of any type). If the alpha (opacity) component is omitted
 			# from the array, full opacity will be used.
 			# 
-			# h value is expected to range from 0 to 360.
-			# s, v, a values are expected to range from 0.0 to 1.0.
+			# h, s, v, a values are expected to range from 0.0 to 1.0.
 			# 
 			def initialize( color )
 				if color.kind_of?(Array)
@@ -52,18 +51,19 @@ module Rubygame
 
 					# Calculate hue.
 					if min == max 
-						h = 0         # Undefined in this case, but set it to zero
+						h = 0 
+						# Undefined in this case, but set it to zero
 					elsif max == r and g >= b
-						h = (60 * (g - b) / (max - min)) + 0
-					elsif max == r and g < b   
-						h = (60 * (g - b) / (max - min)) + 360
+						h = (1.quo(6) * (g - b) / (max - min)) + 0
+					elsif max == r and g < b
+						h = (1.quo(6) * (g - b) / (max - min)) + 1.0
 					elsif max == g
-						h = (60 * (b - r) / (max - min)) + 120
+						h = (1.quo(6) * (b - r) / (max - min)) + 1.quo(3)
 					elsif max == b
-						h = (60 * (r - g) / (max - min)) + 240
+						h = (1.quo(6) * (r - g) / (max - min)) + 2.quo(3)
 					else 
 						raise "Should never happen"
-					end 
+					end
 
 					# Calulate value.
 					v = max
@@ -82,10 +82,10 @@ module Rubygame
 				# to the equivalent red, green, blue, and alpha.
 				def hsva_to_rgba( h, s, v, a ) # :nodoc:
 					# Determine what part of the "color hexagon" the hue is in.
-					hi = (h / 60.0).floor % 6
+					hi = (h * 6).floor % 6
 
 					# Fractional part
-					f  = (h / 60.0) - hi
+					f  = (h * 6) - hi
 
 					# Helper values
 					p  = v * (1.0 - s)
