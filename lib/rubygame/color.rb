@@ -1,11 +1,11 @@
-require 'rubygame/color_models/base'
-require 'rubygame/color_models/rgb'
-require 'rubygame/color_models/hsv'
-require 'rubygame/color_models/hsl'
+require 'rubygame/color/models/base'
+require 'rubygame/color/models/rgb'
+require 'rubygame/color/models/hsv'
+require 'rubygame/color/models/hsl'
 
-require 'rubygame/color_tables/palette'
-require 'rubygame/color_tables/x11'
-require 'rubygame/color_tables/css'
+require 'rubygame/color/palettes/palette'
+require 'rubygame/color/palettes/x11'
+require 'rubygame/color/palettes/css'
 
 module Rubygame
 	module Color

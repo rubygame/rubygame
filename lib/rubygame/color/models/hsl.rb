@@ -1,5 +1,4 @@
-require 'rubygame/color_models/base'
-require 'rubygame/color_models/rgb'
+require 'rubygame/color/models/base'
 
 module Rubygame
 	module Color

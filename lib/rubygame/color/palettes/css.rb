@@ -1,6 +1,6 @@
 require 'rubygame/color'
-require 'rubygame/color_tables/palette'
-require 'rubygame/color_tables/x11'
+require 'rubygame/color/palettes/palette'
+require 'rubygame/color/palettes/x11'
 
 module Rubygame
 	module Color

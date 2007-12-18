@@ -1,5 +1,5 @@
 require 'rubygame/color'
-require 'rubygame/color_tables/palette'
+require 'rubygame/color/palettes/palette'
 
 module Rubygame
 	module Color
