@@ -115,11 +115,11 @@ VALUE convert_color(VALUE color)
 	}
 }
 
-SDL_Color make_sdl_color(VALUE arr)
+SDL_Color make_sdl_color(VALUE vcolor)
 {
 	SDL_Color color;
-	arr = convert_to_array(arr);
-	extract_rgb_u8_as_u8(arr, &(color.r), &(color.g), &(color.b));
+	vcolor = convert_color(vcolor);
+	extract_rgb_u8_as_u8(vcolor, &(color.r), &(color.g), &(color.b));
 	return color;
 }
 
