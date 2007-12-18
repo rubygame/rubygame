@@ -24,6 +24,8 @@ require 'rubygame/color/palettes/x11'
 module Rubygame
 	module Color
 
+		# :enddoc:
+		
 		# The CSS module contains all the colors in the CSS/HTML palette
 		# by symbol name, e.g. :alice_blue, :dark_olive_green, etc.
 		# 

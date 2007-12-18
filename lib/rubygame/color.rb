@@ -27,18 +27,52 @@ require 'rubygame/color/palettes/x11'
 require 'rubygame/color/palettes/css'
 
 module Rubygame
+
+	# The Color module contains classes related to colors.
+	# 
+	# Available color representations:
+	# 
+	# ColorRGB::  color class with red, green, and blue components.
+	# ColorHSV::  color class with hue, saturation, and value components.
+	# ColorHSL::  color class with hue, saturation, and luminosity components.
+	# 
+	# The Palette class allows you to conveniently store and access a
+	# collection of many different colors, with inheritance from
+	# included Palettes.
+	# 
+	# The available predefined palettes are:
+	# 
+	# X11::    palette with the default X11 colors
+	# CSS::    palette used with HTML and CSS, very similar to X11
+	# GLOBAL:: special palette used for automatic lookup (see below)
+	# 
+	# The GLOBAL palette is special; it is used for automatic color lookup
+	# in functions like Surface#draw_circle and TTF#render.It includes the
+	# CSS palette by default; you can include other palettes or define new
+	# custom colors in GLOBAL to make them available for automatic lookup.
+	# 
+	# For convenience, you can access the GLOBAL palette through the
+	# #[] and #[]= methods:
+	# 
+	#     include Rubygame
+	#     player_color = Color[:red]
+	#     Color[:favorite] = Color[:azure]
+	# 
 	module Color
 
-		GLOBAL = Palette.new()
-		GLOBAL.include CSS
-		
+		# Retrieve a color from the GLOBAL palette.
+		# See Palette#[]
 		def self.[]( name )
 			GLOBAL[name]
 		end
 		
+		# Store a color in the GLOBAL palette.
+		# See Palette#[]=
 		def self.[]=( name, color )
 			GLOBAL[name] = color
 		end
+
+		GLOBAL = Palette.new().include(CSS) # :nodoc:
 		
 	end
 end

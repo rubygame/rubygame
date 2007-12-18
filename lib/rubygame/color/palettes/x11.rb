@@ -23,6 +23,8 @@ require 'rubygame/color/palettes/palette'
 module Rubygame
 	module Color
 
+		# :enddoc:
+
 		# The X11 module contains all the colors in the X11 palette
 		# by symbol name, e.g. :alice_blue, :dark_olive_green, etc.
 		# 
