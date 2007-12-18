@@ -628,6 +628,57 @@ VALUE rbgm_surface_getat( int argc, VALUE *argv, VALUE self )
 	return rb_ary_new3(4,UINT2NUM(r),UINT2NUM(g),UINT2NUM(b),UINT2NUM(a));
 }
 
+
+/* 
+ *  call-seq:
+ *     set_at([x,y], color)
+ *
+ *  Set the color of the pixel at the given coordinate.
+ *
+ *  color can be one of:
+ *  * an Array, [r,g,b] or [r,g,b,a] with each component in 0-255
+ *  * an instance of ColorRGB, ColorHSV, etc.
+ *  * the name of a color in Rubygame::Color, as a Symbol or String
+ *
+ *  Raises IndexError if the coordinates are out of bounds.
+ *
+ *--
+ *
+ *  I'm lazy and just using SDL_FillRect. ;-P
+ *  It's easier and less bug-prone this way.
+ *  I have no idea about speed comparisons.
+ *
+ */
+VALUE rbgm_surface_setat( int argc, VALUE *argv, VALUE self )
+{
+	SDL_Surface *surf;
+	SDL_Rect *rect;
+	Uint32 color;
+	Uint8 r,g,b,a;
+	VALUE vpos, vcolor;
+
+	Data_Get_Struct(self, SDL_Surface, surf);
+
+	rb_scan_args(argc, argv, "2", &vpos, &vcolor);
+
+	vcolor = convert_color(vcolor);
+	extract_rgba_u8_as_u8(vcolor, &r, &g, &b, &a);
+	color = SDL_MapRGBA(surf->format, r,g,b,a);
+
+	vpos = convert_to_array(vpos);
+	rect = make_rect( NUM2INT(rb_ary_entry(vpos,0)),
+	                  NUM2INT(rb_ary_entry(vpos,1)),
+	                  1, 1 );
+
+	SDL_FillRect(surf,rect,color);
+
+	free(rect);
+
+	return self;
+}
+
+
+
 /*
  *  call-seq:
  *    pixels  ->  String
@@ -1069,6 +1120,7 @@ void Rubygame_Init_Surface()
 	rb_define_method(cSurface,"blit",rbgm_surface_blit,-1);
 	rb_define_method(cSurface,"fill",rbgm_surface_fill,-1);
 	rb_define_method(cSurface,"get_at",rbgm_surface_getat,-1);
+	rb_define_method(cSurface,"set_at",rbgm_surface_setat,-1);
 	rb_define_method(cSurface,"pixels",rbgm_surface_pixels,0);
 	rb_define_method(cSurface,"clip",rbgm_surface_get_clip,0);
 	rb_define_method(cSurface,"clip=",rbgm_surface_set_clip,1);
