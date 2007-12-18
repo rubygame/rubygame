@@ -92,7 +92,9 @@ VALUE convert_to_array(VALUE val)
 	return v;
 }
 
-/* Takes a Color or Array, returns an RGBA Array */
+/* Takes a Color, Array, or color name (Symbol or String).
+ * Returns an RGBA Array, or raises eTypeError if it can't.
+ */
 VALUE convert_color(VALUE color)
 {
 	if( rb_respond_to(color, rb_intern("to_sdl_rgba_ary")) )
