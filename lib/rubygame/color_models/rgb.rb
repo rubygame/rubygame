@@ -29,6 +29,12 @@ module Rubygame
 				end
 			end
 			
+			# Converts the color to an RGBA array of integers 
+			# ranging from 0 to 255, as SDL wants.
+			def to_sdl_rgba_ary
+				self.to_rgba_ary.collect { |i| (i * 255).to_i }
+			end
+			
 			def to_rgba_ary
 				return [@r, @g, @b, @a]
 			end
@@ -36,6 +42,10 @@ module Rubygame
 			class << self
 				def new_from_rgba( rgba )
 					new( rgba )
+				end
+
+				def new_from_sdl_rgba( rgba )
+					new_from_rgba( rgba.collect { |i| i / 255.0 } )
 				end
 			end
 			

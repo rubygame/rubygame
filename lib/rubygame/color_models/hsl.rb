@@ -42,6 +42,10 @@ module Rubygame
 					new( rgba_to_hsla(*rgba) )
 				end
 				
+				def new_from_sdl_rgba( rgba )
+					new_from_rgba( rgba.collect { |i| i / 255.0 } )
+				end
+				
 				# Convert the red, green, blue, and alpha to the
 				# equivalent hue, saturation, luminosity, and alpha.
 				def rgba_to_hsla( r, g, b, a ) # :nodoc:
