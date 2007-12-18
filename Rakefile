@@ -398,7 +398,17 @@ end
 desc "Install just the library"
 task :install_lib do |task|
   puts "Installing library to #{$options[:sitelibdir]}"
-  cp_r FileList.new("./lib/rubygame*"), $options[:sitelibdir]
+
+  files = FileList.new do |fl|
+    fl.include("lib/**/*.rb")
+    fl.exclude(/svn/)
+  end
+
+  files.each do |f|
+    dir = File.join($options[:sitelibdir], File.dirname(f).sub('lib',''), "")
+    mkdir_p dir
+    cp f, dir
+  end
 end
 
 desc "Install both the extensions and the library"
