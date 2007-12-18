@@ -60,6 +60,8 @@ module Rubygame
 	# 
 	module Color
 
+		(GLOBAL = Palette.new()).include(CSS) # :nodoc:
+		
 		# Retrieve a color from the GLOBAL palette.
 		# See Palette#[]
 		def self.[]( name )
@@ -71,8 +73,6 @@ module Rubygame
 		def self.[]=( name, color )
 			GLOBAL[name] = color
 		end
-
-		GLOBAL = Palette.new().include(CSS) # :nodoc:
 		
 	end
 end
