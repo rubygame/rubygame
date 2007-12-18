@@ -379,7 +379,7 @@ VALUE rbgm_surface_set_colorkey( int argc, VALUE *argv, VALUE self)
 
 	if( RTEST(vcolor) )
 	{
-		vcolor = convert_to_array(vcolor);
+		vcolor = convert_color(vcolor);
 		extract_rgb_u8_as_u8(vcolor, &r, &g, &b);
 		color = SDL_MapRGB(surf->format, r,g,b);
 	}
@@ -506,7 +506,7 @@ VALUE rbgm_surface_fill( int argc, VALUE *argv, VALUE self )
 
 	rb_scan_args(argc, argv, "11", &vcolor, &vrect);
 
-	vcolor = convert_to_array(vcolor);
+	vcolor = convert_color(vcolor);
 	extract_rgba_u8_as_u8(vcolor, &r, &g, &b, &a);
 	color = SDL_MapRGBA(surf->format, r,g,b,a);
 

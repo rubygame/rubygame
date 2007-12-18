@@ -82,6 +82,7 @@ void draw_line(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int aa)
   extract_xy(pt1, &x1, &y1);
   extract_xy(pt2, &x2, &y2);
   
+  rgba = convert_color( rgba );
   extract_rgba_u8_as_u8(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
@@ -156,6 +157,7 @@ void draw_rect(VALUE target, VALUE pt1, VALUE pt2, VALUE rgba, int fill)
   extract_xy(pt1, &x1, &y1);
   extract_xy(pt2, &x2, &y2);
   
+  rgba = convert_color( rgba );
   extract_rgba_u8_as_u8(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
@@ -220,6 +222,7 @@ void draw_circle(VALUE target, VALUE center, VALUE radius, VALUE rgba, int aa, i
   extract_xy(center, &x, &y);
   rad = NUM2INT(radius);
   
+  rgba = convert_color( rgba );
   extract_rgba_u8_as_u8(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
@@ -303,6 +306,7 @@ void draw_ellipse(VALUE target, VALUE center, VALUE radii, VALUE rgba, int aa, i
   extract_xy(center, &x, &y);
   extract_xy(radii, &radx, &rady);
   
+  rgba = convert_color( rgba );
   extract_rgba_u8_as_u8(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
@@ -388,6 +392,7 @@ void draw_pie(VALUE target, VALUE center, VALUE radius, VALUE angles, VALUE rgba
   extract_xy(angles, &start, &end);
   rad = NUM2INT(radius);
   
+  rgba = convert_color( rgba );
   extract_rgba_u8_as_u8(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
@@ -484,6 +489,7 @@ void draw_polygon(VALUE target, VALUE points, VALUE rgba, int aa, int fill)
     extract_xy(each_point, &(x[loop]), &(y[loop]));
   }
 
+  rgba = convert_color( rgba );
   extract_rgba_u8_as_u8(rgba, &r, &g, &b, &a);
 
   Data_Get_Struct(target,SDL_Surface,dest);
