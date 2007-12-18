@@ -32,6 +32,7 @@ require "rubygame_core"
   end
 end
 
+require "rubygame/color"
 require "rubygame/constants"
 require "rubygame/event"
 require "rubygame/queue"
