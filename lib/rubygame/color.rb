@@ -24,7 +24,7 @@ module Rubygame
 		def self.[]( name )
 			self.const_get( name.to_s.gsub(' ','_').upcase.intern )
 		rescue NameError
-			return nil
+			raise NameError, "unknown color name `#{name}'"
 		end
 
 		# Set a color in the color table.
