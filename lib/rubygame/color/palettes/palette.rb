@@ -19,52 +19,88 @@
 
 class Rubygame::Color::Palette
 
+	# Create a new Palette with the given name => color pairs.
 	def initialize( colors = {} )
-		@colors = colors
-		@parents = []
-	end
-	
-	def include( table )
-		@parents += [table]
-		@parents.uniq!
-	end
-	
-	def uninclude( table )
-		@parents -= [table]
+		@includes = []
+		
+		@colors = {}
+		colors.each_pair do |name, color|
+			@colors[sanitize_name(name)] = color
+		end
 	end
 
-	# Retrieve a color by name, searching self and parents.
+	# Retrieve a color by name from this palette.
 	# 
-	# If the color is not found, raises IndexError.
+	# The name can be a Symbol or String. See #sanitize_name for
+	# information on how 
+	# 
+	# If the color cannot be found in this palette, search
+	# each of the #included palettes (recursively, depth-first,
+	# to a maximum depth of 5 levels).
+	# 
+	# If the color is not found in this palette or any included
+	# palettes, raise IndexError.
 	# 
 	def []( name )
-		name = name.to_s.gsub(' ','_').downcase.intern
-		c = lookup(name)
+		c = lookup( sanitize_name( name ) )
 		raise IndexError, "unknown color #{name}" unless c
 		return c
 	end
 	
+	# Store a color by name in this palette. See #[] for information
+	# about naming.
 	def []=( name, color )
+		name = sanitize_name( name )
 		@colors[name] = color
+	end
+	
+	# Include another palette in this one. If a color cannot be
+	# found in this palette, the included palette(s) will be searched.
+	# See also #uninclude.
+	# 
+	# Has no effect if the palette is already included.
+	def include( palette )
+		@includes += [palette] unless @includes.include? palette
+	end
+	
+	# Remove the other palette from this one, so that it won't be
+	# searched for missing colors anymore. Has no effect if the
+	# other palette hasn't been #included.
+	def uninclude( palette )
+		@includes -= [palette]
 	end
 	
 	protected
 
 	# Recursive color lookup
-	def lookup( name, max_depth=5 )
+	def lookup( name, max_depth=5 ) # :nodoc:
 		return nil if max_depth < 0
 
-		c = @colors[name]
+		color = @colors[name]
 
-		unless c
-			@parents.each { |p|
-				if p.lookup(name, max_depth-1)
-					c = p.lookup(name, max_depth-1)
-				end
+		unless color
+			@includes.each { |palette|
+				c = palette.lookup(name, max_depth-1)
+				color = c if c
 			}
 		end
 
-		return c
+		return color
+	end
+	
+	private
+
+	# The name will be:
+	# 
+	# 1. converted to string
+	# 2. spaces replaced with underscores
+	# 3. downcased
+  # 4. converted to a symbol.
+	# 
+	# So, "Alice Blue" and :ALICE_BLUE both become :alice_blue.
+	# 
+	def sanitize_name( name )
+		name.to_s.gsub(' ','_').downcase.intern
 	end
 
 end
