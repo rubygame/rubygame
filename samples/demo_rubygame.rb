@@ -126,6 +126,11 @@ pandas.push(panda1,panda2,panda3)
 # Make the background surface
 background = Surface.new(screen.size)
 
+# Filling with colors in a variety of ways
+background.fill( Color::ColorRGB.new([0.1, 0.2, 0.35]) )
+background.fill( :black, [70,120,80,80] )
+background.fill( "dark red", [80,110,80,80] )
+
 # Create and test a new surface
 a = Surface.new([100,100])
 
@@ -153,18 +158,18 @@ background.draw_polygon_a(\
 # ... a pepperoni pizza!! (if you use your imagination...)
 background.draw_arc_s([250,200],34,[210,150],[180,130,50])
 background.draw_arc_s([250,200],30,[210,150],[230,180,80])
-background.draw_circle_s([240,180],4,[200,50,10])
-background.draw_circle_s([265,185],4,[200,50,10])
-background.draw_circle_s([258,200],4,[200,50,10])
-background.draw_circle_s([240,215],4,[200,50,10])
-background.draw_circle_s([260,220],4,[200,50,10])
+background.draw_circle_s( [240,180], 4, :dark_red )
+background.draw_circle_s( [265,185], 4, :dark_red )
+background.draw_circle_s( [258,200], 4, :dark_red )
+background.draw_circle_s( [240,215], 4, :dark_red )
+background.draw_circle_s( [260,220], 4, :dark_red )
 
 # _Try_ to make an anti-aliased, filled ellipse, but it doesn't work well.
 # If you look closely at the white ellipse, you can see that it isn't
 # AA on the left and right side, and there are some black specks on the top
 # and bottom where the two ellipses don't quite match.
-background.draw_ellipse_s([200,150],[30,25],[250,250,250])
-background.draw_ellipse_a([200,150],[30,25],[250,250,250])
+background.draw_ellipse_s([200,150],[30,25], :beige )
+background.draw_ellipse_a([200,150],[30,25], :beige )
 
 # Let's make some labels
 require "rubygame/sfont"
