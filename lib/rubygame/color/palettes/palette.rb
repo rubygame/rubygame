@@ -31,8 +31,7 @@ class Rubygame::Color::Palette
 
 	# Retrieve a color by name from this palette.
 	# 
-	# The name can be a Symbol or String. See #sanitize_name for
-	# information on how 
+	# The name can be a Symbol or String. See #sanitize_name.
 	# 
 	# If the color cannot be found in this palette, search
 	# each of the #included palettes (recursively, depth-first,
@@ -47,8 +46,7 @@ class Rubygame::Color::Palette
 		return c
 	end
 	
-	# Store a color by name in this palette. See #[] for information
-	# about naming.
+	# Store a color by name in this palette. See #sanitize_name
 	def []=( name, color )
 		name = sanitize_name( name )
 		@colors[name] = color
@@ -90,14 +88,10 @@ class Rubygame::Color::Palette
 	
 	private
 
-	# The name will be:
+	# Takes either a Symbol or a String, and converts it to a
+	# lowercase Symbol with spaces converted to underscores.
 	# 
-	# 1. converted to string
-	# 2. spaces replaced with underscores
-	# 3. downcased
-  # 4. converted to a symbol.
-	# 
-	# So, "Alice Blue" and :ALICE_BLUE both become :alice_blue.
+	# E.g. "Alice Blue" and :ALICE_BLUE both become :alice_blue.
 	# 
 	def sanitize_name( name )
 		name.to_s.gsub(' ','_').downcase.intern
