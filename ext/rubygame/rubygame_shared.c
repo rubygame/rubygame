@@ -99,9 +99,19 @@ VALUE convert_color(VALUE color)
 	{
 		return rb_funcall( color, rb_intern("to_sdl_rgba_ary"), 0 );
 	}
-	else
+	else if( rb_respond_to(color, rb_intern("to_ary")) )
 	{
 		return convert_to_array( color );
+	}
+	else if( TYPE(color) == T_SYMBOL || TYPE(color) == T_STRING )
+	{
+		VALUE mColor = rb_const_get( mRubygame, rb_intern("Color") );
+		return convert_color( rb_funcall( mColor, rb_intern("[]"), 1, color) );
+	}
+	else
+	{
+		rb_raise(rb_eTypeError, "unsupported type %s for color",
+						 rb_obj_classname(color));
 	}
 }
 
