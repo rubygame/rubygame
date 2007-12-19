@@ -1,15 +1,5 @@
 = TODO / ROADMAP
 
-=== 2.2.0 (next minor release)
-
-- Color (representation of a color)
-  - ColorRGB and ColorHSV classes
-  - Mix/combine colors using various blending modes (add, multiply, etc.)
-  - Library of common pre-defined colors. (:red, :black, :chartreuse, etc.)
-  - Integrate with SDL/OpenGL functions (automatic conversion).
-
-- Surface#set_at (set the color of a pixel, complement of Surface#get_at)
-
 === 3.0.0 (next major release)
 
 - Backwards compatibility will be broken:
