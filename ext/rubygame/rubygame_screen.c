@@ -317,7 +317,7 @@ VALUE rbgm_screen_updaterects(VALUE self, VALUE array_rects)
   /* initialize the array of Rects from array_rects */
   for( i=0; i < num_rects; i++ )
   {
-    each_rect = rb_ary_entry(array_rects,i);
+    each_rect = convert_to_array(rb_ary_entry(array_rects,i));
 
     Sint16 x,y,left,top,right,bottom;
     Uint16 w,h;
