@@ -96,18 +96,8 @@ the libraries.
  set LINK_FLAGS=-L \windows\system32 -lSDL
  set LIBRUBYARG_SHARED=-L \ruby\bin -lmsvcrt-ruby18
 
- set RUBYGAME_CONFIG=--no-sdl-config
-
 The -L parameter for LIBRUBYARG_SHARED may be different if you installed
 Ruby to a path other than C:/ruby.
-
-IMPORTANT: If you are missing an optional library (such as SDL_gfx), you need
-to add some extra flags on to the 'RUBYGAME_CONFIG=...' line. The flags you
-must add are of the style '--no-????' (without quotes), where ???? is the
-name of the missing library, dropping the 'SDL_' from in front. So, if you
-don't have SDL_gfx, the last line of your envsetup.bat should be this:
-
- set RUBYGAME_CONFIG=--no-sdl-config --no-gfx
 
 == Step 4: Compile and install Rubygame
 
@@ -117,8 +107,17 @@ directory.  Type:
  envsetup.bat
  rake install
 
-Congratulations!  If all goes well, you have built and installed Rubygame.
+IMPORTANT: If you are missing an optional library (such as SDL_gfx), you must
+disable optional features by passing a "no-???" command to rake before the word
+"install". For example, to disable features that depend on SDL_gfx, you would
+type this instead of the above:
+
+ envsetup.bat
+ rake no-gfx install
+
+If all goes well, you have built and installed Rubygame.
 Try to execute <code>require 'rubygame'</code> in an irb session and run
 the provided samples to ensure that everything is acceptable.
 
-(Thanks to Ash Wilson (smashwilson) for contributing these instructions.)
+(Thanks to Ash Wilson (smashwilson) for contributing the original version of 
+these instructions.)

@@ -49,15 +49,11 @@ In order to use Rubygame applications on Mac OS X, you must use a special wrappe
 
 == Installing Rubygame
 1. {Download and unpack Rubygame}[https://sourceforge.net/project/showfiles.php?group_id=172781].
-2. (For Rubygame-1.1.0) From the rubygame directory:
-   
-    sudo ruby setup.rb all
-
-3. (For Rubygame-2.0.0) From the rubygame directory:
+2. From within the rubygame directory:
 
     sudo rake install
 
-4. Please refer to the README file for options that you can pass to setup.rb
+3. Please refer to the README file for options that you can pass to setup.rb
    or rake (depending on your version of Rubygame)
 
 == Running an application
