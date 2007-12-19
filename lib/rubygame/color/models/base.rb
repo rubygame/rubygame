@@ -49,13 +49,13 @@ module ColorBase
 		wrap( simple_op(other)  { |a,b|  a / b } )
 	end
 	
-	# Layer this color on top of another color.
+	# Layer this color over another color.
 	def over(other)
 		c1, c2 = self.to_rgba_ary, other.to_rgba_ary
 		a1, a2 = c1[3], c2[3]
 
 		rgba = [0,1,2].collect do |i| 
-			clamp( a1*c1.at(i),  a2*c2.at(i)*(1-a1) )
+			clamp( a1*c1.at(i) + a2*c2.at(i)*(1-a1) )
 		end
 		
 		rgba << ( a1 + a2*(1-a1) )
