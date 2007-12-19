@@ -229,6 +229,21 @@ describe "ColorRGB divided with another ColorRGB" do
 	
 end
 
+describe "ColorRGB over another ColorRGB" do 
+	before(:each) do
+		@color1 = ColorRGB.new( [0.5, 0.5, 0.5, 0.5] )
+		@color2 = ColorRGB.new( [0.1, 0.2, 0.4, 0.4] ) 
+
+		@color = @color1.over(@color2)
+
+		@r, @g, @b, @a = 0.252, 0.254, 0.258, 0.7
+	end
+	
+	it_should_behave_like "ColorRGB (shared)"
+	it_should_behave_like "Color with RGBA array (shared)"
+	
+end
+
 
 ##############################
 ##    HSV  SHARED  SPECS    ##

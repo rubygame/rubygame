@@ -25,33 +25,51 @@ module ColorBase
 	# The alpha of the new color will be equal to the alpha
 	# of the receiver.
 	def +(other)
-		simple_operation(other) { |a,b| a + b }
+		wrap( simple_op(other)  { |a,b| a + b } )
 	end
 	
 	# Perform color subtraction with another color of any type.
 	# The alpha of the new color will be equal to the alpha
 	# of the receiver.
 	def -(other)
-		simple_operation(other) { |a,b|  a - b }
+		wrap( simple_op(other)  { |a,b|  a - b } )
 	end
 
 	# Perform color multiplication with another color of any type.
 	# The alpha of the new color will be equal to the alpha
 	# of the receiver.
 	def *(other)
-		simple_operation(other) { |a,b|  a * b }
+		wrap( simple_op(other)  { |a,b|  a * b } )
 	end
 	
 	# Perform color division with another color of any type.
 	# The alpha of the new color will be equal to the alpha
 	# of the receiver.
 	def /(other)
-		simple_operation(other) { |a,b|  a / b }
+		wrap( simple_op(other)  { |a,b|  a / b } )
+	end
+	
+	# Layer this color on top of another color.
+	def over(other)
+		c1, c2 = self.to_rgba_ary, other.to_rgba_ary
+		a1, a2 = c1[3], c2[3]
+
+		rgba = [0,1,2].collect do |i| 
+			clamp( a1*c1.at(i),  a2*c2.at(i)*(1-a1) )
+		end
+		
+		rgba << ( a1 + a2*(1-a1) )
+		
+		wrap( rgba )
 	end
 
 	private
 	
-	def simple_operation(other, &block)
+	def wrap( rgba )
+		self.class.new_from_rgba( rgba )
+	end
+	
+	def simple_op(other, &block)
 		c1, c2 = self.to_rgba_ary, other.to_rgba_ary
 		a1, a2 = c1[3], c2[3]
 
@@ -61,7 +79,7 @@ module ColorBase
 
 		rgba << a1
 
-		return self.class.new_from_rgba( rgba )
+		return rgba
 	end
 	
 	def clamp(v, min=0.0, max=1.0)
