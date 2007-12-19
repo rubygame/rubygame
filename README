@@ -49,7 +49,7 @@
  If you are compiling source on a binary-based Linux ditribution,
  you will also need the "dev" packages of ruby, SDL, SDL_gfx, SDL_image,
  SDL_mixer, and SDL_ttf. (Really, you just need the header files.)
- 
+
  And of course, if you are compiling the source, you will need a C compiler!
  These versions of gcc worked fine when I tried them; other compilers might
  work too:
@@ -69,18 +69,31 @@
 
  === Advanced Install
 
- You can provide flags to configure how the build and install tasks run.
- Flags are provided in an environmental variable, RUBYGAME_CONFIG.
- (Yes, I know this is an ugly hack. At least you only have to do it once.)
+ The build and install tasks can be configured by providing certain 'flags'
+ to rake:
 
- Try this command to see all the possible configuration flags:
+  * no-sdl-gfx::    do not build modules which depend on SDL_gfx
+  * no-sdl-image::  do not build modules which depend on SDL_image
+  * no-sdl-mixer::  do not build modules which depend on SDL_mixer
+  * no-sdl-ttf::    do not build modules which depend on SDL_ttf
+  * no-opengl::     do not build modules which depend on OpenGL
 
-  $ RUBYGAME_CONFIG="--help" rake
+  * no-sdl-config:: do not guess compiler flags using `sdl-config'
+
+  * debug::         build modules with debbugging flags enabled
+  * verbose::       display the build commands as they are run
+
+ Additionally, the build process respects certain environmental variables:
+
+  * CFLAGS::        flags passed to the C compiler
+  * LDFLAGS::       flags passed to the linker
+  * RUBYARCHDIR::   directory to install platform-specific compiled extensions
+  * RUBYLIBDIR::    directory to install platform-independent interpreted libs
 
  IMPORTANT: if you are missing any optional SDL_* libraries, you must specify
- "--no-*" flags for those libraries. For example, if you don't have SDL_gfx:
+ "no-*" flags for those libraries. For example, if you don't have SDL_gfx:
 
-  $ RUBYGAME_CONFIG="--no-gfx" rake build
+  $ rake no-gfx build
 
  If you don't disable the features, the compile will probably fail when it
  looks for the headers and libraries. (The build system is not smart enough to
