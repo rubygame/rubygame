@@ -1,5 +1,7 @@
 == Changes from 2.1.0 to 2.2.0
 
+=== Features
+
 - Add: Rubygame::Color module
   - ColorRGB, ColorHSV, and ColorHSL classes.
   - X11 and CSS palettes of pre-defined colors.
@@ -7,6 +9,11 @@
     is passed for a color to Surface methods.
 
 - Add: Surface#set_at (set the color of a pixel, complement of Surface#get_at)
+
+=== Other Stuff
+
+- Build system correctly recompiles if source has changed.
+- Build system option syntax has changed. See the README: Advanced Install.
 
 == Changes from 2.0.1 to 2.1.0
 
