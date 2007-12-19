@@ -58,6 +58,11 @@ module Rubygame
 				return [@r, @g, @b, @a]
 			end
 			
+			def to_s
+				"#<#{self.class} [#{@r}, #{@g}, #{@b}, #{@a}]>"
+			end
+			alias :inspect :to_s
+			
 			class << self
 				def new_from_rgba( rgba )
 					new( rgba )

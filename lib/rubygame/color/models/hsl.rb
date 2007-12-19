@@ -54,6 +54,11 @@ module Rubygame
 				return self.class.hsla_to_rgba( @h, @s, @l, @a )
 			end
 			
+			def to_s
+				"#<#{self.class} [#{@h}, #{@s}, #{@l}, #{@a}]>"
+			end
+			alias :inspect :to_s
+			
 			class << self
 
 				def new_from_rgba( rgba )

@@ -54,6 +54,11 @@ module Rubygame
 				return self.class.hsva_to_rgba( @h, @s, @v, @a )
 			end
 			
+			def to_s
+				"#<#{self.class} [#{@h}, #{@s}, #{@v}, #{@a}]>"
+			end
+			alias :inspect :to_s
+			
 			class << self
 				
 				def new_from_rgba( rgba )
