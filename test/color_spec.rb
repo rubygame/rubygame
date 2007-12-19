@@ -236,7 +236,7 @@ describe "ColorRGB over another ColorRGB" do
 
 		@color = @color1.over(@color2)
 
-		@r, @g, @b, @a = 0.252, 0.254, 0.258, 0.7
+		@r, @g, @b, @a = 0.27, 0.29, 0.33, 0.7
 	end
 	
 	it_should_behave_like "ColorRGB (shared)"
