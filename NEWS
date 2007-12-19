@@ -5,15 +5,37 @@
 - Add: Rubygame::Color module
   - ColorRGB, ColorHSV, and ColorHSL classes.
   - X11 and CSS palettes of pre-defined colors.
+  - Surface methods can accept ColorRGB etc. for colors.
   - Automatic lookup of color names when a string or symbol
     is passed for a color to Surface methods.
+- Add: Surface#set_at().
 
-- Add: Surface#set_at (set the color of a pixel, complement of Surface#get_at)
+- Add: Screen#icon=().
+- Add: Sprites::ScrollGroup.
+
+=== Bug Fixes
+
+- Fix: Surface#draw_arc was incorrectly documented as Surface#draw_pie
+
+=== Improvements
+
+- Rect#collide_rect? is now faster.
+- Sprites::Group#collide_group can take a block; arguments are deprecated.
 
 === Other Stuff
 
 - Build system correctly recompiles if source has changed.
 - Build system option syntax has changed. See the README: Advanced Install.
+- Build system will correctly exit with an error status if it can't compile;
+  fixes Rubygems trying to install even when compile failed.
+
+=== Acknowledgements
+
+- Michael Swiger (mokkan) for Screen#icon=.
+- ippa for optimizing Rect#collide_rect? and adding Sprites::ScrollGroup.
+
+
+
 
 == Changes from 2.0.1 to 2.1.0
 
@@ -57,6 +79,7 @@
 - Daniel Neis Araujo for adding Sprite#undraw.
 - Roger Ostrander (denor) for and bug fixes and adding Rubygame.key_name.
 - Bjorn De Meyer (beoran) for numerous patches and improvements.
+
 
  
 
