@@ -11,7 +11,6 @@
 - Add: Surface#set_at().
 
 - Add: Screen#icon=().
-- Add: Sprites::ScrollGroup.
 
 === Bug Fixes
 
@@ -32,7 +31,7 @@
 === Acknowledgements
 
 - Michael Swiger (mokkan) for Screen#icon=.
-- ippa for optimizing Rect#collide_rect? and adding Sprites::ScrollGroup.
+- ippa for optimizing Rect#collide_rect?.
 
 
 
