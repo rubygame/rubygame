@@ -248,14 +248,8 @@ class ExtensionModule
       File.join( @directory, "#{obj}.#{OBJEXT}" )
     }
 
-    taskname = @dynlib.gsub('rubygame_','')
-
-    file dynlib_full do
-      Rake::Task[taskname].invoke
-    end
-
     desc "Compile the #{@dynlib} extension"
-    task taskname => objs_full do |task|
+    file dynlib_full => objs_full do |task|
       link_command = "#{from_env_or_config('LDSHARED')} #{LINK_FLAGS} #{@lflags} -o #{dynlib_full} #{task.prerequisites.join(' ')}"
       if( $options[:verbose] )
         try_shell { sh link_command }
