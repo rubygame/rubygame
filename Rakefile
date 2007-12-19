@@ -71,7 +71,7 @@ spec = Gem::Specification.new do |s|
 
   s.extra_rdoc_files = FileList.new do |fl|
     fl.include "doc/*.rdoc"
-    fl.include "README", "LICENSE", "CREDITS", "TODO", "Changelog"
+    fl.include "README", "LICENSE", "CREDITS", "ROADMAP", "NEWS"
   end
 end
 
@@ -100,8 +100,8 @@ Rake::RDocTask.new do |rd|
                         "README",
                         "LICENSE",
                         "CREDITS",
-                        "TODO",
-                        "Changelog")
+                        "ROADMAP",
+                        "NEWS")
 end
 
 task :default => [:build]
