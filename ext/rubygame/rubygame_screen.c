@@ -201,6 +201,11 @@ VALUE rbgm_screen_setcaption(VALUE self, VALUE title)
  *            window (when not in fullscreen mode), and in other OS-specific
  *            areas (like the taskbar entry). If omitted or +nil+, no icon
  *            will be shown at all.
+ *
+ *  NOTE: The SDL docs state that icons on Win32 systems must be 32x32 pixels.
+ *  That may or may not be true anymore, but you might want to consider it
+ *  when creating games to run on Windows.
+ *
  */
 VALUE rbgm_screen_seticon(VALUE self, VALUE data)
 {
