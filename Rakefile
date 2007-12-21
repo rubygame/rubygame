@@ -48,7 +48,7 @@ end
 OBJEXT = from_env_or_config("OBJEXT")
 DLEXT = from_env_or_config("DLEXT")
 
-RUBYGAME_VERSION = "2.1.0"
+RUBYGAME_VERSION = "2.2.0"
 
 spec = Gem::Specification.new do |s|
   s.name     = "rubygame"
@@ -62,7 +62,7 @@ spec = Gem::Specification.new do |s|
   s.files = FileList.new do |fl|
     fl.include("{lib,ext,samples,doc}/**/*")
     fl.exclude(/svn/)
-    fl.exclude(/\.#{OBJEXT}/)
+    #fl.exclude(/\.#{OBJEXT}/)
   end
 
   s.require_paths = ["lib", "lib/rubygame/", "ext/rubygame/"]
