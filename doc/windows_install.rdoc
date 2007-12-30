@@ -80,24 +80,26 @@ system; it helps the compiler to locate the headers and libraries it needs to
 compile Rubygame. 
 
 Create a text file in your Rubygame directory called "envsetup.bat".
-In it, use code based on the following to set your variables.
-Be sure to replace '\src\' (lines 3-7) with the path to where you unpacked
-the libraries.
+In it, use code based on the following to set your variables. Be sure to replace 
+'c:\src\' (lines 3-7) with the path to where you unpacked the libraries. Also,
+make sure that you set 'c:\ruby\bin' in the last line to the 'bin' directory of
+your own Ruby installation. You will need to add quotes around any paths that
+include spaces.
+
+ echo off
 
  set CC=gcc
+
  set CFLAGS=-DHAVE_ISINF -D_MSC_VER=1200 
- set CFLAGS=%CFLAGS% -I \src\SDL-1.2.11\include
- set CFLAGS=%CFLAGS% -I \src\SDL_gfx-2.0.15
- set CFLAGS=%CFLAGS% -I \src\SDL_image-1.2.5\include
- set CFLAGS=%CFLAGS% -I \src\SDL_mixer-1.2.7\include
- set CFLAGS=%CFLAGS% -I \src\SDL_ttf-2.0.8\include
+ set CFLAGS=%CFLAGS% -I c:\src\SDL-1.2.11\include
+ set CFLAGS=%CFLAGS% -I c:\src\SDL_gfx-2.0.15
+ set CFLAGS=%CFLAGS% -I c:\src\SDL_image-1.2.5\include
+ set CFLAGS=%CFLAGS% -I c:\src\SDL_mixer-1.2.7\include
+ set CFLAGS=%CFLAGS% -I c:\src\SDL_ttf-2.0.8\include
  
  set LDSHARED=gcc -shared
- set LINK_FLAGS=-L \windows\system32 -lSDL
- set LIBRUBYARG_SHARED=-L \ruby\bin -lmsvcrt-ruby18
-
-The -L parameter for LIBRUBYARG_SHARED may be different if you installed
-Ruby to a path other than C:/ruby.
+ set LDFLAGS=-L c:\windows\system32 -lSDL
+ set LIBRUBYARG_SHARED=-L c:\ruby\bin -lmsvcrt-ruby18
 
 == Step 4: Compile and install Rubygame
 
@@ -118,6 +120,8 @@ type this instead of the above:
 If all goes well, you have built and installed Rubygame.
 Try to execute <code>require 'rubygame'</code> in an irb session and run
 the provided samples to ensure that everything is acceptable.
+
+These instructions were last verified on 30 December, 2007 with Rubygame 2.2.0.
 
 (Thanks to Ash Wilson (smashwilson) for contributing the original version of 
 these instructions.)
