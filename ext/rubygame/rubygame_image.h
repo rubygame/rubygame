@@ -37,5 +37,6 @@
 
 extern void Init_rubygame_image();
 extern VALUE rbgm_image_load(VALUE, VALUE);
+extern VALUE rbgm_from_string(int, VALUE*, VALUE);
 
 #endif

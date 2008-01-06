@@ -26,6 +26,7 @@
 
 void Rubygame_Init_Image();
 VALUE rbgm_image_load(VALUE, VALUE);
+VALUE rbgm_from_string(int, VALUE*, VALUE);
 
 /*
  *  call-seq:
@@ -72,6 +73,64 @@ VALUE rbgm_image_load( VALUE class, VALUE filename )
 	return Data_Wrap_Struct( cSurface,0,SDL_FreeSurface,surf );
 }
 
+/*
+ *  call-seq:
+ *    Surface.from_string( data [,type] )  ->  Surface
+ *
+ *  Load an image file from memory (in the form of the given data to a Surface.
+ *  If the image has an alpha channel (e.g. PNG with transparency), the Surface
+ *  will as well. If the image cannot be loaded (for example if the image
+ *  format is unsupported), will raise SDLError.
+ *
+ *  This method is only usable if Rubygame was compiled with the SDL_image
+ *  library; you can check Rubygame::VERSIONS[:sdl_image] to see if it was.
+ *
+ *  This method takes these arguments:
+ *  data:: a string containing the data for the image, such as IO::read would
+ *         return.
+ *  type:: The type of file that the image is (i.e. 'TGA').  Case is not 
+ *         important.  If absent, the library will try to automatically
+ *         detect the type.
+ *
+ *  These formats may be supported, but some may not be available on a
+ *  particular system.
+ *  BMP:: "Windows Bitmap" format.
+ *  GIF:: "Graphics Interchange Format."
+ *  JPG:: "Independent JPEG Group" format.
+ *  LBM:: "Linear Bitmap" format (?)
+ *  PCX:: "PC Paintbrush" format
+ *  PNG:: "Portable Network Graphics" format.
+ *  PNM:: "Portable Any Map" format. (i.e., PPM, PGM, or PBM)
+ *  TGA:: "Truevision TARGA" format.
+ *  TIF:: "Tagged Image File Format"
+ *  XCF:: "eXperimental Computing Facility" (GIMP native format).
+ *  XPM:: "XPixMap" format.
+ */
+VALUE rbgm_from_string( int argc, VALUE *argv, VALUE obj)
+{
+	Check_Type(argv[0], T_STRING);
+	/* There's probably a better way of using a string as raw data than this,
+	 * but I don't know it. */
+	void *raw = (void *)RSTRING_PTR(argv[0]);
+	int len = RSTRING_LEN(argv[0]);
+	
+	SDL_RWops *rw = SDL_RWFromMem(raw,len);
+	
+	SDL_Surface *surf;
+	if(argc > 1) {
+		Check_Type(argv[1], T_STRING);
+		surf = IMG_LoadTyped_RW(rw, 1,StringValuePtr(argv[1]));
+	} else {
+		surf = IMG_Load_RW(rw,1);
+	}
+	
+	if(surf == NULL)
+	{
+		rb_raise(eSDLError,"Couldn't load image from string: %s", IMG_GetError());
+	}
+	return Data_Wrap_Struct( cSurface, 0, SDL_FreeSurface, surf);	
+}
+
 /* 
  *  Document-class: Rubygame::Surface
  *
@@ -105,4 +164,5 @@ void Init_rubygame_image()
 
 	/* Image methods */
 	rb_define_singleton_method(cSurface,"load_image",rbgm_image_load,1);
+	rb_define_singleton_method(cSurface,"from_string",rbgm_from_string,-1);
 }
