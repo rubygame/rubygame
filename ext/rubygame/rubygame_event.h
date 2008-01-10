@@ -43,6 +43,7 @@ extern VALUE convert_active(Uint8);
 extern VALUE convert_keymod(SDLMod);
 extern VALUE convert_mousebuttons(Uint8);
 extern VALUE rbgm_convert_sdlevent(SDL_Event);
+extern VALUE rbgm_enableKeyRepeat(VALUE,VALUE,VALUE);
 extern VALUE rbgm_fetchevents(VALUE);
 
 #endif
