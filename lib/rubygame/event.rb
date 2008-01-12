@@ -140,9 +140,11 @@ module Rubygame
 	# buttons:: the mouse buttons that were being held during the movement,
 	#           an Array of zero or more of these constants in module Rubygame
 	#           (or the corresponding button number):
-	#           MOUSE_LEFT::   1; left mouse button
-	#           MOUSE_MIDDLE:: 2; middle mouse button
-	#           MOUSE_RIGHT::  3; right mouse button
+	#           MOUSE_LEFT::      1; left mouse button
+	#           MOUSE_MIDDLE::    2; middle mouse button
+	#           MOUSE_RIGHT::     3; right mouse button
+  #           MOUSE_WHEELUP::   4; mouse wheel up (may also be a real button)
+  #           MOUSE_WHEELDOWN:: 5; mouse wheel down (may also be a real button)
 	class MouseMotionEvent < Event
 		attr_accessor :pos,:rel,:buttons
 		def initialize(pos,rel,buttons)
@@ -159,9 +161,11 @@ module Rubygame
 	#          in the form [x,y].
 	# button:: the mouse button that was pressed; one of these constants in
 	#          module Rubygame (or the corresponding button number):
-	#          MOUSE_LEFT::   1; left mouse button
-	#          MOUSE_MIDDLE:: 2; middle mouse button
-	#          MOUSE_RIGHT::  3; right mouse button
+	#          MOUSE_LEFT::      1; left mouse button
+	#          MOUSE_MIDDLE::    2; middle mouse button
+	#          MOUSE_RIGHT::     3; right mouse button
+  #          MOUSE_WHEELUP::   4; mouse wheel up (may also be a real button)
+  #          MOUSE_WHEELDOWN:: 5; mouse wheel down (may also be a real button)
 	class MouseDownEvent < Event
 		attr_accessor :string,:pos,:button
 		def initialize(pos,button)

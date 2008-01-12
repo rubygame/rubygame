@@ -24,7 +24,9 @@ module Rubygame
 		MOUSE2STR = {
 			MOUSE_LEFT => "left",
 			MOUSE_MIDDLE => "middle",
-			MOUSE_RIGHT => "right"
+			MOUSE_RIGHT => "right",
+      MOUSE_WHEELUP => "wheel up",
+      MOUSE_WHEELDOWN => "wheel down"
 		}
 		# And to translate the other way...
 		STR2MOUSE = MOUSE2STR.invert()
@@ -32,6 +34,8 @@ module Rubygame
 		STR2MOUSE[1] = MOUSE_LEFT
 		STR2MOUSE[2] = MOUSE_MIDDLE
 		STR2MOUSE[3] = MOUSE_RIGHT
+    STR2MOUSE[4] = MOUSE_WHEELUP
+    STR2MOUSE[5] = MOUSE_WHEELDOWN
 	end # module Mouse
 
 	module Key

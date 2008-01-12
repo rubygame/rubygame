@@ -115,12 +115,16 @@ VALUE convert_mousebuttons( Uint8 state )
   VALUE buttons;
 
   buttons = rb_ary_new();
-  if(state & SDL_BUTTON(1))
+  if(state & SDL_BUTTON(SDL_BUTTON_LEFT))
     rb_ary_push(buttons, INT2NUM(SDL_BUTTON_LEFT));
-  if(state & SDL_BUTTON(2))
+  if(state & SDL_BUTTON(SDL_BUTTON_MIDDLE))
     rb_ary_push(buttons, INT2NUM(SDL_BUTTON_MIDDLE));
-  if(state & SDL_BUTTON(3))
+  if(state & SDL_BUTTON(SDL_BUTTON_RIGHT))
     rb_ary_push(buttons, INT2NUM(SDL_BUTTON_RIGHT));
+  if(state & SDL_BUTTON(SDL_BUTTON_WHEELUP))
+  	rb_ary_push(buttons, INT2NUM(SDL_BUTTON_WHEELUP));
+  if(state & SDL_BUTTON(SDL_BUTTON_WHEELDOWN))
+  	rb_ary_push(buttons, INT2NUM(SDL_BUTTON_WHEELDOWN));
   return buttons;
 }
 
@@ -394,6 +398,8 @@ void Rubygame_Init_Event()
 	rb_define_const(mRubygame,"MOUSE_LEFT",UINT2NUM(SDL_BUTTON_LEFT));
 	rb_define_const(mRubygame,"MOUSE_MIDDLE",UINT2NUM(SDL_BUTTON_MIDDLE));
 	rb_define_const(mRubygame,"MOUSE_RIGHT",UINT2NUM(SDL_BUTTON_RIGHT));
+	rb_define_const(mRubygame,"MOUSE_WHEELUP",UINT2NUM(SDL_BUTTON_WHEELUP));
+	rb_define_const(mRubygame,"MOUSE_WHEELDOWN",UINT2NUM(SDL_BUTTON_WHEELDOWN));
 	rb_define_const(mRubygame,"MOUSE_LMASK",UINT2NUM(SDL_BUTTON_LMASK));
 	rb_define_const(mRubygame,"MOUSE_MMASK",UINT2NUM(SDL_BUTTON_MMASK));
 	rb_define_const(mRubygame,"MOUSE_RMASK",UINT2NUM(SDL_BUTTON_RMASK));
