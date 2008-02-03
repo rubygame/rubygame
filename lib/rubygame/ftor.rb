@@ -74,6 +74,7 @@ class Ftor
 	# Create a new Ftor by specifying its x and y components. See also #new_am
   # and #new_from_to.
 	def initialize(x,y)
+	_clear()
     @x, @y = x, y
 	end
 
