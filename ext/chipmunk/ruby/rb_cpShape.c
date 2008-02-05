@@ -181,6 +181,30 @@ rb_cpCircleInitialize(VALUE self, VALUE body, VALUE radius, VALUE offset)
 	return self;
 }
 
+static VALUE
+rb_cpCircleC(VALUE self)
+{
+	cpCircleShape *circle = (cpCircleShape *)SHAPE(self);
+
+	return VNEW( circle->c );
+}
+
+static VALUE
+rb_cpCircleTC(VALUE self)
+{
+	cpCircleShape *circle = (cpCircleShape *)SHAPE(self);
+
+	return VNEW( circle->tc );
+}
+
+static VALUE
+rb_cpCircleR(VALUE self)
+{
+	cpCircleShape *circle = (cpCircleShape *)SHAPE(self);
+
+	return rb_float_new( circle->r );
+}
+
 
 
 //cpSegment
@@ -344,6 +368,9 @@ Init_cpShape(void)
 	rb_include_module(c_cpCircleShape, m_cpShape);
 	rb_define_alloc_func(c_cpCircleShape, rb_cpCircleAlloc);
 	rb_define_method(c_cpCircleShape, "initialize", rb_cpCircleInitialize, 3);
+	rb_define_method(c_cpCircleShape, "c", rb_cpCircleC, 0);
+	rb_define_method(c_cpCircleShape, "tc", rb_cpCircleTC, 0);
+	rb_define_method(c_cpCircleShape, "r", rb_cpCircleR, 0);
 	
 	
 	c_cpSegmentShape = rb_define_class_under(m_cpShape, "Segment", rb_cObject);
