@@ -30,6 +30,7 @@ extern VALUE c_cpSegmentShape;
 extern VALUE c_cpPolyShape;
 extern VALUE m_cpJoint;
 extern VALUE c_cpSpace;
+extern VALUE c_cpContact;
 
 extern ID id_parent;
 
@@ -40,6 +41,16 @@ VNEW(cpVect v)
 	*ptr = v;
 	return Data_Wrap_Struct(c_cpVect, NULL, &free, ptr);	
 }
+
+// We must ensure we null the contact reference after the callback is done.
+static inline VALUE
+CONTACTNEW(cpContact * v)
+{
+	cpContact * new_v = (cpContact *)malloc(sizeof(cpContact));
+	memcpy(new_v, v, sizeof(cpContact));
+	return Data_Wrap_Struct(c_cpContact, NULL, &free, new_v);
+}
+
 
 //static inline VALUE
 //VWRAP(cpVect *v, VALUE parent)
@@ -67,6 +78,7 @@ GETTER_TEMPLATE(BODY , c_cpBody , Body , cpBody )
 GETTER_TEMPLATE(SHAPE, m_cpShape, Shape, cpShape)
 GETTER_TEMPLATE(JOINT, m_cpJoint, Joint, cpJoint)
 GETTER_TEMPLATE(SPACE, c_cpSpace, Space, cpSpace)
+GETTER_TEMPLATE(CONTACT, c_cpContact, Contact, cpContact)
 
 void Init_chipmunk(void);
 void Init_cpVect();
@@ -75,3 +87,4 @@ void Init_cpBody();
 void Init_cpShape();
 void Init_cpJoint();
 void Init_cpSpace();
+void Init_cpContact();

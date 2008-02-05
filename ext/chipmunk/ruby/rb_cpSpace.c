@@ -97,8 +97,14 @@ collisionCallback(cpShape *a, cpShape *b, cpContact *contacts, int numContacts, 
 	VALUE block = (VALUE)data;
 	VALUE shapea = (VALUE)a->data;
 	VALUE shapeb = (VALUE)b->data;
-	
-	return rb_funcall(block, id_call, 2, shapea, shapeb);
+	VALUE rb_contact_array = rb_ary_new();
+   
+	for(int i = 0; i < numContacts; i++)
+		rb_ary_push(rb_contact_array, CONTACTNEW(&contacts[i]));
+   
+	int rv = rb_funcall(block, id_call, 3, shapea, shapeb, rb_contact_array);
+         
+	return rv;
 }
 
 static VALUE
