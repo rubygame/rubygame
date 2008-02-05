@@ -205,6 +205,39 @@ rb_cpSegmentInitialize(VALUE self, VALUE body, VALUE a, VALUE b, VALUE r)
 	return self;
 }
 
+static VALUE
+rb_cpSegmentA(VALUE self)
+{
+	cpSegmentShape *seg = (cpSegmentShape *)SHAPE(self);
+
+	return VNEW( seg->a );
+}
+
+static VALUE
+rb_cpSegmentB(VALUE self)
+{
+	cpSegmentShape *seg = (cpSegmentShape *)SHAPE(self);
+
+	return VNEW( seg->b );
+}
+
+
+static VALUE
+rb_cpSegmentTA(VALUE self)
+{
+	cpSegmentShape *seg = (cpSegmentShape *)SHAPE(self);
+
+	return VNEW( seg->ta );
+}
+
+static VALUE
+rb_cpSegmentTB(VALUE self)
+{
+	cpSegmentShape *seg = (cpSegmentShape *)SHAPE(self);
+
+	return VNEW( seg->tb );
+}
+
 
 
 //cpPoly
@@ -317,6 +350,10 @@ Init_cpShape(void)
 	rb_include_module(c_cpSegmentShape, m_cpShape);
 	rb_define_alloc_func(c_cpSegmentShape, rb_cpSegmentAlloc);
 	rb_define_method(c_cpSegmentShape, "initialize", rb_cpSegmentInitialize, 4);
+	rb_define_method(c_cpSegmentShape, "a", rb_cpSegmentA, 0);
+	rb_define_method(c_cpSegmentShape, "b", rb_cpSegmentB, 0);
+	rb_define_method(c_cpSegmentShape, "ta", rb_cpSegmentTA, 0);
+	rb_define_method(c_cpSegmentShape, "tb", rb_cpSegmentTB, 0);
 
 
 	c_cpPolyShape = rb_define_class_under(m_cpShape, "Poly", rb_cObject);
@@ -324,5 +361,5 @@ Init_cpShape(void)
 	rb_define_alloc_func(c_cpPolyShape, rb_cpPolyAlloc);
 	rb_define_method(c_cpPolyShape, "initialize", rb_cpPolyInitialize, 3);
 	rb_define_method(c_cpPolyShape, "verts", rb_cpPolyVerts, 0);
-	rb_define_method(c_cpPolyShape, "tverts", rb_cpPolyVerts, 0);
+	rb_define_method(c_cpPolyShape, "tverts", rb_cpPolyTVerts, 0);
 }
