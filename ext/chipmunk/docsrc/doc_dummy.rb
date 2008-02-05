@@ -221,6 +221,9 @@ module CP
     # Poly collision shape.
     class Poly
       include Shape
+			
+      # Array of vectors, the vertices of the poly. Read-only.
+      attr_reader :verts
       
       # Create a poly collision shape attached to the given body at
       # the given offset with the given vertexes. _verts_ must be an

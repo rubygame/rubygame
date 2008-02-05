@@ -236,7 +236,41 @@ rb_cpPolyInitialize(VALUE self, VALUE body, VALUE arr, VALUE offset)
 	return self;
 }
 
+static VALUE
+rb_cpPolyVerts(VALUE self)
+{
+	cpPolyShape *poly = (cpPolyShape *)SHAPE(self);
 
+	VALUE verts = rb_ary_new();
+	int numVerts = poly->numVerts;
+	VALUE vert;
+
+	for(int i=0; i<numVerts; i++)
+	{
+		vert = VNEW( poly->verts[i] );
+		verts = rb_ary_push( verts, vert );
+	}
+
+	return verts;
+}
+
+static VALUE
+rb_cpPolyTVerts(VALUE self)
+{
+	cpPolyShape *poly = (cpPolyShape *)SHAPE(self);
+
+	VALUE verts = rb_ary_new();
+	int numVerts = poly->numVerts;
+	VALUE vert;
+
+	for(int i=0; i<numVerts; i++)
+	{
+		vert = VNEW( poly->tVerts[i] );
+		verts = rb_ary_push( verts, vert );
+	}
+
+	return verts;
+}
 
 void
 Init_cpShape(void)
@@ -289,4 +323,6 @@ Init_cpShape(void)
 	rb_include_module(c_cpPolyShape, m_cpShape);
 	rb_define_alloc_func(c_cpPolyShape, rb_cpPolyAlloc);
 	rb_define_method(c_cpPolyShape, "initialize", rb_cpPolyInitialize, 3);
+	rb_define_method(c_cpPolyShape, "verts", rb_cpPolyVerts, 0);
+	rb_define_method(c_cpPolyShape, "tverts", rb_cpPolyVerts, 0);
 }
