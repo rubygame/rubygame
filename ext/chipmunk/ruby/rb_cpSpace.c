@@ -220,6 +220,30 @@ rb_cpSpaceRemoveJoint(VALUE self, VALUE joint)
 }
 
 static VALUE
+rb_cpSpaceShapes(VALUE self)
+{
+	return rb_iv_get(self, "active_shapes");
+}
+
+static VALUE
+rb_cpSpaceStaticShapes(VALUE self)
+{
+	return rb_iv_get(self, "static_shapes");
+}
+
+static VALUE
+rb_cpSpaceBodies(VALUE self)
+{
+	return rb_iv_get(self, "bodies");
+}
+
+static VALUE
+rb_cpSpaceJoints(VALUE self)
+{
+	return rb_iv_get(self, "joints");
+}
+
+static VALUE
 rb_cpSpaceResizeStaticHash(VALUE self, VALUE dim, VALUE count)
 {
 	cpSpaceResizeStaticHash(SPACE(self), NUM2DBL(dim), NUM2INT(count));
@@ -246,8 +270,6 @@ rb_cpSpaceStep(VALUE self, VALUE dt)
 	cpSpaceStep(SPACE(self), NUM2DBL(dt));
 	return Qnil;
 }
-
-
 
 void
 Init_cpSpace(void)
@@ -280,6 +302,11 @@ Init_cpSpace(void)
 	rb_define_method(c_cpSpace, "remove_static_shape", rb_cpSpaceRemoveStaticShape, 1);
 	rb_define_method(c_cpSpace, "remove_body", rb_cpSpaceRemoveBody, 1);
 	rb_define_method(c_cpSpace, "remove_joint", rb_cpSpaceRemoveJoint, 1);
+
+	rb_define_method(c_cpSpace, "shapes", rb_cpSpaceShapes, 0);
+	rb_define_method(c_cpSpace, "static_shapes", rb_cpSpaceStaticShapes, 0);
+	rb_define_method(c_cpSpace, "bodies", rb_cpSpaceBodies, 0);
+	rb_define_method(c_cpSpace, "joints", rb_cpSpaceJoints, 0);
 	
 	rb_define_method(c_cpSpace, "resize_static_hash", rb_cpSpaceResizeStaticHash, 2);
 	rb_define_method(c_cpSpace, "resize_active_hash", rb_cpSpaceResizeActiveHash, 2);
