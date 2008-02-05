@@ -227,6 +227,7 @@ Init_cpVect(void)
 	
 	rb_define_method(c_cpVect, "to_s", rb_cpVectToString, 0);
 	rb_define_method(c_cpVect, "to_a", rb_cpVectToArray, 0);
+	rb_define_alias( c_cpVect, "to_ary", "to_a");
 	rb_define_method(c_cpVect, "to_angle", rb_cpVectToAngle, 0);
 	
 	rb_define_method(c_cpVect, "-@", rb_cpVectNegate, 0);
