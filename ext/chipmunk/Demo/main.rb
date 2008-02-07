@@ -7,9 +7,12 @@ include Rubygame
 include Gl
 
 INFINITY =  10**100
+PI = Math::PI
 
 require 'demo1'
 require 'demo2'
+require 'demo3'
+require 'demo4'
 
 $width  = 640
 $height = 480
@@ -34,9 +37,9 @@ def demo_update( ticks )
 	end
 end
 
-$init_funcs = [:demo1_init, :demo2_init]
-$update_funcs = [:demo_update]*2
-$destroy_funcs = [:demo_destroy]*2
+$init_funcs = [:demo1_init, :demo2_init, :demo3_init, :demo4_init]
+$update_funcs = [:demo_update, :demo_update, :demo3_update, :demo4_update]
+$destroy_funcs = [:demo_destroy]*4
 
 $shape_color = :black
 $bg_color = :white
@@ -52,11 +55,11 @@ def drawCircleShape( circle )
 	center = xform(circle.tc)
 	edge = xform(circle.tc + vec2(circle.r,0).rotate(circle.body.rot))
 	$screen.draw_circle_a( center, circle.r, $shape_color )
-$screen.draw_line_a( center, edge, $shape_color )
+	$screen.draw_line_a( center, edge, $shape_color )
 end
 
 def drawSegmentShape( seg )
-	$screen.draw_line_a( xform(seg.a), xform(seg.b), $shape_color )
+	$screen.draw_line_a( xform(seg.ta), xform(seg.tb), $shape_color )
 end
 
 def drawPolyShape( poly )
@@ -100,7 +103,7 @@ def main
 	
 	#initGL()
 
-	keys = [K_1, K_2]#, K_3, K_4, K_5, K_6, K_7]
+	keys = [K_1, K_2, K_3, K_4]#, K_5, K_6, K_7]
 	
 	# Main loop
 	catch :quit do 
@@ -129,8 +132,6 @@ def main
 		end		
 	end
 	
-	#method($destroy_funcs[$demo_index]).call()
-
 end
 
 main()

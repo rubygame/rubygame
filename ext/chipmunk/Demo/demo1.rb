@@ -1,5 +1,6 @@
 def demo1_init()
-	staticBody = CP::Body.new( INFINITY, INFINITY )
+	
+	$static_body = CP::Body.new( INFINITY, INFINITY )
 
 	$space = CP::Space.new()
 	$space.resize_static_hash(20.0, 999)
@@ -32,15 +33,15 @@ def demo1_init()
 	
 	# Create walls / floor
 	
-	shape = CP::Shape::Segment.new(staticBody, vec2(-320,-240), vec2(-320,240), 0.0)
+	shape = CP::Shape::Segment.new($static_body, vec2(-320,-240), vec2(-320,240), 0.0)
 	shape.e, shape.u = 1.0, 1.0
 	$space.add_static_shape(shape)
 	
-	shape = CP::Shape::Segment.new(staticBody, vec2(320,-240), vec2(320,240), 0.0)
+	shape = CP::Shape::Segment.new($static_body, vec2(320,-240), vec2(320,240), 0.0)
 	shape.e, shape.u = 1.0, 1.0
 	$space.add_static_shape(shape)
 	
-	shape = CP::Shape::Segment.new(staticBody, vec2(-320,-240), vec2(320,-240), 0.0)
+	shape = CP::Shape::Segment.new($static_body, vec2(-320,-240), vec2(320,-240), 0.0)
 	shape.e, shape.u = 1.0, 1.0
 	$space.add_static_shape(shape)
 	
@@ -53,14 +54,15 @@ def demo1_init()
 		b = vec2(j*10 - 320, i*-10 + 240)
 		c = vec2(j*10 - 320, j*-10 + 240)
 		
-		shape = CP::Shape::Segment.new(staticBody, a, b, 0.0)
+		shape = CP::Shape::Segment.new($static_body, a, b, 0.0)
 		shape.e, shape.u = 1.0, 1.0
 		$space.add_static_shape(shape)
 		
-		shape = CP::Shape::Segment.new(staticBody, b, c, 0.0)
+		shape = CP::Shape::Segment.new($static_body, b, c, 0.0)
 		shape.e, shape.u = 1.0, 1.0
 		$space.add_static_shape(shape)
 	end
 	
 	# $space.add_collision_func( 1,0, method(:demo1_collide).to_proc )
+	
 end

@@ -1,5 +1,6 @@
 def demo2_init
-	staticBody = CP::Body.new( INFINITY, INFINITY )
+	
+	$static_body = CP::Body.new( INFINITY, INFINITY )
 	
 	$space = CP::Space.new()
 	$space.iterations = 20
@@ -7,15 +8,15 @@ def demo2_init
 	$space.resize_active_hash(40.0, 1000)
 	$space.gravity = vec2(0,-100)
 
-	shape = CP::Shape::Segment.new( staticBody, vec2(-320,-240), vec2(-320,240), 0.0 )
+	shape = CP::Shape::Segment.new( $static_body, vec2(-320,-240), vec2(-320,240), 0.0 )
 	shape.e, shape.u = 1.0, 1.0
 	$space.add_static_shape(shape)
 	
-	shape = CP::Shape::Segment.new( staticBody, vec2(320,-240), vec2(320,240), 0.0 )
+	shape = CP::Shape::Segment.new( $static_body, vec2(320,-240), vec2(320,240), 0.0 )
 	shape.e, shape.u = 1.0, 1.0
 	$space.add_static_shape(shape)
 	
-	shape = CP::Shape::Segment.new( staticBody, vec2(-320,-240), vec2(320,-240), 0.0 )
+	shape = CP::Shape::Segment.new( $static_body, vec2(-320,-240), vec2(320,-240), 0.0 )
 	shape.e, shape.u = 1.0, 1.0
 	$space.add_static_shape(shape)
 	
