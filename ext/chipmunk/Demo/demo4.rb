@@ -27,23 +27,12 @@ def demo4_init
 	b = vec2(-200,  200)
 	c = vec2( 200,  200)
 	d = vec2( 200, -200)
-	
-	shape = CP::Shape::Segment.new($static_body, a, b, 0.0)
-	shape.e, shape.u = 1.0, 1.0
-	$space.add_static_shape(shape)
-	
-	shape = CP::Shape::Segment.new($static_body, b, c, 0.0)
-	shape.e, shape.u = 1.0, 1.0
-	$space.add_static_shape(shape)
-	
-	shape = CP::Shape::Segment.new($static_body, c, d, 0.0)
-	shape.e, shape.u = 1.0, 1.0
-	$space.add_static_shape(shape)
-	
-	shape = CP::Shape::Segment.new($static_body, d, a, 0.0)
-	shape.e, shape.u = 1.0, 1.0
-	$space.add_static_shape(shape)
-	
+
+	make_wall( a, b )
+	make_wall( b, c )
+	make_wall( c, d )
+	make_wall( d, a )
+
 	$static_body.w = 0.4
 	
 	0.upto(2) do |i|

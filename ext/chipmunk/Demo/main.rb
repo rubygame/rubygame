@@ -6,6 +6,10 @@ include Math
 include Rubygame
 include Gl
 
+include CP
+include CP::Shape
+include CP::Joint
+
 INFINITY =  10**100
 PI = Math::PI
 
@@ -13,6 +17,9 @@ require 'demo1'
 require 'demo2'
 require 'demo3'
 require 'demo4'
+require 'demo5'
+require 'demo6'
+require 'demo7'
 
 $width  = 640
 $height = 480
@@ -37,9 +44,9 @@ def demo_update( ticks )
 	end
 end
 
-$init_funcs = [:demo1_init, :demo2_init, :demo3_init, :demo4_init]
-$update_funcs = [:demo_update, :demo_update, :demo3_update, :demo4_update]
-$destroy_funcs = [:demo_destroy]*4
+$init_funcs = [:demo1_init, :demo2_init, :demo3_init, :demo4_init, :demo5_init, :demo6_init, :demo7_init]
+$update_funcs = [:demo_update, :demo_update, :demo3_update, :demo4_update, :demo_update, :demo_update, :demo7_update]
+$destroy_funcs = [:demo_destroy]*7
 
 $shape_color = :black
 $bg_color = :white
@@ -68,15 +75,24 @@ end
 
 def drawObject( shape )
 	case shape
-	when CP::Shape::Circle
+	when Circle
 		drawCircleShape(shape)
-	when CP::Shape::Segment
+	when Segment
 		drawSegmentShape(shape)
-	when CP::Shape::Poly
+	when Poly
 		drawPolyShape(shape)
 	else
 		puts "Bad shape in drawObject()."
 	end
+end
+
+def make_wall( a, b, options = { :thickness => 0, :e => 1.0, :u => 1.0 } )
+	
+	shape = Segment.new($static_body, a, b, options[:thickness])
+	shape.e, shape.u = options[:e], options[:u]
+	$space.add_static_shape(shape)
+	
+	return nil
 end
 
 def display()
@@ -98,12 +114,12 @@ def main
 	
 	Rubygame.init()
 	
-	$screen = Rubygame::Screen.set_mode([640,480], 16)
+	$screen = Screen.set_mode([640,480], 16)
 	$screen.title = "Press 1-7 to switch demos"
 	
 	#initGL()
 
-	keys = [K_1, K_2, K_3, K_4]#, K_5, K_6, K_7]
+	keys = [K_1, K_2, K_3, K_4, K_5, K_6, K_7]
 	
 	# Main loop
 	catch :quit do 
