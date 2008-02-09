@@ -105,6 +105,12 @@ module CP
     
     # Test if the BBs intersect.
     def intersect?(other); end
+		
+    # Test if the other BB is completely inside the BB.
+    def contain_bb?(other); end
+		
+    # Test if the Vec2 is completely inside the BB.
+    def contain_vect?(vect); end
     
     # Clamps _v_ to _self_.
     def clamp_vect(v); end
