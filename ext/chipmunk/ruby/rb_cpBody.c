@@ -200,6 +200,13 @@ rb_cpBodyUpdatePosition(VALUE self, VALUE dt)
 	return Qnil;
 }
 
+static VALUE
+rb_cpBodySlew(VALUE self, VALUE pos, VALUE dt)
+{
+	cpBodySlew(BODY(self), *VGET(pos), NUM2DBL(dt));
+	return Qnil;
+}
+
 
 void
 Init_cpBody(void)
@@ -236,4 +243,5 @@ Init_cpBody(void)
 	
 	rb_define_method(c_cpBody, "update_velocity", rb_cpBodyUpdateVelocity, 3);
 	rb_define_method(c_cpBody, "update_position", rb_cpBodyUpdatePosition, 1);
+	rb_define_method(c_cpBody, "slew", rb_cpBodySlew, 2);
 }

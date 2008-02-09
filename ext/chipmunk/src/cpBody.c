@@ -92,7 +92,7 @@ cpBodySetAngle(cpBody *body, cpFloat a)
 void
 cpBodySlew(cpBody *body, cpVect pos, cpFloat dt)
 {
-	cpVect delta = cpvsub(body->p, pos);
+	cpVect delta = cpvsub(pos,body->p);
 	body->v = cpvmult(delta, 1.0/dt);
 }
 
