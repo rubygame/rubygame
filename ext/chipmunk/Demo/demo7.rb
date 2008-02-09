@@ -34,15 +34,6 @@ def make_box(x,y)
 	
 end
 
-def make_wall( a, b, options = { :thickness => 0, :e => 1.0, :u => 1.0 } )
-	
-	shape = Segment.new($static_body, a, b, options[:thickness])
-	shape.e, shape.u = options[:e], options[:u]
-	$space.add_static_shape(shape)
-	
-	return nil
-end
-
 def demo7_init
 	
 	$static_body = Body.new( INFINITY, INFINITY )
