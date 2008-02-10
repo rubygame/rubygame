@@ -29,8 +29,10 @@ module CP
     
     def initialize(x, y); end
     
-    # Return the vector as an array.
+    # Return the vector as an Array, [x,y].
     def to_a; end
+    
+    alias :to_ary :to_a
     
     def to_s; end
     
@@ -61,13 +63,14 @@ module CP
     # Length of the vector.
     def length(vect); end
 
-    # Squared ength of the vector.
-    def lengthsd(vect); end
+    # Squared length of the vector. (Faster than #length if you just
+    # need to compare lengths.)
+    def lengthsq(vect); end
 
-    # Normalize a vector.		
+    # Normalize the vector. Returns a new vector with a length of 1.
     def normalize; end
     
-    # Normalize a vector in place.		
+    # Normalize the vector in place. Sets the vector's length to 1.
     def normalize!; end
     
     # Get the perpendicular vector.
@@ -103,19 +106,21 @@ module CP
     # Left, bottom, right and top.
     def initialize(l, b, r, t); end
     
-    # Test if the BBs intersect.
+    # Returns true if the BBs intersect.
     def intersect?(other); end
-		
-    # Test if the other BB is completely inside the BB.
+    
+    # Returns true if the other BB is completely inside the BB.
     def contain_bb?(other); end
-		
-    # Test if the Vec2 is completely inside the BB.
+    
+    # Returns true if the Vect is completely inside the BB.
     def contain_vect?(vect); end
     
-    # Clamps _v_ to _self_.
+    # Clamps _v_ to _self_. Returns the point inside the BB
+    # nearest to the given vector.
     def clamp_vect(v); end
     
-    # Wraps _v_ to _self_.
+    # Wraps _v_ to _self_. For example, a vector that goes off
+    # the right side of the BB will wrap around to the left side.
     def wrap_vect(v); end
     
     def to_s; end
@@ -150,10 +155,10 @@ module CP
     # Rotation vector.
     attr_reader :rot
     
-    # Covnvert body local coordinates to world space coordinates.
+    # Convert body local coordinates to world space coordinates.
     def local2world(v); end
     
-    # Covnvert world space coordinates to body local coordinates.
+    # Convert world space coordinates to body local coordinates.
     def world2local(v); end
     
     # Create a body with the given mass and moment of inertia.
@@ -175,14 +180,32 @@ module CP
 
     # Integrate the position of the body for the given time
     # step. (Uses Euler integration)
-    def update_velocity(gravity, damping, dt); end
+    def update_position(dt); end
+
+    # Set the body's velocity such that it will be at the given position
+    # after the given time step.
+    def slew(pos, dt); end
   end
   
   # Collision shapes module.
   module Shape
+
+    # Reset the ID counter for Shapes. Calling this method before
+    # populating a Space with Shapes helps guarantee the simulation
+    # will run the same way every time.
+    # 
+    # Each new Shape is given a numerical ID, starting with 0 for
+    # the first shape, and going up by one for each new Shape. This
+    # method resets the counter back to 0.
+    #
+    def Shape.reset_id_counter; end
+    
     # The CP::Body the shape is connected to.
     attr_accessor :body
     
+    # The bounding box (CP::BB) of the shape.
+    attr_reader :bb
+
     # The collision type for the shape. The actual collision type used
     # is the object id of the object you pass as the collision type,
     # meaning you can use any Ruby object as an identifier.
@@ -195,10 +218,17 @@ module CP
     # A 32bit bitmask to set which layers the shape should collide in.
     attr_accessor :layers
     
-    # The elasticity of the shape.
+    # The elasticity of the shape (how bouncy it is).
+    #
+    # 0.0 means no bounce (total energy loss).
+    # 1.0 means full bounce (no energy loss).
+    # > 1.0 means the object bounces higher each time (not realistic).
     attr_accessor :e
     
-    # The frictional coefficient of the shape.
+    # The frictional coefficient of the shape (how rough it is).
+    # 
+    # 0.0 means no friction (smooth, slides along surfaces).
+    # Larger values have more friction.
     attr_accessor :u
     
     # The surface velocity is used by the friction calculations.
@@ -206,18 +236,43 @@ module CP
     # Interpreted in world space.
     attr_accessor :surface_v
     
-    # Circle collision shape.
+    # Update the Shape's bounding box.
+    # Should be called if you modify the Shape.
+    def cache_bb; end
+    
+    # Circle collision shape. The fastest-to-compute collision shape.
     class Circle
       include Shape
+
+      # The center of the Circle, in body local coordinates.
+      attr_reader :c
+
+      # The radius of the Circle.
+      attr_reader :r
+
+      # The center of the Circle, in world coordinates.
+      attr_reader :tc
       
       # Create a circle collision shape attached to the given body at
       # the given offset with the given radius.
       def initialize(body, radius, offset); end
     end
     
-    # Segment collision shape.
+    # Line segment collision shape.
     class Segment
       include Shape
+      
+      # The first point of the Segment, in body local coordinates.
+      attr_reader :a
+      
+      # The second point of the Segment, in body local coordinates.
+      attr_reader :b
+      
+      # The first point of the Segment, in world coordinates.
+      attr_reader :ta
+      
+      # The second point of the Segment, in world coordinates.
+      attr_reader :tb
       
       # Create a segment collision shape attached to the given body
       # with endpoints _a_ and _b_.
@@ -227,9 +282,12 @@ module CP
     # Poly collision shape.
     class Poly
       include Shape
-			
-      # Array of vectors, the vertices of the poly. Read-only.
+      
+      # The vertices of the Poly, in body local coordinates.
       attr_reader :verts
+      
+      # The vertices of the Poly, in world coordinates.
+      attr_reader :tverts
       
       # Create a poly collision shape attached to the given body at
       # the given offset with the given vertexes. _verts_ must be an
@@ -264,9 +322,9 @@ module CP
     
     # One body has a pivot that connects to a linear groove in the other.
     class Groove
-    	# _grv_a_ and _grv_b_ define the groove on _body1_ and _anchr2_
-    	# defines the anchor on _body2_. All coordinates in body local coordinates.
-    	def initialize(body1, body2, grv_a, grv_b, anchr2); end
+      # _grv_a_ and _grv_b_ define the groove on _body1_ and _anchr2_
+      # defines the anchor on _body2_. All coordinates in body local coordinates.
+      def initialize(body1, body2, grv_a, grv_b, anchr2); end
     end
   end
   
