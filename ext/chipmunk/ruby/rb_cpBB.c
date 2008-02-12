@@ -46,6 +46,19 @@ rb_cpBBInitialize(VALUE self, VALUE l, VALUE b, VALUE r, VALUE t)
 }
 
 static VALUE
+rb_cpBBEquality(VALUE self, VALUE bb)
+{
+	cpBB *a = BBGET(self);
+	cpBB *b = BBGET(bb);
+
+	if(a->l == b->l && a->b == b->b && a->r == b->r && a->t == b->t) {
+		return Qtrue;
+	} else {
+		return Qfalse;
+	}
+}
+
+static VALUE
 rb_cpBBintersects(VALUE self, VALUE other)
 {
 	int bool = cpBBintersects(*BBGET(self), *BBGET(other));
@@ -131,6 +144,55 @@ rb_cpBBSetT(VALUE self, VALUE val)
 }
 
 static VALUE
+rb_cpBBGetHeight(VALUE self)
+{
+	return rb_float_new( cpBBGetHeight(*BBGET(self)) );
+}
+
+static VALUE
+rb_cpBBGetWidth(VALUE self)
+{
+	return rb_float_new( cpBBGetWidth(*BBGET(self)) );
+}
+
+static VALUE
+rb_cpBBGetCenter(VALUE self)
+{
+	return VNEW( cpBBGetCenter(*BBGET(self)) );
+}
+
+static VALUE
+rb_cpBBMove(VALUE self, VALUE v)
+{
+	return BBNEW( cpBBMove(*BBGET(self), *VGET(v)) );
+}
+
+static VALUE
+rb_cpBBClamp(VALUE self, VALUE bb)
+{
+	return BBNEW( cpBBClamp(*BBGET(self), *BBGET(bb)) );
+}
+
+static VALUE
+rb_cpBBGrow(VALUE self, VALUE d)
+{
+	return BBNEW( cpBBGrow(*BBGET(self), NUM2DBL(d)) );
+}
+
+static VALUE
+rb_cpBBUnion(VALUE self, VALUE bb)
+{
+	return BBNEW( cpBBUnion(*BBGET(self), *BBGET(bb)) );
+}
+
+static VALUE
+rb_cpBBIntersection(VALUE self, VALUE bb)
+{
+	return BBNEW( cpBBIntersection(*BBGET(self), *BBGET(bb)) );
+}
+
+
+static VALUE
 rb_cpBBToString(VALUE self)
 {
 	char str[256];
@@ -147,6 +209,8 @@ Init_cpBB(void)
 	c_cpBB = rb_define_class_under(m_Chipmunk, "BB", rb_cObject);
 	rb_define_alloc_func(c_cpBB, rb_cpBBAlloc);
 	rb_define_method(c_cpBB, "initialize", rb_cpBBInitialize, 4);
+
+	rb_define_method(c_cpBB, "==", rb_cpBBEquality, 1);
 	
 	rb_define_method(c_cpBB, "l", rb_cpBBGetL, 0);
 	rb_define_method(c_cpBB, "b", rb_cpBBGetB, 0);
@@ -158,12 +222,22 @@ Init_cpBB(void)
 	rb_define_method(c_cpBB, "r=", rb_cpBBSetR, 1);
 	rb_define_method(c_cpBB, "t=", rb_cpBBSetT, 1);
 
+	rb_define_method(c_cpBB, "height", rb_cpBBGetHeight, 0);
+	rb_define_method(c_cpBB, "width",  rb_cpBBGetWidth,  0);
+	rb_define_method(c_cpBB, "center", rb_cpBBGetCenter, 0);
+
 	rb_define_method(c_cpBB, "intersect?", rb_cpBBintersects, 1);
 	rb_define_method(c_cpBB, "contain_bb?", rb_cpBBcontainsBB, 1);
 	rb_define_method(c_cpBB, "contain_vect?", rb_cpBBcontainsVect, 1);
 
 	rb_define_method(c_cpBB, "clamp_vect", rb_cpBBClampVect, 1);
 	rb_define_method(c_cpBB, "wrap_vect", rb_cpBBWrapVect, 1);
+
+	rb_define_method(c_cpBB, "move", rb_cpBBMove, 1);
+	rb_define_method(c_cpBB, "clamp", rb_cpBBClamp, 1);
+	rb_define_method(c_cpBB, "grow", rb_cpBBGrow, 1);
+	rb_define_method(c_cpBB, "union", rb_cpBBUnion, 1);
+	rb_define_method(c_cpBB, "intersection", rb_cpBBIntersection, 1);
 	
 	rb_define_method(c_cpBB, "to_s", rb_cpBBToString, 0);
 }

@@ -51,6 +51,14 @@ CONTACTNEW(cpContact * v)
 	return Data_Wrap_Struct(c_cpContact, NULL, &free, new_v);
 }
 
+static inline VALUE
+BBNEW(cpBB b)
+{
+	cpBB *bb = malloc(sizeof(cpBB));
+	*bb = b;
+	return Data_Wrap_Struct(c_cpBB, NULL, free, bb);
+}
+
 
 //static inline VALUE
 //VWRAP(cpVect *v, VALUE parent)
