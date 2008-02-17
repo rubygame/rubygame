@@ -28,7 +28,12 @@ cpBBClampVect(const cpBB bb, const cpVect v)
 {
 	cpFloat x = cpfmin(cpfmax(bb.l, v.x), bb.r);
 	cpFloat y = cpfmin(cpfmax(bb.b, v.y), bb.t);
-	return cpv(x, y);
+
+	if( v.p ) {
+		return cpp(x, y);
+	} else {
+		return cpv(x, y);
+	}
 }
 
 cpVect
@@ -42,7 +47,12 @@ cpBBWrapVect(const cpBB bb, const cpVect v)
 	cpFloat mody = fmodf(v.y - bb.b, iy);
 	cpFloat y = (mody > 0.0f) ? mody : mody + iy;
 	
-	return cpv(x + bb.l, y + bb.b);
+	if( v.p ) {
+		return cpp(x + bb.l, y + bb.b);
+	} else {
+		return cpv(x + bb.l, y + bb.b);
+	}
+	
 }
 
 /* Return the height of the given BB from bottom to top. */
@@ -63,7 +73,7 @@ cpBBGetWidth(const cpBB bb)
 cpVect
 cpBBGetCenter(const cpBB bb)
 {
-	return cpv( (bb.l + bb.r)*0.5, (bb.b + bb.t)*0.5 );
+	return cpp( (bb.l + bb.r)*0.5, (bb.b + bb.t)*0.5 );
 }
 
 /* Return a new BB which is the given BB moved by V */

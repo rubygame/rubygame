@@ -127,10 +127,14 @@ cpPinJointInit(cpPinJoint *joint, cpBody *a, cpBody *b, cpVect anchr1, cpVect an
 	
 	joint->anchr1 = anchr1;
 	joint->anchr2 = anchr2;
+
+	/* Ensure both anchors are true points */
+	joint->anchr1.p = 1;
+	joint->anchr2.p = 1;
 	
-	cpVect p1 = cpvadd(a->p, cpvrotate(anchr1, a->rot));
-	cpVect p2 = cpvadd(b->p, cpvrotate(anchr2, b->rot));
-	joint->dist = cpvlength(cpvsub(p2, p1));
+	cpVect p1 = cppadd(a->p, cpvrotate(anchr1, a->rot));
+	cpVect p2 = cppadd(b->p, cpvrotate(anchr2, b->rot));
+	joint->dist = cpvlength(cppsub(p2, p1));
 
 	joint->jnAcc = 0.0;
 	
@@ -247,6 +251,11 @@ cpSlideJointInit(cpSlideJoint *joint, cpBody *a, cpBody *b, cpVect anchr1, cpVec
 	
 	joint->anchr1 = anchr1;
 	joint->anchr2 = anchr2;
+
+	/* Ensure both anchors are true points */
+	joint->anchr1.p = 1;
+	joint->anchr2.p = 1;
+
 	joint->min = min;
 	joint->max = max;
 	
@@ -361,8 +370,8 @@ cpPivotJointInit(cpPivotJoint *joint, cpBody *a, cpBody *b, cpVect pivot)
 	joint->joint.a = a;
 	joint->joint.b = b;
 	
-	joint->anchr1 = cpvunrotate(cpvsub(pivot, a->p), a->rot);
-	joint->anchr2 = cpvunrotate(cpvsub(pivot, b->p), b->rot);
+	joint->anchr1 = cppunrotate(cpvsub(pivot, a->p), a->rot);
+	joint->anchr2 = cppunrotate(cpvsub(pivot, b->p), b->rot);
 	
 	joint->jAcc = cpvzero;
 	
@@ -521,6 +530,11 @@ cpGrooveJointInit(cpGrooveJoint *joint, cpBody *a, cpBody *b, cpVect groove_a, c
 	joint->grv_b = groove_b;
 	joint->grv_n = cpvperp(cpvnormalize(cpvsub(groove_b, groove_a)));
 	joint->anchr2 = anchr2;
+
+	/* Ensure grooves and anchor are true points */
+	joint->grv_a.p = 1;
+	joint->grv_b.p = 1;
+	joint->anchr2.p = 1;
 	
 	joint->jAcc = cpvzero;
 	

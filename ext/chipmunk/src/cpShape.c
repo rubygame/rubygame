@@ -99,7 +99,7 @@ cpCircleShapeCacheData(cpShape *shape, cpVect p, cpVect rot)
 {
 	cpCircleShape *circle = (cpCircleShape *)shape;
 	
-	circle->tc = cpvadd(p, cpvrotate(circle->c, rot));
+	circle->tc = cppadd(p, cpprotate(circle->c, rot));
 	return bbFromCircle(circle->tc, circle->r);
 }
 
@@ -107,6 +107,10 @@ cpCircleShape *
 cpCircleShapeInit(cpCircleShape *circle, cpBody *body, cpFloat radius, cpVect offset)
 {
 	circle->c = offset;
+
+	/* Ensure center is a true point */
+	circle->c.p = 1;
+
 	circle->r = radius;
 	
 	circle->shape.cacheData = &cpCircleShapeCacheData;
@@ -133,8 +137,8 @@ cpSegmentShapeCacheData(cpShape *shape, cpVect p, cpVect rot)
 {
 	cpSegmentShape *seg = (cpSegmentShape *)shape;
 	
-	seg->ta = cpvadd(p, cpvrotate(seg->a, rot));
-	seg->tb = cpvadd(p, cpvrotate(seg->b, rot));
+	seg->ta = cppadd(p, cpprotate(seg->a, rot));
+	seg->tb = cppadd(p, cpprotate(seg->b, rot));
 	seg->tn = cpvrotate(seg->n, rot);
 	
 	cpFloat l,r,s,t;
@@ -164,6 +168,11 @@ cpSegmentShapeInit(cpSegmentShape *seg, cpBody *body, cpVect a, cpVect b, cpFloa
 {
 	seg->a = a;
 	seg->b = b;
+
+	/* Ensure both are true points */
+	seg->a.p = 1;
+	seg->b.p = 1;
+
 	seg->n = cpvperp(cpvnormalize(cpvsub(b, a)));
 	
 	seg->r = r;

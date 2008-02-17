@@ -37,7 +37,7 @@ cpBodyInit(cpBody *body, cpFloat m, cpFloat i)
 	cpBodySetMass(body, m);
 	cpBodySetMoment(body, i);
 
-	body->p = cpvzero;
+	body->p = cppzero;
 	body->v = cpvzero;
 	body->f = cpvzero;
 	
@@ -106,7 +106,7 @@ cpBodyUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt)
 void
 cpBodyUpdatePosition(cpBody *body, cpFloat dt)
 {
-	body->p = cpvadd(body->p, cpvmult(cpvadd(body->v, body->v_bias), dt));
+	body->p = cppadd(body->p, cpvmult(cpvadd(body->v, body->v_bias), dt));
 	cpBodySetAngle(body, body->a + (body->w + body->w_bias)*dt);
 	
 	body->v_bias = cpvzero;
@@ -134,7 +134,7 @@ cpDampedSpring(cpBody *a, cpBody *b, cpVect anchr1, cpVect anchr2, cpFloat rlen,
 	cpVect r1 = cpvrotate(anchr1, a->rot);
 	cpVect r2 = cpvrotate(anchr2, b->rot);
 	
-	cpVect delta = cpvsub(cpvadd(b->p, r2), cpvadd(a->p, r1));
+	cpVect delta = cpvsub(cppadd(b->p, r2), cppadd(a->p, r1));
 	cpFloat dist = cpvlength(delta);
 	cpVect n = dist ? cpvmult(delta, 1.0f/dist) : cpvzero;
 	
