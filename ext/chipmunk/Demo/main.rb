@@ -137,6 +137,7 @@ def main
 					when *keys
 						method($destroy_funcs[$demo_index]).call()
 						$demo_index = keys.index(event.key)
+						Shape.reset_id_counter
 						method($init_funcs[$demo_index]).call()
 					end
 				end
