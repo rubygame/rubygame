@@ -79,6 +79,12 @@ cpvmult(const cpVect v, const cpFloat s)
 	return cpv(v.x*s, v.y*s);
 }
 
+static inline cpVect
+cppmult(const cpVect v, const cpFloat s)
+{
+	return cpp(v.x*s, v.y*s);
+}
+
 static inline cpFloat
 cpvdot(const cpVect v1, const cpVect v2)
 {
