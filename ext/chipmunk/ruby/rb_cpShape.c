@@ -329,6 +329,29 @@ rb_cpPolyTVerts(VALUE self)
 	return verts;
 }
 
+static VALUE
+rb_cpPolySetVerts(VALUE self, VALUE arr, VALUE offset)
+{
+	cpPolyShape *poly = (cpPolyShape *)SHAPE(self);
+	
+	Check_Type(arr, T_ARRAY);
+	int numVerts = RARRAY(arr)->len;
+	cpVect verts[numVerts];
+	
+	for(int i=0; i<numVerts; i++)
+		verts[i] = *VGET(RARRAY(arr)->ptr[i]);
+
+	free(poly->verts);
+	free(poly->tVerts);
+	
+	free(poly->axes);
+	free(poly->tAxes);
+
+	cpPolyShapeSetVerts(poly, numVerts, verts, *VGET(offset));
+
+	return self;
+}
+
 void
 Init_cpShape(void)
 {
@@ -388,5 +411,6 @@ Init_cpShape(void)
 	rb_define_alloc_func(c_cpPolyShape, rb_cpPolyAlloc);
 	rb_define_method(c_cpPolyShape, "initialize", rb_cpPolyInitialize, 3);
 	rb_define_method(c_cpPolyShape, "verts", rb_cpPolyVerts, 0);
+	rb_define_method(c_cpPolyShape, "set_verts", rb_cpPolySetVerts, 2);
 	rb_define_method(c_cpPolyShape, "tverts", rb_cpPolyTVerts, 0);
 }

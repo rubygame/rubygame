@@ -293,6 +293,11 @@ module CP
       # the given offset with the given vertexes. _verts_ must be an
       # Array of CP::Vect with a counterclockwise winding.
       def initialize(body, verts, offset); end
+      
+      # Set the verts of the Poly. Use with caution! Sudden, large changes
+      # could cause undesirable results (such as interpenetration or falling
+      # through other shapes).
+      def set_verts(verts, offset); end
     end
   end
   

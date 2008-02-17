@@ -94,8 +94,8 @@ cpPolyShapeDestroy(cpShape *shape)
 }
 
 cpPolyShape *
-cpPolyShapeInit(cpPolyShape *poly, cpBody *body, int numVerts, cpVect *verts, cpVect offset)
-{	
+cpPolyShapeSetVerts(cpPolyShape *poly, int numVerts, cpVect *verts, cpVect offset)
+{
 	poly->numVerts = numVerts;
 
 	poly->verts = (cpVect *)calloc(numVerts, sizeof(cpVect));
@@ -112,6 +112,12 @@ cpPolyShapeInit(cpPolyShape *poly, cpBody *body, int numVerts, cpVect *verts, cp
 		poly->axes[i].n = n;
 		poly->axes[i].d = cpvdot(n, a);
 	}
+}
+
+cpPolyShape *
+cpPolyShapeInit(cpPolyShape *poly, cpBody *body, int numVerts, cpVect *verts, cpVect offset)
+{	
+	cpPolyShapeSetVerts(poly, numVerts, verts, offset);
 	
 	poly->shape.cacheData = &cpPolyShapeCacheData;
 	poly->shape.destroy = &cpPolyShapeDestroy;
