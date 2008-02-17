@@ -62,6 +62,12 @@ rb_cpVectGetY(VALUE self)
 }
 
 static VALUE
+rb_cpVectGetP(VALUE self)
+{
+	return VGET(self)->p ? Qtrue : Qfalse;
+}
+
+static VALUE
 rb_cpVectSetX(VALUE self, VALUE x)
 {
 	VGET(self)->x = NUM2DBL(x);
@@ -76,12 +82,19 @@ rb_cpVectSetY(VALUE self, VALUE y)
 }
 
 static VALUE
+rb_cpVectSetP(VALUE self, VALUE p)
+{
+	VGET(self)->p = RTEST(p);
+	return self;
+}
+
+static VALUE
 rb_cpVectToString(VALUE self)
 {
 	char str[256];
 	cpVect *v = VGET(self);
 	
-	sprintf(str, "(% .3f, % .3f)", v->x, v->y);
+	sprintf(str, "%s(% .3f, % .3f)", (v->p ? "P" : "V"), v->x, v->y);
 	
 	return rb_str_new2(str);
 }
@@ -211,6 +224,12 @@ rb_vec2(VALUE self, VALUE x, VALUE y)
 	return VNEW(cpv(NUM2DBL(x), NUM2DBL(y)));
 }
 
+static VALUE
+rb_point(VALUE self, VALUE x, VALUE y)
+{
+	return VNEW(cpp(NUM2DBL(x), NUM2DBL(y)));
+}
+
 void
 Init_cpVect(void)
 {
@@ -222,8 +241,10 @@ Init_cpVect(void)
 	
 	rb_define_method(c_cpVect, "x", rb_cpVectGetX, 0);
 	rb_define_method(c_cpVect, "y", rb_cpVectGetY, 0);
+	rb_define_method(c_cpVect, "p", rb_cpVectGetP, 0);
 	rb_define_method(c_cpVect, "x=", rb_cpVectSetX, 1);
 	rb_define_method(c_cpVect, "y=", rb_cpVectSetY, 1);
+	rb_define_method(c_cpVect, "p=", rb_cpVectSetP, 1);
 	
 	rb_define_method(c_cpVect, "to_s", rb_cpVectToString, 0);
 	rb_define_method(c_cpVect, "to_a", rb_cpVectToArray, 0);
@@ -248,4 +269,5 @@ Init_cpVect(void)
 	rb_define_method(c_cpVect, "near?", rb_cpVectNear, 2);
 		
 	rb_define_global_function("vec2", rb_vec2, 2);
+	rb_define_global_function("point", rb_point, 2);
 }

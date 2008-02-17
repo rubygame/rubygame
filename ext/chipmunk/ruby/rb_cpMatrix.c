@@ -109,7 +109,14 @@ rb_cpMatrixMultiply(VALUE self, VALUE other)
 	}
 	else if( c_cpVect == oklass ) {
 		cpVect *v = VGET(other);
-		return VNEW( cpMmultv(*a, *v) );
+
+		/* If it's marked as a "point", use point transform,
+		 * otherwise vector transform.  */
+		if( v->p ){
+			return VNEW( cpMmultp(*a, *v) );
+		} else {
+			return VNEW( cpMmultv(*a, *v) );
+		}
 	} else {
 		rb_raise( rb_eTypeError, "wrong argument type %s (expected CP::Matrix or CP::Vect)",
 		          rb_obj_classname(other) );
