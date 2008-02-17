@@ -52,6 +52,7 @@ cpfmin(cpFloat a, cpFloat b)
 #endif
 
 #include "cpVect.h"
+#include "cpMatrix.h"
 #include "cpBB.h"
 #include "cpBody.h"
 #include "cpArray.h"
