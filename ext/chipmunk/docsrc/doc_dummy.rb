@@ -182,9 +182,13 @@ module CP
     # step. (Uses Euler integration)
     def update_position(dt); end
 
-    # Set the body's velocity such that it will be at the given position
-    # after the given time step.
+    # Set the body's velocity such that it will be at the 
+    # given position after the given time step.
     def slew(pos, dt); end
+    
+    # Set the body's angular velocity such that it will be at the
+    # given angle after the given time step.
+    def rot_slew(angle, dt); end
   end
   
   # Collision shapes module.

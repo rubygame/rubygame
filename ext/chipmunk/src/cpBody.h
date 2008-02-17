@@ -49,8 +49,13 @@ void cpBodySetMass(cpBody *body, cpFloat m);
 void cpBodySetMoment(cpBody *body, cpFloat i);
 void cpBodySetAngle(cpBody *body, cpFloat a);
 
-// Modify the velocity of an object so that it will 
+// Modify the velocity of an object so that it will be at the
+//  given position after the given timestep.
 void cpBodySlew(cpBody *body, cpVect pos, cpFloat dt);
+
+// Modify the angular velocity of an object so that it will be at the
+// given rotation after the given timestep.
+void cpBodyRotSlew(cpBody *body, cpFloat angle, cpFloat dt);
 
 // Integration functions.
 void cpBodyUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt);

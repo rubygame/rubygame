@@ -207,6 +207,13 @@ rb_cpBodySlew(VALUE self, VALUE pos, VALUE dt)
 	return Qnil;
 }
 
+static VALUE
+rb_cpBodyRotSlew(VALUE self, VALUE angle, VALUE dt)
+{
+	cpBodyRotSlew(BODY(self), NUM2DBL(angle), NUM2DBL(dt));
+	return Qnil;
+}
+
 
 void
 Init_cpBody(void)
@@ -243,5 +250,7 @@ Init_cpBody(void)
 	
 	rb_define_method(c_cpBody, "update_velocity", rb_cpBodyUpdateVelocity, 3);
 	rb_define_method(c_cpBody, "update_position", rb_cpBodyUpdatePosition, 1);
+
 	rb_define_method(c_cpBody, "slew", rb_cpBodySlew, 2);
+	rb_define_method(c_cpBody, "rot_slew", rb_cpBodyRotSlew, 2);
 }

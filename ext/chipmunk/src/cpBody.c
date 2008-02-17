@@ -97,6 +97,13 @@ cpBodySlew(cpBody *body, cpVect pos, cpFloat dt)
 }
 
 void
+cpBodyRotSlew(cpBody *body, cpFloat angle, cpFloat dt)
+{
+	cpFloat delta = angle - body->a;
+	body->w = delta / dt;
+}
+
+void
 cpBodyUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt)
 {
 	body->v = cpvadd(cpvmult(body->v, damping), cpvmult(cpvadd(gravity, cpvmult(body->f, body->m_inv)), dt));
