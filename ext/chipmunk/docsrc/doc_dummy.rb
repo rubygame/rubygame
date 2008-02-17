@@ -105,6 +105,10 @@ module CP
     
     # Left, bottom, right and top.
     def initialize(l, b, r, t); end
+
+    def height; end
+    def width; end
+    def center; end
     
     # Returns true if the BBs intersect.
     def intersect?(other); end
@@ -122,6 +126,26 @@ module CP
     # Wraps _v_ to _self_. For example, a vector that goes off
     # the right side of the BB will wrap around to the left side.
     def wrap_vect(v); end
+    
+    # Move the BB by the given vector.
+    def move(v); end
+    
+    # Return a new BB which is the given BB moved to be inside this
+    # BB. If the given BB is too large to fit (on either X or Y), it
+    # will instead be centered with this BB, on that axis.
+    def clamp(bb); end
+    
+    # Return a new BB which is this BB expanded by D in each direction.
+    # The new width (and height) will be D*2 greater than the old.
+    def grow(d); end
+    
+    # Return a new BB which surrounds both this BB and the given BB.
+    def union(bb); end
+    
+    # Return a new BB which is the overlapping area of this BB and the
+    # given BB. If the two BBs do not overlap, the new BB will be
+    # {0,0,0,0}.
+    def intersection; end
     
     def to_s; end
   end
