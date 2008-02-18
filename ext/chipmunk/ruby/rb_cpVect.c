@@ -219,7 +219,7 @@ rb_cpVectNear(VALUE self, VALUE v, VALUE d)
 }
 
 static VALUE
-rb_vec2(VALUE self, VALUE x, VALUE y)
+rb_vect(VALUE self, VALUE x, VALUE y)
 {
 	return VNEW(cpv(NUM2DBL(x), NUM2DBL(y)));
 }
@@ -233,7 +233,11 @@ rb_point(VALUE self, VALUE x, VALUE y)
 void
 Init_cpVect(void)
 {
-	c_cpVect = rb_define_class_under(m_Chipmunk, "Vec2", rb_cObject);
+	c_cpVect = rb_define_class_under(m_Chipmunk, "Vect", rb_cObject);
+
+	/* Make an alternate name, equivalent to: CP::Vec2 = CP::Vect */
+	rb_const_set(m_Chipmunk, rb_intern("Vec2"), c_cpVect);
+
 	rb_define_singleton_method(c_cpBB, "for_angle", rb_cpVectForAngle, 1);
 	
 	rb_define_alloc_func(c_cpVect, rb_cpVectAlloc);
@@ -268,6 +272,7 @@ Init_cpVect(void)
 	rb_define_method(c_cpVect, "unrotate", rb_cpVectUnRotate, 1);
 	rb_define_method(c_cpVect, "near?", rb_cpVectNear, 2);
 		
-	rb_define_global_function("vec2", rb_vec2, 2);
+	rb_define_global_function("vec2", rb_vect, 2);
+	rb_define_global_function("vect", rb_vect, 2);
 	rb_define_global_function("point", rb_point, 2);
 }
