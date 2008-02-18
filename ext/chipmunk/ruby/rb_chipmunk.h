@@ -83,20 +83,20 @@ static inline type *\
 func_name(VALUE self)\
 {\
 	if(!rb_obj_is_kind_of(self, klass))\
-		rb_raise(rb_eTypeError, "wrong argument type %s (expected CP::klass_name)", rb_obj_classname(self));\
+		rb_raise(rb_eTypeError, "wrong argument type %s (expected CP::%s)", rb_obj_classname(self), klass_name ); \
 	type *ptr;\
 	Data_Get_Struct(self, type, ptr);\
 	return ptr;\
 }\
 
-GETTER_TEMPLATE(VGET , c_cpVect , Vec2 , cpVect )
-GETTER_TEMPLATE(BBGET, c_cpBB   , BB   , cpBB   )
-GETTER_TEMPLATE(BODY , c_cpBody , Body , cpBody )
-GETTER_TEMPLATE(SHAPE, m_cpShape, Shape, cpShape)
-GETTER_TEMPLATE(JOINT, m_cpJoint, Joint, cpJoint)
-GETTER_TEMPLATE(SPACE, c_cpSpace, Space, cpSpace)
-GETTER_TEMPLATE(CONTACT, c_cpContact, Contact, cpContact)
-GETTER_TEMPLATE(MGET , c_cpMatrix , Matrix , cpMatrix )
+GETTER_TEMPLATE( VGET,    c_cpVect,    "Vect",    cpVect    )
+GETTER_TEMPLATE( BBGET,   c_cpBB,      "BB",      cpBB      )
+GETTER_TEMPLATE( BODY,    c_cpBody,    "Body" ,   cpBody    )
+GETTER_TEMPLATE( SHAPE,   m_cpShape,   "Shape",   cpShape   )
+GETTER_TEMPLATE( JOINT,   m_cpJoint,   "Joint",   cpJoint   )
+GETTER_TEMPLATE( SPACE,   c_cpSpace,   "Space",   cpSpace   )
+GETTER_TEMPLATE( CONTACT, c_cpContact, "Contact", cpContact )
+GETTER_TEMPLATE( MGET,    c_cpMatrix,  "Matrix" , cpMatrix  )
 
 void Init_chipmunk(void);
 void Init_cpVect();
