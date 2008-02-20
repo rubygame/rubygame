@@ -109,3 +109,9 @@ class TickTrigger
 		event.kind_of?( Rubygame::TickEvent )
 	end
 end
+
+class YesTrigger
+	def match?( event )
+		true
+	end
+end
