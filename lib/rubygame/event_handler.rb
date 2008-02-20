@@ -11,7 +11,6 @@ class EventHandler
 		instance_eval(&block) if block_given?
 	end
 
-	# For testing purposes. Remove for production?
 	attr_accessor :hooks
 	
 	#  call-seq:
@@ -55,23 +54,6 @@ class EventHandler
 	end
 	
 	#  call-seq:
-	#    remove_hook( *hooks )  ->  removed_hooks
-	# 
-	#  Remove one or more hooks from the EventHandler. Safe to use even
-	#  if the EventHandler does not include some of the given hooks.
-	# 
-	#  *hooks::   the hooks to remove. (Hooks, required) 
-	# 
-	#  Returns::  the hooks that were found and removed by this operation.
-	#             (Array of Hooks)
-	# 
-	def remove_hook( *hooks )
-		overlap = @hooks & hooks
-		@hooks -= hooks
-		return overlap
-	end
-
-	#  call-seq:
 	#    handle( event )  ->  nil
 	#  
 	#  Triggers every hook in the stack which matches the given event.
@@ -96,6 +78,5 @@ class EventHandler
 		end
 			
 		return nil
-	end
-
+	end	
 end
