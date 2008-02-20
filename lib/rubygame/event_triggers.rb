@@ -67,6 +67,16 @@ class KeyPressTrigger
 	end
 end
 
+class KindOfTrigger
+	def initialize( klass )
+		@klass = klass
+	end
+	
+	def match?( event )
+		event.kind_of?( @klass )
+	end
+end
+
 class MouseClickTrigger
 	def initialize( button=:any, bounds=:anywhere )
 		@button = button
