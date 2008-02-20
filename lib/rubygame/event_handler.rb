@@ -55,18 +55,20 @@ class EventHandler
 	end
 	
 	#  call-seq:
-	#    remove_hook( *hooks )  ->  hook
+	#    remove_hook( *hooks )  ->  removed_hooks
 	# 
-	#  Remove a hook from the EventHandler, if that hook exists.
-	#  If the EventHandler doesn't have that hook, this method will do nothing.
+	#  Remove one or more hooks from the EventHandler. Safe to use even
+	#  if the EventHandler does not include some of the given hooks.
 	# 
 	#  *hooks::   the hooks to remove. (Hooks, required) 
 	# 
-	#  Returns::  the hooks that were removed. (Array of Hooks)
+	#  Returns::  the hooks that were found and removed by this operation.
+	#             (Array of Hooks)
 	# 
 	def remove_hook( *hooks )
+		overlap = @hooks & hooks
 		@hooks -= hooks
-		return hooks
+		return overlap
 	end
 
 	#  call-seq:
