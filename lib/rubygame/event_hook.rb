@@ -1,5 +1,5 @@
-require 'rubygame/gl/event_triggers'
-require 'rubygame/gl/event_actions'
+require 'rubygame/event_triggers'
+require 'rubygame/event_actions'
 
 class Hook
 	attr_accessor :owner, :trigger, :action, :consumes
