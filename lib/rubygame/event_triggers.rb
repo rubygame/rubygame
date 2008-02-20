@@ -66,6 +66,21 @@ class KeyPressTrigger
 	end
 end
 
+class KeyReleaseTrigger
+	def initialize( key=:any, mods=:any )
+		@key = key
+		@mods = mods
+	end
+	
+	def match?( event )
+		if event.kind_of?( Rubygame::KeyUpEvent )
+			((@key == :any) or (event.key == @key)) and \
+			((@mods == :any) or (@mods == :none and event.mods == [])\
+			                 or (event.mods == @mods))
+		end
+	end
+end
+
 class KindOfTrigger
 	def initialize( klass )
 		@klass = klass
