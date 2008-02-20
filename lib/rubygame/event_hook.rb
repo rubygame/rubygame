@@ -18,6 +18,10 @@ class Hook
 		@trigger.match?( event )
 	end
 	
+	def owned_by?( owner )
+		return @owner.equal?( owner )
+	end
+	
 	def perform( event )
 		@action.perform( owner, event )
 	end
