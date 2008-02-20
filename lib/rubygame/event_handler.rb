@@ -76,6 +76,10 @@ class EventHandler
 	#  
 	#  Triggers every hook in the stack which matches the given event.
 	#  See Hook.
+	# 
+	#  If one of the matching hooks has @consumes enabled, no hooks
+	#  after it will receive that event. (Example use: a mouse click that
+	#  only affects the top-most object it hits, not any below it.)
 	#  
 	#  event:     the event to handle. (Object, required)
 	# 
@@ -83,7 +87,14 @@ class EventHandler
 	# 
 	def handle( event )
 		matching_hooks = @hooks.select { |hook| hook.match?( event ) }
-		matching_hooks.each { |hook| hook.perform( event ) }
+		
+		catch :event_consumed do
+			matching_hooks.each do |hook|
+				hook.perform( event )
+				throw :event_consumed if hook.consumes
+			end
+		end
+			
 		return nil
 	end
 
