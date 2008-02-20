@@ -52,17 +52,16 @@ class InstanceOfTrigger
 end
 
 class KeyPressTrigger
-	def initialize( key=:any )
+	def initialize( key=:any, mods=:any )
 		@key = key
+		@mods = mods
 	end
 	
 	def match?( event )
 		if event.kind_of?( Rubygame::KeyDownEvent )
-			if (@key == :any) or (event.key == @key)
-				true
-			end
-		else
-			false
+			((@key == :any) or (event.key == @key)) and \
+			((@mods == :any) or (@mods == :none and event.mods == [])\
+			                 or (event.mods == @mods))
 		end
 	end
 end
