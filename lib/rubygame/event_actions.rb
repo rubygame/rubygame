@@ -20,3 +20,13 @@ class MethodAction
 		owner.send( *args )
 	end
 end
+
+class MultiAction
+	def initialize( *actions )
+		@actions = actions
+	end
+	
+	def perform( owner, event )
+		@actions.each { |action| action.perform( owner, event ) }
+	end
+end
