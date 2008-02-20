@@ -41,18 +41,13 @@ class BlockTrigger
 	end
 end
 
-class InstanceTrigger
-	def initialize( klass, attributes={} )
+class InstanceOfTrigger
+	def initialize( klass )
 		@klass = klass
-		@attributes = attributes
 	end
 	
 	def match?( event )
-		if event.kind_of?( @klass )
-			@attributes.all? { |key, value| event.send(key) == value }
-		else
-			false
-		end
+		event.instance_of?( @klass )
 	end
 end
 
