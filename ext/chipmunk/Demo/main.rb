@@ -1,10 +1,8 @@
 require 'chipmunk'
 require 'rubygame'
-require 'gl'
 
 include Math
 include Rubygame
-include Gl
 
 include CP
 include CP::Shape
