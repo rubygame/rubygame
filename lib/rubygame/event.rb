@@ -135,41 +135,54 @@ module Rubygame
 	# Indicates that the mouse cursor moved.
 	# 
 	# This event has these attributes:
-	# pos::     the new position of the cursor, in the form [x,y].
-	# rel::     the relative movement of the cursor since the last update, [x,y].
-	# buttons:: the mouse buttons that were being held during the movement,
-	#           an Array of zero or more of these constants in module Rubygame
-	#           (or the corresponding button number):
-	#           MOUSE_LEFT::      1; left mouse button
-	#           MOUSE_MIDDLE::    2; middle mouse button
-	#           MOUSE_RIGHT::     3; right mouse button
-  #           MOUSE_WHEELUP::   4; mouse wheel up (may also be a real button)
-  #           MOUSE_WHEELDOWN:: 5; mouse wheel down (may also be a real button)
+	# pos::       the new position of the cursor on the screen.
+	# world_pos:: like _pos_, but converted into world coordinates based on the Scene's camera.
+	#             By default, the same as _pos_, but may be set by the Scene.
+	# rel::       the relative movement of the cursor since the last update, [x,y].
+	# world_rel:: like _rel_, but converted into world coordinates based on the Scene's camera.
+	#             By default, the same as _rel_, but may be set by the Scene.
+	# buttons::   the mouse buttons that were being held during the movement,
+	#             an Array of zero or more of these constants in module Rubygame
+	#             (or the corresponding button number):
+	#             MOUSE_LEFT::      1; left mouse button
+	#             MOUSE_MIDDLE::    2; middle mouse button
+	#             MOUSE_RIGHT::     3; right mouse button
+  #             MOUSE_WHEELUP::   4; mouse wheel up (may also be a real button)
+  #             MOUSE_WHEELDOWN:: 5; mouse wheel down (may also be a real button)
 	class MouseMotionEvent < Event
 		attr_accessor :pos,:rel,:buttons
-		def initialize(pos,rel,buttons)
+		attr_accessor :world_pos, :world_rel
+		def initialize(pos, rel, buttons, world_pos=nil, world_rel=nil)
 			@pos, @rel, @buttons = pos, rel, buttons
+			@world_pos = world_pos or pos
+			@world_rel = world_rel or rel
 		end
 	end
 
 	# Indicates that a mouse button was pressed.
 	# 
 	# This event has these attributes:
-	# string:: string indicating the button that was pressed ("left","middle", or
-	#          "right").
-	# pos::    the position of the mouse cursor when the button was pressed,
-	#          in the form [x,y].
-	# button:: the mouse button that was pressed; one of these constants in
-	#          module Rubygame (or the corresponding button number):
-	#          MOUSE_LEFT::      1; left mouse button
-	#          MOUSE_MIDDLE::    2; middle mouse button
-	#          MOUSE_RIGHT::     3; right mouse button
-  #          MOUSE_WHEELUP::   4; mouse wheel up (may also be a real button)
-  #          MOUSE_WHEELDOWN:: 5; mouse wheel down (may also be a real button)
+	# string::    string indicating the button that was pressed ("left","middle", or
+	#             "right").
+	# pos::       the position of the mouse cursor when the button was pressed,
+	#             in the form [x,y].
+	# world_pos:: like _pos_, but converted into world coordinates based on the Scene's camera.
+	#             By default, the same as _pos_, but may be set by the Scene.
+	# button::    the mouse button that was pressed; one of these constants in
+	#             module Rubygame (or the corresponding button number):
+	#             MOUSE_LEFT::      1; left mouse button
+	#             MOUSE_MIDDLE::    2; middle mouse button
+	#             MOUSE_RIGHT::     3; right mouse button
+  #             MOUSE_WHEELUP::   4; mouse wheel up (may also be a real button)
+  #             MOUSE_WHEELDOWN:: 5; mouse wheel down (may also be a real button)
 	class MouseDownEvent < Event
 		attr_accessor :string,:pos,:button
-		def initialize(pos,button)
+		attr_accessor :world_pos
+		def initialize(pos, button, world_pos=nil)
+			
 			@pos = pos
+			@world_pos = world_pos or pos
+			
 			if button.kind_of? Integer
 				@button = button
 				@string = Rubygame::Mouse::MOUSE2STR[button] #a string or nil
@@ -189,8 +202,12 @@ module Rubygame
 	# See MouseDownEvent.
 	class MouseUpEvent < Event
 		attr_accessor :string,:pos,:button
-		def initialize(pos,button)
+		attr_accessor :world_pos
+		
+		def initialize(pos, button, world_pos=nil)
 			@pos = pos
+			@world_pos = world_pos or pos
+			
 			if button.kind_of? Integer
 				@button = button
 				@string = Rubygame::Mouse::MOUSE2STR[button] #a string or nil
