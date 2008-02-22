@@ -41,19 +41,17 @@ module Rubygame
 			@solid = true
 			@static = false
 			
-			sprite = self
-			
 			@event_handler = EventHandler.new do
-				append_hook {
-					@owner = sprite
-					@trigger = TickTrigger.new()
-					@action = MethodAction.new(:update, true)
+				append_hook { |h|
+					h.owner = self
+					h.trigger = TickTrigger.new()
+					h.action = MethodAction.new(:update, true)
 				}
 				
-				append_hook {
-					@owner = sprite.rb
-					@trigger = InstanceOfTrigger.new( DrawEvent )
-					@action = MethodAction.new(:draw, true)
+				append_hook { |h|
+					h.owner = self
+					h.trigger = InstanceOfTrigger.new( DrawEvent )
+					h.action = MethodAction.new(:draw, true)
 				}
 			end
 			
