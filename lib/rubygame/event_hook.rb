@@ -7,7 +7,7 @@ class Hook
 	def initialize( &block )
 		@owner, @trigger, @action = nil
 		@consumes = false
-		instance_eval(&block)
+		yield self if block_given?
 		unless (@trigger and @action)
 			# @owner is allowed to be nil, I think
 			raise( ArgumentError, "must set @trigger and @action")
