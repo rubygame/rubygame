@@ -20,6 +20,11 @@
 require 'chipmunk'
 
 require 'rubygame'
+require 'rubygame/event_handler'
+require 'rubygame/event_hook'
+require 'rubygame/event_triggers'
+require 'rubygame/event_actions'
+
 
 module Rubygame
 
