@@ -43,11 +43,12 @@ VALUE rbgm_quit(VALUE);
  *  not be initialized for some reason.
  *
  *  Example:
- *    Rubygame.key_name( Rubygame::K_A )       # => "a"
- *    Rubygame.key_name( Rubygame::K_RETURN )  # => "return"
- *    Rubygame.key_name( Rubygame::K_LEFT )    # => "left"
+ *    include Rubygame
+ *    Event.key_name( K_A )       # => "a"
+ *    Event.key_name( K_RETURN )  # => "return"
+ *    Event.key_name( K_LEFT )    # => "left"
  */
-VALUE rbgm_keyname(VALUE self, VALUE sym)
+VALUE rbgm_event_keyname(VALUE self, VALUE sym)
 {
 	/* SDL_GetKeyName only works when video system has been initialized. */
 	if( init_video_system() == 0 )
@@ -108,7 +109,6 @@ void Init_rubygame_core()
 
 	rb_define_module_function(mRubygame,"init",rbgm_init,0);
 	rb_define_module_function(mRubygame,"quit",rbgm_quit,0);
-	rb_define_singleton_method(mRubygame,"key_name",rbgm_keyname, 1);
 	cRect = rb_define_class_under(mRubygame,"Rect",rb_cArray);
 
   rb_hash_aset(rb_ivar_get(mRubygame,rb_intern("VERSIONS")),
@@ -131,6 +131,9 @@ void Init_rubygame_core()
 	Rubygame_Init_Event();
 	Rubygame_Init_Joystick();
   Rubygame_Init_GL();
+
+	VALUE cEvent = rb_define_class_under(mRubygame,"Event",rb_cObject);
+	rb_define_singleton_method(cEvent,"key_name",rbgm_event_keyname, 1);
 
 	/* Define fully opaque and full transparent (0 and 255) */
 	rb_define_const(mRubygame,"ALPHA_OPAQUE",UINT2NUM(SDL_ALPHA_OPAQUE));
