@@ -30,7 +30,6 @@
 
 VALUE rbgm_init(VALUE);
 VALUE rbgm_quit(VALUE);
-void Define_Rubygame_Constants();
 
 /* 
  *  call-seq:
@@ -118,6 +117,7 @@ void Init_rubygame_core()
                            INT2NUM(RUBYGAME_MAJOR_VERSION),
                            INT2NUM(RUBYGAME_MINOR_VERSION),
                            INT2NUM(RUBYGAME_PATCHLEVEL)));
+
   rb_hash_aset(rb_ivar_get(mRubygame,rb_intern("VERSIONS")),
                ID2SYM(rb_intern("sdl")),
                rb_ary_new3(3,
@@ -132,24 +132,8 @@ void Init_rubygame_core()
 	Rubygame_Init_Joystick();
   Rubygame_Init_GL();
 
-	/* Flags for subsystem initialization */
-	rb_define_const(mRubygame,"INIT_TIMER",INT2NUM(SDL_INIT_TIMER));
-	rb_define_const(mRubygame,"INIT_AUDIO",INT2NUM(SDL_INIT_AUDIO));
-	rb_define_const(mRubygame,"INIT_VIDEO",INT2NUM(SDL_INIT_VIDEO));
-	rb_define_const(mRubygame,"INIT_CDROM",INT2NUM(SDL_INIT_CDROM));
-	rb_define_const(mRubygame,"INIT_JOYSTICK",INT2NUM(SDL_INIT_JOYSTICK));
-	rb_define_const(mRubygame,"INIT_NOPARACHUTE",INT2NUM(SDL_INIT_NOPARACHUTE));
-	rb_define_const(mRubygame,"INIT_EVENTTHREAD",UINT2NUM(SDL_INIT_EVENTTHREAD));
-	rb_define_const(mRubygame,"INIT_EVERYTHING",UINT2NUM(SDL_INIT_EVERYTHING));
-
-	
 	/* Define fully opaque and full transparent (0 and 255) */
 	rb_define_const(mRubygame,"ALPHA_OPAQUE",UINT2NUM(SDL_ALPHA_OPAQUE));
 	rb_define_const(mRubygame,"ALPHA_TRANSPARENT",
 	                UINT2NUM(SDL_ALPHA_TRANSPARENT));
-
-
-	/* Flags for palettes (?) */
-	rb_define_const(mRubygame,"LOGPAL",UINT2NUM(SDL_LOGPAL));
-	rb_define_const(mRubygame,"PHYSPAL",UINT2NUM(SDL_PHYSPAL));
 }

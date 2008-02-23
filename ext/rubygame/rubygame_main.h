@@ -28,6 +28,5 @@
 extern VALUE rbgm_keyname(VALUE, VALUE);
 extern VALUE rbgm_init(VALUE);
 extern VALUE rbgm_quit(VALUE);
-extern void Define_Rubygame_Constants();
 
 #endif
