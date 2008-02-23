@@ -22,7 +22,7 @@ require 'rubygame/event_actions'
 
 module Rubygame 
 	
-class Hook
+class EventHook
 	attr_accessor :owner, :trigger, :action, :consumes
 	
 	def initialize( &block )

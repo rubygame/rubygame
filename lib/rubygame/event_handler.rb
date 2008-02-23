@@ -40,24 +40,24 @@ class EventHandler
 	#    append_hook( hook )  ->  hook
 	#    append_hook( &block )  ->  hook
 	# 
-	#  Puts a Hook at the bottom of the stack (it will be handled last).
+	#  Puts an EventHook at the bottom of the stack (it will be handled last).
 	#  If the EventHandler already has that hook, it is moved to the bottom.
-	#  See Hook and #handle. 
+	#  See EventHook and #handle. 
 	# 
 	#  This method has two distinct forms. The first form adds an existing Hook
-	#  instance; the second form constructs a new Hook instance and adds it.
+	#  instance; the second form constructs a new EventHook instance and adds it.
 	# 
-	#  hook::     the hook to add. (Hook, for first form only)
+	#  hook::     the hook to add. (EventHook, for first form only)
 	# 
 	#  block::    a block to initialize the hook. (Proc, for second form only)
 	# 
-	#  Returns::  the hook that was added. (Hook)
+	#  Returns::  the hook that was added. (EventHook)
 	# 
-	#  Contrast this method with #prepend, which puts the Hook at
+	#  Contrast this method with #prepend, which puts the EventHook at
 	#  the top of the stack.
 	# 
 	def append_hook( hook=nil, &block )
-		hook = Hook.new( &block ) if block_given?
+		hook = EventHook.new( &block ) if block_given?
 		@hooks = @hooks | [hook]
 		return hook
 	end
@@ -66,12 +66,12 @@ class EventHandler
 	#    prepend_hook( hook )  ->  hook
 	#    prepend_hook( &block )  ->  hook
 	# 
-	#  Exactly like #append_hook, except that the Hook is put at the
+	#  Exactly like #append_hook, except that the EventHook is put at the
 	#  top of the stack (it will be handled first).
 	#  If the EventHandler already has that hook, it is moved to the top.
 	# 
 	def prepend_hook( hook )
-		hook = Hook.new( &block ) if block_given?
+		hook = EventHook.new( &block ) if block_given?
 		@hooks = [hook] | @hooks
 		return hook
 	end
@@ -80,7 +80,7 @@ class EventHandler
 	#    handle( event )  ->  nil
 	#  
 	#  Triggers every hook in the stack which matches the given event.
-	#  See Hook.
+	#  See EventHook.
 	# 
 	#  If one of the matching hooks has @consumes enabled, no hooks
 	#  after it will receive that event. (Example use: a mouse click that
