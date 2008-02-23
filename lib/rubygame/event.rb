@@ -43,6 +43,9 @@ module Rubygame
   # if desired; inheriting this class is not necessary, but makes it easier
   # to check if an object is an event or not.
 	class Event
+		def self.key_symbol( key )
+			return Rubygame.key_name(key).downcase.gsub(" ","_").intern
+		end
 	end
 
 	# Indicates that the Rubygame window has gained or lost focus from the
