@@ -70,7 +70,7 @@ class EventHandler
 	#  top of the stack (it will be handled first).
 	#  If the EventHandler already has that hook, it is moved to the top.
 	# 
-	def prepend_hook( hook )
+	def prepend_hook( hook=nil, &block )
 		hook = EventHook.new( &block ) if block_given?
 		@hooks = [hook] | @hooks
 		return hook
