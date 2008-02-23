@@ -25,26 +25,26 @@ module Rubygame
 		JoyBallEvent, JoyHatEvent,JoyDownEvent, JoyUpEvent,\
 		ResizeEvent, QuitEvent]
   
-	# Converts a keyboard symbol (keysym) into a human-readable text string.
-	# If either Shift key was being pressed, alphanumeric or punctuation keys 
-	# will be made uppercase or alternate, based on U.S. keyboard layout.
-	# E.g. "a" becomes "A", "1" becomes "!", and "/" becomes "?".
-	def Rubygame.key2str( sym, mods )
-		if (mods.include? K_LSHIFT) or (mods.include? K_RSHIFT)
-			return (Rubygame::Key::KEY2UPPER[sym]\
-				or Rubygame::Key::KEY2ASCII[sym] or "")
-		else
-			return (Rubygame::Key::KEY2LOWER[sym]\
-				or Rubygame::Key::KEY2ASCII[sym] or "")
-		end
-	end
-
 	# The parent class for all event classes. You can make custom event classes,
   # if desired; inheriting this class is not necessary, but makes it easier
   # to check if an object is an event or not.
 	class Event
 		def self.key_symbol( key )
 			return Event.key_name(key).downcase.gsub(" ","_").intern
+		end
+		
+		# Converts a keyboard symbol (keysym) into a human-readable text string.
+		# If either Shift key was being pressed, alphanumeric or punctuation keys 
+		# will be made uppercase or alternate, based on U.S. keyboard layout.
+		# E.g. "a" becomes "A", "1" becomes "!", and "/" becomes "?".
+		def self.key2str( sym, mods )
+			if (mods.include? K_LSHIFT) or (mods.include? K_RSHIFT)
+				return (Rubygame::Key::KEY2UPPER[sym]\
+				        or Rubygame::Key::KEY2ASCII[sym] or "")
+			else
+				return (Rubygame::Key::KEY2LOWER[sym]\
+				        or Rubygame::Key::KEY2ASCII[sym] or "")
+			end
 		end
 	end
 
@@ -69,7 +69,7 @@ module Rubygame
 	# 
 	# This event has these attributes:
 	# string:: a human-readable string telling what key was pressed, or nil.
-	#          See #key2str.
+	#          See Event.key2str.
 	# key::    the integer keysym for the key. These can be compared with the
 	#          K_* constants in the Rubygame module, e.g. Rubygame::K_A.
 	# mods::   an Array of zero or more keysyms indicating which modifier keys
@@ -101,7 +101,7 @@ module Rubygame
 		def initialize(key,mods)
 			if key.kind_of? Integer
 				@key = key
-				@string = Rubygame.key2str(key, mods) #a string or nil
+				@string = Event.key2str(key, mods) #a string or nil
 			elsif key.kind_of? String
 				@key = Rubygame::Key::ASCII2KEY[key]
 				if @key != nil
@@ -122,7 +122,7 @@ module Rubygame
 		def initialize(key,mods)
 			if key.kind_of? Integer
 				@key = key
-				@string = Rubygame.key2str(key, mods) #a string or nil
+				@string = Event.key2str(key, mods) #a string or nil
 			elsif key.kind_of? String
 				@key = Rubygame::Key::ASCII2KEY[key]
 				if @key != nil
