@@ -72,6 +72,10 @@ module Rubygame
 			@dead_objects << sprite
 		end
 
+		def sort_sprites
+			@objects.sort { |a,b| a.depth <=> b.depth }
+		end
+		
 		def step
 			tick = @clock.tick
 			
