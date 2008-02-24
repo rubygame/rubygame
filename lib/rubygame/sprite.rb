@@ -99,5 +99,8 @@ module Rubygame
 			@static = enable
 		end
 		
+		def update( tick )
+		end
+		
 	end
 end
