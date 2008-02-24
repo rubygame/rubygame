@@ -102,5 +102,19 @@ module Rubygame
 		def update( tick )
 		end
 		
+		def remove_from_space( space )
+			if space.bodies.include?( @body )
+				space.remove_body( @body )
+			end
+
+			@shapes.each { |s|
+				if space.shapes.include?( s.shape )
+					space.remove_shape( s.shape ) 
+				elsif space.static_shapes.include?( s.shape )
+					space.remove_static_shape( s.shape )
+				end
+			}
+		end
+		
 	end
 end

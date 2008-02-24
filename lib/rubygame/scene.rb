@@ -55,9 +55,9 @@ module Rubygame
 			
 			@space = CP::Space.new()
 			
-			@space.set_default_collision_func { |a,b|
+			@space.set_default_collision_func { |a,b,contacts|
 				if (a.emit_collide and b.emit_collide)
-					scene.event_queue.push( CollisionEvent.new(a,b) )
+					scene.event_queue.push( CollisionEvent.new(a,b,contacts) )
 				end
 				return (a.solid and b.solid)
 			}
@@ -104,31 +104,13 @@ module Rubygame
 		# (being careful to make sure they were actually
 		# *in* the simulation in the first place).
 		def _flush_dead_sprites
-			
 			@dead_sprites.each do |spr|
-				
-				if( @sprites.include?( spr ) )
-					
-					if @space.bodies.include?( spr.body )
-						@space.remove_body( spr.body )
-					end
-
-					spr.shapes.each { |s|
-						if @space.shapes.include?( s.shape )
-							@space.remove_shape( s.shape ) 
-						elsif @space.static_shapes.include?( s.shape )
-							@space.remove_static_shape( s.shape )
-						end
-					}
-
-					@sprites -= [spr]
-					
-				end
-				
+				spr.remove_from_space( space )
 			end
 			
-			@dead_sprites = []
+			@sprites -= @dead_sprites
 			
+			@dead_sprites = []
 		end
 		
 	end
