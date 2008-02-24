@@ -334,4 +334,7 @@ module Rubygame
 	# pressed the close button.)
 	class QuitEvent < Event
 	end
+	
+	CollisionEvent = Struct.new(:a,:b,:contacts)
+	
 end # module Rubygame
