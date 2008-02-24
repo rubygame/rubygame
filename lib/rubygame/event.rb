@@ -335,6 +335,10 @@ module Rubygame
 	class QuitEvent < Event
 	end
 	
-	CollisionEvent = Struct.new(:a,:b,:contacts)
+	class CollisionEvent < Struct.new(:a,:b,:contacts)
+	end
+	
+	class DrawEvent < Struct.new(:context)
+	end
 	
 end # module Rubygame
