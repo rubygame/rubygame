@@ -29,7 +29,7 @@ require 'rubygame/event_actions'
 module Rubygame
 
 	class Scene
-		attr_reader :event_handler, :event_queue, :clock, :objects, :space
+		attr_reader :event_handler, :event_queue, :clock, :sprites, :space
 		attr_accessor :time_step
 		
 		def initialize(size)
@@ -38,18 +38,18 @@ module Rubygame
 			@time_step = 0.02
 			@leftover_tick = 0.0
 			
-			@objects = []
-			@dead_objects = []
+			@sprites = []
+			@dead_sprites = []
 			
 			@event_queue = EventQueue.new()
 			@event_handler = EventHandler.new()
 
-			# Forward all events to @object members
+			# Forward all events to @sprites members
 			@event_handler.append_hook do |h|
 				h.owner = self
 				h.trigger = YesTrigger.new
 				h.action = BlockAction.new { |owner, event|
-					owner.objects.each { |ob| ob.handle( event ) }
+					owner.sprites.each { |sprite| sprite.handle( event ) }
 				}
 			end
 			
@@ -69,11 +69,11 @@ module Rubygame
 		end
 		
 		def mark_dead( sprite )
-			@dead_objects << sprite
+			@dead_sprites << sprite
 		end
 
 		def sort_sprites
-			@objects.sort { |a,b| a.depth <=> b.depth }
+			@sprites.sort { |a,b| a.depth <=> b.depth }
 		end
 		
 		def step
@@ -93,27 +93,27 @@ module Rubygame
 			# Process the accumulated events
 			@event_queue.each { |e| self.handle(e) }
 			
-			# Remove dead objects from the simulation
-			_flush_dead_objects()
+			# Remove dead sprites from the simulation
+			_flush_dead_sprites()
 
 		end
 		
 		private
 		
-		# Remove all dead objects from the simulation
+		# Remove all dead sprites from the simulation
 		# (being careful to make sure they were actually
 		# *in* the simulation in the first place).
-		def _flush_dead_objects
+		def _flush_dead_sprites
 			
-			@dead_objects.each do |obj|
+			@dead_sprites.each do |spr|
 				
-				if( @objects.include?( obj ) )
+				if( @sprites.include?( spr ) )
 					
-					if @space.bodies.include?( obj.body )
-						@space.remove_body( obj.body )
+					if @space.bodies.include?( spr.body )
+						@space.remove_body( spr.body )
 					end
 
-					obj.shapes.each { |s|
+					spr.shapes.each { |s|
 						if @space.shapes.include?( s.shape )
 							@space.remove_shape( s.shape ) 
 						elsif @space.static_shapes.include?( s.shape )
@@ -121,13 +121,13 @@ module Rubygame
 						end
 					}
 
-					@objects -= [obj]
+					@sprites -= [spr]
 					
 				end
 				
 			end
 			
-			@dead_objects = []
+			@dead_sprites = []
 			
 		end
 		
