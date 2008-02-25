@@ -20,6 +20,7 @@
 require 'chipmunk'
 
 require 'rubygame'
+require 'rubygame/camera'
 
 module Rubygame
 
@@ -27,14 +28,17 @@ module Rubygame
 	
 	class Sprite
 		attr_reader :scene, :body, :event_handler
-		attr_accessor :shapes
-		attr_accessor :emit_collide, :solid
+		attr_accessor :shapes, :image
+		attr_accessor :emit_collide, :solid, :quality
 		attr_reader :static
 		
 		def initialize( scene, &block )
 			@scene = scene
 			@body = CP::Body.new(0,0)
 			@shapes = []
+
+			@image = nil
+			@quality = 1.0
 			
 			@depth = 0
 			@emit_collide = true
@@ -63,6 +67,38 @@ module Rubygame
 		end
 		
 		def draw( event )
+			camera = event.camera
+			
+			case( camera.mode )
+			when Camera::RenderModeSDL
+				
+				# Don't need to do anything if it's invisible!
+				if( @image )
+					image = @image
+					
+					rot = @body.a + camera.rotation
+					scale = camera.zoom
+					quality = camera.quality * self.quality
+					
+					# Special case to skip rotozoom, if there is no rotation or zoom
+					if(rot == 0.0 and scale == 1.0)
+						# Use antialiasing if quality level is high enough
+						aa = (quality > 0.5)
+						image = image.rotozoom( rot * PI/180, scale, aa )
+					end
+					
+					rect = image.make_rect
+					rect.center = ((@body.p * camera.zoom) - camera.position).to_ary
+
+					return image.blit(context.surface, rect)
+				else
+					return nil
+				end
+				
+			else
+				return nil				
+			end
+
 		end
 
 		def handle( event )
