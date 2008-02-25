@@ -20,6 +20,8 @@
 require 'chipmunk'
 
 require 'rubygame'
+require 'rubygame/clock'
+require 'rubygame/event'
 require 'rubygame/event_handler'
 require 'rubygame/event_hook'
 require 'rubygame/event_triggers'
