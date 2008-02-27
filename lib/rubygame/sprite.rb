@@ -27,9 +27,8 @@ module Rubygame
 	ShapeStruct = Struct.new(:shape, :mass, :offset)
 	
 	class Sprite
-		attr_reader :scene, :body, :event_handler
-		attr_accessor :shapes, :image
-		attr_accessor :emit_collide, :solid, :quality
+		attr_reader :scene, :body, :shapes, :event_handler
+		attr_accessor :image, :emit_collide, :solid, :quality
 		attr_reader :static
 		
 		def initialize( scene, &block )
@@ -74,6 +73,7 @@ module Rubygame
 		def add_shape( shape, mass, offset )
 			@shapes << ShapeStruct.new( shape, mass, offset )
 			shape.body = @body
+			shape.sprite = self
 			@scene.space.add_shape(shape)
 		end
 
