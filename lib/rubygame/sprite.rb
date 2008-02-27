@@ -34,6 +34,8 @@ module Rubygame
 		
 		def initialize( scene, &block )
 			@scene = scene
+			@scene.register_sprite(self)
+			
 			@body = CP::Body.new(0,0)
 			@shapes = []
 

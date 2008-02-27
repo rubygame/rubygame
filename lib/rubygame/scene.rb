@@ -79,6 +79,10 @@ module Rubygame
 			@dead_sprites << sprite
 		end
 
+		def register_sprite( sprite )
+			@sprites << sprite
+		end
+
 		def sort_sprites
 			@sprites.sort { |a,b| a.depth <=> b.depth }
 		end
