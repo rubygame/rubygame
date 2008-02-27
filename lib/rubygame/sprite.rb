@@ -176,7 +176,7 @@ module Rubygame
 					
 					# Use antialiasing if quality level is high enough
 					aa = (camera.mode.quality * self.quality > 0.5)
-					image = image.rotozoom( rot, scale, aa )
+					image = image.rotozoom( -rot, scale, aa )
 					
 				end
 				
@@ -200,7 +200,7 @@ module Rubygame
 				
 				# Don't need to do this if there's no rotation or scale change
 				if(rot != 0.0 or scale != 1.0)
-					rect.size = Rubygame::Surface.rotozoom_size( rect.size, rot, scale )
+					rect.size = Rubygame::Surface.rotozoom_size( rect.size, -rot, scale )
 				end
 				
 				rect.center = ((@body.p * camera.zoom) - camera.position).to_ary
