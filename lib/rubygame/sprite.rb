@@ -76,21 +76,22 @@ module Rubygame
 				if( @image )
 					image = @image
 					
-					rot = @body.a + camera.rotation
+					rot = (@body.a + camera.rotation) * PI/180
 					scale = camera.zoom
-					quality = camera.quality * self.quality
 					
-					# Special case to skip rotozoom, if there is no rotation or zoom
-					if(rot == 0.0 and scale == 1.0)
+					# Don't need to do this if there's no rotation or scale change
+					if(rot != 0.0 and scale != 1.0)
+						
 						# Use antialiasing if quality level is high enough
-						aa = (quality > 0.5)
-						image = image.rotozoom( rot * PI/180, scale, aa )
+						aa = (camera.quality * self.quality > 0.5)
+						image = image.rotozoom( rot, scale, aa )
+						
 					end
 					
 					rect = image.make_rect
 					rect.center = ((@body.p * camera.zoom) - camera.position).to_ary
 
-					return image.blit(context.surface, rect)
+					camera.mode.dirty_rects << image.blit( camera.mode.surface, rect )
 				else
 					return nil
 				end
@@ -134,7 +135,7 @@ module Rubygame
 			end
 			@static = enable
 		end
-		
+
 		def update( tick )
 		end
 		
