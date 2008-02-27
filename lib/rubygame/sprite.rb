@@ -43,7 +43,7 @@ module Rubygame
 			@depth = 0
 			@emit_collide = true
 			@solid = true
-			@static = false
+			@static = true
 			
 			@event_handler = EventHandler.new do |handler|
 				handler.append_hook { |h|
@@ -64,9 +64,9 @@ module Rubygame
 
 		
 		def add_shape( shape, mass, offset )
-			@shapes += ShapeStruct.new( shape, mass, offset )
+			@shapes << ShapeStruct.new( shape, mass, offset )
 			shape.body = @body
-			@space.add_shape(shape)
+			@scene.space.add_shape(shape)
 		end
 
 		
@@ -125,9 +125,9 @@ module Rubygame
 
 		
 		def static=( enable )
-			if( enable and !(@static) )
+			if( !(enable) and @static)
 				@scene.space.add_body( @body )
-			elsif( !(enable) and @static )
+			elsif( enable and !(@static) )
 				@scene.space.remove_body( @body )
 			else
 				# no change, do nothing
@@ -160,14 +160,14 @@ module Rubygame
 			if( @image )
 				image = @image
 				
-				rot = (@body.a + camera.rotation) * PI/180
+				rot = (@body.a + camera.rotation) * 57.2958 # converted to degrees
 				scale = camera.zoom
 				
 				# Don't need to do this if there's no rotation or scale change
-				if(rot != 0.0 and scale != 1.0)
+				if(rot != 0.0 or scale != 1.0)
 					
 					# Use antialiasing if quality level is high enough
-					aa = (camera.quality * self.quality > 0.5)
+					aa = (camera.mode.quality * self.quality > 0.5)
 					image = image.rotozoom( rot, scale, aa )
 					
 				end
@@ -187,17 +187,17 @@ module Rubygame
 			if( @image )
 				rect = @image.make_rect
 				
-				rot = (@body.a + camera.rotation) * PI/180
+				rot = (@body.a + camera.rotation) * 57.2958 # converted to degrees
 				scale = camera.zoom
 				
 				# Don't need to do this if there's no rotation or scale change
-				if(rot != 0.0 and scale != 1.0)
+				if(rot != 0.0 or scale != 1.0)
 					rect.size = Rubygame::Surface.rotozoom_size( rect.size, rot, scale )
 				end
 				
 				rect.center = ((@body.p * camera.zoom) - camera.position).to_ary
 
-				bg = camera.background
+				bg = camera.mode.background
 				bg.blit( camera.mode.surface, rect, rect )
 				
 				camera.mode.dirty_rects << rect
