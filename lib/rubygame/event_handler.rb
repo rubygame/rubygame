@@ -24,14 +24,14 @@ module Rubygame
 class EventHandler
 
 	#  call-seq:
-	#    EventHandler.new { optional block }  ->  new_handler
+	#    EventHandler.new { |handler| ... }  ->  new_handler
 	# 
 	#  Create a new EventHandler. The optional block can be used
-	#  for initializing the EventHandler.
+	#  for further initializing the EventHandler.
 	# 
 	def initialize(&block)
 		@hooks = []
-		instance_eval(&block) if block_given?
+		yield self if block_given?
 	end
 
 	attr_accessor :hooks
