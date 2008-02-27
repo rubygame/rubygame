@@ -38,7 +38,7 @@ module Rubygame
 			@mode.refresh
 		end
 		
-		class RenderMode < Struct(:rect, :quality); end
+		class RenderMode < Struct.new(:rect, :quality); end
 		
 		class RenderModeSDL < RenderMode
 			attr_reader :surface, :background
