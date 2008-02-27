@@ -33,17 +33,28 @@ module Rubygame
 			@zoom = 1
 			yield self if block_given?
 		end
-
+		
+		def refresh
+			@mode.refresh
+		end
 		
 		class RenderMode < Struct(:rect, :quality); end
 		
 		class RenderModeSDL < RenderMode
-			attr_accessor :surface, :dirty_rects
+			attr_reader :surface
+			attr_accessor :dirty_rects
 			
 			def initialize(surface, *args)
 				@surface = surface
+				@is_screen = surface.kind_of?( Rubygame::Screen )
 				@dirty_rects = []
 				super(*args)
+			end
+			
+			def refresh
+				if @is_screen
+					@surface.update_rects(@dirty_rects)
+				end
 			end
 		end
 		
