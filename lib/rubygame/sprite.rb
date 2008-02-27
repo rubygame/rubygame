@@ -62,9 +62,11 @@ module Rubygame
 			instance_eval(&block) if block_given?
 		end
 
+		
 		def add_shapes( *shape_structs )
 			@shapes += shape_structs
 		end
+
 		
 		def draw( event )
 			camera = event.camera
@@ -102,13 +104,16 @@ module Rubygame
 
 		end
 
+		
 		def handle( event )
 			@event_handler.handle( event )
 		end
 
+		
 		def mark_dead
 			@scene.mark_dead(self)
 		end
+
 		
 		def recalc_mi
 			@body.m = @shapes.inject(0) { |mem, s| mem + s.mass }
@@ -124,6 +129,22 @@ module Rubygame
 				end
 			}
 		end
+		
+		
+		def remove_from_space( space )
+			if space.bodies.include?( @body )
+				space.remove_body( @body )
+			end
+
+			@shapes.each { |s|
+				if space.shapes.include?( s.shape )
+					space.remove_shape( s.shape ) 
+				elsif space.static_shapes.include?( s.shape )
+					space.remove_static_shape( s.shape )
+				end
+			}
+		end
+
 		
 		def static=( enable )
 			if( enable and !(@static) )
@@ -173,20 +194,6 @@ module Rubygame
 		
 		def update( tick )
 		end
-		
-		def remove_from_space( space )
-			if space.bodies.include?( @body )
-				space.remove_body( @body )
-			end
-
-			@shapes.each { |s|
-				if space.shapes.include?( s.shape )
-					space.remove_shape( s.shape ) 
-				elsif space.static_shapes.include?( s.shape )
-					space.remove_static_shape( s.shape )
-				end
-			}
-		end
-		
+				
 	end
 end
