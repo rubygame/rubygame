@@ -20,6 +20,7 @@
 require 'chipmunk'
 
 require 'rubygame'
+require 'rubygame/camera'
 require 'rubygame/clock'
 require 'rubygame/event'
 require 'rubygame/event_handler'
@@ -31,10 +32,10 @@ require 'rubygame/event_actions'
 module Rubygame
 
 	class Scene
-		attr_reader :event_handler, :event_queue, :clock, :sprites, :space
+		attr_reader :event_handler, :event_queue, :clock, :camera, :sprites, :space
 		attr_accessor :time_step
 		
-		def initialize(size)
+		def initialize( camera_mode )
 
 			@clock = Rubygame::Clock.new { |c| c.target_framerate = 60 }
 			@time_step = 0.02
@@ -42,6 +43,8 @@ module Rubygame
 			
 			@sprites = []
 			@dead_sprites = []
+			
+			@camera = Rubygame::Camera.new( camera_mode )
 			
 			@event_queue = EventQueue.new()
 			@event_handler = EventHandler.new()
