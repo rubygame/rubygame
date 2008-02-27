@@ -38,10 +38,11 @@ module Rubygame
 		class RenderMode < Struct(:rect, :quality); end
 		
 		class RenderModeSDL < RenderMode
-			attr_accessor :surface
+			attr_accessor :surface, :dirty_rects
 			
 			def initialize(surface, *args)
 				@surface = surface
+				@dirty_rects = []
 				super(*args)
 			end
 		end
