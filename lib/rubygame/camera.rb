@@ -17,6 +17,8 @@
 #	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #++
 
+require 'chipmunk'
+
 module Rubygame
 
 	class Camera
@@ -26,6 +28,9 @@ module Rubygame
 		
 		def initialize( mode, &block )
 			@mode = mode
+			@position = vect(0,0)
+			@rotation = 0
+			@zoom = 1
 			yield self if block_given?
 		end
 
