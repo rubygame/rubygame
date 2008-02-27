@@ -63,8 +63,10 @@ module Rubygame
 		end
 
 		
-		def add_shapes( *shape_structs )
-			@shapes += shape_structs
+		def add_shape( shape, mass, offset )
+			@shapes += ShapeStruct.new( shape, mass, offset )
+			shape.body = @body
+			@space.add_shape(shape)
 		end
 
 		
