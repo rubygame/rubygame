@@ -59,6 +59,13 @@ module Rubygame
 				}
 			end
 			
+			# Update simulation on TickEvent.
+			@event_handler.append_hook do |h|
+				h.owner = self
+				h.trigger = TickTrigger.new()
+				h.action = MethodAction.new(:update, true)
+			end
+
 			@space = CP::Space.new()
 			
 			@space.set_default_collision_func { |a,b,contacts|
@@ -85,6 +92,30 @@ module Rubygame
 
 		def sort_sprites
 			@sprites.sort { |a,b| a.depth <=> b.depth }
+		end
+		
+		def step
+			@event_queue.fetch_sdl_events
+			
+			@event_queue.push( Rubygame::UndrawEvent.new(@camera) )
+			@event_queue.push( @clock.tick )
+			@event_queue.push( Rubygame::DrawEvent.new(@camera) )
+			
+			# Process the accumulated events
+			@event_queue.each { |e| self.handle(e) }
+		end
+		
+		def update( tick )
+			# Remove dead sprites from the simulation
+			_flush_dead_sprites()
+			
+			# Update the simulation (using a fixed time step for stability)
+			# until it has caught up with the current time.
+			@leftover_tick += tick.seconds
+			while( @leftover_tick > @time_step )
+				@space.step( @time_step )
+				@leftover_tick -= @time_step
+			end
 		end
 		
 		private
