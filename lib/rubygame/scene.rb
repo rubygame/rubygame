@@ -18,6 +18,7 @@
 #++
 
 require 'chipmunk'
+require 'rubygame/chipmunk'
 
 require 'rubygame'
 require 'rubygame/camera'
@@ -61,10 +62,11 @@ module Rubygame
 			@space = CP::Space.new()
 			
 			@space.set_default_collision_func { |a,b,contacts|
+				a,b = a.sprite, b.sprite
 				if (a.emit_collide and b.emit_collide)
-					scene.event_queue.push( CollisionEvent.new(a,b,contacts) )
+					self.event_queue.push( CollisionEvent.new(a,b,contacts) )
 				end
-				return (a.solid and b.solid)
+				(a.solid and b.solid)
 			}
 
 		end
