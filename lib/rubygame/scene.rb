@@ -87,28 +87,6 @@ module Rubygame
 			@sprites.sort { |a,b| a.depth <=> b.depth }
 		end
 		
-		def step
-			tick = @clock.tick
-			
-			@event_queue.fetch_sdl_events
-			@event_queue.push( tick )
-
-			# Update the simulation (using a fixed time step for stability)
-			# until it has caught up with the current time.
-			@leftover_tick += tick.seconds
-			while( @leftover_tick > @time_step )
-				@space.step( @time_step )
-				@leftover_tick -= @time_step
-			end
-			
-			# Process the accumulated events
-			@event_queue.each { |e| self.handle(e) }
-			
-			# Remove dead sprites from the simulation
-			_flush_dead_sprites()
-
-		end
-		
 		private
 		
 		# Remove all dead sprites from the simulation
