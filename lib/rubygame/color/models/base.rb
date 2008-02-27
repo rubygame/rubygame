@@ -17,6 +17,8 @@
 #	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #++
 
+module Rubygame
+module Color
 
 # A mix-in module defining color arithmetic operations.
 module ColorBase
@@ -103,4 +105,7 @@ module ColorBase
 		v = max if v > max
 		return v		
 	end
+end
+
+end
 end
