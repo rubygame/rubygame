@@ -41,12 +41,13 @@ module Rubygame
 		class RenderMode < Struct(:rect, :quality); end
 		
 		class RenderModeSDL < RenderMode
-			attr_reader :surface
+			attr_reader :surface, :background
 			attr_accessor :dirty_rects
 			
-			def initialize(surface, *args)
+			def initialize(surface, background, *args)
 				@surface = surface
 				@is_screen = surface.kind_of?( Rubygame::Screen )
+				@background = background
 				@dirty_rects = []
 				super(*args)
 			end
