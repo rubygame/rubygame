@@ -55,6 +55,7 @@ module Rubygame
 			def refresh
 				if @is_screen
 					@surface.update_rects(@dirty_rects)
+					@dirty_rects = []
 				end
 			end
 		end
