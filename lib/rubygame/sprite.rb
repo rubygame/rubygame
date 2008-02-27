@@ -136,6 +136,41 @@ module Rubygame
 			@static = enable
 		end
 
+		
+		def undraw( event )
+			camera = event.camera
+			
+			case( camera.mode )
+			when Camera::RenderModeSDL
+				
+				# Don't need to do anything if it's invisible!
+				if( @image )
+					rect = @image.make_rect
+					
+					rot = (@body.a + camera.rotation) * PI/180
+					scale = camera.zoom
+					
+					# Don't need to do this if there's no rotation or scale change
+					if(rot != 0.0 and scale != 1.0)
+						rect.size = Rubygame::Surface.rotozoom_size( rect.size, rot, scale )
+					end
+					
+					rect.center = ((@body.p * camera.zoom) - camera.position).to_ary
+
+					bg = camera.background
+					bg.blit( camera.mode.surface, rect, rect )
+					
+					camera.mode.dirty_rects << rect
+				else
+					return nil
+				end
+				
+			else
+				return nil				
+			end
+		end
+
+		
 		def update( tick )
 		end
 		
