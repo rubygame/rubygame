@@ -54,6 +54,17 @@ module Rubygame
 			@event_queue = EventQueue.new()
 			@event_handler = EventHandler.new()
 
+			# Forward collision events only to the concerned sprites
+			@event_handler.append_hook do |h|
+				h.consumes = true
+				h.owner = self
+				h.trigger = CollisionTrigger.new
+				h.action = BlockAction.new { |owner, event|
+					event.a.handle( event )
+					event.b.handle( event )
+				}
+			end
+			
 			# Forward all events to @sprites members
 			@event_handler.append_hook do |h|
 				h.owner = self
