@@ -105,4 +105,35 @@ class EventHandler
 	end	
 end
 
+module HasEventHandler
+	def append_hook( hook )
+		hook = _prepare_hook( hook )
+		@event_handler.append_hook( hook )
+	end
+	
+	def handle( event )
+		@event_handler.handle( event )
+	end
+	
+	def prepend_hook( hook )
+		hook = _prepare_hook( hook )
+		@event_handler.prepend_hook( hook )
+	end
+	
+	private
+	
+	def _prepare_hook( hook )
+		if( hook.kind_of? Hash )
+			hook = EventHook.new( {:owner => self}.merge(hook) )
+		end
+		
+		if( hook.owner == nil )
+			hook = hook.dup
+			hook.owner = self
+		end
+		
+		return hook
+	end
+end
+
 end
