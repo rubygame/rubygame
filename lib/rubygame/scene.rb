@@ -23,6 +23,7 @@ require 'rubygame/chipmunk'
 require 'rubygame'
 require 'rubygame/camera'
 require 'rubygame/clock'
+require 'rubygame/collision_handler'
 require 'rubygame/event'
 require 'rubygame/event_handler'
 require 'rubygame/event_hook'
@@ -33,7 +34,8 @@ require 'rubygame/event_actions'
 module Rubygame
 
 	class Scene
-		attr_reader :event_handler, :event_queue, :clock, :camera, :sprites, :space
+		attr_reader :clock, :collision_handler, :event_handler, :event_queue
+		attr_reader :camera, :sprites, :space
 		attr_accessor :time_step
 		
 		def initialize( camera_mode )
@@ -46,6 +48,8 @@ module Rubygame
 			@dead_sprites = []
 			
 			@camera = Rubygame::Camera.new( camera_mode )
+			
+			@collision_handler = CollisionHandler.new()
 			
 			@event_queue = EventQueue.new()
 			@event_handler = EventHandler.new()
@@ -65,13 +69,13 @@ module Rubygame
 				h.trigger = TickTrigger.new()
 				h.action = MethodAction.new(:update, true)
 			end
-
+			
 			@space = CP::Space.new()
 			
 			@space.set_default_collision_func { |a,b,contacts|
 				a,b = a.sprite, b.sprite
 				if (a.emit_collide and b.emit_collide)
-					self.event_queue.push( CollisionEvent.new(a,b,contacts) )
+					self.collision_handler.register( a, b,contacts )
 				end
 				(a.solid and b.solid)
 			}
@@ -95,6 +99,7 @@ module Rubygame
 		end
 		
 		def step
+			@event_queue.push( *(@collision_handler.flush()) )
 			@event_queue.fetch_sdl_events
 			
 			@event_queue.push( Rubygame::UndrawEvent.new(@camera) )
