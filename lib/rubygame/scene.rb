@@ -34,6 +34,8 @@ require 'rubygame/event_actions'
 module Rubygame
 
 	class Scene
+		include HasEventHandler
+		
 		attr_reader :clock, :collision_handler, :event_handler, :event_queue
 		attr_reader :camera, :sprites, :space
 		attr_accessor :time_step
@@ -55,9 +57,8 @@ module Rubygame
 			@event_handler = EventHandler.new()
 
 			# Forward collision events only to the concerned sprites
-			@event_handler.append_hook({
+			append_hook({
 				:consumes => true,
-				:owner => self,
 				:trigger => CollisionTrigger.new,
 				:action => BlockAction.new do |owner, event|
 					event.a.handle( event )
@@ -66,8 +67,7 @@ module Rubygame
 			})
 			
 			# Forward all events to @sprites members
-			@event_handler.append_hook({
-				:owner => self,
+			append_hook({
 				:trigger => YesTrigger.new,
 				:action => BlockAction.new do |owner, event|
 					owner.sprites.each { |sprite| sprite.handle( event ) }
@@ -75,8 +75,7 @@ module Rubygame
 			})
 			
 			# Update simulation on TickEvent.
-			@event_handler.append_hook({
-				:owner => self,
+			append_hook({
 				:trigger => TickTrigger.new(),
 				:action => MethodAction.new(:update, true)
 			})
@@ -93,10 +92,6 @@ module Rubygame
 
 		end
 
-		def handle( event )
-			@event_handler.handle( event )
-		end
-		
 		def mark_dead( sprite )
 			@dead_sprites << sprite
 		end
