@@ -38,7 +38,7 @@ class EventHandler
 	
 	#  call-seq:
 	#    append_hook( hook )  ->  hook
-	#    append_hook( &block )  ->  hook
+	#    append_hook( description )  ->  hook
 	# 
 	#  Puts an EventHook at the bottom of the stack (it will be handled last).
 	#  If the EventHandler already has that hook, it is moved to the bottom.
@@ -47,31 +47,32 @@ class EventHandler
 	#  This method has two distinct forms. The first form adds an existing Hook
 	#  instance; the second form constructs a new EventHook instance and adds it.
 	# 
-	#  hook::     the hook to add. (EventHook, for first form only)
+	#  hook::        the hook to add. (EventHook, for first form only)
 	# 
-	#  block::    a block to initialize the hook. (Proc, for second form only)
+	#  description:: a Hash to initialize a new EventHook.
+	#                (Hash, for second form only)
 	# 
 	#  Returns::  the hook that was added. (EventHook)
 	# 
 	#  Contrast this method with #prepend, which puts the EventHook at
 	#  the top of the stack.
 	# 
-	def append_hook( hook=nil, &block )
-		hook = EventHook.new( &block ) if block_given?
+	def append_hook( hook )
+		hook = EventHook.new( hook ) if hook.kind_of?( Hash )
 		@hooks = @hooks | [hook]
 		return hook
 	end
 
 	#  call-seq:
 	#    prepend_hook( hook )  ->  hook
-	#    prepend_hook( &block )  ->  hook
+	#    prepend_hook( description )  ->  hook
 	# 
 	#  Exactly like #append_hook, except that the EventHook is put at the
 	#  top of the stack (it will be handled first).
 	#  If the EventHandler already has that hook, it is moved to the top.
 	# 
-	def prepend_hook( hook=nil, &block )
-		hook = EventHook.new( &block ) if block_given?
+	def prepend_hook( hook )
+		hook = EventHook.new( hook ) if hook.kind_of?( Hash )
 		@hooks = [hook] | @hooks
 		return hook
 	end

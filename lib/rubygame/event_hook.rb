@@ -25,10 +25,11 @@ module Rubygame
 class EventHook
 	attr_accessor :owner, :trigger, :action, :consumes
 	
-	def initialize( &block )
-		@owner, @trigger, @action = nil
-		@consumes = false
-		yield self if block_given?
+	def initialize( description )
+		@owner    = description[:owner]
+		@trigger  = description[:trigger]
+		@action   = description[:action]
+		@consumes = description[:consumes]
 	end
 	
 	def match?( event )
