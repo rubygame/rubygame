@@ -24,22 +24,22 @@ module Rubygame
 	class CollisionHandler
 		def initialize
 			@collisions = {}
-			@old_collisions = {}
+			@old = {}
 			@outbox = []
 		end
 		
 		def flush
-			_check_old_collisions
+			_check_old
 			
 			out = @outbox
 			@outbox = []
 			return out
 		end
 		
-		def register_collision( a, b, contacts )
+		def register( a, b, contacts )
 			@collisions[ [a,b] ] = contacts
 			
-			if( @old_collisions[ [a,b] ] )
+			if( @old[ [a,b] ] )
 				@outbox << CollisionEvent.new( a, b, contacts )
 			else
 				@outbox << CollisionStartEvent.new( a, b, contacts )
@@ -48,16 +48,15 @@ module Rubygame
 		
 		private
 		
-		def _check_old_collisions
-			ended = @old_collisions.keys - @collisions.keys
+		def _check_old
+			ended = @old.keys - @collisions.keys
 			
 			ended.each { |pair|
 				a, b = pair
-				contacts = @old_collisions[ pair ]
-				@outbox << CollisionEndEvent.new( a, b, contacts )
+				@outbox << CollisionEndEvent.new( a, b, @old[ pair ] )
 			}
 			
-			@old_collisions = @collisions
+			@old = @collisions
 			@collisions = {}
 		end
 		
