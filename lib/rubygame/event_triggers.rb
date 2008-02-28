@@ -81,7 +81,7 @@ class CollisionTrigger
 				[]
 			end
 		
-		matching_types.include?(type) and _has_objects?( event )
+		matching_types.include?(@type) and _has_objects?( event )
 	end
 	
 	private
