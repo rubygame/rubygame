@@ -55,31 +55,31 @@ module Rubygame
 			@event_handler = EventHandler.new()
 
 			# Forward collision events only to the concerned sprites
-			@event_handler.append_hook do |h|
-				h.consumes = true
-				h.owner = self
-				h.trigger = CollisionTrigger.new
-				h.action = BlockAction.new { |owner, event|
+			@event_handler.append_hook({
+				:consumes => true,
+				:owner => self,
+				:trigger => CollisionTrigger.new,
+				:action => BlockAction.new do |owner, event|
 					event.a.handle( event )
 					event.b.handle( event )
-				}
-			end
+				end
+			})
 			
 			# Forward all events to @sprites members
-			@event_handler.append_hook do |h|
-				h.owner = self
-				h.trigger = YesTrigger.new
-				h.action = BlockAction.new { |owner, event|
+			@event_handler.append_hook({
+				:owner => self,
+				:trigger => YesTrigger.new,
+				:action => BlockAction.new do |owner, event|
 					owner.sprites.each { |sprite| sprite.handle( event ) }
-				}
-			end
+				end
+			})
 			
 			# Update simulation on TickEvent.
-			@event_handler.append_hook do |h|
-				h.owner = self
-				h.trigger = TickTrigger.new()
-				h.action = MethodAction.new(:update, true)
-			end
+			@event_handler.append_hook({
+				:owner => self,
+				:trigger => TickTrigger.new(),
+				:action => MethodAction.new(:update, true)
+			})
 			
 			@space = CP::Space.new()
 			

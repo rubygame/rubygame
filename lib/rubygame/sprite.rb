@@ -47,23 +47,23 @@ module Rubygame
 			@static = true
 			
 			@event_handler = EventHandler.new do |handler|
-				handler.append_hook { |h|
-					h.owner = self
-					h.trigger = TickTrigger.new()
-					h.action = MethodAction.new(:update, true)
-				}
+				handler.append_hook({
+					:owner => self,
+					:trigger => TickTrigger.new(),
+					:action => MethodAction.new(:update, true)
+				})
 				
-				handler.append_hook { |h|
-					h.owner = self
-					h.trigger = InstanceOfTrigger.new( DrawEvent )
-					h.action = MethodAction.new(:draw, true)
-				}
+				handler.append_hook({
+					:owner => self,
+					:trigger => InstanceOfTrigger.new( DrawEvent ),
+					:action => MethodAction.new(:draw, true)
+				})
 				
-				handler.append_hook { |h|
-					h.owner = self
-					h.trigger = InstanceOfTrigger.new( UndrawEvent )
-					h.action = MethodAction.new(:undraw, true)
-				}
+				handler.append_hook({
+					:owner => self,
+					:trigger => InstanceOfTrigger.new( UndrawEvent ),
+					:action => MethodAction.new(:undraw, true)
+				})
 			end
 			
 			instance_eval(&block) if block_given?
