@@ -75,7 +75,7 @@ class CollisionTrigger
 				[:start, :any]
 			when CollisionEvent
 				[:hold, :any]
-			when CollisionStartEvent
+			when CollisionEndEvent
 				[:end, :any]
 			else
 				[]
