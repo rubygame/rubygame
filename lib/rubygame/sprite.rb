@@ -27,6 +27,8 @@ module Rubygame
 	ShapeStruct = Struct.new(:shape, :mass, :offset)
 	
 	class Sprite
+		include HasEventHandler
+
 		attr_reader :scene, :body, :shapes, :event_handler
 		attr_accessor :image, :emit_collide, :solid, :quality
 		attr_reader :static
@@ -46,25 +48,22 @@ module Rubygame
 			@solid = true
 			@static = true
 			
-			@event_handler = EventHandler.new do |handler|
-				handler.append_hook({
-					:owner => self,
-					:trigger => TickTrigger.new(),
-					:action => MethodAction.new(:update, true)
-				})
+			@event_handler = EventHandler.new
+			
+			append_hook({
+				:trigger => TickTrigger.new(),
+				:action => MethodAction.new(:update, true)
+			})
 				
-				handler.append_hook({
-					:owner => self,
-					:trigger => InstanceOfTrigger.new( DrawEvent ),
-					:action => MethodAction.new(:draw, true)
-				})
+			append_hook({
+				:trigger => InstanceOfTrigger.new( DrawEvent ),
+				:action => MethodAction.new(:draw, true)
+			})
 				
-				handler.append_hook({
-					:owner => self,
-					:trigger => InstanceOfTrigger.new( UndrawEvent ),
-					:action => MethodAction.new(:undraw, true)
-				})
-			end
+			append_hook({
+				:trigger => InstanceOfTrigger.new( UndrawEvent ),
+				:action => MethodAction.new(:undraw, true)
+			})
 			
 			instance_eval(&block) if block_given?
 		end
@@ -88,11 +87,6 @@ module Rubygame
 				return nil				
 			end
 
-		end
-
-		
-		def handle( event )
-			@event_handler.handle( event )
 		end
 
 		
