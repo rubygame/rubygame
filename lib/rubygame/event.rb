@@ -338,6 +338,12 @@ module Rubygame
 	class CollisionEvent < Struct.new(:a,:b,:contacts)
 	end
 	
+	class CollisionStartEvent < Struct.new(:a,:b,:contacts)
+	end
+	
+	class CollisionEndEvent < Struct.new(:a,:b,:contacts)
+	end
+		
 	class DrawEvent < Struct.new(:camera)
 	end
 	
