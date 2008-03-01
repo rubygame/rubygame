@@ -111,10 +111,8 @@ VALUE convert_keymod( SDLMod mods )
 
 VALUE key_symbol( SDLKey key )
 {
-	return rb_funcall(cEvent,rb_intern("key_symbol"),
-	                  1, INT2NUM(key) );
+	return sanitized_symbol( SDL_GetKeyName(key) );
 }
-
 
 /* convert a button state into a list of mouse button sym */
 VALUE convert_mousebuttons( Uint8 state )
