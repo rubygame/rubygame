@@ -47,6 +47,18 @@ VALUE make_symbol(char *string)
 	return ID2SYM(rb_intern(string));
 }
 
+/* Lowercase, change spaces to underscores, and convert to symbol.
+ * Equivalent to: str.downcase!.gsub!(" ","_").intern
+ */
+VALUE sanitized_symbol(char *string)
+{
+	VALUE str = rb_str_new2(string);
+
+	rb_funcall( str, rb_intern("downcase!"), 0 );
+	rb_funcall( str, rb_intern("gsub!"), 2, rb_str_new2(" "), rb_str_new2("_") );
+	return rb_funcall( str, rb_intern("intern"), 0 );
+}
+
 /* Take either nil, Numeric or an Array of Numerics, returns Uint32. */
 Uint32 collapse_flags(VALUE vflags)
 {

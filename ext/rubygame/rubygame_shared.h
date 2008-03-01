@@ -33,6 +33,7 @@ extern VALUE cRect;
 
 extern SDL_Rect *make_rect(int, int, int, int);
 extern VALUE make_symbol(char *);
+extern VALUE sanitized_symbol(char *);
 extern Uint32 collapse_flags(VALUE);
 extern VALUE convert_to_array(VALUE);
 
