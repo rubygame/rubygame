@@ -33,9 +33,20 @@ require "rubygame_core"
 end
 
 require "rubygame/color"
+
 require "rubygame/constants"
+
 require "rubygame/event"
 require "rubygame/queue"
+require "rubygame/event_handler"
+require "rubygame/event_triggers"
+require "rubygame/event_actions"
+
 require "rubygame/rect"
+require "rubygame/old_sprite"
+
 require "rubygame/sprite"
+require "rubygame/scene"
+require "rubygame/camera"
+
 require "rubygame/clock"
