@@ -55,10 +55,10 @@ module Rubygame
 	# 
 	# This event has these attributes:
 	# gain::  true if the window gained focus, and false if it lost focus.
-	# state:: string indicating what type of focus was gained or lost: 
-	#         "mouse"::    the mouse entered/exited the window
-	#         "keyboard":: the window gained or lost input focus
-	#         "active"::   the window was minimized/iconified.
+	# state:: symbol indicating what type of focus was gained or lost: 
+	#         :mouse::    the mouse entered/exited the window
+	#         :keyboard:: the window gained or lost input focus
+	#         :active::   the window was minimized/iconified.
 	class ActiveEvent < Event
 		attr_accessor :gain, :state
 		def initialize(gain,state)

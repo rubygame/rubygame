@@ -76,11 +76,11 @@ VALUE convert_active( Uint8 state )
   if(state != 0)
   {
     if(state & SDL_APPMOUSEFOCUS)
-      rb_ary_push(array,rb_str_new2("mouse\0"));
+      rb_ary_push(array, make_symbol("mouse") );
     if(state & SDL_APPINPUTFOCUS)
-      rb_ary_push(array,rb_str_new2("keyboard\0"));
+      rb_ary_push(array, make_symbol("keyboard") );
     if(state & SDL_APPACTIVE)
-      rb_ary_push(array,rb_str_new2("active\0"));
+      rb_ary_push(array, make_symbol("active") );
   }
   return array;
 }
