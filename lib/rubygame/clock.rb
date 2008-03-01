@@ -17,24 +17,10 @@
 #	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #++
 
+require 'rubygame/event'
+
 module Rubygame
 
-	class TickEvent
-		attr_accessor :seconds, :created_at
-		def initialize( seconds )
-			@seconds = seconds
-			@created_at = Time.now
-		end
-		
-		def milliseconds
-			@seconds * 1000.0
-		end
-		
-		def milliseconds=( milliseconds )
-			@seconds = milliseconds / 1000.0
-		end
-	end
-	
 		#  Clock provides class methods for tracking running time and delaying
 		#  execution of the program for specified time periods. This is used to
 		#  provide a consistent framerate, prevent the program from using

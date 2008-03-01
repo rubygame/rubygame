@@ -350,4 +350,20 @@ module Rubygame
 	class UndrawEvent < Struct.new(:camera)
 	end
 	
+	class TickEvent
+		attr_accessor :seconds, :created_at
+		def initialize( seconds )
+			@seconds = seconds
+			@created_at = Time.now
+		end
+		
+		def milliseconds
+			@seconds * 1000.0
+		end
+		
+		def milliseconds=( milliseconds )
+			@seconds = milliseconds / 1000.0
+		end
+	end
+	
 end # module Rubygame
