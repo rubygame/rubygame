@@ -24,8 +24,6 @@ require 'rubygame/camera'
 
 module Rubygame
 
-	ShapeStruct = Struct.new(:shape, :mass, :offset)
-	
 	class Sprite
 		include HasEventHandler
 
@@ -69,8 +67,8 @@ module Rubygame
 		end
 
 		
-		def add_shape( shape, mass, offset )
-			@shapes << ShapeStruct.new( shape, mass, offset )
+		def add_shape( shape )
+			@shapes << shape
 			shape.body = @body
 			shape.sprite = self
 			@scene.space.add_shape(shape)
@@ -96,14 +94,20 @@ module Rubygame
 
 		
 		def recalc_mi
-			@body.m = @shapes.inject(0) { |mem, s| mem + s.mass }
+			@body.m = @shapes.inject(0) { |mem, s|
+				s.mass ? mem + s.mass : mem
+			}
 			
 			@body.i = @shapes.inject(0) { |mem, s|
-				case(s.shape)
-				when CP::Shape::Poly
-					mem + CP.moment_for_poly( s.mass, s.shape.verts, s.offset )
-				when CP::Shape::Circle
-					mem + CP.moment_for_circle( s.mass, 0, s.shape.r, s.offset )
+				if( s.mass and s.offset )
+					case(s)
+					when CP::Shape::Poly
+						mem + CP.moment_for_poly( s.mass, s.verts, s.offset )
+					when CP::Shape::Circle
+						mem + CP.moment_for_circle( s.mass, 0, s.r, s.offset )
+					else
+						mem
+					end
 				else
 					mem
 				end

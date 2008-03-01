@@ -23,6 +23,7 @@ module CP
 
 	module Shape
 		attr_accessor :sprite
+		attr_accessor :mass, :offset
 	end
 	
 end
