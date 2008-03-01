@@ -85,7 +85,7 @@ VALUE convert_active( Uint8 state )
   return array;
 }
 
-/* Convert an OR'd list of KMODs into a Ruby array of keysyms. */
+/* Convert an OR'd list of KMODs into a Ruby array of symbols. */
 VALUE convert_keymod( SDLMod mods )
 {
   VALUE array;
@@ -93,21 +93,28 @@ VALUE convert_keymod( SDLMod mods )
   array = rb_ary_new();
   if(mods != 0)
   {
-    /*        KEY MODIFIER                              KEY SYM */
-    if(mods & KMOD_LSHIFT)   rb_ary_push(array,INT2NUM( SDLK_LSHIFT    ));
-    if(mods & KMOD_RSHIFT)   rb_ary_push(array,INT2NUM( SDLK_RSHIFT    ));
-    if(mods & KMOD_LCTRL)    rb_ary_push(array,INT2NUM( SDLK_LCTRL     ));
-    if(mods & KMOD_RCTRL)    rb_ary_push(array,INT2NUM( SDLK_RCTRL     ));
-    if(mods & KMOD_LALT)     rb_ary_push(array,INT2NUM( SDLK_LALT      ));
-    if(mods & KMOD_RALT)     rb_ary_push(array,INT2NUM( SDLK_RALT      ));
-    if(mods & KMOD_LMETA)    rb_ary_push(array,INT2NUM( SDLK_LMETA     ));
-    if(mods & KMOD_RMETA)    rb_ary_push(array,INT2NUM( SDLK_RMETA     ));
-    if(mods & KMOD_NUM)      rb_ary_push(array,INT2NUM( SDLK_NUMLOCK   ));
-    if(mods & KMOD_CAPS)     rb_ary_push(array,INT2NUM( SDLK_CAPSLOCK  ));
-    if(mods & KMOD_MODE)     rb_ary_push(array,INT2NUM( SDLK_MODE      ));
+    /*        KEY MODIFIER                                   SYMBOL */
+    if(mods & KMOD_LSHIFT)   rb_ary_push(array, make_symbol( "lshift"   ));
+    if(mods & KMOD_RSHIFT)   rb_ary_push(array, make_symbol( "rshift"   ));
+    if(mods & KMOD_LCTRL)    rb_ary_push(array, make_symbol( "lctrl"    ));
+    if(mods & KMOD_RCTRL)    rb_ary_push(array, make_symbol( "rctrl"    ));
+    if(mods & KMOD_LALT)     rb_ary_push(array, make_symbol( "lalt"     ));
+    if(mods & KMOD_RALT)     rb_ary_push(array, make_symbol( "ralt"     ));
+    if(mods & KMOD_LMETA)    rb_ary_push(array, make_symbol( "lmeta"    ));
+    if(mods & KMOD_RMETA)    rb_ary_push(array, make_symbol( "rmeta"    ));
+    if(mods & KMOD_NUM)      rb_ary_push(array, make_symbol( "numlock"  ));
+    if(mods & KMOD_CAPS)     rb_ary_push(array, make_symbol( "capslock" ));
+    if(mods & KMOD_MODE)     rb_ary_push(array, make_symbol( "mode"     ));
   }
   return array;
 }
+
+VALUE key_symbol( SDLKey key )
+{
+	return rb_funcall(cEvent,rb_intern("key_symbol"),
+	                  1, INT2NUM(key) );
+}
+
 
 /* convert a button state into a list of mouse button sym */
 VALUE convert_mousebuttons( Uint8 state )
@@ -180,23 +187,25 @@ VALUE rbgm_convert_sdlevent( SDL_Event ev )
       return rb_funcall(cActiveEvent,new,2,\
         ev.active.gain, convert_active(ev.active.state));
       break;
+
+
     case SDL_KEYDOWN:
-      /* KeyDownEvent.new(keysym,[mods,...]) */
+      /* KeyDownEvent.new(key,[mods,...]) */
       return rb_funcall(cKeyDownEvent,new,2,\
-        /* keysym, string version is set in new()*/
-        INT2NUM(ev.key.keysym.sym),\
-        /* convert OR'd list of mods into Array of keysyms */
+        key_symbol(ev.key.keysym.sym),\
         convert_keymod(ev.key.keysym.mod)\
         );
       break;
+
     case SDL_KEYUP: /* Same as SDL_KEYDOWN */
-      /* KeyUpEvent.new(keysym,[mods,...]) */
+      /* KeyUpEvent.new(key,[mods,...]) */
       return rb_funcall(cKeyUpEvent,new,2,\
-        INT2NUM(ev.key.keysym.sym),\
+        key_symbol(ev.key.keysym.sym),\
         convert_keymod(ev.key.keysym.mod));
       break;
-    case SDL_MOUSEMOTION:;
 
+
+    case SDL_MOUSEMOTION:;
       /* MouseMotionEvent.new([x,y],[xrel,yrel],[buttons,...]) */
       return rb_funcall(cMouseMotionEvent,new,3,\
         rb_ary_new3(2,INT2NUM(ev.motion.x),INT2NUM(ev.motion.y)),\

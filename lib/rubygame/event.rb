@@ -29,8 +29,10 @@ module Rubygame
   # if desired; inheriting this class is not necessary, but makes it easier
   # to check if an object is an event or not.
 	class Event
-		def self.key_symbol( key )
-			return Event.key_name(key).downcase.gsub(" ","_").intern
+		
+		# Return a :symbol for the given key integer. For internal use.
+		def self.key_symbol( integer )
+			return Event.key_name(integer).downcase.gsub(" ","_").intern
 		end
 		
 		# Converts a keyboard symbol (keysym) into a human-readable text string.
@@ -96,42 +98,32 @@ module Rubygame
 
 		# Create a new KeyDownEvent.
 		# 
-		# key::  either an integer keysym (e.g. Rubygame::K_A) or string (e.g. "a")
-		# mods:: array of modifier keysyms
-		def initialize(key,mods)
-			if key.kind_of? Integer
-				@key = key
-				@string = Event.key2str(key, mods) #a string or nil
-			elsif key.kind_of? String
-				@key = Rubygame::Key::ASCII2KEY[key]
-				if @key != nil
-					@string = key
-				else
-					raise(ArgumentError,"First argument of KeyDownEvent.new() must be an Integer KeySym (like K_A) or a ASCII-like String (like \"a\" or \"A\"). Got %s (%s)"%[key,key.class])
-				end
-			end
+		# key::  a symbol representing the key pressed. (Symbol, required)
+		# mods:: Array of modifier key symbols. (Array of Symbols, optional)
+		# 
+		# Example::
+		#   KeyDownEvent.new( :a, [:shift] )     # uppercase A
+		#   KeyDownEvent.new( :"." )             # period / dot
+		#   KeyDownEvent.new( :"\"" )            # double-quote (")
+		#   KeyDownEvent.new( :up, [:ctrl] )     # ctrl + up-arrow
+		#   KeyDownEvent.new( :backspace )       # backspace key
+		# 
+		def initialize(key,mods=[])
+			@key = key
 			@mods = mods
+			# @string = Event.key2str(key, mods) #a string or nil
 		end
 	end
 
 	# Indicates that a keyboard key was released.
 	# 
-	# See KeyDownEvent.
+	# Please refer to KeyDownEvent for use and examples.
 	class KeyUpEvent < Event
 		attr_accessor :string,:key,:mods
 		def initialize(key,mods)
-			if key.kind_of? Integer
-				@key = key
-				@string = Event.key2str(key, mods) #a string or nil
-			elsif key.kind_of? String
-				@key = Rubygame::Key::ASCII2KEY[key]
-				if @key != nil
-					@string = key
-				else
-					raise(ArgumentError,"First argument of KeyUpEvent.new() must be an Integer KeySym (like K_A) or a ASCII-like String (like \"a\" or \"A\"). Got %s (%s)"%[key,key.class])
-				end
-			end
+			@key = key
 			@mods = mods
+			# @string = Event.key2str(key, mods) #a string or nil
 		end
 	end
 
