@@ -131,11 +131,7 @@ module Rubygame
 	# 
 	# This event has these attributes:
 	# pos::       the new position of the cursor on the screen.
-	# world_pos:: like _pos_, but converted into world coordinates based on the Scene's camera.
-	#             By default, the same as _pos_, but may be set by the Scene.
 	# rel::       the relative movement of the cursor since the last update, [x,y].
-	# world_rel:: like _rel_, but converted into world coordinates based on the Scene's camera.
-	#             By default, the same as _rel_, but may be set by the Scene.
 	# buttons::   the mouse buttons that were being held during the movement,
 	#             an Array of zero or more of these constants in module Rubygame
 	#             (or the corresponding button number):
@@ -144,6 +140,10 @@ module Rubygame
 	#             MOUSE_RIGHT::     3; right mouse button
   #             MOUSE_WHEELUP::   4; mouse wheel up (may also be a real button)
   #             MOUSE_WHEELDOWN:: 5; mouse wheel down (may also be a real button)
+	# world_pos:: like _pos_, but converted into world coordinates based on the Scene's camera.
+	#             By default, the same as _pos_, but may be set by the Scene.
+	# world_rel:: like _rel_, but converted into world coordinates based on the Scene's camera.
+	#             By default, the same as _rel_, but may be set by the Scene.
 	class MouseMotionEvent < Event
 		attr_accessor :pos,:rel,:buttons
 		attr_accessor :world_pos, :world_rel
@@ -161,8 +161,6 @@ module Rubygame
 	#             "right").
 	# pos::       the position of the mouse cursor when the button was pressed,
 	#             in the form [x,y].
-	# world_pos:: like _pos_, but converted into world coordinates based on the Scene's camera.
-	#             By default, the same as _pos_, but may be set by the Scene.
 	# button::    the mouse button that was pressed; one of these constants in
 	#             module Rubygame (or the corresponding button number):
 	#             MOUSE_LEFT::      1; left mouse button
@@ -170,6 +168,8 @@ module Rubygame
 	#             MOUSE_RIGHT::     3; right mouse button
   #             MOUSE_WHEELUP::   4; mouse wheel up (may also be a real button)
   #             MOUSE_WHEELDOWN:: 5; mouse wheel down (may also be a real button)
+	# world_pos:: like _pos_, but converted into world coordinates based on the Scene's camera.
+	#             By default, the same as _pos_, but may be set by the Scene.
 	class MouseDownEvent < Event
 		attr_accessor :string,:pos,:button
 		attr_accessor :world_pos
