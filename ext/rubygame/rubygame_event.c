@@ -114,6 +114,17 @@ VALUE key_symbol( SDLKey key )
 	return sanitized_symbol( SDL_GetKeyName(key) );
 }
 
+/* Return a symbol :mouseN where N is the button number.
+ * E.g. left mouse (button 1) becomes :mouse1
+ */
+VALUE mouse_symbol( Uint8 button )
+{
+  int size = 8; /* can fit up to mouse99\0 */
+  char *name = (char *)malloc(size);
+  snprintf( name, size, "mouse%d", button );
+  return make_symbol(name);
+}
+
 /* convert a button state into a list of mouse button sym */
 VALUE convert_mousebuttons( Uint8 state )
 {
@@ -121,15 +132,15 @@ VALUE convert_mousebuttons( Uint8 state )
 
   buttons = rb_ary_new();
   if(state & SDL_BUTTON(SDL_BUTTON_LEFT))
-    rb_ary_push(buttons, INT2NUM(SDL_BUTTON_LEFT));
+    rb_ary_push(buttons, mouse_symbol(SDL_BUTTON_LEFT));
   if(state & SDL_BUTTON(SDL_BUTTON_MIDDLE))
-    rb_ary_push(buttons, INT2NUM(SDL_BUTTON_MIDDLE));
+    rb_ary_push(buttons, mouse_symbol(SDL_BUTTON_MIDDLE));
   if(state & SDL_BUTTON(SDL_BUTTON_RIGHT))
-    rb_ary_push(buttons, INT2NUM(SDL_BUTTON_RIGHT));
+    rb_ary_push(buttons, mouse_symbol(SDL_BUTTON_RIGHT));
   if(state & SDL_BUTTON(SDL_BUTTON_WHEELUP))
-  	rb_ary_push(buttons, INT2NUM(SDL_BUTTON_WHEELUP));
+    rb_ary_push(buttons, mouse_symbol(SDL_BUTTON_WHEELUP));
   if(state & SDL_BUTTON(SDL_BUTTON_WHEELDOWN))
-  	rb_ary_push(buttons, INT2NUM(SDL_BUTTON_WHEELDOWN));
+    rb_ary_push(buttons, mouse_symbol(SDL_BUTTON_WHEELDOWN));
   return buttons;
 }
 
@@ -212,18 +223,22 @@ VALUE rbgm_convert_sdlevent( SDL_Event ev )
         /* Prepare list of buttons from OR'd list */
         convert_mousebuttons(ev.motion.state));
       break;
+
     case SDL_MOUSEBUTTONDOWN:
       /* MouseDownEvent.new([x,y],button) */
       return rb_funcall(cMouseDownEvent,new,2,\
         rb_ary_new3(2,INT2NUM(ev.button.x),INT2NUM(ev.button.y)),\
-        INT2NUM(ev.button.button));
+        mouse_symbol(ev.button.button));
       break;
+
     case SDL_MOUSEBUTTONUP:
       /* MouseUpEvent.new([x,y],button) */
       return rb_funcall(cMouseUpEvent,new,2,\
         rb_ary_new3(2,INT2NUM(ev.button.x),INT2NUM(ev.button.y)),\
-        INT2NUM(ev.button.button));
+        mouse_symbol(ev.button.button));
       break;
+
+
     case SDL_JOYAXISMOTION:
       /* JoyAxisEvent.new(joy,axis,value) */
       /* Eventually, joy might be a reference to a Joystick instance? */

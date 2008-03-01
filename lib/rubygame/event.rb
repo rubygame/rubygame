@@ -139,13 +139,13 @@ module Rubygame
 	# pos::       the new position of the cursor on the screen.
 	# rel::       the relative movement of the cursor since the last update, [x,y].
 	# buttons::   the mouse buttons that were being held during the movement,
-	#             an Array of zero or more of these constants in module Rubygame
-	#             (or the corresponding button number):
-	#             MOUSE_LEFT::      1; left mouse button
-	#             MOUSE_MIDDLE::    2; middle mouse button
-	#             MOUSE_RIGHT::     3; right mouse button
-  #             MOUSE_WHEELUP::   4; mouse wheel up (may also be a real button)
-  #             MOUSE_WHEELDOWN:: 5; mouse wheel down (may also be a real button)
+	#             an Array of zero or more symbols of the form :mouseN, where N
+	#             in the button number:
+	#             :mouse1:: left mouse button
+	#             :mouse2:: middle mouse button (mouse wheel pressed)
+	#             :mouse3:: right mouse button
+  #             :mouse4:: mouse wheel up (may also be a real button)
+  #             :mouse5:: mouse wheel down (may also be a real button)
 	# world_pos:: like _pos_, but converted into world coordinates based on the Scene's camera.
 	#             By default, the same as _pos_, but may be set by the Scene.
 	# world_rel:: like _rel_, but converted into world coordinates based on the Scene's camera.
@@ -167,34 +167,22 @@ module Rubygame
 	#             "right").
 	# pos::       the position of the mouse cursor when the button was pressed,
 	#             in the form [x,y].
-	# button::    the mouse button that was pressed; one of these constants in
-	#             module Rubygame (or the corresponding button number):
-	#             MOUSE_LEFT::      1; left mouse button
-	#             MOUSE_MIDDLE::    2; middle mouse button
-	#             MOUSE_RIGHT::     3; right mouse button
-  #             MOUSE_WHEELUP::   4; mouse wheel up (may also be a real button)
-  #             MOUSE_WHEELDOWN:: 5; mouse wheel down (may also be a real button)
+	# button::    the mouse button that was pressed, a symbol of the form :mouseN, where N
+	#             in the button number:
+	#             :mouse1:: left mouse button
+	#             :mouse2:: middle mouse button (mouse wheel pressed)
+	#             :mouse3:: right mouse button
+  #             :mouse4:: mouse wheel up (may also be a real button)
+  #             :mouse5:: mouse wheel down (may also be a real button)
 	# world_pos:: like _pos_, but converted into world coordinates based on the Scene's camera.
 	#             By default, the same as _pos_, but may be set by the Scene.
 	class MouseDownEvent < Event
 		attr_accessor :string,:pos,:button
 		attr_accessor :world_pos
 		def initialize(pos, button, world_pos=nil)
-			
 			@pos = pos
+			@button = button
 			@world_pos = world_pos or pos
-			
-			if button.kind_of? Integer
-				@button = button
-				@string = Rubygame::Mouse::MOUSE2STR[button] #a string or nil
-			elsif key.kind_of? String
-				@button = Rubygame::Mouse::STR2MOUSE[key]
-				if @button != nil
-					@string = button
-				else
-					raise(ArgumentError,"First argument of MouseDownEvent.new() must be an Integer Mouse button indentifier (like MOUSE_LEFT) or a String (like \"left\"). Got %s (%s)"%[button,button.class])
-				end
-			end
 		end
 	end
 
@@ -207,19 +195,8 @@ module Rubygame
 		
 		def initialize(pos, button, world_pos=nil)
 			@pos = pos
+			@button = button
 			@world_pos = world_pos or pos
-			
-			if button.kind_of? Integer
-				@button = button
-				@string = Rubygame::Mouse::MOUSE2STR[button] #a string or nil
-			elsif key.kind_of? String
-				@button = Rubygame::Mouse::STR2MOUSE[key]
-				if @button != nil
-					@string = button
-				else
-					raise(ArgumentError,"First argument of MouseUpEvent.new() must be an Integer Mouse button indentifier (like MOUSE_LEFT) or a String (like \"left\"). Got %s (%s)"%[button,button.class])
-				end
-			end
 		end
 	end
 
