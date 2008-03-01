@@ -72,27 +72,33 @@ module Rubygame
 	# This event has these attributes:
 	# string:: a human-readable string telling what key was pressed, or nil.
 	#          See Event.key2str.
-	# key::    the integer keysym for the key. These can be compared with the
-	#          K_* constants in the Rubygame module, e.g. Rubygame::K_A.
-	# mods::   an Array of zero or more keysyms indicating which modifier keys
-	#          were being pressed when the key was pressed. You can compare
-	#          with these constants in the Rubygame module:
-	#          K_RSHIFT::    shift key (right side)
-	#          K_LSHIFT::    shift key (left side)
-	#          K_RCTRL::     ctrl key (right side)
-	#          K_LCTRL::     ctrl key (left side)
-	#          K_RALT::      alt key (right side)
-	#          K_LALT::      alt key (left side)
-	#          K_RMETA::     meta key (right side)
-	#          K_LMETA::     meta key (left side)
-	#          K_RSUPER::    super key, aka. Windows key (right side)
-	#          K_LSUPER::    super key, aka. Windows key (left side)
-	#          K_RALT::      alt key (right side)
-	#          K_NUMLOCK::   num lock
-	#          K_CAPSLOCK::  caps lock
-	#          K_MODE::      mode key
+	# key::    
+	# mods::   an Array of zero or more symbols indicating which modifier keys
+	#          were being pressed when the key was pressed.
+	# 
+	#          :capslock::  Caps lock
+	#          :compose::   Compose key
+	#          :lalt::      Alt key (left side)
+	#          :lctrl::     Ctrl key (left side)
+	#          :lmeta::     Meta key (left side)
+	#          :lshift::    Shift key (left side)
+	#          :lsuper::    Super key, aka. Windows key (left side)
+	#          :mode::      Mode key
+	#          :numlock::   Num lock
+	#          :ralt::      Alt key (right side)
+	#          :rctrl::     Ctrl key (right side)
+	#          :rmeta::     Meta key (right side)
+	#          :rshift::    Shift key (right side)
+	#          :rsuper::    Super key, aka. Windows key (right side)
 	#          
-	#          
+	# *NOTE*: Caps Lock and Num Lock are special. Instead of emitting an event
+	# when pressed or released, they emit events when activated or deactivated.
+	# In other words, when the LED on your keyboard turns on, a KeyDownEvent
+	# is emitted; when the light goes off, a KeyUpEvent is emitted.
+	# 
+	# Similarly, the :capslock and :numlock modifiers indicate that those
+	# features are active, not that the keys are being pressed right now.
+	# 
 	class KeyDownEvent < Event
 		attr_accessor :string,:key,:mods
 
