@@ -1,6 +1,6 @@
 #--
 #	Rubygame -- Ruby code and bindings to SDL to facilitate game creation
-#	Copyright (C) 2004-2007  John Croisant
+#	Copyright (C) 2004-2008  John Croisant
 #
 #	This library is free software; you can redistribute it and/or
 #	modify it under the terms of the GNU Lesser General Public
@@ -40,14 +40,65 @@ module Rubygame
 		# will be made uppercase or alternate, based on U.S. keyboard layout.
 		# E.g. "a" becomes "A", "1" becomes "!", and "/" becomes "?".
 		def self.key2str( sym, mods )
-			if (mods.include? K_LSHIFT) or (mods.include? K_RSHIFT)
-				return (Rubygame::Key::KEY2UPPER[sym]\
-				        or Rubygame::Key::KEY2ASCII[sym] or "")
+			if( mods.include?(:lshift) or mods.include?(:rshift) )
+				return (KEY2UPPER[sym] or KEY2ASCII[sym] or sym.to_s.upcase!)
 			else
-				return (Rubygame::Key::KEY2LOWER[sym]\
-				        or Rubygame::Key::KEY2ASCII[sym] or "")
+				return (KEY2ASCII[sym] or sym.to_s)
 			end
 		end
+		
+		# All the keys which have ASCII print values that are different
+		# from their symbol name (e.g. :a -> "a", so it's not listed)
+		KEY2ASCII = {
+			:backspace => "\b",
+			:tab => "\t",
+			:return => "\n",
+			:escape => "^[",
+			:space => " ",
+			:"[0]" => "0",
+			:"[1]" => "1",
+			:"[2]" => "2",
+			:"[3]" => "3",
+			:"[4]" => "4",
+			:"[5]" => "5",
+			:"[6]" => "6",
+			:"[7]" => "7",
+			:"[8]" => "8",
+			:"[9]" => "9",
+			:"[.]" => ".",
+			:"[/]" => "/",
+			:"[*]" => "*",
+			:"[-]" => "-",
+			:"[+]" => "+",
+			:"[=]" => "=",
+			:enter => "\n", # keypad enter
+		}
+
+		# All the keys affected by the Shift key on Sholes (QWERTY) keyboard,
+		# except letter keys (which are just upcase()'d)
+		KEY2UPPER = {
+			:"\'" => "\"",
+			:"," => "<",
+			:"-" => "_",
+			:"." => ">",
+			:"/" => "?",
+			:"0" => ")",
+			:"1" => "!",
+			:"2" => "@",
+			:"3" => "#",
+			:"4" => "$",
+			:"5" => "%",
+			:"6" => "^",
+			:"7" => "&",
+			:"8" => "*",
+			:"9" => "(",
+			:";" => ":",
+			:"=" => "+",
+			:"[" => "{",
+			:"\\" => "|",
+			:"]" => "}",
+			:"`" => "~",
+		}
 	end
 
 	# Indicates that the Rubygame window has gained or lost focus from the
