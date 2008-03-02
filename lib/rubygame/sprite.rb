@@ -165,21 +165,22 @@ module Rubygame
 			# Don't need to do anything if it's invisible!
 			if( @image )
 				image = @image
-				
-				rot = (@body.a + camera.rotation) * 57.2958 # converted to degrees
-				scale = camera.zoom
+
+				trans = camera.world_to_screen(:pos => @body.p, :size => (@size or 1), :rot => @body.a)
+				trans[:rot] *= 57.2958 # converted to degrees and flip
 				
 				# Don't need to do this if there's no rotation or scale change
-				if(rot != 0.0 or scale != 1.0)
+				unless( trans[:rot] == 0.0 and trans[:size] == 1.0)
 					
 					# Use antialiasing if quality level is high enough
 					aa = (camera.mode.quality * self.quality > 0.5)
-					image = image.rotozoom( -rot, scale, aa )
+					
+					image = image.rotozoom( -trans[:rot], trans[:size], aa )
 					
 				end
 				
 				rect = image.make_rect
-				rect.center = ((@body.p * camera.zoom) - camera.position).to_ary
+				rect.center = trans[:pos].to_ary
 
 				camera.mode.dirty_rects << image.blit( camera.mode.surface, rect )
 			else
@@ -193,15 +194,15 @@ module Rubygame
 			if( @image )
 				rect = @image.make_rect
 				
-				rot = (@body.a + camera.rotation) * 57.2958 # converted to degrees
-				scale = camera.zoom
+				trans = camera.world_to_screen(:pos => @body.p, :size => (@size or 1), :rot => @body.a)
+				trans[:rot] *= 57.2958 # converted to degrees and flip
 				
 				# Don't need to do this if there's no rotation or scale change
-				if(rot != 0.0 or scale != 1.0)
-					rect.size = Rubygame::Surface.rotozoom_size( rect.size, -rot, scale )
+				unless( trans[:rot] == 0.0 and trans[:size] == 1.0)
+					rect.size = Rubygame::Surface.rotozoom_size( rect.size, -trans[:rot], trans[:size] )
 				end
 				
-				rect.center = ((@body.p * camera.zoom) - camera.position).to_ary
+				rect.center = trans[:pos].to_ary
 
 				bg = camera.mode.background
 				bg.blit( camera.mode.surface, rect, rect )
