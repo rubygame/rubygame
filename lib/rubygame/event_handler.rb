@@ -115,6 +115,24 @@ module HasEventHandler
 		@event_handler.handle( event )
 	end
 	
+	def magic_hooks( hash )
+		hash.each_pair do |symbol, method|
+			
+			hook = { :action => MethodAction.new(method,true) }
+			
+			case(symbol.to_s)
+			when /mouse/
+				hook[:trigger] = MouseClickTrigger.new(symbol)
+			else
+				hook[:trigger] = KeyPressTrigger.new(symbol)
+			end
+			
+			append_hook( hook )
+			
+		end
+		nil
+	end
+	
 	def prepend_hook( hook )
 		hook = _prepare_hook( hook )
 		@event_handler.prepend_hook( hook )
