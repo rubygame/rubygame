@@ -121,10 +121,10 @@ module Rubygame
 			end
 
 			@shapes.each { |s|
-				if space.shapes.include?( s.shape )
-					space.remove_shape( s.shape ) 
-				elsif space.static_shapes.include?( s.shape )
-					space.remove_static_shape( s.shape )
+				if space.shapes.include?( s )
+					space.remove_shape( s ) 
+				elsif space.static_shapes.include?( s )
+					space.remove_static_shape( s )
 				end
 			}
 		end
