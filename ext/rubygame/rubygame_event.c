@@ -114,15 +114,30 @@ VALUE key_symbol( SDLKey key )
 	return sanitized_symbol( SDL_GetKeyName(key) );
 }
 
-/* Return a symbol :mouseN where N is the button number.
- * E.g. left mouse (button 1) becomes :mouse1
+/* Return a descriptive symbol for the given mouse button.
+ * e.g. :mouse_left, :mouse_wheel_up, etc.
  */
 VALUE mouse_symbol( Uint8 button )
 {
-  int size = 8; /* can fit up to mouse99\0 */
-  char *name = (char *)malloc(size);
-  snprintf( name, size, "mouse%d", button );
-  return make_symbol(name);
+	switch( button )
+	{
+		case SDL_BUTTON_LEFT:
+			return make_symbol("mouse_left");
+		case SDL_BUTTON_MIDDLE:
+			return make_symbol("mouse_middle");
+		case SDL_BUTTON_RIGHT:
+			return make_symbol("mouse_right");
+		case SDL_BUTTON_WHEELUP:
+			return make_symbol("mouse_wheel_up");
+		case SDL_BUTTON_WHEELDOWN:
+			return make_symbol("mouse_wheel_down");
+		default: {
+			int size = 8;
+			char *name = (char *)malloc(size);
+			snprintf( name, size, "mouse_%d", button );
+			return make_symbol(name);
+		}
+	}
 }
 
 /* convert a button state into a list of mouse button sym */
@@ -132,15 +147,15 @@ VALUE convert_mousebuttons( Uint8 state )
 
   buttons = rb_ary_new();
   if(state & SDL_BUTTON(SDL_BUTTON_LEFT))
-    rb_ary_push(buttons, mouse_symbol(SDL_BUTTON_LEFT));
+    rb_ary_push(buttons, make_symbol("mouse_left"));
   if(state & SDL_BUTTON(SDL_BUTTON_MIDDLE))
-    rb_ary_push(buttons, mouse_symbol(SDL_BUTTON_MIDDLE));
+    rb_ary_push(buttons, make_symbol("mouse_middle"));
   if(state & SDL_BUTTON(SDL_BUTTON_RIGHT))
-    rb_ary_push(buttons, mouse_symbol(SDL_BUTTON_RIGHT));
+    rb_ary_push(buttons, make_symbol("mouse_right"));
   if(state & SDL_BUTTON(SDL_BUTTON_WHEELUP))
-    rb_ary_push(buttons, mouse_symbol(SDL_BUTTON_WHEELUP));
+    rb_ary_push(buttons, make_symbol("mouse_wheel_up"));
   if(state & SDL_BUTTON(SDL_BUTTON_WHEELDOWN))
-    rb_ary_push(buttons, mouse_symbol(SDL_BUTTON_WHEELDOWN));
+    rb_ary_push(buttons, make_symbol("mouse_wheel_down"));
   return buttons;
 }
 
