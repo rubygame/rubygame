@@ -84,7 +84,7 @@ scene.append_hook(
 )
 
 scene.append_hook(
-	:trigger => KeyPressTrigger.new(K_PRINT),
+	:trigger => KeyPressTrigger.new(:print_screen),
 	:action => BlockAction.new { |o,e|
 		o.camera.mode.surface.savebmp("rubygame3-sprite-test.bmp")
 	}
