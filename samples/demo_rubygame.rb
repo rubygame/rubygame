@@ -205,33 +205,33 @@ catch(:rubygame_quit) do
 			case event
 			when KeyDownEvent
 				case event.key
-				when K_ESCAPE
+				when :escape
 					throw :rubygame_quit 
-				when K_Q
+				when :q
 					throw :rubygame_quit 
-				when K_UP
+				when :up
 					panda1.vy = -1
-				when K_DOWN
+				when :down
 					panda1.vy = 1
-				when K_LEFT
+				when :left
 					panda1.vx = -1
-				when K_RIGHT
+				when :right
 					panda1.vx = 1
-				when K_S
+				when :s
 					$smooth = !$smooth
 					puts "#{$smooth?'En':'Dis'}abling smooth scale/rotate."
 				else
-					print "%s"%[event.string]
+					print "%s "%[event.key]
 				end
 			when KeyUpEvent
 				case event.key
-				when K_UP
+				when :up
 					panda1.vy = 0
-				when K_DOWN
+				when :down
 					panda1.vy = 0
-				when K_LEFT
+				when :left
 					panda1.vx = 0
-				when K_RIGHT
+				when :right
 					panda1.vx = 0
 				end
 			when ActiveEvent
@@ -242,7 +242,7 @@ catch(:rubygame_quit) do
 			when QuitEvent
 				throw :rubygame_quit
 			when MouseDownEvent
-				puts "click: [%d,%d]"%event.pos
+				puts "click: %s at [%d,%d]"%[event.button, *event.pos]
 			when JoyDownEvent
 				case event.button
 				when 4; panda1.speed = 80
