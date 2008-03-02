@@ -31,136 +31,135 @@ panda_pic = Surface.load_image("panda.png")
 panda_pic.set_colorkey(panda_pic.get_at(0,0))
 $media.store("panda.png", panda_pic)
 
-class Panda < Sprite
+class PandaBall < Sprite
+	@@colors = [:red, :yellow, :blue,
+	            :green, :orange, :purple,
+	            :pink, :sky_blue]
+	
 	attr_accessor :vx, :vy, :speed
 	def initialize(scene,pos)
 		super(scene)
-		@speed = 40
 		@image = $media["panda.png"]
 		@body.p = pos
-	end
-end
-
-class SpinnyPanda < Panda
-	attr_accessor :rate
-	def initialize(scene,pos,rate=1)
-		super(scene,pos)
-		@body.w = rate
+		@size = 0.5 + rand() * 0.8
+		@color = @@colors[ rand(@@colors.length) ]
+		
+		shape = CP::Shape::Circle.new( @body, 22 * @size, vect(0,0) )
+		shape.e = 0.0
+		shape.u = 0.5
+		shape.mass = 10.0
+		shape.offset = vect(0,0)
+		add_shape( shape )
+		recalc_mi()
+		
+		self.static = false
 	end
 	
-	def draw( event )
-		super
-		
-		camera = event.camera
-		scale = camera.zoom
-		center = ((@body.p * camera.zoom) - camera.position).to_ary
-		camera.mode.surface.draw_circle_a(center, 22, :black)
+	def _draw_sdl( camera )
+		trans = camera.world_to_screen(:pos => @body.p, :size => @size)
+		trans[:size] *= 23.0
 
+		camera.mode.surface.draw_circle_s( trans[:pos].to_ary, trans[:size], @color )
+		
+		rect = Rect.new(0,0,trans[:size]*2,trans[:size]*2)
+		rect.center = trans[:pos].to_ary
+		
+		camera.mode.dirty_rects << rect
+		
+		super
+	end
+	
+	def _undraw_sdl( camera )
+		trans = camera.world_to_screen(:pos => @body.p, :size => @size)
+		trans[:size] *= 23.0
+		
+		rect = Rect.new(0,0,trans[:size]*2+2,trans[:size]*2+2)
+		rect.center = trans[:pos].to_ary
+		
+		bg = camera.mode.background
+		bg.blit( camera.mode.surface, rect, rect )
+		
+		camera.mode.dirty_rects << rect
+		
+		super
+	end
+	
+	def update( event )
+		# Kill it if it goes too far down, way off the screen
+		mark_dead() if @body.p.y > 1000
 	end
 end
-
-
 
 # Create the SDL window
 screen = Screen.set_mode([320,240])
-screen.show_cursor = false;
 
 # Make the background surface
 background = Surface.new(screen.size)
 
 camera_mode = Camera::RenderModeSDL.new(screen, background, screen.make_rect, 1.0)
 scene = Scene.new( camera_mode )
-scene.camera.zoom = 1
-scene.camera.position = vect(0,0)
+#scene.camera.position = vect(160,120)
 
 scene.event_queue.ignore = [MouseMotionEvent]
+
 scene.space.gravity = vect(0,100)
 
-scene.append_hook(
-	:trigger => AnyTrigger.new( KeyPressTrigger.new( :q ),
-	                            KeyPressTrigger.new( :escape ) ,
-	                            InstanceOfTrigger.new(QuitEvent) ),
-	:action => BlockAction.new { |o,e| throw :rubygame_quit }
-)
+scene.clock.target_framerate = 100
 
-scene.append_hook(
-	:trigger => KeyPressTrigger.new(:print_screen),
-	:action => BlockAction.new { |o,e|
-		o.camera.mode.surface.savebmp("rubygame3-sprite-test.bmp")
-	}
-)
-
-# 
-# PANDAAAAAAAAAA!!!
-# 
-
-panda1 = SpinnyPanda.new( scene, vect(100,50), 2 ) {
+class << scene
+	def quit( ignored )
+		throw :quit
+	end
 	
-	# size = vect(*$media['panda.png'].size)
-	# $square = [vect(-0.5,-0.5), vect(0.5,-0.5), vect(0.5,0.5), vect(-0.5,0.5)].reverse
-	# verts = $square.collect { |v| vect(v.x*size.x, v.y*size.y) }
-	# shape = CP::Shape::Poly.new( @body, verts, vect(0,0) )
+	def take_screenshot( ignored )
+		@camera.mode.surface.savebmp("rubygame3-sprite-test.bmp")
+	end
 	
-	shape = CP::Shape::Circle.new( @body, 22.0, vect(0,0) )
-	shape.e = 0.3
-	shape.u = 0.6
-	shape.mass = 10.0
-	shape.offset = vect(0,0)
-	add_shape( shape )
-	recalc_mi()
+	def toggle_smooth( ignored )
+		@smooth = true unless defined? @smooth # enabled by default
+		@smooth = @smooth ? false : true
+		@camera.mode.quality = @smooth ? 1.0 : 0.0
+	end
+
+	# 
+	# MAKE ME SOME PANDAAAAAAAAAAS!!
+	# 
+	def add_panda( event )
+		PandaBall.new( self, vect(*event.world_pos) )
+	end
 	
-	self.static = false
-}
+	def refresh( event )
+		@camera.mode.surface.update
+	end
+	
+end
 
-panda1.append_hook(
-	:trigger => KeyPressTrigger.new( :up ),
-	:action => BlockAction.new { |o,e| o.body.f.x = -10 }
-)
+PandaBall.new( scene, vect(100,50) )
 
-panda1.append_hook(
-	:trigger => KeyPressTrigger.new( :down ),
-	:action => BlockAction.new { |o,e| o.body.f.y = 10 }
-)
+# When the event on the left happens, call the method on the right.
+# It's so easy, it's magic!
+scene.magic_hooks(:mouse_right  =>  :add_panda,
+                  :print_screen =>  :take_screenshot,
+                  :r            =>  :refresh,
+                  :s            =>  :toggle_smooth,
+                  :q            =>  :quit,
+                  :escape       =>  :quit)
 
-panda1.append_hook(
-	:trigger => KeyPressTrigger.new( :left ),
-	:action => BlockAction.new { |o,e| o.body.f.x = -10 }
-)
+puts "Right click to make a Panda Ball!"
 
-panda1.append_hook(
-	:trigger => KeyPressTrigger.new( :right ),
-	:action => BlockAction.new { |o,e| o.body.f.y = 10 }
-)
-
-panda1.append_hook(
-	:trigger => AnyTrigger.new( KeyReleaseTrigger.new( :up   ),
-	                            KeyReleaseTrigger.new( :down ) ),
-	:action => BlockAction.new { |o,e| o.body.v.y = 0 }
-)
-
-panda1.append_hook(
-	:trigger => AnyTrigger.new( KeyReleaseTrigger.new( :up   ),
-	                            KeyReleaseTrigger.new( :down ) ),
-	:action => BlockAction.new { |o,e| o.body.v.x = 0 }
-)
-
-
-
-
-
-INFINITY = 10**100
+INFINITY = 15**100
 
 floor = Sprite.new( scene ) {
 	@body.m, @body.i = INFINITY, INFINITY
 	
 	shape = CP::Shape::Segment.new(@body, vect(0,120), vect(260,220), 1.0)
-	shape.e = 0.8
+	shape.e = 0.2
 	shape.u = 0.4
 	shape.mass = INFINITY
 	add_shape( shape )
 	
 	shape = CP::Shape::Segment.new(@body, vect(260,220), vect(320,120), 1.0)
-	shape.e = 0.8
+	shape.e = 0.2
 	shape.u = 0.4
 	shape.mass = INFINITY
 	add_shape( shape )
@@ -174,7 +173,8 @@ background.fill( "dark red", [80,110,80,80] )
 
 
 floor.shapes.each { |s|
-	background.draw_line_a( s.ta, s.tb, :black )
+	background.draw_line_a( scene.camera.world_to_screen(:pos => s.ta)[:pos],
+													scene.camera.world_to_screen(:pos => s.tb)[:pos], :black )
 }
 
 # Refresh the screen once. During the loop, we'll use 'dirty rect' updating
@@ -187,11 +187,11 @@ screen.update()
 update_time = 0
 framerate = 0
 
-catch(:rubygame_quit) do
+catch(:quit) do
 	loop do
 		scene.step
 		scene.camera.refresh()
-		screen.title = "Rubygame3 test [%.1f fps]"%[scene.clock.framerate]
+		screen.title = "Rubygame3  [%d sprites] [%.1f fps]"%[scene.sprites.length, scene.clock.framerate]
 	end
 end
 
