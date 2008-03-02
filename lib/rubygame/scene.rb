@@ -66,6 +66,28 @@ module Rubygame
 				end
 			})
 			
+			
+			append_hook(
+				:trigger => MouseClickTrigger.new,
+				:action => BlockAction.new do |owner, event|
+					trans = owner.camera.screen_to_world( {:pos => vect(*event.pos)} )
+					event.world_pos = trans[:pos]
+					owner.sprites.each { |sprite| sprite.handle( event ) }
+				end
+			)
+			
+			
+			append_hook(
+				:trigger => MouseHoverTrigger.new,
+				:action => BlockAction.new do |owner, event|
+					trans = owner.camera.screen_to_world( {:pos => vect(*event.pos),
+					                                       :rel => vect(*event.rel)} )
+					event.world_pos = trans[:pos]
+					event.world_rel = trans[:rel]
+					owner.sprites.each { |sprite| sprite.handle( event ) }
+				end
+			)
+			
 			# Forward all events to @sprites members
 			append_hook({
 				:trigger => YesTrigger.new,
