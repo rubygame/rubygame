@@ -154,7 +154,7 @@ class MouseClickTrigger
 	end
 	
 	def match?( event )
-		if event.kind_of?( MouseClickEvent )
+		if event.kind_of?( MouseDownEvent )
 			((@button == :any) or (event.button == @button)) and \
 			((@bounds == :anywhere) or (@bounds.collide( event.world_pos )))
 		else
@@ -170,7 +170,7 @@ class MouseHoverTrigger
 	end
 	
 	def match?( event )
-		if event.kind_of?( MouseHoverEvent )
+		if event.kind_of?( MouseMotionEvent )
 			(@button == :any or event.buttons.include?(@button)) and \
 			(@bounds == :anywhere or @bounds.collide( event.world_pos ))
 		else
