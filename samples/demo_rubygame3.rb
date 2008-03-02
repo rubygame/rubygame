@@ -77,8 +77,8 @@ scene.event_queue.ignore = [MouseMotionEvent]
 scene.space.gravity = vect(0,100)
 
 scene.append_hook(
-	:trigger => AnyTrigger.new( KeyPressTrigger.new(K_Q),
-	                            KeyPressTrigger.new(K_ESCAPE) ,
+	:trigger => AnyTrigger.new( KeyPressTrigger.new( :q ),
+	                            KeyPressTrigger.new( :escape ) ,
 	                            InstanceOfTrigger.new(QuitEvent) ),
 	:action => BlockAction.new { |o,e| throw :rubygame_quit }
 )
@@ -104,40 +104,43 @@ panda1 = SpinnyPanda.new( scene, vect(100,50), 2 ) {
 	shape = CP::Shape::Circle.new( @body, 22.0, vect(0,0) )
 	shape.e = 0.3
 	shape.u = 0.6
-	add_shape( shape, 10.0, vect(0,0) )
+	shape.mass = 10.0
+	shape.offset = vect(0,0)
+	add_shape( shape )
 	recalc_mi()
-	scene.space.add_body(@body)
+	
+	self.static = false
 }
 
 panda1.append_hook(
-	:trigger => KeyPressTrigger.new(K_UP),
+	:trigger => KeyPressTrigger.new( :up ),
 	:action => BlockAction.new { |o,e| o.body.f.x = -10 }
 )
 
 panda1.append_hook(
-	:trigger => KeyPressTrigger.new(K_DOWN),
+	:trigger => KeyPressTrigger.new( :down ),
 	:action => BlockAction.new { |o,e| o.body.f.y = 10 }
 )
 
 panda1.append_hook(
-	:trigger => KeyPressTrigger.new(K_LEFT),
+	:trigger => KeyPressTrigger.new( :left ),
 	:action => BlockAction.new { |o,e| o.body.f.x = -10 }
 )
 
 panda1.append_hook(
-	:trigger => KeyPressTrigger.new(K_RIGHT),
+	:trigger => KeyPressTrigger.new( :right ),
 	:action => BlockAction.new { |o,e| o.body.f.y = 10 }
 )
 
 panda1.append_hook(
-	:trigger => AnyTrigger.new( KeyReleaseTrigger.new(K_UP),
-	                            KeyReleaseTrigger.new(K_DOWN) ),
+	:trigger => AnyTrigger.new( KeyReleaseTrigger.new( :up   ),
+	                            KeyReleaseTrigger.new( :down ) ),
 	:action => BlockAction.new { |o,e| o.body.v.y = 0 }
 )
 
 panda1.append_hook(
-	:trigger => AnyTrigger.new( KeyReleaseTrigger.new(K_LEFT),
-	                            KeyReleaseTrigger.new(K_RIGHT) ),
+	:trigger => AnyTrigger.new( KeyReleaseTrigger.new( :up   ),
+	                            KeyReleaseTrigger.new( :down ) ),
 	:action => BlockAction.new { |o,e| o.body.v.x = 0 }
 )
 
@@ -153,12 +156,14 @@ floor = Sprite.new( scene ) {
 	shape = CP::Shape::Segment.new(@body, vect(0,120), vect(260,220), 1.0)
 	shape.e = 0.8
 	shape.u = 0.4
-	add_shape( shape, INFINITY, vect(0,0) )
+	shape.mass = INFINITY
+	add_shape( shape )
 	
 	shape = CP::Shape::Segment.new(@body, vect(260,220), vect(320,120), 1.0)
 	shape.e = 0.8
 	shape.u = 0.4
-	add_shape( shape, INFINITY, vect(0,0) )
+	shape.mass = INFINITY
+	add_shape( shape )
 }
 
 
@@ -169,7 +174,6 @@ background.fill( "dark red", [80,110,80,80] )
 
 
 floor.shapes.each { |s|
-	s = s.shape
 	background.draw_line_a( s.ta, s.tb, :black )
 }
 
@@ -187,7 +191,7 @@ catch(:rubygame_quit) do
 	loop do
 		scene.step
 		scene.camera.refresh()
-		screen.title = "Rubygame3 test [%d fps]"%[scene.clock.framerate]
+		screen.title = "Rubygame3 test [%.1f fps]"%[scene.clock.framerate]
 	end
 end
 
