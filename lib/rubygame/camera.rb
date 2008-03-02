@@ -29,8 +29,8 @@ module Rubygame
 		def initialize( mode, &block )
 			@mode = mode
 			@position = vect(0,0)
-			@rotation = 0
-			@zoom = 1
+			@rotation = 0.0
+			@zoom = 1.0
 			yield self if block_given?
 		end
 		
@@ -50,6 +50,27 @@ module Rubygame
 					result[key] = val + @rotation
 				when :size
 					result[key] = val * @zoom
+				end
+			end
+			
+			return result
+		end
+		
+		def screen_to_world( orig )
+			result = {}
+
+			orig.each_pair do |key,val|
+				case key
+				when :pos
+					rot_by = CP::Vect.for_angle(@rotation) * @zoom
+					result[key] = val.unrotate(rot_by) + @position
+				when :rel
+					rot_by = CP::Vect.for_angle(@rotation) * @zoom
+					result[key] = val.unrotate(rot_by)
+				when :rot
+					result[key] = val - @rotation
+				when :size
+					result[key] = val / @zoom
 				end
 			end
 			
