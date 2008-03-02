@@ -707,7 +707,7 @@ VALUE rbgm_transform_rzsize(int argc, VALUE *argv, VALUE module)
 
     case T_FLOAT:
     case T_FIXNUM: {
-      zoomx = NUM2DBL(argv[1]);
+      zoomx = NUM2DBL(vzoom);
 #ifndef HAVE_ROTOZOOMXY
       if(zoomx < 0)                /* negative zoom (for flipping) */
       {
