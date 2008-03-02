@@ -38,6 +38,24 @@ module Rubygame
 			@mode.refresh
 		end
 		
+		def world_to_screen( orig )
+			result = {}
+
+			orig.each_pair do |key,val|
+				case key
+				when :pos
+					rot_by = CP::Vect.for_angle(@rotation) * @zoom
+					result[key] = ((val - @position)).rotate(rot_by) 
+				when :rot
+					result[key] = val + @rotation
+				when :size
+					result[key] = val * @zoom
+				end
+			end
+			
+			return result
+		end
+		
 		class RenderMode < Struct.new(:rect, :quality); end
 		
 		class RenderModeSDL < RenderMode
