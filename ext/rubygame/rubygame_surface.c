@@ -60,9 +60,33 @@ VALUE rbgm_image_savebmp(VALUE, VALUE);
 
 VALUE rbgm_transform_flip(VALUE, VALUE, VALUE);
 
+
+Uint32 surface_syms_to_flags( VALUE ary )
+{
+	ary = convert_to_array(ary);
+
+	Uint32 flags = 0;
+	int i;
+	int len = RARRAY(ary)->len;
+	char *symbol;
+
+	for(i = 0; i < len; i++ )
+	{
+		symbol = rb_id2name( SYM2ID( rb_ary_entry(ary,i) ) );
+
+		if     ( rg_streql(symbol, "hardware") )  flags |= SDL_HWSURFACE;
+		else if( rg_streql(symbol, "colorkey") )  flags |= SDL_SRCCOLORKEY;
+		else if( rg_streql(symbol, "alpha"   ) )  flags |= SDL_SRCALPHA;
+		else rb_raise( rb_eArgError, "Unknown flag ':%s'.", symbol);
+	}
+
+	return flags;
+}
+
+
 /* 
  *  call-seq:
- *     new(size, depth=0, flags=0)  ->  Surface
+ *     new(size, depth=0, flags=[])  ->  Surface
  *
  *  Create and initialize a new Surface object. 
  *
@@ -80,21 +104,16 @@ VALUE rbgm_transform_flip(VALUE, VALUE, VALUE);
  *          automatically choose a color depth: either the depth of the Screen
  *          mode (if one has been set), or the greatest color depth available
  *          on the system.
- *  flags:: an Array or Bitwise-OR'd list of zero or more of the following 
- *          flags (located in the Rubygame module, e.g. Rubygame::SWSURFACE).
- *          This argument may be omitted, in which case the Surface 
- *          will be a normal software surface (this is not necessarily a bad
- *          thing).
- *          SWSURFACE::   (default) request a software surface.
- *          HWSURFACE::   request a hardware-accelerated surface (using a 
- *                        graphics card), if available. Creates a software
- *                        surface if hardware surfaces are not available.
- *          SRCCOLORKEY:: request a colorkeyed surface. #set_colorkey will
- *                        also enable colorkey as needed. For a description
- *                        of colorkeys, see #set_colorkey.
- *          SRCALPHA::    request an alpha channel. #set_alpha will
- *                        also enable alpha. as needed. For a description
- *                        of alpha, see #alpha.
+ *  flags:: an Array of zero or more of the following flags:
+ *          :hwsurface:: request a hardware-accelerated surface (using a 
+ *                       graphics card), if available. Creates a software
+ *                       surface if hardware surfaces are not available.
+ *          :colorkey::  request a colorkeyed surface. #set_colorkey will
+ *                       also enable colorkey as needed. For a description
+ *                       of colorkeys, see #set_colorkey.
+ *          :alpha::     request an alpha channel. #set_alpha will
+ *                       also enable alpha. as needed. For a description
+ *                       of alpha, see #alpha.
  */
 VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 {
@@ -105,7 +124,9 @@ VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 	int w, h, depth;
 	VALUE vsize, vdepth, vflags;
 
+
 	rb_scan_args(argc, argv, "12", &vsize, &vdepth, &vflags);
+
 
 	if( SDL_GetVideoSurface() )
 	{
@@ -132,7 +153,8 @@ VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 	Bmask = pixformat->Bmask;
 	Amask = pixformat->Amask;
 
-	if( !NIL_P(vdepth) && NUM2INT(vdepth) > 0 )
+
+	if( RTEST(vdepth) && NUM2INT(vdepth) > 0 )
 	{
 		/* TODO: We might want to check that the requested depth makes sense. */
 		depth = NUM2INT(vdepth);
@@ -154,8 +176,14 @@ VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 	else
 		rb_raise(rb_eArgError,"Array is too short for Surface size (%d for 2)",\
 			RARRAY(vsize)->len);
-	
-	flags = collapse_flags(vflags); /* in rubygame_shared */
+
+
+	flags = 0;
+	if( RTEST(vflags) )
+	{
+		flags = surface_syms_to_flags(vflags);
+	}
+
 
 	/* Finally, we can create the new Surface! Or try, anyway... */
 	self_surf = SDL_CreateRGBSurface(flags,w,h,depth,Rmask,Gmask,Bmask,Amask);
