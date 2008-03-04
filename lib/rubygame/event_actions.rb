@@ -36,8 +36,11 @@ class MethodAction
 	end
 	
 	def perform( owner, event )
-		args = @pass_event ? [@method_name, event] : [@method_name]
-		owner.send( *args )
+		method = owner.method(@method_name)
+		@pass_event ? method.call( event ) : method.call()
+	rescue ArgumentError
+		# Oops! Try again, without any argument.
+		method.call()
 	end
 end
 
