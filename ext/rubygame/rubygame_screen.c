@@ -58,7 +58,7 @@ Uint32 screen_syms_to_flags( VALUE ary )
 	{
 		symbol = rb_id2name( SYM2ID( rb_ary_entry(ary,i) ) );
 
-		if     ( rg_streql(symbol, "hwsurface" ))  flags |= SDL_HWSURFACE;
+		if     ( rg_streql(symbol, "hardware"  ))  flags |= SDL_HWSURFACE;
 		else if( rg_streql(symbol, "asyncblit" ))  flags |= SDL_ASYNCBLIT;
 		else if( rg_streql(symbol, "anyformat" ))  flags |= SDL_ANYFORMAT;
 		else if( rg_streql(symbol, "doublebuf" ))  flags |= SDL_DOUBLEBUF;
@@ -89,7 +89,7 @@ Uint32 screen_syms_to_flags( VALUE ary )
  *          current system color depth.
  *  flags:: an Array of zero or more of the following symbols:
  *          
- *          :hwsurface::  Try to create the video surface in video card memory
+ *          :hardware::   Try to create the video surface in video card memory
  *                        instead of in general memory. This makes it very fast
  *                        to blit hardware surfaces onto other hardware surfaces,
  *                        but slower to access the image data (e.g to draw shapes
