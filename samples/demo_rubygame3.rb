@@ -107,15 +107,11 @@ scene.space.gravity = vect(0,100)
 scene.clock.target_framerate = 100
 
 class << scene
-	def quit( ignored )
-		throw :quit
-	end
-	
-	def take_screenshot( ignored )
+	def take_screenshot
 		@camera.mode.surface.savebmp("rubygame3-sprite-test.bmp")
 	end
 	
-	def toggle_smooth( ignored )
+	def toggle_smooth
 		@smooth = true unless defined? @smooth # enabled by default
 		@smooth = @smooth ? false : true
 		@camera.mode.quality = @smooth ? 1.0 : 0.0
@@ -128,7 +124,7 @@ class << scene
 		PandaBall.new( self, vect(*event.world_pos) )
 	end
 	
-	def refresh( event )
+	def refresh
 		@camera.mode.surface.update
 	end
 	
@@ -142,8 +138,9 @@ scene.magic_hooks(:mouse_right  =>  :add_panda,
                   :print_screen =>  :take_screenshot,
                   :r            =>  :refresh,
                   :s            =>  :toggle_smooth,
-                  :q            =>  :quit,
-                  :escape       =>  :quit)
+                  :q            =>  Proc.new{ throw :quit },
+                  :escape       =>  Proc.new{ throw :quit },
+                  QuitEvent     =>  Proc.new{ throw :quit })
 
 puts "Right click to make a Panda Ball!"
 
