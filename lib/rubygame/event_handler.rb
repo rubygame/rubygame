@@ -116,22 +116,27 @@ module HasEventHandler
 	end
 	
 	def magic_hooks( hash )
-		hash.each_pair do |symbol, method|
+		hash.each_pair do |trigger, action|
 			
 			hook = {}
 			
-			case(symbol.to_s)
-			when /mouse/
-				hook[:trigger] = MouseClickTrigger.new(symbol)
-			else
-				hook[:trigger] = KeyPressTrigger.new(symbol)
+			case trigger
+			when Symbol
+				case(trigger.to_s)
+				when /mouse/
+					hook[:trigger] = MouseClickTrigger.new(trigger)
+				else
+					hook[:trigger] = KeyPressTrigger.new(trigger)
+				end
+			when Class
+				hook[:trigger] = InstanceOfTrigger.new(trigger)
 			end
 			
-			case method
+			case action
 			when Symbol
-				hook[:action] = MethodAction.new(method,true)
+				hook[:action] = MethodAction.new(action,true)
 			when Proc, Method
-				hook[:action] = BlockAction.new(&method)
+				hook[:action] = BlockAction.new(&action)
 			end
 			
 			append_hook( hook )
