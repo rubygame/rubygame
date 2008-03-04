@@ -30,7 +30,7 @@ class BlockAction
 end
 
 class MethodAction
-	def initialize( method_name=:push, pass_event=false )
+	def initialize( method_name, pass_event=false )
 		@method_name = method_name
 		@pass_event = pass_event
 	end
