@@ -77,11 +77,31 @@ Uint32 surface_syms_to_flags( VALUE ary )
 		if     ( rg_streql(symbol, "hardware") )  flags |= SDL_HWSURFACE;
 		else if( rg_streql(symbol, "colorkey") )  flags |= SDL_SRCCOLORKEY;
 		else if( rg_streql(symbol, "alpha"   ) )  flags |= SDL_SRCALPHA;
-		else rb_raise( rb_eArgError, "Unknown flag ':%s'.", symbol);
+		else rb_raise( rb_eArgError, "Unknown Surface flag ':%s'.", symbol);
 	}
 
 	return flags;
 }
+
+/* NOTE: Inherited by Screen, so needs to handle Screen flags too. */
+VALUE surface_flags_to_syms( Uint32 flags )
+{
+	VALUE ary = rb_ary_new();
+
+	if(flags & SDL_HWSURFACE  )  rb_ary_push( ary, make_symbol("hardware")   );
+	if(flags & SDL_ASYNCBLIT  )  rb_ary_push( ary, make_symbol("asyncblit")  );
+	if(flags & SDL_ANYFORMAT  )  rb_ary_push( ary, make_symbol("anyformat")  );
+	if(flags & SDL_DOUBLEBUF  )  rb_ary_push( ary, make_symbol("doublebuf")  );
+	if(flags & SDL_FULLSCREEN )  rb_ary_push( ary, make_symbol("fullscreen") );
+	if(flags & SDL_OPENGL     )  rb_ary_push( ary, make_symbol("opengl")     );
+	if(flags & SDL_RESIZABLE  )  rb_ary_push( ary, make_symbol("resizable")  );
+	if(flags & SDL_NOFRAME    )  rb_ary_push( ary, make_symbol("noframe")    );
+	if(flags & SDL_SRCCOLORKEY)  rb_ary_push( ary, make_symbol("colorkey")   );
+	if(flags & SDL_SRCALPHA   )  rb_ary_push( ary, make_symbol("alpha")      );
+
+	return ary;
+}
+
 
 
 /* 
@@ -261,14 +281,15 @@ VALUE rbgm_surface_get_depth(VALUE self)
 /*  call-seq:
  *     flags
  *
- *  Return any flags the surface was initialized with 
- *  (as a bitwise OR'd integer).
+ *  Return the flags the Surface has enabled (an Array of symbols).
+ *  See Surface.new (or Screen.new) for a list of possible flags.
+ *  
  */
 VALUE rbgm_surface_get_flags(VALUE self)
 {
 	SDL_Surface *surf;
 	Data_Get_Struct(self, SDL_Surface, surf);
-	return UINT2NUM(surf->flags);
+	return surface_flags_to_syms(surf->flags);
 }
 
 /* 
