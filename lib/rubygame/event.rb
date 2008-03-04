@@ -49,12 +49,19 @@ module Rubygame
 		
 		# All the keys which have ASCII print values that are different
 		# from their symbol name (e.g. :a -> "a", so it's not listed)
+		# Modifiers will return an empty string
 		KEY2ASCII = {
 			:backspace => "\b",
 			:tab => "\t",
 			:return => "\n",
 			:escape => "^[",
 			:space => " ",
+			:left_shift => "",
+			:right_shift => "",
+			:left_ctrl => "",
+			:right_ctrl => "",
+			:left_alt => "",
+			:right_alt => "",
 			:"[0]" => "0",
 			:"[1]" => "1",
 			:"[2]" => "2",
