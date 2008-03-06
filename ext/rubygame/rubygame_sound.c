@@ -649,6 +649,12 @@ static VALUE rg_sound_fadingp( int argc, VALUE *argv, VALUE self )
 	int direction;
 	int channel = sound->channel;
 
+	/* If it's not actually on a channel, return false right away. */
+	if( !(_rg_sound_channel_check(sound)) )
+	{
+		return Qfalse;
+	}
+
 	if( RTEST(vdirection) )
 	{
 		if( make_symbol("in") == vdirection )
