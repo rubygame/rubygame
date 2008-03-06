@@ -42,10 +42,18 @@ SDL_Rect *make_rect(int x, int y, int w, int h)
 	return rect;
 }
 
+/* Returns a symbol from the given char* string */
 VALUE make_symbol(char *string)
 {
 	return ID2SYM(rb_intern(string));
 }
+
+/* Returns a char* string from the given symbol */
+char *unmake_symbol(VALUE symbol)
+{
+	return rb_id2name( SYM2ID(symbol) );
+}
+
 
 /* Lowercase, change spaces to underscores, and convert to symbol.
  * Equivalent to: str.downcase!.gsub!(" ","_").intern
