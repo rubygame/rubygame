@@ -729,6 +729,9 @@ void Rubygame_Init_Sound()
 #endif
 
 	/*
+	 *  **IMPORTANT**: Sound is only available if Rubygame was compiled
+	 *  with SDL_mixer support!
+	 *
 	 *  Sound holds a sound effect, loaded from an audio file (see #new for
 	 *  supported formats).
 	 *
