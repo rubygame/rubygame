@@ -702,10 +702,14 @@ static VALUE rg_sound_getvolume( VALUE self )
  *  call-seq:
  *    volume = new_vol
  *
- *  Set the new volume level of the sound.
+ *  Set the new #volume level of the sound.
  *  0.0 is totally silent, 1.0 is full volume.
+ * 
+ *  Volume cannot be set while the sound is fading in or out.
+ *  Be sure to check #fading? or rescue from SDLError when
+ *  using this method.
  *
- *  **NOTE**: Does nothing if the sound is fading in or out.
+ *  May raise::  SDLError if the sound is fading in or out.
  *	
  */
 static VALUE rg_sound_setvolume( VALUE self, VALUE volume )
@@ -721,6 +725,10 @@ static VALUE rg_sound_setvolume( VALUE self, VALUE volume )
 		{
 			sound->volume = NUM2DBL(volume);
 			Mix_Volume( sound->channel, (int)(MIX_MAX_VOLUME * sound->volume) );
+		}
+		else
+		{
+			rb_raise(eSDLError, "cannot set Sound volume while fading");
 		}
 	}
 	else
