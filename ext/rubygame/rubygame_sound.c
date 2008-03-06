@@ -164,6 +164,7 @@ static void _rg_sound_copy( RG_Sound *sound, RG_Sound *other )
 	sound->channel = -1;
 }
 
+
 /* Make a new Sound with a copy of the audio from an existing Sound */
 static void _rg_sound_deepcopy( RG_Sound *sound, RG_Sound *other )
 {
@@ -175,6 +176,7 @@ static void _rg_sound_deepcopy( RG_Sound *sound, RG_Sound *other )
 	sound->volume = other->volume;
 	sound->channel = -1;
 }
+
 
 static int _rg_sound_play( RG_Sound *sound, 
                             int fade_in, int repeats, int stop_after )
@@ -211,6 +213,8 @@ static int _rg_sound_play( RG_Sound *sound,
 	}
 }
 
+
+
 static VALUE rg_sound_alloc( VALUE klass )
 {
 	RG_Sound *sound = _rg_sound_alloc();
@@ -245,6 +249,10 @@ static VALUE rg_sound_initialize_copy( VALUE self, VALUE other )
 
 	return self;
 }
+
+
+
+
 
 static VALUE rg_sound_play( int argc, VALUE *argv, VALUE self )
 {
@@ -300,6 +308,165 @@ static VALUE rg_sound_play( int argc, VALUE *argv, VALUE self )
 	return self;
 }
 
+
+
+
+/* Check that the given channel is (still) loaded with the given chunk. */
+static int _rg_sound_channel_check(int channel, Mix_Chunk *chunk)
+{
+	/* channel is unset, so it doesn't belong. */
+	if( channel == -1 )
+	{
+		return 0;
+	}
+
+	Mix_Chunk *chan_chunk = Mix_GetChunk(channel);	
+
+	/* Check that the chunks are the same
+	 * by comparing buffer pointers.
+	 */
+	return ( chunk == chan_chunk );
+}
+
+
+
+static VALUE rg_sound_playingp( VALUE self )
+{
+	RG_Sound *sound;
+	Data_Get_Struct(self,  RG_Sound, sound);
+
+	int channel = sound->channel;
+
+	/* Make sure the sound actually belongs to the channel */
+	if( _rg_sound_channel_check(channel, sound->wrap->chunk) )
+	{
+		/* Return true if it's playing, but not paused. */
+		if( Mix_Playing(channel) && !Mix_Paused(channel) )
+		{
+			return Qtrue;
+		}
+		else
+		{
+			return Qfalse;
+		}
+	}
+	else
+	{
+		return Qfalse;
+	}
+}
+
+
+
+
+static VALUE rg_sound_pause( VALUE self )
+{
+	RG_Sound *sound;
+	Data_Get_Struct(self,  RG_Sound, sound);
+
+	int channel = sound->channel;
+
+	/* Make sure the sound actually belongs to the channel */
+	if( _rg_sound_channel_check(channel, sound->wrap->chunk) )
+	{
+		Mix_Pause( channel );
+	}
+
+	return self;
+}
+
+
+static VALUE rg_sound_unpause( VALUE self )
+{
+	RG_Sound *sound;
+	Data_Get_Struct(self,  RG_Sound, sound);
+
+	int channel = sound->channel;
+
+	/* Make sure the sound actually belongs to the channel */
+	if( _rg_sound_channel_check(channel, sound->wrap->chunk) )
+	{
+		Mix_Resume( channel );
+	}
+
+	return self;
+}
+
+
+static VALUE rg_sound_pausedp( VALUE self )
+{
+	RG_Sound *sound;
+	Data_Get_Struct(self,  RG_Sound, sound);
+
+	int channel = sound->channel;
+
+	/* Make sure the sound actually belongs to the channel */
+	if( _rg_sound_channel_check(channel, sound->wrap->chunk) )
+	{
+		/* Return true if it's "playing" (not stopped), as well as paused. */
+		if( Mix_Playing(channel) && Mix_Paused(channel) )
+		{
+			return Qtrue;
+		}
+		else
+		{
+			return Qfalse;
+		}
+	}
+	else
+	{
+		return Qfalse;
+	}
+}
+
+
+
+
+static VALUE rg_sound_stop( VALUE self )
+{
+	RG_Sound *sound;
+	Data_Get_Struct(self,  RG_Sound, sound);
+
+	int channel = sound->channel;
+
+	/* Make sure the sound actually belongs to the channel */
+	if( _rg_sound_channel_check(channel, sound->wrap->chunk) )
+	{
+		Mix_HaltChannel( channel );
+	}
+
+	return self;
+}
+
+static VALUE rg_sound_stoppedp( VALUE self )
+{
+	RG_Sound *sound;
+	Data_Get_Struct(self,  RG_Sound, sound);
+
+	int channel = sound->channel;
+
+	/* Make sure the sound actually belongs to the channel */
+	if( _rg_sound_channel_check(channel, sound->wrap->chunk) )
+	{
+		/* Return true if it's not playing. */
+		if( !Mix_Playing(channel) )
+		{
+			return Qtrue;
+		}
+		else
+		{
+			return Qfalse;
+		}
+	}
+	else
+	{
+		return Qfalse;
+	}
+}
+
+
+
+
 void Rubygame_Init_Sound()
 {
 #if 0
@@ -314,4 +481,10 @@ void Rubygame_Init_Sound()
 	rb_define_method( cSound, "initialize_copy", rg_sound_initialize_copy,  1 );
 
 	rb_define_method( cSound, "play",            rg_sound_play,            -1 );
+	rb_define_method( cSound, "playing?",        rg_sound_playingp,         0 );
+	rb_define_method( cSound, "pause",           rg_sound_pause,            0 );
+	rb_define_method( cSound, "unpause",         rg_sound_unpause,          0 );
+	rb_define_method( cSound, "paused?",         rg_sound_pausedp,          0 );
+	rb_define_method( cSound, "stop",            rg_sound_stop,             0 );
+	rb_define_method( cSound, "stopped?",        rg_sound_stoppedp,         0 );
 }
