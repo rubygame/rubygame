@@ -48,11 +48,11 @@ end
 OBJEXT = from_env_or_config("OBJEXT")
 DLEXT = from_env_or_config("DLEXT")
 
-RUBYGAME_VERSION = "2.2.0"
+RUBYGAME_VERSION = [3,0,0]
 
 spec = Gem::Specification.new do |s|
   s.name     = "rubygame"
-  s.version  = RUBYGAME_VERSION
+  s.version  = RUBYGAME_VERSION.join(".")
   s.author   = "John Croisant"
   s.email    = "jacius@users.sourceforge.net"
   s.homepage = "http://rubygame.sourceforge.net/"
@@ -199,7 +199,11 @@ string_option :sitelibdir
 CFLAGS = [from_env_or_config("CFLAGS"),
           try_sdl_config("--cflags"),
           "-I. -I#{CONFIG['topdir']}",
-          ("-g" if $options[:debug]) ].join(" ")
+          ("-g" if $options[:debug]),
+          "-DRUBYGAME_MAJOR_VERSION=#{RUBYGAME_VERSION[0]}",
+          "-DRUBYGAME_MINOR_VERSION=#{RUBYGAME_VERSION[1]}",
+          "-DRUBYGAME_PATCHLEVEL=#{RUBYGAME_VERSION[2]}"
+         ].join(" ")
 
 LINK_FLAGS = [from_env_or_config("LIBRUBYARG_SHARED"),
               from_env_or_config("LDFLAGS"),
