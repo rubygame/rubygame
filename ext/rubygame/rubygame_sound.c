@@ -516,6 +516,36 @@ static VALUE rg_sound_fadingp( int argc, VALUE *argv, VALUE self )
 
 
 
+
+static VALUE rg_sound_getvolume( VALUE self )
+{
+	RG_Sound *sound;
+	Data_Get_Struct(self,  RG_Sound, sound);
+
+	return rb_float_new(sound->volume);
+}
+
+
+static VALUE rg_sound_setvolume( VALUE self, VALUE volume )
+{
+	RG_Sound *sound;
+	Data_Get_Struct(self,  RG_Sound, sound);
+
+	sound->volume = NUM2DBL(volume);
+
+	/* Change channel volume if Sound is currently assigned to a channel */
+	if( _rg_sound_channel_check(sound->channel, sound->wrap->chunk) )
+	{
+		Mix_Volume( sound->channel, (int)(MIX_MAX_VOLUME * sound->volume) );
+	}
+
+	return volume;
+}
+
+
+
+
+
 void Rubygame_Init_Sound()
 {
 #if 0
@@ -542,4 +572,6 @@ void Rubygame_Init_Sound()
 	rb_define_method( cSound, "fade_out",        rg_sound_fadeout,          1 );
 	rb_define_method( cSound, "fading?",         rg_sound_fadingp,         -1 );
 
+	rb_define_method( cSound, "volume",          rg_sound_getvolume,        0 );
+	rb_define_method( cSound, "volume=",         rg_sound_setvolume,        1 );
 }
