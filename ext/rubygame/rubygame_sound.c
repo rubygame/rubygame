@@ -182,6 +182,22 @@ static void _rg_sound_deepcopy( RG_Sound *sound, RG_Sound *other )
 }
 
 
+/* Check that the given channel is (still) loaded with the given chunk. */
+static int _rg_sound_channel_check( RG_Sound *sound )
+{
+	/* channel is unset, so it doesn't belong. */
+	if( sound->channel == -1 )
+	{
+		return 0;
+	}
+
+	Mix_Chunk *chan_chunk = Mix_GetChunk(sound->channel);	
+
+	/* Check that the channel chunk is the same as the given one */
+	return ( sound->wrap->chunk == chan_chunk );
+}
+
+
 /* Play the sound, fading in, repeating, and stopping as specified.
  * fade_in and stop_after are in milliseconds!
  */
@@ -378,24 +394,6 @@ static VALUE rg_sound_play( int argc, VALUE *argv, VALUE self )
 }
 
 
-
-
-/* Check that the given channel is (still) loaded with the given chunk. */
-static int _rg_sound_channel_check(int channel, Mix_Chunk *chunk)
-{
-	/* channel is unset, so it doesn't belong. */
-	if( channel == -1 )
-	{
-		return 0;
-	}
-
-	Mix_Chunk *chan_chunk = Mix_GetChunk(channel);	
-
-	/* Check that the channel chunk is the same as the given one */
-	return ( chunk == chan_chunk );
-}
-
-
 /*
  *  call-seq:
  *    playing?  ->  true or false
@@ -412,7 +410,7 @@ static VALUE rg_sound_playingp( VALUE self )
 	int channel = sound->channel;
 
 	/* Make sure the sound actually belongs to the channel */
-	if( _rg_sound_channel_check(channel, sound->wrap->chunk) )
+	if( _rg_sound_channel_check(sound) )
 	{
 		/* Return true if it's playing, but not paused. */
 		if( Mix_Playing(channel) && !Mix_Paused(channel) )
@@ -452,7 +450,7 @@ static VALUE rg_sound_pause( VALUE self )
 	int channel = sound->channel;
 
 	/* Make sure the sound actually belongs to the channel */
-	if( _rg_sound_channel_check(channel, sound->wrap->chunk) )
+	if( _rg_sound_channel_check(sound) )
 	{
 		Mix_Pause( channel );
 	}
@@ -481,7 +479,7 @@ static VALUE rg_sound_unpause( VALUE self )
 	int channel = sound->channel;
 
 	/* Make sure the sound actually belongs to the channel */
-	if( _rg_sound_channel_check(channel, sound->wrap->chunk) )
+	if( _rg_sound_channel_check(sound) )
 	{
 		Mix_Resume( channel );
 	}
@@ -506,7 +504,7 @@ static VALUE rg_sound_pausedp( VALUE self )
 	int channel = sound->channel;
 
 	/* Make sure the sound actually belongs to the channel */
-	if( _rg_sound_channel_check(channel, sound->wrap->chunk) )
+	if( _rg_sound_channel_check(sound) )
 	{
 		/* Return true if it's "playing" (not stopped), as well as paused. */
 		if( Mix_Playing(channel) && Mix_Paused(channel) )
@@ -546,7 +544,7 @@ static VALUE rg_sound_stop( VALUE self )
 	int channel = sound->channel;
 
 	/* Make sure the sound actually belongs to the channel */
-	if( _rg_sound_channel_check(channel, sound->wrap->chunk) )
+	if( _rg_sound_channel_check(sound) )
 	{
 		Mix_HaltChannel( channel );
 	}
@@ -571,7 +569,7 @@ static VALUE rg_sound_stoppedp( VALUE self )
 	int channel = sound->channel;
 
 	/* Make sure the sound actually belongs to the channel */
-	if( _rg_sound_channel_check(channel, sound->wrap->chunk) )
+	if( _rg_sound_channel_check(sound) )
 	{
 		/* Return true if it's not playing. */
 		if( !Mix_Playing(channel) )
@@ -613,7 +611,7 @@ static VALUE rg_sound_fadeout( VALUE self, VALUE fade_time )
 	int fade_ms = (int)(1000 * NUM2LONG(fade_time));
 
 	/* Make sure the sound actually belongs to the channel */
-	if( _rg_sound_channel_check(channel, sound->wrap->chunk) )
+	if( _rg_sound_channel_check(sound) )
 	{
 		Mix_FadeOutChannel( channel, fade_ms );
 	}
