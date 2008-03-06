@@ -53,7 +53,7 @@ typedef struct RG_Sound {
 
 
 
-
+/* Allocate/initialize the memory for a RG_WrapChunk and return a pointer. */
 static RG_WrapChunk* _rg_wrapchunk_alloc()
 {
 	RG_WrapChunk *wrap;
@@ -76,12 +76,16 @@ static int _rg_wrapchunk_load( RG_WrapChunk *wrap, char *file )
 		return 0;
 }
 
+/* Make a copy of the other's Mix_Chunk audio data, and assign
+ * it to the RG_WrapChunk.
+ */
 static void _rg_wrapchunk_deepcopy( RG_WrapChunk *wrap, RG_WrapChunk *other )
 {
 	*(wrap->chunk) = *(other->chunk);
 }
 
 
+/* Free the memory used by the RG_WrapChunk */
 static void _rg_wrapchunk_free( RG_WrapChunk *wrap )
 {
 	Mix_FreeChunk( wrap->chunk );
@@ -106,7 +110,7 @@ static inline void _rg_sound_deassociate( RG_Sound *sound )
 	sound->wrap = NULL;
 }
 
-
+/* Allocate/initialize the memory for a RG_Sound return a pointer. */
 static RG_Sound* _rg_sound_alloc()
 {
 	RG_Sound *sound;
@@ -178,6 +182,9 @@ static void _rg_sound_deepcopy( RG_Sound *sound, RG_Sound *other )
 }
 
 
+/* Play the sound, fading in, repeating, and stopping as specified.
+ * fade_in and stop_after are in milliseconds!
+ */
 static int _rg_sound_play( RG_Sound *sound, 
                             int fade_in, int repeats, int stop_after )
 {
@@ -214,13 +221,29 @@ static int _rg_sound_play( RG_Sound *sound,
 }
 
 
-
+/* Ruby allocation function. */
 static VALUE rg_sound_alloc( VALUE klass )
 {
 	RG_Sound *sound = _rg_sound_alloc();
 	return Data_Wrap_Struct(klass, 0, _rg_sound_free, sound);
 }
 
+
+
+/*
+ *  call-seq:
+ *    new( filename )  ->  sound
+ *
+ *  Load the given audio file.
+ *  Supported file formats are WAV, AIFF, RIFF, OGG (Ogg Vorbis), and
+ *  VOC (SoundBlaster).
+ *
+ *  filename::    Full or relative path to the file. (String, required)
+ *
+ *  Returns::     The new Sound instance. (Sound)
+ *  May raise::   SDLError, if the sound file could not be loaded.
+ *
+ */
 static VALUE rg_sound_initialize( VALUE self, VALUE filename )
 {
 	RG_Sound *sound;
@@ -239,6 +262,24 @@ static VALUE rg_sound_initialize( VALUE self, VALUE filename )
 	return self;
 }
 
+
+/*
+ *  call-seq:
+ *    clone( other )  ->  sound
+ *    dup( other )  ->  sound
+ *
+ *  Create a copy of the given Sound instance. Much more memory-efficient
+ *  than using #new to load the sound file again.
+ *
+ *  other::       An existing Sound instance. (Sound, required)
+ *
+ *  Returns::     The new Sound instance. (Sound)
+ *
+ *  **NOTE**: #clone and #dup do slightly different things; #clone will copy
+ *  the 'frozen' state of the object, while #dup will create a fresh, un-frozen
+ *  object.
+ *
+ */
 static VALUE rg_sound_initialize_copy( VALUE self, VALUE other )
 {
 	RG_Sound *soundA, *soundB;
@@ -253,7 +294,35 @@ static VALUE rg_sound_initialize_copy( VALUE self, VALUE other )
 
 
 
-
+/*
+ *  call-seq:
+ *    play( options={} )  ->  self
+ *
+ *  Play the Sound, optionally fading in, repeating a certain number of
+ *  times (or forever), and/or stopping automatically after a certain time.
+ *
+ *  See also #pause and #stop.
+ *
+ *  options::     Hash of options, listed below. (Hash, required)
+ *
+ *    :fade_in::     Fade in from silence over the given number of seconds.
+ *                   (Numeric)
+ *    :repeats::     Repeat the sound the given number of times, or forever
+ *                   (or until stopped) if -1. (Integer)
+ *    :stop_after::  Automatically stop playing after playing for the given
+ *                   number of seconds. (Numeric)
+ *
+ *  Returns::     The receiver (self).
+ *  May raise::   SDLError, if the sound file could not be played.
+ *
+ *	**NOTE**: Does nothing if the sound is already playing.
+ *
+ *  Example:
+ *    # Fade in over 2 seconds, play 4 times (1 + 3 repeats),
+ *    # but stop playing after 5 seconds.
+ *    sound.play( :fade_in => 2, :repeats => 3, :stop_after => 5 );
+ *
+ */
 static VALUE rg_sound_play( int argc, VALUE *argv, VALUE self )
 {
 	RG_Sound *sound;
@@ -327,7 +396,14 @@ static int _rg_sound_channel_check(int channel, Mix_Chunk *chunk)
 }
 
 
-
+/*
+ *  call-seq:
+ *    playing?  ->  true or false
+ *
+ *  True if the Sound is currently playing (not paused or stopped).
+ *  See also #paused? and #stopped?.
+ *
+ */
 static VALUE rg_sound_playingp( VALUE self )
 {
 	RG_Sound *sound;
@@ -356,7 +432,18 @@ static VALUE rg_sound_playingp( VALUE self )
 
 
 
-
+/*
+ *  call-seq:
+ *    pause  ->  self
+ *
+ *  Pause the Sound. Unlike #stop, it can be unpaused later to resume
+ *  from where it was paused. See also #unpause and #paused?.
+ *
+ *  Returns::     The receiver (self).
+ *
+ *  **NOTE**: Does nothing if the sound is not currently playing.
+ *
+ */
 static VALUE rg_sound_pause( VALUE self )
 {
 	RG_Sound *sound;
@@ -374,6 +461,18 @@ static VALUE rg_sound_pause( VALUE self )
 }
 
 
+/*
+ *  call-seq:
+ *    unpause  ->  self
+ *
+ *  Unpause the Sound, if it is currently paused. Resumes from
+ *  where it was paused. See also #pause and #paused?.
+ *
+ *  Returns::     The receiver (self).
+ *
+ *  **NOTE**: Does nothing if the sound is not currently paused.
+ *
+ */
 static VALUE rg_sound_unpause( VALUE self )
 {
 	RG_Sound *sound;
@@ -391,6 +490,14 @@ static VALUE rg_sound_unpause( VALUE self )
 }
 
 
+/*
+ *  call-seq:
+ *    paused?  ->  true or false
+ *
+ *  True if the Sound is currently paused (not playing or stopped).
+ *  See also #playing? and #stopped?.
+ *
+ */
 static VALUE rg_sound_pausedp( VALUE self )
 {
 	RG_Sound *sound;
@@ -419,7 +526,18 @@ static VALUE rg_sound_pausedp( VALUE self )
 
 
 
-
+/*
+ *  call-seq:
+ *    stop  ->  self
+ *
+ *  Stop the Sound. Unlike #pause, the sound must be played again from
+ *  the beginning, it cannot be resumed from it was stopped.
+ *
+ *  Returns::     The receiver (self).
+ *
+ *  **NOTE**: Does nothing if the sound is not currently playing or paused.
+ *
+ */
 static VALUE rg_sound_stop( VALUE self )
 {
 	RG_Sound *sound;
@@ -436,6 +554,15 @@ static VALUE rg_sound_stop( VALUE self )
 	return self;
 }
 
+
+/*
+ *  call-seq:
+ *    stopped?  ->  true or false
+ *
+ *  True if the Sound is currently stopped (not playing or paused).
+ *  See also #playing? and #paused?.
+ *
+ */
 static VALUE rg_sound_stoppedp( VALUE self )
 {
 	RG_Sound *sound;
@@ -463,7 +590,20 @@ static VALUE rg_sound_stoppedp( VALUE self )
 }
 
 
-
+/*
+ *  call-seq:
+ *    fade_out( fade_time )  ->  self
+ *
+ *  Fade out to silence over the given number of seconds. Once the sound
+ *  is silent, it is automatically stopped.
+ *
+ *  Returns::     The receiver (self).
+ *
+ *  **NOTE**: If the sound is currently paused, the fade will start,
+ *  but you won't be able to hear it happening unless you #unpause during
+ *  the fade. Does nothing if the sound is currently stopped.
+ *
+ */
 static VALUE rg_sound_fadeout( VALUE self, VALUE fade_time )
 {
 	RG_Sound *sound;
@@ -481,6 +621,18 @@ static VALUE rg_sound_fadeout( VALUE self, VALUE fade_time )
 	return self;
 }
 
+
+/*
+ *  call-seq:
+ *    fading?( direction=:either )  ->  true or false
+ *
+ *  True if the Sound is currently fading in or out.
+ *  See also #play and #fade_out.
+ *
+ *  direction::  Check if it is fading :in, :out, or :either.
+ *               (Symbol, required)
+ *
+ */
 static VALUE rg_sound_fadingp( int argc, VALUE *argv, VALUE self )
 {
 	RG_Sound *sound;
@@ -516,7 +668,16 @@ static VALUE rg_sound_fadingp( int argc, VALUE *argv, VALUE self )
 
 
 
-
+/*
+ *  call-seq:
+ *    volume  -> vol
+ *
+ *  Return the volume level of the sound.
+ *  0.0 is totally silent, 1.0 is full volume.
+ *
+ *  **NOTE**: Ignores fading in or out.
+ *	
+ */
 static VALUE rg_sound_getvolume( VALUE self )
 {
 	RG_Sound *sound;
@@ -526,6 +687,16 @@ static VALUE rg_sound_getvolume( VALUE self )
 }
 
 
+/*
+ *  call-seq:
+ *    volume = new_vol
+ *
+ *  Set the new volume level of the sound.
+ *  0.0 is totally silent, 1.0 is full volume.
+ *
+ *  **NOTE**: Does nothing if the sound is fading in or out.
+ *	
+ */
 static VALUE rg_sound_setvolume( VALUE self, VALUE volume )
 {
 	RG_Sound *sound;
@@ -543,17 +714,28 @@ static VALUE rg_sound_setvolume( VALUE self, VALUE volume )
 }
 
 
-
-
-
 void Rubygame_Init_Sound()
 {
 #if 0
   mRubygame = rb_define_module("Rubygame");
 #endif
 
-  /* Sound class */
+	/*
+	 *  Sound holds a sound effect, loaded from an audio file (see #new for
+	 *  supported formats).
+	 *
+	 *  Sound can #play, #pause/#unpause, #stop, adjust #volume,
+	 *  and #fade_out (you can fade in by passing an option to #play).
+	 *
+	 *  Sound can create duplicates (with #dup or #clone) in a memory-efficient
+	 *  way -- the new Sound instance refers back to the same audio data,
+	 *  so having 100 duplicates of a sound uses only slightly more memory
+	 *  than having the first sound. Duplicates can different volume levels,
+	 *  too!
+	 *
+	 */
   cSound = rb_define_class_under(mRubygame,"Sound",rb_cObject);
+
 	rb_define_alloc_func( cSound, rg_sound_alloc );
 
 	rb_define_method( cSound, "initialize",      rg_sound_initialize,       1 );
