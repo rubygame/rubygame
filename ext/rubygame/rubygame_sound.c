@@ -204,6 +204,12 @@ static int _rg_sound_channel_check( RG_Sound *sound )
 static int _rg_sound_play( RG_Sound *sound, 
                             int fade_in, int repeats, int stop_after )
 {
+	/* If it's already playing on a channel, stop it first. */
+	if( _rg_sound_channel_check(sound) )
+	{
+		Mix_HaltChannel( sound->channel );
+	}
+
 	/* Find first available channel */
 	sound->channel = Mix_GroupAvailable(-1);
 
@@ -225,14 +231,14 @@ static int _rg_sound_play( RG_Sound *sound,
 	if( fade_in <= 0 )
 	{
 		/* Play sound without fading in */
-		return Mix_PlayChannelTimed(sound->channel, sound->wrap->chunk,
-		                            repeats, stop_after);
+		return Mix_PlayChannelTimed( sound->channel, sound->wrap->chunk,
+		                             repeats, stop_after );
 	}
 	else
 	{
 		/* Play sound with fading in */
-		return Mix_FadeInChannelTimed(sound->channel, sound->wrap->chunk,
-		                              repeats, fade_in, stop_after);
+		return Mix_FadeInChannelTimed( sound->channel, sound->wrap->chunk,
+		                               repeats, fade_in, stop_after );
 	}
 }
 
@@ -331,7 +337,8 @@ static VALUE rg_sound_initialize_copy( VALUE self, VALUE other )
  *  Returns::     The receiver (self).
  *  May raise::   SDLError, if the sound file could not be played.
  *
- *	**NOTE**: Does nothing if the sound is already playing.
+ *	**NOTE**: If the sound is already playing (or paused), it will be stopped
+ *  and played again from the beginning.
  *
  *  Example:
  *    # Fade in over 2 seconds, play 4 times (1 + 3 repeats),
