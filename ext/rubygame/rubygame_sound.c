@@ -702,12 +702,20 @@ static VALUE rg_sound_setvolume( VALUE self, VALUE volume )
 	RG_Sound *sound;
 	Data_Get_Struct(self,  RG_Sound, sound);
 
-	sound->volume = NUM2DBL(volume);
-
 	/* Change channel volume if Sound is currently assigned to a channel */
 	if( _rg_sound_channel_check(sound->channel, sound->wrap->chunk) )
 	{
-		Mix_Volume( sound->channel, (int)(MIX_MAX_VOLUME * sound->volume) );
+		/* But only if it's not fading right now. */
+		if( Mix_FadingChannel(sound->channel) == MIX_NO_FADING )
+		{
+			sound->volume = NUM2DBL(volume);
+			Mix_Volume( sound->channel, (int)(MIX_MAX_VOLUME * sound->volume) );
+		}
+	}
+	else
+	{
+		/* Save it for later. */
+		sound->volume = NUM2DBL(volume);
 	}
 
 	return volume;
