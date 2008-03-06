@@ -322,9 +322,7 @@ static int _rg_sound_channel_check(int channel, Mix_Chunk *chunk)
 
 	Mix_Chunk *chan_chunk = Mix_GetChunk(channel);	
 
-	/* Check that the chunks are the same
-	 * by comparing buffer pointers.
-	 */
+	/* Check that the channel chunk is the same as the given one */
 	return ( chunk == chan_chunk );
 }
 
@@ -466,6 +464,57 @@ static VALUE rg_sound_stoppedp( VALUE self )
 
 
 
+static VALUE rg_sound_fadeout( VALUE self, VALUE fade_time )
+{
+	RG_Sound *sound;
+	Data_Get_Struct(self,  RG_Sound, sound);
+
+	int channel = sound->channel;
+	int fade_ms = (int)(1000 * NUM2LONG(fade_time));
+
+	/* Make sure the sound actually belongs to the channel */
+	if( _rg_sound_channel_check(channel, sound->wrap->chunk) )
+	{
+		Mix_FadeOutChannel( channel, fade_ms );
+	}
+
+	return self;
+}
+
+static VALUE rg_sound_fadingp( int argc, VALUE *argv, VALUE self )
+{
+	RG_Sound *sound;
+	Data_Get_Struct(self,  RG_Sound, sound);
+
+	VALUE vdirection;
+	rb_scan_args(argc, argv, "01", &vdirection);
+	
+	int direction;
+	int channel = sound->channel;
+
+	if( RTEST(vdirection) )
+	{
+		if( make_symbol("in") == vdirection )
+		{
+			return ( (Mix_FadingChannel(channel) == MIX_FADING_IN)  ? Qtrue : Qfalse );
+		}
+		
+		else if( make_symbol("out") == vdirection )
+		{
+			return ( (Mix_FadingChannel(channel) == MIX_FADING_OUT) ? Qtrue : Qfalse );
+		}
+		
+		else if( make_symbol("either") == vdirection )
+		{
+			return ( (Mix_FadingChannel(channel) != MIX_NO_FADING)  ? Qtrue : Qfalse );
+		}
+	}
+
+	/* default */
+	return ( (Mix_FadingChannel(channel) != MIX_NO_FADING)  ? Qtrue : Qfalse );
+}
+
+
 
 void Rubygame_Init_Sound()
 {
@@ -482,9 +531,15 @@ void Rubygame_Init_Sound()
 
 	rb_define_method( cSound, "play",            rg_sound_play,            -1 );
 	rb_define_method( cSound, "playing?",        rg_sound_playingp,         0 );
+
 	rb_define_method( cSound, "pause",           rg_sound_pause,            0 );
 	rb_define_method( cSound, "unpause",         rg_sound_unpause,          0 );
 	rb_define_method( cSound, "paused?",         rg_sound_pausedp,          0 );
+
 	rb_define_method( cSound, "stop",            rg_sound_stop,             0 );
 	rb_define_method( cSound, "stopped?",        rg_sound_stoppedp,         0 );
+
+	rb_define_method( cSound, "fade_out",        rg_sound_fadeout,          1 );
+	rb_define_method( cSound, "fading?",         rg_sound_fadingp,         -1 );
+
 }
