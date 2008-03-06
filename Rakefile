@@ -350,7 +350,7 @@ end
 
 rubygame_mixer = ExtensionModule.new do |mixer|
   mixer.dynlib = 'rubygame_mixer'
-  mixer.objs = ['rubygame_shared', 'rubygame_mixer']
+  mixer.objs = ['rubygame_shared', 'rubygame_mixer', 'rubygame_sound']
   mixer.add_lib('SDL_mixer')
   mixer.add_header('SDL_mixer.h')
   mixer.create_all_tasks() if $options[:"sdl-mixer"]
