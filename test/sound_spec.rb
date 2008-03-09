@@ -2,8 +2,10 @@ require 'rubygame'
 include Rubygame
 
 samples_dir = File.join( File.dirname(__FILE__), "..", "samples", "")
-sound = samples_dir + "song.ogg"
-not_sound = samples_dir + "does_not_exist.ogg"
+
+song = samples_dir + "song.ogg"
+whiff = samples_dir + "whiff.wav"
+dne = samples_dir + "does_not_exist.ogg"
 
 
 
@@ -12,7 +14,7 @@ describe "new loaded Sound" do
 	
 	before :each do
 		Mixer.open_audio
-		@sound = Sound.new(sound)
+		@sound = Sound.new(song)
 	end
 	
 	after :each do 
@@ -28,12 +30,14 @@ describe "new loaded Sound" do
 	it { @sound.should be_stopped }	
 	
 end
-	
+
+
+
 describe "Sound that is playing" do 
 	
 	before :each do
 		Mixer.open_audio
-		@sound = Sound.new(sound)
+		@sound = Sound.new(song)
 		@sound.play
 	end
 	
@@ -67,11 +71,13 @@ describe "Sound that is playing" do
 	
 end
 
+
+
 describe "Sound that is paused" do 
 	
 	before :each do
 		Mixer.open_audio
-		@sound = Sound.new(sound)
+		@sound = Sound.new(song)
 		@sound.play
 		@sound.pause
 	end
@@ -112,11 +118,12 @@ describe "Sound that is paused" do
 end
 
 
+
 describe "Sound that is stopped" do 
 	
 	before :each do
 		Mixer.open_audio
-		@sound = Sound.new(sound)
+		@sound = Sound.new(song)
 		@sound.play
 		@sound.stop
 	end
@@ -147,6 +154,76 @@ describe "Sound that is stopped" do
 	it "should be able to change volume" do
 		@sound.volume = 0.5
 		@sound.volume.should == 0.5
+	end
+	
+end
+
+
+
+describe "Sound set to stop after 0.5 seconds" do 
+	
+	before :each do
+		Mixer.open_audio
+		@sound = Sound.new(song)
+		@sound.volume = 0.01 # for programmer sanity
+		@sound.play( :stop_after => 0.5 )
+	end
+	
+	after :each do 
+		Mixer.close_audio
+	end
+	
+	it "should still be playing at 0.45 seconds" do 
+		sleep 0.45
+		@sound.should be_playing
+	end
+	
+	it "should be stopped at 0.55 seconds" do 
+		sleep 0.55
+		@sound.should be_stopped
+	end
+	
+end
+
+
+
+describe "Sound that is short" do 
+	
+	before :each do
+		Mixer.open_audio
+		@sound = Sound.new(whiff)
+		@sound.volume = 0.01 # for programmer sanity
+		@sound.play
+	end
+	
+	after :each do 
+		Mixer.close_audio
+	end
+	
+	it "should be stopped after it has expired" do 
+		sleep 0.6
+		@sound.should be_stopped
+	end
+	
+end
+
+
+describe "Sound that is short but repeats forever" do 
+	
+	before :each do
+		Mixer.open_audio
+		@sound = Sound.new(whiff)
+		@sound.volume = 0.01 # for programmer sanity
+		@sound.play( :repeats => -1 )
+	end
+	
+	after :each do 
+		Mixer.close_audio
+	end
+	
+	it "should still be playing at 1 second" do 
+		sleep 1.0
+		@sound.should be_playing
 	end
 	
 end
