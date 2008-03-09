@@ -47,7 +47,9 @@ class AttrTrigger
 	end
 	
 	def match?( event )
-		@attributes.all? { |key, value| event.send(key) == value }
+		@attributes.all? { |key, value|
+			event.respond_to?(key) and (event.send(key) == value)
+		}
 	end
 end
 
