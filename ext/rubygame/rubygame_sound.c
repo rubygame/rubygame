@@ -616,7 +616,7 @@ static VALUE rg_sound_fadeout( VALUE self, VALUE fade_time )
 	Data_Get_Struct(self,  RG_Sound, sound);
 
 	int channel = sound->channel;
-	int fade_ms = (int)(1000 * NUM2LONG(fade_time));
+	int fade_ms = (int)(1000 * NUM2DBL(fade_time));
 
 	/* Make sure the sound actually belongs to the channel */
 	if( _rg_sound_channel_check(sound) )
