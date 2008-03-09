@@ -9,6 +9,12 @@ dne = samples_dir + "does_not_exist.ogg"
 
 
 
+######################### 
+##                     ##
+##    INITIALIAZING    ##
+##                     ##
+#########################
+
 
 describe "new loaded Sound" do 
 	
@@ -31,6 +37,13 @@ describe "new loaded Sound" do
 	
 end
 
+
+
+######################### 
+##                     ##
+##        BASIC        ##
+##                     ##
+#########################
 
 
 describe "Sound that is playing" do 
@@ -160,6 +173,13 @@ end
 
 
 
+######################### 
+##                     ##
+##    AUTO-STOPPING    ##
+##                     ##
+#########################
+
+
 describe "Sound set to stop after 0.5 seconds" do 
 	
 	before :each do
@@ -208,7 +228,42 @@ describe "Sound that is short" do
 end
 
 
-describe "Sound that is short but repeats forever" do 
+
+describe "Sound that repeats forever but stops after 1.5 seconds" do 
+	
+	before :each do
+		Mixer.open_audio
+		@sound = Sound.new(whiff)
+		@sound.volume = 0.01 # for programmer sanity
+		@sound.play( :repeats => -1, :stop_after => 1.5 )
+	end
+	
+	after :each do 
+		Mixer.close_audio
+	end
+	
+	it "should still be playing at 1.45 second" do 
+		sleep 1.45
+		@sound.should be_playing
+	end
+	
+	it "should be stopped at 1.55 second" do 
+		sleep 1.55
+		@sound.should be_stopped
+	end
+	
+end
+
+
+
+######################### 
+##                     ##
+##      REPEATING      ##
+##                     ##
+#########################
+
+
+describe "Sound that repeats forever" do 
 	
 	before :each do
 		Mixer.open_audio
@@ -227,3 +282,33 @@ describe "Sound that is short but repeats forever" do
 	end
 	
 end
+
+
+
+describe "Sound that repeats 3 times" do 
+	
+	before :each do
+		Mixer.open_audio
+		@sound = Sound.new(whiff)
+		@sound.volume = 0.01 # for programmer sanity
+		@sound.play( :repeats => 3 )
+	end
+	
+	after :each do 
+		Mixer.close_audio
+	end
+	
+	it "should still be playing after 3 plays" do 
+		sleep 0.6*3
+		@sound.should be_playing
+	end
+	
+	it "should be stopped after 4 plays" do 
+		sleep 0.6*4
+		@sound.should be_stopped
+	end
+	
+end
+
+
+
