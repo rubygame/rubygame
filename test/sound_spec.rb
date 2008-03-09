@@ -6,6 +6,7 @@ samples_dir = File.join( File.dirname(__FILE__), "..", "samples", "")
 song = samples_dir + "song.ogg"
 whiff = samples_dir + "whiff.wav"
 dne = samples_dir + "does_not_exist.ogg"
+panda = samples_dir + "panda.png"
 
 
 
@@ -34,6 +35,42 @@ describe "new loaded Sound" do
 	it { @sound.should_not be_playing }
 	it { @sound.should_not be_paused }
 	it { @sound.should be_stopped }	
+	
+end
+
+
+
+describe "loading Sound from nonexistent file" do 
+	
+	before :each do
+		Mixer.open_audio
+	end
+	
+	after :each do 
+		Mixer.close_audio
+	end
+	
+	it "should raise SDLError" do 
+		lambda { @sound = Sound.new(dne) }.should raise_error(SDLError)
+	end
+	
+end
+
+
+
+describe "loading Sound from non-sound file" do 
+	
+	before :each do
+		Mixer.open_audio
+	end
+	
+	after :each do 
+		Mixer.close_audio
+	end
+	
+	it "should raise SDLError" do 
+		lambda { @sound = Sound.new(panda) }.should raise_error(SDLError)
+	end
 	
 end
 
