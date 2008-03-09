@@ -312,3 +312,103 @@ end
 
 
 
+######################### 
+##                     ##
+##       FADING        ##
+##                     ##
+#########################
+
+
+describe "Sound that fades in for 0.5 seconds" do 
+	
+	before :each do
+		Mixer.open_audio
+		@sound = Sound.new(whiff)
+		@sound.volume = 0.01 # for programmer sanity
+		@sound.play( :fade_in => 0.5 )
+	end
+	
+	after :each do 
+		Mixer.close_audio
+	end
+	
+	it "should be playing right away" do 
+		@sound.should be_playing
+	end
+	
+	it "should be fading in right away" do 
+		@sound.should be_fading
+		@sound.fading?(:in).should be_true
+	end
+	
+	it "should still be fading in after 0.45 seconds" do 
+		sleep 0.45
+		@sound.should be_fading
+		@sound.fading?(:in).should be_true
+	end
+	
+	it "should not be fading in after 0.55 seconds" do 
+		sleep 0.55
+		@sound.should_not be_fading
+		@sound.fading?(:in).should be_false
+	end
+	
+	it "should still be playing after it has faded in" do 
+		sleep 0.55
+		@sound.should be_playing
+	end
+	
+	it "should not allow changing volume" do 
+		lambda { @sound.volume = 0.5 }.should raise_error(SDLError)
+		@sound.volume.should_not == 0.5
+	end
+	
+end
+
+
+describe "Sound that fades out for 0.5 seconds" do 
+	
+	before :each do
+		Mixer.open_audio
+		@sound = Sound.new(whiff)
+		@sound.volume = 0.01 # for programmer sanity
+		@sound.play( :repeats => -1 )
+		@sound.fade_out( 0.5 )
+	end
+	
+	after :each do 
+		Mixer.close_audio
+	end
+	
+	it "should be playing right away" do 
+		@sound.should be_playing
+	end
+	
+	it "should be fading out right away" do 
+		@sound.should be_fading
+		@sound.fading?(:out).should be_true
+	end
+	
+	it "should still be fading out after 0.45 seconds" do 
+		sleep 0.45
+		@sound.should be_fading
+		@sound.fading?(:out).should be_true
+	end
+	
+	it "should not be fading out after 0.55 seconds" do 
+		sleep 0.55
+		@sound.should_not be_fading
+		@sound.fading?(:out).should be_false
+	end
+	
+	it "should be stopped after it has faded out" do 
+		sleep 0.55
+		@sound.should be_stopped
+	end
+	
+	it "should not allow changing volume" do 
+		lambda { @sound.volume = 0.5 }.should raise_error(SDLError)
+		@sound.volume.should_not == 0.5
+	end
+
+end
