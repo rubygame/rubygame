@@ -373,7 +373,7 @@ static VALUE rg_sound_play( int argc, VALUE *argv, VALUE self )
 		temp = rb_hash_aref(options, make_symbol("fade_in"));
 		if( RTEST(temp) )
 		{
-			fade_in = (int)(1000 * NUM2LONG( temp ));
+			fade_in = (int)(1000 * NUM2DBL( temp ));
 		}
 
 		temp = rb_hash_aref(options, make_symbol("repeats"));
@@ -385,7 +385,7 @@ static VALUE rg_sound_play( int argc, VALUE *argv, VALUE self )
 		temp = rb_hash_aref(options, make_symbol("stop_after"));
 		if( RTEST(temp) )
 		{
-			stop_after = (int)(1000 * NUM2LONG( temp ));
+			stop_after = (int)(1000 * NUM2DBL( temp ));
 		}
 
 	}
