@@ -590,7 +590,8 @@ static VALUE rg_sound_stoppedp( VALUE self )
 	}
 	else
 	{
-		return Qfalse;
+		/* If it's not on a channel... it can't be playing! */
+		return Qtrue;
 	}
 }
 
