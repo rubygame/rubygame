@@ -21,6 +21,7 @@ module Rubygame
 
 class BlockAction
 	def initialize( &block )
+		raise ArgumentError, "BlockAction needs a block" unless block_given?
 		@block = block
 	end
 	

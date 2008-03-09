@@ -33,6 +33,10 @@ describe BlockAction do
 	end
 	
 	it_should_behave_like "an event action"
+
+	it "should fail on creation if no block is given" do 
+		lambda { BlockAction.new }.should raise_error( ArgumentError )
+	end
 	
 	it "#perform should execute the block" do 
 		@owner.should_receive( :foo ).with( :event )
