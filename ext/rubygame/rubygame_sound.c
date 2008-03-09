@@ -718,7 +718,7 @@ static VALUE rg_sound_setvolume( VALUE self, VALUE volume )
 	Data_Get_Struct(self,  RG_Sound, sound);
 
 	/* Change channel volume if Sound is currently assigned to a channel */
-	if( _rg_sound_channel_check(sound->channel, sound->wrap->chunk) )
+	if( _rg_sound_channel_check(sound) )
 	{
 		/* But only if it's not fading right now. */
 		if( Mix_FadingChannel(sound->channel) == MIX_NO_FADING )
