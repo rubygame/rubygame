@@ -93,7 +93,7 @@ cpPolyShapeDestroy(cpShape *shape)
 	free(poly->tAxes);
 }
 
-cpPolyShape *
+void
 cpPolyShapeSetVerts(cpPolyShape *poly, int numVerts, cpVect *verts, cpVect offset)
 {
 	poly->numVerts = numVerts;

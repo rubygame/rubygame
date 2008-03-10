@@ -43,6 +43,7 @@ typedef struct cpPolyShape{
 
 // Basic allocation functions.
 cpPolyShape *cpPolyShapeAlloc(void);
+void cpPolyShapeSetVerts(cpPolyShape *poly, int numVerts, cpVect *verts, cpVect offset);
 cpPolyShape *cpPolyShapeInit(cpPolyShape *poly, cpBody *body, int numVerts, cpVect *verts, cpVect offset);
 cpShape *cpPolyShapeNew(cpBody *body, int numVerts, cpVect *verts, cpVect offset);
 
