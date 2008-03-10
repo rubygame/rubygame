@@ -51,13 +51,3 @@ cpBBcontainsVect(const cpBB bb, const cpVect v)
 
 cpVect cpBBClampVect(const cpBB bb, const cpVect v); // clamps the vector to lie within the bbox
 cpVect cpBBWrapVect(const cpBB bb, const cpVect v); // wrap a vector to a bbox
-
-cpFloat cpBBGetHeight(const cpBB bb);
-cpFloat cpBBGetWidth(const cpBB bb);
-cpVect cpBBGetCenter(const cpBB bb);
-
-cpBB cpBBMove(const cpBB bb, const cpVect v);
-cpBB cpBBClamp(const cpBB a, const cpBB b);
-cpBB cpBBGrow(const cpBB bb, const cpFloat d);
-cpBB cpBBUnion(const cpBB a, const cpBB b);
-cpBB cpBBIntersection(const cpBB a, const cpBB b);
