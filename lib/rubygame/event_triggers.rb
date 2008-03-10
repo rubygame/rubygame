@@ -55,6 +55,7 @@ end
 
 class BlockTrigger
 	def initialize( &block )
+		raise ArgumentError, "BlockTrigger needs a block" unless block_given?
 		@block = block
 	end
 	
