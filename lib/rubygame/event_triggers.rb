@@ -59,7 +59,7 @@ class BlockTrigger
 	end
 	
 	def match?( event )
-		@block.call( event )
+		@block.call( event ) == true
 	end
 end
 
