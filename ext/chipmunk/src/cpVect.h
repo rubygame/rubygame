@@ -21,25 +21,14 @@
  
 typedef struct cpVect{
 	cpFloat x,y;
-
-	/* Bool, indicates the Vect represents a point, not a vector */
-	int p;
 } cpVect;
 
-static const cpVect cpvzero={0.0f,0.0f,0};
-static const cpVect cppzero={0.0f,0.0f,1};
+static const cpVect cpvzero={0.0f,0.0f};
 
 static inline cpVect
 cpv(const cpFloat x, const cpFloat y)
 {
-	cpVect v = {x, y, 0};
-	return v;
-}
-
-static inline cpVect
-cpp(const cpFloat x, const cpFloat y)
-{
-	cpVect v = {x, y, 1};
+	cpVect v = {x, y};
 	return v;
 }
 
@@ -47,12 +36,6 @@ static inline cpVect
 cpvadd(const cpVect v1, const cpVect v2)
 {
 	return cpv(v1.x + v2.x, v1.y + v2.y);
-}
-
-static inline cpVect
-cppadd(const cpVect v1, const cpVect v2)
-{
-	return cpp(v1.x + v2.x, v1.y + v2.y);
 }
 
 static inline cpVect
@@ -68,21 +51,9 @@ cpvsub(const cpVect v1, const cpVect v2)
 }
 
 static inline cpVect
-cppsub(const cpVect v1, const cpVect v2)
-{
-	return cpp(v1.x - v2.x, v1.y - v2.y);
-}
-
-static inline cpVect
 cpvmult(const cpVect v, const cpFloat s)
 {
 	return cpv(v.x*s, v.y*s);
-}
-
-static inline cpVect
-cppmult(const cpVect v, const cpFloat s)
-{
-	return cpp(v.x*s, v.y*s);
 }
 
 static inline cpFloat
@@ -116,33 +87,15 @@ cpvproject(const cpVect v1, const cpVect v2)
 }
 
 static inline cpVect
-cppproject(const cpVect v1, const cpVect v2)
-{
-	return cppmult(v2, cpvdot(v1, v2)/cpvdot(v2, v2));
-}
-
-static inline cpVect
 cpvrotate(const cpVect v1, const cpVect v2)
 {
 	return cpv(v1.x*v2.x - v1.y*v2.y, v1.x*v2.y + v1.y*v2.x);
 }
 
 static inline cpVect
-cpprotate(const cpVect v1, const cpVect v2)
-{
-	return cpp(v1.x*v2.x - v1.y*v2.y, v1.x*v2.y + v1.y*v2.x);
-}
-
-static inline cpVect
 cpvunrotate(const cpVect v1, const cpVect v2)
 {
 	return cpv(v1.x*v2.x + v1.y*v2.y, v1.y*v2.x - v1.x*v2.y);
-}
-
-static inline cpVect
-cppunrotate(const cpVect v1, const cpVect v2)
-{
-	return cpp(v1.x*v2.x + v1.y*v2.y, v1.y*v2.x - v1.x*v2.y);
 }
 
 cpFloat cpvlength(const cpVect v);

@@ -38,7 +38,7 @@ cpPolyShapeTransformVerts(cpPolyShape *poly, cpVect p, cpVect rot)
 	cpVect *dst = poly->tVerts;
 	
 	for(int i=0; i<poly->numVerts; i++)
-		dst[i] = cppadd(p, cpprotate(src[i], rot));
+		dst[i] = cpvadd(p, cpvrotate(src[i], rot));
 }
 
 static void
@@ -104,9 +104,9 @@ cpPolyShapeSetVerts(cpPolyShape *poly, int numVerts, cpVect *verts, cpVect offse
 	poly->tAxes = (cpPolyShapeAxis *)calloc(numVerts, sizeof(cpPolyShapeAxis));
 	
 	for(int i=0; i<numVerts; i++){
-		cpVect a = cppadd(offset, verts[i]);
-		cpVect b = cppadd(offset, verts[(i+1)%numVerts]);
-		cpVect n = cpvnormalize(cpvperp(cppsub(b, a)));
+		cpVect a = cpvadd(offset, verts[i]);
+		cpVect b = cpvadd(offset, verts[(i+1)%numVerts]);
+		cpVect n = cpvnormalize(cpvperp(cpvsub(b, a)));
 
 		poly->verts[i] = a;
 		poly->axes[i].n = n;

@@ -31,10 +31,6 @@ cpContact*
 cpContactInit(cpContact *con, cpVect p, cpVect n, cpFloat dist, unsigned int hash)
 {
 	con->p = p;
-
-	/* Ensure contact point is a true point */
-	con->p.p = 1;
-	
 	con->n = n;
 	con->dist = dist;
 	
