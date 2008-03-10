@@ -31,7 +31,6 @@ extern VALUE c_cpPolyShape;
 extern VALUE m_cpJoint;
 extern VALUE c_cpSpace;
 extern VALUE c_cpContact;
-extern VALUE c_cpMatrix;
 
 extern ID id_parent;
 
@@ -58,14 +57,6 @@ BBNEW(cpBB b)
 	cpBB *bb = malloc(sizeof(cpBB));
 	*bb = b;
 	return Data_Wrap_Struct(c_cpBB, NULL, free, bb);
-}
-
-static inline VALUE
-MNEW(cpMatrix m)
-{
-	cpMatrix *ptr = malloc(sizeof(cpMatrix));
-	*ptr = m;
-	return Data_Wrap_Struct(c_cpMatrix, NULL, &free, ptr);	
 }
 
 
@@ -96,7 +87,6 @@ GETTER_TEMPLATE( SHAPE,   m_cpShape,   "Shape",   cpShape   )
 GETTER_TEMPLATE( JOINT,   m_cpJoint,   "Joint",   cpJoint   )
 GETTER_TEMPLATE( SPACE,   c_cpSpace,   "Space",   cpSpace   )
 GETTER_TEMPLATE( CONTACT, c_cpContact, "Contact", cpContact )
-GETTER_TEMPLATE( MGET,    c_cpMatrix,  "Matrix" , cpMatrix  )
 
 void Init_chipmunk(void);
 void Init_cpVect();
@@ -106,4 +96,3 @@ void Init_cpShape();
 void Init_cpJoint();
 void Init_cpSpace();
 void Init_cpContact();
-void Init_cpMatrix();

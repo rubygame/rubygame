@@ -107,5 +107,4 @@ Init_chipmunk(void)
 	Init_cpJoint();
 	Init_cpSpace();
 	Init_cpContact();
-	Init_cpMatrix();
 }
