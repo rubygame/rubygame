@@ -105,9 +105,8 @@ module Rubygame
 			@space = CP::Space.new()
 			
 			@space.set_default_collision_func { |a,b,contacts|
-				a,b = a.sprite, b.sprite
 				if (a.emit_collide and b.emit_collide)
-					self.collision_handler.register( a, b,contacts )
+					self.collision_handler.register( a.sprite, b.sprite, contacts )
 				end
 				(a.solid and b.solid)
 			}

@@ -24,6 +24,15 @@ module CP
 	module Shape
 		attr_accessor :sprite
 		attr_accessor :mass, :offset
+		attr_writer :emit_collide, :solid
+		
+		def emit_collide
+			@emit_collide or (@sprite and @sprite.emit_collide)
+		end
+		
+		def solid
+			@solid or (@sprite and @sprite.solid)
+		end
 	end
 	
 end
