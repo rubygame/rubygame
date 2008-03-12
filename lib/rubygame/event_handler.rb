@@ -106,6 +106,16 @@ class EventHandler
 end
 
 module HasEventHandler
+
+	def initialize( *args )
+		# Try super with the given arguments, but rescue if it fails.
+		super
+	rescue ArgumentError
+		# do nothing
+	ensure
+		@event_handler = EventHandler.new() unless defined?( @event_handler )
+	end
+	
 	def append_hook( hook )
 		hook = _prepare_hook( hook )
 		@event_handler.append_hook( hook )
