@@ -41,7 +41,8 @@ module Rubygame
 		attr_accessor :time_step
 		
 		def initialize( camera_mode )
-
+			super() # Creates @event_handler
+			
 			@clock = Rubygame::Clock.new { |c| c.target_framerate = 60 }
 			@time_step = 0.02
 			@leftover_tick = 0.0
@@ -54,7 +55,6 @@ module Rubygame
 			@collision_handler = CollisionHandler.new()
 			
 			@event_queue = EventQueue.new()
-			@event_handler = EventHandler.new()
 
 			# Forward collision events only to the concerned sprites
 			append_hook({

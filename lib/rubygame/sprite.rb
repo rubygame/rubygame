@@ -32,6 +32,8 @@ module Rubygame
 		attr_reader :static
 		
 		def initialize( scene, &block )
+			super() # Creates @event_handler
+			
 			@scene = scene
 			@scene.register_sprite(self)
 			
@@ -45,8 +47,6 @@ module Rubygame
 			@emit_collide = true
 			@solid = true
 			@static = true
-			
-			@event_handler = EventHandler.new
 			
 			append_hook({
 				:trigger => TickTrigger.new(),
