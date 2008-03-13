@@ -25,14 +25,25 @@ require 'rubygame/camera'
 module Rubygame
 
 	class Sprite
+		
+		class << self
+			def make_child_id
+				@counter = defined?(@counter) ? @counter + 1 : 1
+				return @counter
+			end
+		end
+		
 		include HasEventHandler
 
 		attr_reader :scene, :body, :shapes, :event_handler
 		attr_accessor :image, :emit_collide, :solid, :quality
 		attr_reader :static
+		attr_accessor :name
 		
 		def initialize( scene, &block )
 			super() # Creates @event_handler
+			
+			@name = "%s %s"%[self.class, self.class.make_child_id]
 			
 			@scene = scene
 			@scene.register_sprite(self)
@@ -64,6 +75,15 @@ module Rubygame
 			})
 			
 			instance_eval(&block) if block_given?
+		end
+		
+		
+		def to_s
+			"#<%s \"%s\">"%[self.class.name, @name]
+		end
+		
+		def inspect
+			"#<%s:%0x \"%s\" %s>"%[self.class.name, self.object_id, @name, @body.p]
 		end
 
 		
