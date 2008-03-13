@@ -61,6 +61,8 @@ VALUE rbgm_image_savebmp(VALUE, VALUE);
 VALUE rbgm_transform_flip(VALUE, VALUE, VALUE);
 
 
+
+
 Uint32 surface_syms_to_flags( VALUE ary )
 {
 	ary = convert_to_array(ary);
@@ -74,16 +76,24 @@ Uint32 surface_syms_to_flags( VALUE ary )
 	{
 		symbol = rb_id2name( SYM2ID( rb_ary_entry(ary,i) ) );
 
-		if     ( rg_streql(symbol, "hardware") )  flags |= SDL_HWSURFACE;
-		else if( rg_streql(symbol, "colorkey") )  flags |= SDL_SRCCOLORKEY;
-		else if( rg_streql(symbol, "alpha"   ) )  flags |= SDL_SRCALPHA;
-		else rb_raise( rb_eArgError, "Unknown Surface flag ':%s'.", symbol);
+		if     ( rg_streql(symbol, "hardware"  ))  flags |= SDL_HWSURFACE;
+		else if( rg_streql(symbol, "asyncblit" ))  flags |= SDL_ASYNCBLIT;
+		else if( rg_streql(symbol, "anyformat" ))  flags |= SDL_ANYFORMAT;
+		else if( rg_streql(symbol, "doublebuf" ))  flags |= SDL_DOUBLEBUF;
+		else if( rg_streql(symbol, "fullscreen"))  flags |= SDL_FULLSCREEN;
+		else if( rg_streql(symbol, "opengl"    ))  flags |= SDL_OPENGL;
+		else if( rg_streql(symbol, "resizable" ))  flags |= SDL_RESIZABLE;
+		else if( rg_streql(symbol, "noframe"   ))  flags |= SDL_NOFRAME;
+		else if( rg_streql(symbol, "colorkey"  ))  flags |= SDL_SRCCOLORKEY;
+		else if( rg_streql(symbol, "alpha"     ))  flags |= SDL_SRCALPHA;
+		else if( rg_streql(symbol, "rleaccel"  ))  flags |= SDL_RLEACCEL;
+		else rb_raise( rb_eArgError, "Unknown flag ':%s'.", symbol);
 	}
 
 	return flags;
 }
 
-/* NOTE: Inherited by Screen, so needs to handle Screen flags too. */
+
 VALUE surface_flags_to_syms( Uint32 flags )
 {
 	VALUE ary = rb_ary_new();
@@ -98,9 +108,40 @@ VALUE surface_flags_to_syms( Uint32 flags )
 	if(flags & SDL_NOFRAME    )  rb_ary_push( ary, make_symbol("noframe")    );
 	if(flags & SDL_SRCCOLORKEY)  rb_ary_push( ary, make_symbol("colorkey")   );
 	if(flags & SDL_SRCALPHA   )  rb_ary_push( ary, make_symbol("alpha")      );
+	if(flags & SDL_RLEACCEL   )  rb_ary_push( ary, make_symbol("rleaccel")   );
 
 	return ary;
 }
+
+
+Uint32 surface_extract_flags( VALUE ary_symbols, Uint32 allowed )
+{
+	/* Convert to bitwise flags, and also filter out
+	 * totally unknown symbols.
+	 */
+	Uint32 given = surface_syms_to_flags( ary_symbols );
+
+	/* Arcane bitwise operation to filter out allowed flags,
+	 * leaving behind only the unallowed ones (if any).
+	 */
+	Uint32 bad_flags = (given ^ ( given & allowed));
+
+	if( bad_flags )
+	{
+		VALUE bad = surface_flags_to_syms( bad_flags );
+
+		/* Raise error with the only the first bad flag. 
+		 * Multiple flags in one error considered bad style. -J
+		 */
+		rb_raise( rb_eArgError, "Inappropriate flag ':%s'.",
+		          rb_id2name(SYM2ID( rb_ary_entry(bad,0) )) );
+	}
+	else
+	{
+		return given;
+	}
+}
+
 
 
 
@@ -125,7 +166,7 @@ VALUE surface_flags_to_syms( Uint32 flags )
  *          mode (if one has been set), or the greatest color depth available
  *          on the system.
  *  flags:: an Array of zero or more of the following flags:
- *          :hwsurface:: request a hardware-accelerated surface (using a 
+ *          :hardware::  request a hardware-accelerated surface (using a 
  *                       graphics card), if available. Creates a software
  *                       surface if hardware surfaces are not available.
  *          :colorkey::  request a colorkeyed surface. #set_colorkey will
@@ -134,6 +175,7 @@ VALUE surface_flags_to_syms( Uint32 flags )
  *          :alpha::     request an alpha channel. #set_alpha will
  *                       also enable alpha. as needed. For a description
  *                       of alpha, see #alpha.
+ *
  */
 VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 {
@@ -201,7 +243,10 @@ VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 	flags = 0;
 	if( RTEST(vflags) )
 	{
-		flags = surface_syms_to_flags(vflags);
+		flags = surface_extract_flags( vflags, 
+		                               SDL_HWSURFACE |
+		                               SDL_SRCCOLORKEY |
+		                               SDL_SRCALPHA );
 	}
 
 

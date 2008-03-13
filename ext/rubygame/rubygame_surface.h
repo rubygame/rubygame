@@ -24,6 +24,8 @@
 
 extern void Rubygame_Init_Surface();
 
+extern Uint32 surface_extract_flags( VALUE ary_symbols, Uint32 allowed );
+
 extern VALUE rbgm_surface_new(int, VALUE*, VALUE);
 
 extern VALUE rbgm_surface_get_w(VALUE);
