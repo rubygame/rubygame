@@ -24,7 +24,7 @@ module Rubygame
 	class CollisionHandler
 		def initialize
 			@collisions = {}
-			@old = {}
+			@old = [{}]*3
 			@outbox = []
 		end
 		
@@ -39,7 +39,10 @@ module Rubygame
 		def register( a, b, contacts )
 			@collisions[ [a,b] ] = contacts
 			
-			if( @old[ [a,b] ] )
+			old_collide = false
+			@old.each { |old| old_collide = true if old[[a,b]] }
+			
+			if( old_collide )
 				@outbox << CollisionEvent.new( a, b, contacts )
 			else
 				@outbox << CollisionStartEvent.new( a, b, contacts )
@@ -49,14 +52,30 @@ module Rubygame
 		private
 		
 		def _check_old
-			ended = @old.keys - @collisions.keys
 			
-			ended.each { |pair|
-				a, b = pair
-				@outbox << CollisionEndEvent.new( a, b, @old[ pair ] )
+			oldest = @old.shift
+			@old << @collisions
+			
+			recent = {}
+			
+			# "Flatten" the old collisions to get a summary of
+			# the collisions that have happened recently.
+			@old.reverse_each { |old|
+				old.each_pair { |k,v| 
+					recent[k] = v
+				}
 			}
-			
-			@old = @collisions
+
+			# Check each collision in the set of oldest collisions,
+			# and emit an End event if it doesn't appear in the more
+			# recent collisions.
+			oldest.each_pair { |k,v|
+				a, b = k
+				if recent[k] == nil
+					@outbox << CollisionEndEvent.new( a, b, v )
+				end
+			}
+
 			@collisions = {}
 		end
 		
