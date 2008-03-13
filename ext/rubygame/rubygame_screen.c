@@ -45,34 +45,6 @@ VALUE rbgm_screen_getshowcursor(VALUE);
 VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
 
 
-Uint32 screen_syms_to_flags( VALUE ary )
-{
-	ary = convert_to_array(ary);
-
-	Uint32 flags = 0;
-	int i;
-	int len = RARRAY(ary)->len;
-	char *symbol;
-
-	for(i = 0; i < len; i++ )
-	{
-		symbol = rb_id2name( SYM2ID( rb_ary_entry(ary,i) ) );
-
-		if     ( rg_streql(symbol, "hardware"  ))  flags |= SDL_HWSURFACE;
-		else if( rg_streql(symbol, "asyncblit" ))  flags |= SDL_ASYNCBLIT;
-		else if( rg_streql(symbol, "anyformat" ))  flags |= SDL_ANYFORMAT;
-		else if( rg_streql(symbol, "doublebuf" ))  flags |= SDL_DOUBLEBUF;
-		else if( rg_streql(symbol, "fullscreen"))  flags |= SDL_FULLSCREEN;
-		else if( rg_streql(symbol, "opengl"    ))  flags |= SDL_OPENGL;
-		else if( rg_streql(symbol, "resizable" ))  flags |= SDL_RESIZABLE;
-		else if( rg_streql(symbol, "noframe"   ))  flags |= SDL_NOFRAME;
-		else rb_raise( rb_eArgError, "Unknown flag ':%s'.", symbol);
-	}
-
-	return flags;
-}
-
-
 
 /* call-seq:
  *     new(size, depth=0, flags=[])  ->  Screen
@@ -152,7 +124,15 @@ VALUE rbgm_screen_setmode(int argc, VALUE *argv, VALUE module)
 	flags = 0;
 	if( RTEST(vflags) )
 	{
-		flags = screen_syms_to_flags(vflags);
+		flags = surface_extract_flags( vflags, 
+		                               SDL_HWSURFACE  |
+		                               SDL_ASYNCBLIT  |
+		                               SDL_ANYFORMAT  |
+		                               SDL_DOUBLEBUF  |
+		                               SDL_FULLSCREEN |
+		                               SDL_OPENGL     |
+		                               SDL_RESIZABLE  |
+		                               SDL_NOFRAME    );
 	}
 
   screen = SDL_SetVideoMode( w,h,depth,flags );
