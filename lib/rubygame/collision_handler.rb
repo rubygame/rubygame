@@ -22,9 +22,15 @@ require 'rubygame/event'
 module Rubygame
 
 	class CollisionHandler
-		def initialize
+		attr_accessor :slop
+		
+		def initialize( options={} )
+			options = { :slop => 0.25 }.update( options )
+			
+			@slop = options[:slop]
+			
 			@collisions = {}
-			@old = [{}]*3
+			@timestamps = {}
 			@outbox = []
 		end
 		
@@ -37,46 +43,38 @@ module Rubygame
 		end
 		
 		def register( a, b, contacts )
-			@collisions[ [a,b] ] = contacts
 			
-			old_collide = false
-			@old.each { |old| old_collide = true if old[[a,b]] }
-			
-			if( old_collide )
+			# Sort by object id
+			a,b = a.object_id < b.object_id ? [a,b] : [b,a]
+
+			if( @collisions[[a,b]] )
 				@outbox << CollisionEvent.new( a, b, contacts )
 			else
 				@outbox << CollisionStartEvent.new( a, b, contacts )
 			end
+			
+			@collisions[ [a,b] ] = contacts
+			@timestamps[ [a,b] ] = Time.now
+
 		end
 		
 		private
 		
 		def _check_old
 			
-			oldest = @old.shift
-			@old << @collisions
+			now = Time.now
 			
-			recent = {}
-			
-			# "Flatten" the old collisions to get a summary of
-			# the collisions that have happened recently.
-			@old.reverse_each { |old|
-				old.each_pair { |k,v| 
-					recent[k] = v
-				}
-			}
-
-			# Check each collision in the set of oldest collisions,
-			# and emit an End event if it doesn't appear in the more
-			# recent collisions.
-			oldest.each_pair { |k,v|
-				a, b = k
-				if recent[k] == nil
-					@outbox << CollisionEndEvent.new( a, b, v )
+			@timestamps.each_pair { |obs, time|
+				if( now - time > @slop )
+					a,b = obs
+					c = @collisions[obs]
+					
+					@outbox << CollisionEndEvent.new( a, b, c )
+					
+					@timestamps.delete(obs)
+					@collisions.delete(obs)
 				end
 			}
-
-			@collisions = {}
 		end
 		
 	end
