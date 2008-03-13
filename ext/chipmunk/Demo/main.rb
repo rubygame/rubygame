@@ -117,7 +117,7 @@ def main
 	
 	#initGL()
 
-	keys = [K_1, K_2, K_3, K_4, K_5, K_6, K_7]
+	keys = [:number_1, :number_2, :number_3, :number_4, :number_5, :number_6, :number_7]
 	
 	# Main loop
 	catch :quit do 
@@ -128,9 +128,9 @@ def main
 					throw :quit
 				when KeyDownEvent
 					case event.key
-					when K_Q, K_ESCAPE
+					when :q, :escape
 						throw :quit
-					when K_PRINT
+					when :print_screen
 						$screen.savebmp('screenshot.bmp')
 					when *keys
 						method($destroy_funcs[$demo_index]).call()
