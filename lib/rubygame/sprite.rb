@@ -36,8 +36,8 @@ module Rubygame
 		include HasEventHandler
 
 		attr_reader :scene, :body, :shapes, :event_handler
-		attr_accessor :image, :emit_collide, :solid, :quality
-		attr_reader :static
+		attr_accessor :emit_collide, :solid, :quality
+		attr_reader :image, :static
 		attr_accessor :name
 		
 		def initialize( scene, &block )
@@ -59,6 +59,12 @@ module Rubygame
 			@solid = true
 			@static = true
 			
+
+			# The smallest amount for either rotation (radians) or size
+			# to change before the temporary image is regenerated.
+			@change_threshold = { :rot => 0.03, :size => 0.1 }
+			
+
 			append_hook({
 				:trigger => TickTrigger.new(),
 				:action => MethodAction.new(:update, true)
@@ -73,6 +79,15 @@ module Rubygame
 				:trigger => InstanceOfTrigger.new( UndrawEvent ),
 				:action => MethodAction.new(:undraw, true)
 			})
+			
+			
+			# Store a rotated/zoomed version of the image to re-use
+			# if it doesn't change much next frame.
+			@_image = nil
+
+			# Store the rotation/size of the @temp_image, to test
+			# for change.
+			@_trans = {:rot => 0, :size => 1.0}
 			
 			instance_eval(&block) if block_given?
 		end
@@ -107,6 +122,12 @@ module Rubygame
 
 		end
 
+		
+		def image=( new_image )
+			@image = new_image
+			@_image = @image
+		end
+		
 		
 		def mark_dead
 			@scene.mark_dead(self)
@@ -180,29 +201,42 @@ module Rubygame
 		
 		private
 		
+
+		def _render_temp_image( trans, quality )
+			rot_change  = (trans[:rot ] - @_trans[:rot ]).abs
+			size_change = (trans[:size] - @_trans[:size]).abs
+			
+			if( rot_change  > @change_threshold[:rot ] or \
+			    size_change > @change_threshold[:size])
+
+				# Use antialiasing if quality level is high enough
+				aa = (quality * self.quality > 0.5)
+				
+				@_image = @image.rotozoom( -trans[:rot]*57.2958, trans[:size], aa )
+				@_trans = trans
+				
+			end
+		end
+		
 		
 		def _draw_sdl( camera )
 			# Don't need to do anything if it's invisible!
 			if( @image )
-				image = @image
 
-				trans = camera.world_to_screen(:pos => @body.p, :size => (@size or 1), :rot => @body.a)
-				trans[:rot] *= 57.2958 # converted to degrees and flip
-				
-				# Don't need to do this if there's no rotation or scale change
-				unless( trans[:rot] == 0.0 and trans[:size] == 1.0)
-					
-					# Use antialiasing if quality level is high enough
-					aa = (camera.mode.quality * self.quality > 0.5)
-					
-					image = image.rotozoom( -trans[:rot], trans[:size], aa )
-					
+				if @_image == nil
+					@_image = @image
 				end
+
+				trans = camera.world_to_screen(:pos  => @body.p,
+				                               :size => (@size or 1),
+				                               :rot  => @body.a)
 				
-				rect = image.make_rect
+				_render_temp_image( trans, camera.mode.quality )
+				
+				rect = @_image.make_rect
 				rect.center = trans[:pos].to_ary
 
-				camera.mode.dirty_rects << image.blit( camera.mode.surface, rect )
+				camera.mode.dirty_rects << @_image.blit( camera.mode.surface, rect )
 			else
 				return nil
 			end
@@ -212,16 +246,13 @@ module Rubygame
 		def _undraw_sdl( camera )
 			# Don't need to do anything if it's invisible!
 			if( @image )
-				rect = @image.make_rect
 				
-				trans = camera.world_to_screen(:pos => @body.p, :size => (@size or 1), :rot => @body.a)
-				trans[:rot] *= 57.2958 # converted to degrees and flip
-				
-				# Don't need to do this if there's no rotation or scale change
-				unless( trans[:rot] == 0.0 and trans[:size] == 1.0)
-					rect.size = Rubygame::Surface.rotozoom_size( rect.size, -trans[:rot], trans[:size] )
+				if @_image == nil
+					@_image = @image
 				end
-				
+
+				rect = @_image.make_rect
+				trans = camera.world_to_screen(:pos => @body.p)
 				rect.center = trans[:pos].to_ary
 
 				bg = camera.mode.background
