@@ -42,17 +42,45 @@ class PandaBall < Sprite
 		@image = $media["panda.png"]
 		@body.p = pos
 		@size = 0.5 + rand() * 0.8
-		@color = @@colors[ rand(@@colors.length) ]
+		@true_color = @@colors[ rand(@@colors.length) ]
+		@color = @true_color
+		@collisions = []
 		
 		shape = CP::Shape::Circle.new( @body, 22 * @size, vect(0,0) )
 		shape.e = 0.0
 		shape.u = 0.5
-		shape.mass = 10.0
+		shape.mass = 10.0 * Math::PI * @size**2
 		shape.offset = vect(0,0)
 		add_shape( shape )
 		recalc_mi()
 		
 		self.static = false
+		
+		append_hook(:trigger => CollisionTrigger.new(self, :any, :start),
+		            :action  => MethodAction.new(:collide_start, true) )
+		
+		append_hook(:trigger => CollisionTrigger.new(self, :any, :end),
+		            :action  => MethodAction.new(:collide_end, true) )
+
+	end
+	
+	def collide_start( event )
+		other = (event.a == self ? event.b : event.a)
+		@collisions += [other]
+		
+		unless @collisions.empty?
+			@color = Color[@true_color] * Color[:gray]
+		end
+
+	end
+	
+	def collide_end( event )
+		other = (event.a == self ? event.b : event.a)
+		@collisions -= [other]
+		
+		if @collisions.empty?
+			@color = @true_color
+		end
 	end
 	
 	def _draw_sdl( camera )
@@ -130,7 +158,8 @@ class << scene
 	
 end
 
-PandaBall.new( scene, vect(100,50) )
+p = PandaBall.new( scene, vect(100,50) )
+p.name = "George"
 
 # When the event on the left happens, call the method on the right.
 # It's so easy, it's magic!
@@ -149,17 +178,19 @@ INFINITY = 15**100
 floor = Sprite.new( scene ) {
 	@body.m, @body.i = INFINITY, INFINITY
 	
-	shape = CP::Shape::Segment.new(@body, vect(0,120), vect(260,220), 1.0)
-	shape.e = 0.2
+	shape = CP::Shape::Segment.new(@body, vect(30,160), vect(160,220), 1.0)
+	shape.e = 0.0
 	shape.u = 0.4
-	shape.mass = INFINITY
+	shape.mass = 100
 	add_shape( shape )
 	
-	shape = CP::Shape::Segment.new(@body, vect(260,220), vect(320,120), 1.0)
-	shape.e = 0.2
+	shape = CP::Shape::Segment.new(@body, vect(160,220), vect(290,160), 1.0)
+	shape.e = 0.0
 	shape.u = 0.4
-	shape.mass = INFINITY
+	shape.mass = 100
 	add_shape( shape )
+	
+	@name = "floor"
 }
 
 
