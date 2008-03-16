@@ -30,7 +30,7 @@ class EventHook
 		@trigger  = description[:trigger]
 		@action   = description[:action]
 		@consumes = (description[:consumes] or false)
-		@active   = (description[:active] or true)
+		@active   = (description[:active].nil? ? true : description[:active])
 	end
 	
 	def match?( event )
