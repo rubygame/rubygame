@@ -273,8 +273,8 @@ module CP
       attr_reader :tb
       
       # Create a segment collision shape attached to the given body
-      # with endpoints _a_ and _b_.
-      def initialize(body, a, b); end
+      # with endpoints _a_ and _b_, and a thickness _r_.
+      def initialize(body, a, b, r); end
     end
     
     # Poly collision shape.
