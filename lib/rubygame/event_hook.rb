@@ -29,12 +29,12 @@ class EventHook
 		@owner    = description[:owner]
 		@trigger  = description[:trigger]
 		@action   = description[:action]
-		@consumes = description[:consumes] or false
-		@active   = description[:active] or true
+		@consumes = (description[:consumes] or false)
+		@active   = (description[:active] or true)
 	end
 	
 	def match?( event )
-		@trigger.match?( event ) if @trigger and @active
+		@trigger.match?( event ) if (@trigger and @active)
 	end
 	
 	def perform( event )
