@@ -151,15 +151,15 @@ class KindOfTrigger
 end
 
 class MouseClickTrigger
-	def initialize( button=:any, bounds=:anywhere )
+	def initialize( button=:any, area=:anywhere )
 		@button = button
-		@bounds = bounds
+		@area = area
 	end
 	
 	def match?( event )
 		if event.kind_of?( MouseDownEvent )
 			((@button == :any) or (event.button == @button)) and \
-			((@bounds == :anywhere) or (@bounds.collide( event.world_pos )))
+			((@area == :anywhere) or (@area.contain_vect?( event.world_pos )))
 		else
 			false
 		end
@@ -167,15 +167,15 @@ class MouseClickTrigger
 end
 
 class MouseHoverTrigger
-	def initialize( button=:any, bounds=:anywhere )
+	def initialize( button=:any, area=:anywhere )
 		@button = button
-		@bounds = bounds
+		@area = area
 	end
 	
 	def match?( event )
 		if event.kind_of?( MouseMotionEvent )
-			(@button == :any or event.buttons.include?(@button)) and \
-			(@bounds == :anywhere or @bounds.collide( event.world_pos ))
+			((@button == :any) or (event.buttons.include?(@button))) and \
+			((@area == :anywhere) or (@area.contain_vect?( event.world_pos )))
 		else
 			false
 		end
