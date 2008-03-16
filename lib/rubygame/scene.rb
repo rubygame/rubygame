@@ -147,6 +147,7 @@ module Rubygame
 			# until it has caught up with the current time.
 			@leftover_tick += tick.seconds
 			while( @leftover_tick > @time_step )
+				self.handle( PreStepEvent.new(@time_step) )
 				@space.step( @time_step )
 				@leftover_tick -= @time_step
 			end

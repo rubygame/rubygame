@@ -397,4 +397,7 @@ module Rubygame
 		end
 	end
 	
+	class PreStepEvent < Struct.new(:dt)
+	end
+	
 end # module Rubygame

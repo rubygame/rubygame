@@ -79,6 +79,11 @@ module Rubygame
 				:trigger => InstanceOfTrigger.new( UndrawEvent ),
 				:action => MethodAction.new(:undraw, true)
 			})
+
+			append_hook({
+				:trigger => InstanceOfTrigger.new( PreStepEvent ),
+				:action => MethodAction.new(:pre_step, true)
+			})
 			
 			
 			# Store a rotated/zoomed version of the image to re-use
@@ -196,6 +201,9 @@ module Rubygame
 
 		
 		def update( tick )
+		end
+		
+		def pre_step( event )
 		end
 
 		
