@@ -68,7 +68,8 @@ module Rubygame
 			
 			
 			append_hook(
-				:trigger => MouseClickTrigger.new,
+				:trigger => AnyTrigger.new( MouseClickTrigger.new,
+				                            MouseReleaseTrigger.new ),
 				:action => BlockAction.new do |owner, event|
 					trans = owner.camera.screen_to_world( {:pos => vect(*event.pos)} )
 					event.world_pos = trans[:pos]
