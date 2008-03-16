@@ -62,6 +62,15 @@ class PandaBall < Sprite
 		append_hook(:trigger => CollisionTrigger.new(self, :any, :end),
 		            :action  => MethodAction.new(:collide_end, true) )
 
+		append_hook(:trigger => MouseClickTrigger.new(:mouse_left, shape),
+		            :action  => MethodAction.new(:bounce, true) )
+
+		
+	end
+	
+	def bounce( event )
+		diff = @body.p - event.world_pos
+		@body.apply_impulse( diff.normalize*@body.m*50, -diff  )
 	end
 	
 	def collide_start( event )
@@ -171,7 +180,8 @@ scene.magic_hooks(:mouse_right  =>  :add_panda,
                   :escape       =>  Proc.new{ throw :quit },
                   QuitEvent     =>  Proc.new{ throw :quit })
 
-puts "Right click to make a Panda Ball!"
+puts "Right click anywhere to make a Panda Ball."
+puts "Left click a Panda Ball to bounce it!"
 
 INFINITY = 15**100
 
