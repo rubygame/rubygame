@@ -205,6 +205,20 @@ rb_cpCircleR(VALUE self)
 	return rb_float_new( circle->r );
 }
 
+static VALUE
+rb_cpCircleContainVect(VALUE self, VALUE vect)
+{
+	cpCircleShape *circle = (cpCircleShape *)SHAPE(self);
+	cpVect v = *VGET(vect);
+	
+	if( cpvlengthsq( cpvsub(circle->tc, v) ) <= (circle->r * circle->r) ) {
+		return Qtrue;
+	} else {
+		return Qfalse;
+	}
+}
+
+
 
 
 //cpSegment
@@ -403,6 +417,7 @@ Init_cpShape(void)
 	rb_define_method(c_cpCircleShape, "c", rb_cpCircleC, 0);
 	rb_define_method(c_cpCircleShape, "tc", rb_cpCircleTC, 0);
 	rb_define_method(c_cpCircleShape, "r", rb_cpCircleR, 0);
+	rb_define_method(c_cpCircleShape, "contain_vect?", rb_cpCircleContainVect, 1);
 	
 	
 	c_cpSegmentShape = rb_define_class_under(m_cpShape, "Segment", rb_cObject);

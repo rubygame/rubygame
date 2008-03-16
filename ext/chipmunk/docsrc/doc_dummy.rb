@@ -254,6 +254,10 @@ module CP
       # Create a circle collision shape attached to the given body at
       # the given offset with the given radius.
       def initialize(body, radius, offset); end
+      
+      # True if the Vect _v_ is a point inside (or touching) the Circle,
+      # in world coordinates.
+      def contain_vect?( v ); end
     end
     
     # Line segment collision shape.
