@@ -272,6 +272,9 @@ module CP
       # The second point of the Segment, in world coordinates.
       attr_reader :tb
       
+      # The radius (thickness) of the Segment.
+      attr_reader :r
+      
       # Create a segment collision shape attached to the given body
       # with endpoints _a_ and _b_, and a thickness _r_.
       def initialize(body, a, b, r); end

@@ -262,6 +262,15 @@ rb_cpSegmentTB(VALUE self)
 	return VNEW( seg->tb );
 }
 
+static VALUE
+rb_cpSegmentR(VALUE self)
+{
+	cpSegmentShape *seg = (cpSegmentShape *)SHAPE(self);
+	
+	return rb_float_new( seg->r );
+}
+
+
 
 
 //cpPoly
@@ -404,6 +413,7 @@ Init_cpShape(void)
 	rb_define_method(c_cpSegmentShape, "b", rb_cpSegmentB, 0);
 	rb_define_method(c_cpSegmentShape, "ta", rb_cpSegmentTA, 0);
 	rb_define_method(c_cpSegmentShape, "tb", rb_cpSegmentTB, 0);
+	rb_define_method(c_cpSegmentShape, "r", rb_cpSegmentR, 0);
 
 
 	c_cpPolyShape = rb_define_class_under(m_cpShape, "Poly", rb_cObject);
