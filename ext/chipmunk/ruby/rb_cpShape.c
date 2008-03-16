@@ -284,6 +284,40 @@ rb_cpSegmentR(VALUE self)
 	return rb_float_new( seg->r );
 }
 
+static VALUE
+rb_cpSegmentContainVect(VALUE self, VALUE vect)
+{
+	cpSegmentShape *seg = (cpSegmentShape *)SHAPE(self);
+	cpVect v = *VGET(vect);
+	
+	cpVect line = cpvsub(seg->tb, seg->ta);
+	cpFloat lengthsq = cpvlengthsq( line );
+	
+	/* Project the point onto the line */
+	cpVect projected = cpvproject( v, line );
+	
+	/* If the projected point is not between the two end points,
+	 * snap to the nearest end point.
+	 */
+	if( cpvlengthsq( cpvsub(seg->tb, projected) ) > lengthsq ) {
+		/* too far off ta's side */
+		projected = seg->ta;
+	}
+	else if( cpvlengthsq( cpvsub(seg->ta, projected) ) > lengthsq ) {
+		/* too far off tb's side */
+		projected = seg->tb;
+	}
+	
+	/* If the distance from the original point to the projected point
+	 * is less than the thickness of the segment, it collides.
+	 */
+	if( cpvlengthsq( cpvsub(projected, v) ) <= (seg->r * seg->r * 0.25) ) {
+		return Qtrue;
+	} else {
+		return Qfalse;
+	}
+}
+
 
 
 
@@ -429,6 +463,7 @@ Init_cpShape(void)
 	rb_define_method(c_cpSegmentShape, "ta", rb_cpSegmentTA, 0);
 	rb_define_method(c_cpSegmentShape, "tb", rb_cpSegmentTB, 0);
 	rb_define_method(c_cpSegmentShape, "r", rb_cpSegmentR, 0);
+	rb_define_method(c_cpSegmentShape, "contain_vect?", rb_cpSegmentContainVect, 1);
 
 
 	c_cpPolyShape = rb_define_class_under(m_cpShape, "Poly", rb_cObject);

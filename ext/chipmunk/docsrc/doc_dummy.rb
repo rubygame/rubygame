@@ -282,6 +282,11 @@ module CP
       # Create a segment collision shape attached to the given body
       # with endpoints _a_ and _b_, and a thickness _r_.
       def initialize(body, a, b, r); end
+      
+      # True if the Vect _v_ is a point inside (or touching) the Segment
+      # (taking into account the Segment's thickness), in world coordinates.
+      def contain_vect?( v ); end
+      
     end
     
     # Poly collision shape.
