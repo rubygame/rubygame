@@ -61,8 +61,8 @@ module Rubygame
 				:consumes => true,
 				:trigger => CollisionTrigger.new,
 				:action => BlockAction.new do |owner, event|
-					event.a.handle( event )
-					event.b.handle( event )
+					event.a.sprite.handle( event )
+					event.b.sprite.handle( event )
 				end
 			})
 			
@@ -105,8 +105,9 @@ module Rubygame
 			@space = CP::Space.new()
 			
 			@space.set_default_collision_func { |a,b,contacts|
+				# a and b are the two SHAPES that collided.
 				if (a.emit_collide and b.emit_collide)
-					self.collision_handler.register( a.sprite, b.sprite, contacts )
+					self.collision_handler.register( a, b, contacts )
 				end
 				(a.solid and b.solid)
 			}

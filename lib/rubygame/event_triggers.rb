@@ -93,10 +93,10 @@ class CollisionTrigger
 	# is watching. It's not important that the event's pair order
 	# matches the trigger's pair order.
 	def _has_objects?( event )
-		pair = [event.a, event.b]
+		obs = [event.a, event.a.sprite, event.b, event.b.sprite]
 		
-		(@a == :any  or  pair.include?(@a)) and \
-		(@b == :any  or  pair.include?(@b))
+		(@a == :any  or  obs.include?(@a)) and \
+		(@b == :any  or  obs.include?(@b))
 	end
 end
 
