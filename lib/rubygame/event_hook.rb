@@ -23,17 +23,18 @@ require 'rubygame/event_actions'
 module Rubygame 
 	
 class EventHook
-	attr_accessor :owner, :trigger, :action, :consumes
+	attr_accessor :owner, :trigger, :action, :consumes, :active
 	
 	def initialize( description )
 		@owner    = description[:owner]
 		@trigger  = description[:trigger]
 		@action   = description[:action]
-		@consumes = description[:consumes]
+		@consumes = description[:consumes] or false
+		@active   = description[:active] or true
 	end
 	
 	def match?( event )
-		@trigger.match?( event ) if @trigger
+		@trigger.match?( event ) if @trigger and @active
 	end
 	
 	def perform( event )
