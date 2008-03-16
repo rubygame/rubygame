@@ -182,6 +182,22 @@ class MouseHoverTrigger
 	end
 end
 
+class MouseReleaseTrigger
+	def initialize( button=:any, area=:anywhere )
+		@button = button
+		@area = area
+	end
+	
+	def match?( event )
+		if event.kind_of?( MouseUpEvent )
+			((@button == :any) or (event.button == @button)) and \
+			((@area == :anywhere) or (@area.contain_vect?( event.world_pos )))
+		else
+			false
+		end
+	end
+end
+
 class TickTrigger
 	def match?( event )
 		event.kind_of?( Rubygame::TickEvent )
