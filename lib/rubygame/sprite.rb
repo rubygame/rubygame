@@ -65,25 +65,12 @@ module Rubygame
 			@change_threshold = { :rot => 0.03, :size => 0.1 }
 			
 
-			append_hook({
-				:trigger => TickTrigger.new(),
-				:action => MethodAction.new(:update, true)
-			})
-				
-			append_hook({
-				:trigger => InstanceOfTrigger.new( DrawEvent ),
-				:action => MethodAction.new(:draw, true)
-			})
-				
-			append_hook({
-				:trigger => InstanceOfTrigger.new( UndrawEvent ),
-				:action => MethodAction.new(:undraw, true)
-			})
-
-			append_hook({
-				:trigger => InstanceOfTrigger.new( PreStepEvent ),
-				:action => MethodAction.new(:pre_step, true)
-			})
+			# Add event hooks to forward certain types of events
+			# to the methods that handle them.
+			magic_hooks( TickEvent     => :update,
+									 DrawEvent     => :draw,
+									 UndrawEvent   => :undraw,
+									 PreStepEvent  => :pre_step )
 			
 			
 			# Store a rotated/zoomed version of the image to re-use
