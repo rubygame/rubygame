@@ -23,7 +23,14 @@ unless ($gfx_ok = (VERSIONS[:sdl_gfx] != nil))
   raise "SDL_gfx is not available. Bailing out." 
 end
 
-
+# Collision layers for different sprite types.
+# Only shapes that share a layer will collide.
+# 
+# Pandas belong to both layers by default, but
+# when grabbed they leave the floor layer so they
+# can pass through it to follow the mouse.
+$panda_layer = 0x1
+$floor_layer = 0x2
 
 $media = MediaBag.new()
 
@@ -47,10 +54,11 @@ class PandaBall < Sprite
 		@collisions = []
 		
 		shape = CP::Shape::Circle.new( @body, 22 * @size, vect(0,0) )
-		shape.e = 0.0
-		shape.u = 0.5
+		shape.e = 0.2 # bounciness
+		shape.u = 0.8 # friction
 		shape.mass = 10.0 * Math::PI * @size**2
 		shape.offset = vect(0,0)
+		shape.layers = $panda_layer|$floor_layer
 		add_shape( shape )
 		recalc_mi()
 		
@@ -62,15 +70,26 @@ class PandaBall < Sprite
 		append_hook(:trigger => CollisionTrigger.new(self, :any, :end),
 		            :action  => MethodAction.new(:collide_end, true) )
 
+		
 		append_hook(:trigger => MouseClickTrigger.new(:mouse_left, shape),
+		            :action  => MethodAction.new(:grab, true) )
+
+		append_hook(:trigger => MouseHoverTrigger.new,
+		            :action  => MethodAction.new(:drag, true),
+		            :active  => false )
+		@drag_hook = @event_handler.hooks[-1]
+
+		append_hook(:trigger => MouseReleaseTrigger.new(:mouse_left),
+		            :action  => MethodAction.new(:ungrab, true) )
+		
+		append_hook(:trigger => MouseReleaseTrigger.new(:mouse_middle, shape),
 		            :action  => MethodAction.new(:bounce, true) )
 
-		
 	end
 	
 	def bounce( event )
 		diff = @body.p - event.world_pos
-		@body.apply_impulse( diff.normalize*@body.m*50, -diff  )
+		@body.apply_impulse( diff.normalize*@body.m*100, -diff  )
 	end
 	
 	def collide_start( event )
@@ -90,6 +109,41 @@ class PandaBall < Sprite
 		if @collisions.empty?
 			@color = @true_color
 		end
+	end
+	
+	def drag( event )
+		@drag_pos += event.world_rel * 0.5
+	end
+	
+	def drag_hook_active?
+		@drag_hook.active
+	end
+	
+	def grab( event )
+		@drag_hook.active = true
+		@drag_pos = @body.p
+		@drag_rot = @body.a
+		@body.w = 0
+		@shapes[0].layers = $panda_layer # no floor
+	end
+	
+	def ungrab( event )
+		@drag_hook.active = false
+		@drag_pos = nil
+		@drag_rot = nil
+		@shapes[0].layers = $panda_layer|$floor_layer
+	end
+	
+	def pre_step( event )
+		if @drag_hook.active
+			@body.slew(@drag_pos, event.dt*1) 
+			@body.rot_slew(@drag_rot, event.dt*10)
+		end
+	end
+	
+	def update( event )
+		# Kill it if it goes way off the screen
+		mark_dead() if @body.p.y > 500 or !(@body.p.x.between?(-500,500))
 	end
 	
 	def _draw_sdl( camera )
@@ -120,26 +174,23 @@ class PandaBall < Sprite
 		
 		super
 	end
-	
-	def update( event )
-		# Kill it if it goes too far down, way off the screen
-		mark_dead() if @body.p.y > 1000
-	end
 end
 
 # Create the SDL window
 screen = Screen.set_mode([320,240])
+#screen = Screen.set_mode([640,480])
 
 # Make the background surface
 background = Surface.new(screen.size)
 
 camera_mode = Camera::RenderModeSDL.new(screen, background, screen.make_rect, 1.0)
 scene = Scene.new( camera_mode )
+
 #scene.camera.position = vect(160,120)
+#scene.camera.zoom = 2
 
-scene.event_queue.ignore = [MouseMotionEvent]
 
-scene.space.gravity = vect(0,100)
+scene.space.gravity = vect(0,400)
 
 scene.clock.target_framerate = 100
 
@@ -153,7 +204,7 @@ class << scene
 		@smooth = @smooth ? false : true
 		@camera.mode.quality = @smooth ? 1.0 : 0.0
 	end
-
+	
 	# 
 	# MAKE ME SOME PANDAAAAAAAAAAS!!
 	# 
@@ -180,8 +231,9 @@ scene.magic_hooks(:mouse_right  =>  :add_panda,
                   :escape       =>  Proc.new{ throw :quit },
                   QuitEvent     =>  Proc.new{ throw :quit })
 
-puts "Right click anywhere to make a Panda Ball."
-puts "Left click a Panda Ball to bounce it!"
+puts "Left click and hold  = grab ball"
+puts "Middle click = bounce ball"
+puts "Right click = create Ball"
 
 INFINITY = 15**100
 
@@ -189,15 +241,17 @@ floor = Sprite.new( scene ) {
 	@body.m, @body.i = INFINITY, INFINITY
 	
 	shape = CP::Shape::Segment.new(@body, vect(30,160), vect(160,220), 1.0)
-	shape.e = 0.0
+	shape.e = 0.4
 	shape.u = 0.4
-	shape.mass = 100
+	shape.mass = INFINITY
+	shape.layers = $floor_layer
 	add_shape( shape )
 	
 	shape = CP::Shape::Segment.new(@body, vect(160,220), vect(290,160), 1.0)
-	shape.e = 0.0
+	shape.e = 0.4
 	shape.u = 0.4
-	shape.mass = 100
+	shape.mass = INFINITY
+	shape.layers = $floor_layer
 	add_shape( shape )
 	
 	@name = "floor"
