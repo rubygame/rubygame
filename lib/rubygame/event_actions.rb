@@ -31,7 +31,7 @@ class BlockAction
 end
 
 class MethodAction
-	def initialize( method_name, pass_event=false )
+	def initialize( method_name, pass_event=true )
 		@method_name = method_name
 		@pass_event = pass_event
 	end
@@ -39,9 +39,14 @@ class MethodAction
 	def perform( owner, event )
 		method = owner.method(@method_name)
 		@pass_event ? method.call( event ) : method.call()
-	rescue ArgumentError
-		# Oops! Try again, without any argument.
-		method.call()
+	rescue ArgumentError => s
+		begin
+			# Oops! Try again, without any argument.
+			method.call()
+		rescue ArgumentError
+			# That didn't work either. Raise the original error.
+			raise s
+		end
 	end
 end
 
