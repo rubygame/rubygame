@@ -26,8 +26,10 @@ module Rubygame
 		attr_reader :mode
 		attr_accessor :position, :rotation, :zoom
 		
-		def initialize( mode, &block )
-			@mode = mode
+		def initialize( options, &block )
+			@mode = options[:mode]
+			@size = options[:size]
+			@halfsizev = vect(*@size) * 0.5
 			@position = vect(0,0)
 			@rotation = 0.0
 			@zoom = 1.0
@@ -44,8 +46,8 @@ module Rubygame
 			orig.each_pair do |key,val|
 				case key
 				when :pos
-					rot_by = CP::Vect.for_angle(@rotation) * @zoom
-					result[key] = ((val - @position)).rotate(rot_by) 
+					rot = CP::Vect.for_angle(@rotation) 
+					result[key] = (val - @position).rotate(rot) * @zoom + @halfsizev
 				when :rot
 					result[key] = val + @rotation
 				when :size
@@ -62,11 +64,12 @@ module Rubygame
 			orig.each_pair do |key,val|
 				case key
 				when :pos
-					rot_by = CP::Vect.for_angle(@rotation) * @zoom
-					result[key] = val.unrotate(rot_by) + @position
+					rot = CP::Vect.for_angle(@rotation)
+					p = (val - @halfsizev).unrotate(rot) / @zoom + @position
+					result[key] = p
 				when :rel
-					rot_by = CP::Vect.for_angle(@rotation) * @zoom
-					result[key] = val.unrotate(rot_by)
+					rot = CP::Vect.for_angle(@rotation)
+					result[key] = val.unrotate(rot) / @zoom
 				when :rot
 					result[key] = val - @rotation
 				when :size
