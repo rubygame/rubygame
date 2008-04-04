@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # This demonstrates the use of ruby-opengl alongside rubygame to produce
-# hardware-accelerated three-dimensional graphics. 
+# hardware-accelerated three-dimensional graphics.
 #
 # Please note that rubygame itself does not perform any OpenGL functions,
 # it only allows ruby-opengl to use the Screen as its viewport. You MUST
@@ -9,12 +9,26 @@
 
 require 'rubygame'
 
+
 begin
   require 'opengl'
 rescue LoadError
-  puts "ATTENTION: This demo requires the opengl extension for ruby."
-  raise
+  puts <<EOF
+
+ATTENTION: This demo requires the ruby-opengl extension, but it was not found.
+Please install the ruby-opengl gem:
+
+    sudo gem install ruby-opengl
+
+Or install ruby-opengl manually from < http://ruby-opengl.rubyforge.org >
+and check that it is installed in one of the following directories:
+
+#{ $:.collect { |dir| "\t%s"%dir }.join("\n") }
+
+EOF
+  exit
 end
+
 
 WIDE = 640
 HIGH = 480
@@ -27,27 +41,27 @@ Rubygame::GL.set_attrib(Rubygame::GL::BLUE_SIZE, 5)
 Rubygame::GL.set_attrib(Rubygame::GL::DEPTH_SIZE, 16)
 Rubygame::GL.set_attrib(Rubygame::GL::DOUBLEBUFFER, 1)
 
-Rubygame::Screen.set_mode([WIDE,HIGH], 16, [Rubygame::OPENGL])
+Rubygame::Screen.set_mode([WIDE,HIGH], 16, [:opengl])
 queue = Rubygame::EventQueue.new()
 clock = Rubygame::Clock.new { |c| c.target_framerate = 60 }
 
 ObjectSpace.garbage_collect
-GL::Viewport( 0, 0, WIDE, HIGH )
+Gl.glViewport( 0, 0, WIDE, HIGH )
 
-GL::MatrixMode( GL::PROJECTION )
-GL::LoadIdentity( )
-GLU::Perspective( 35, WIDE/(HIGH.to_f), 3, 10)
+Gl.glMatrixMode( Gl::GL_PROJECTION )
+Gl.glLoadIdentity( )
+Glu::gluPerspective( 35, WIDE/(HIGH.to_f), 3, 10)
 
-GL::MatrixMode( GL::MODELVIEW )
-GL::LoadIdentity( )
+Gl.glMatrixMode( Gl::GL_MODELVIEW )
+Gl.glLoadIdentity( )
 
-GL::Enable(GL::DEPTH_TEST)
-GL::DepthFunc(GL::LESS)
+Gl.glEnable(Gl::GL_DEPTH_TEST)
+Gl.glDepthFunc(Gl::GL_LESS)
 
-GL::ShadeModel(GL::FLAT)
+Gl.glShadeModel(Gl::GL_FLAT)
 
 color =
-  [[ 1.0,  1.0,  0.0], 
+  [[ 1.0,  1.0,  0.0],
   [ 1.0,  0.0,  0.0],
   [ 0.0,  0.0,  0.0],
   [ 0.0,  1.0,  0.0],
@@ -57,7 +71,7 @@ color =
   [ 0.0,  0.0,  1.0]]
 
 cube =
-  [[ 0.5,  0.5, -0.5], 
+  [[ 0.5,  0.5, -0.5],
   [ 0.5, -0.5, -0.5],
   [-0.5, -0.5, -0.5],
   [-0.5,  0.5, -0.5],
@@ -68,84 +82,82 @@ cube =
 
 cube_list = 1
 
-GL::NewList(cube_list,GL::COMPILE_AND_EXECUTE)
-  GL::PushMatrix()
-		GL::Begin(GL::QUADS) 
-			GL::Color(1.0, 0.0, 0.0);
-			GL::Vertex(cube[0]);
-			GL::Vertex(cube[1]);
-			GL::Vertex(cube[2]);
-			GL::Vertex(cube[3]);
-			
-			GL::Color(0.0, 1.0, 0.0);
-			GL::Vertex(cube[3]);
-			GL::Vertex(cube[4]);
-			GL::Vertex(cube[7]);
-			GL::Vertex(cube[2]);
-			
-			GL::Color(0.0, 0.0, 1.0);
-			GL::Vertex(cube[0]);
-			GL::Vertex(cube[5]);
-			GL::Vertex(cube[6]);
-			GL::Vertex(cube[1]);
-			
-			GL::Color(0.0, 1.0, 1.0);
-			GL::Vertex(cube[5]);
-			GL::Vertex(cube[4]);
-			GL::Vertex(cube[7]);
-			GL::Vertex(cube[6]);
-			
-			GL::Color(1.0, 1.0, 0.0);
-			GL::Vertex(cube[5]);
-			GL::Vertex(cube[0]);
-			GL::Vertex(cube[3]);
-			GL::Vertex(cube[4]);
-			
-			GL::Color(1.0, 0.0, 1.0);
-			GL::Vertex(cube[6]);
-			GL::Vertex(cube[1]);
-			GL::Vertex(cube[2]);
-			GL::Vertex(cube[7]);
-  GL::PopMatrix()
-	GL::End()
-GL::EndList()
+Gl.glNewList(cube_list,Gl::GL_COMPILE_AND_EXECUTE)
+  Gl.glPushMatrix()
+    Gl.glBegin(Gl::GL_QUADS)
+      Gl.glColor(1.0, 0.0, 0.0);
+      Gl.glVertex(cube[0]);
+      Gl.glVertex(cube[1]);
+      Gl.glVertex(cube[2]);
+      Gl.glVertex(cube[3]);
+
+      Gl.glColor(0.0, 1.0, 0.0);
+      Gl.glVertex(cube[3]);
+      Gl.glVertex(cube[4]);
+      Gl.glVertex(cube[7]);
+      Gl.glVertex(cube[2]);
+
+      Gl.glColor(0.0, 0.0, 1.0);
+      Gl.glVertex(cube[0]);
+      Gl.glVertex(cube[5]);
+      Gl.glVertex(cube[6]);
+      Gl.glVertex(cube[1]);
+
+      Gl.glColor(0.0, 1.0, 1.0);
+      Gl.glVertex(cube[5]);
+      Gl.glVertex(cube[4]);
+      Gl.glVertex(cube[7]);
+      Gl.glVertex(cube[6]);
+
+      Gl.glColor(1.0, 1.0, 0.0);
+      Gl.glVertex(cube[5]);
+      Gl.glVertex(cube[0]);
+      Gl.glVertex(cube[3]);
+      Gl.glVertex(cube[4]);
+
+      Gl.glColor(1.0, 0.0, 1.0);
+      Gl.glVertex(cube[6]);
+      Gl.glVertex(cube[1]);
+      Gl.glVertex(cube[2]);
+      Gl.glVertex(cube[7]);
+    Gl.glEnd()
+  Gl.glPopMatrix()
+Gl.glEndList()
 
 angle = 0
 
 catch(:rubygame_quit) do
-	loop do
-		queue.each do |event|
-			case event
-			when Rubygame::KeyDownEvent
-				case event.key
-				when Rubygame::K_ESCAPE
-					throw :rubygame_quit 
-				when Rubygame::K_Q
-					throw :rubygame_quit 
+  loop do
+    queue.each do |event|
+      case event
+      when Rubygame::KeyDownEvent
+        case event.key
+        when :escape, :q
+          throw :rubygame_quit
         end
       when Rubygame::QuitEvent
         throw :rubygame_quit
       end
-		end
+    end
 
-    GL.ClearColor(0.0, 0.0, 0.0, 1.0);
-		GL.Clear(GL::COLOR_BUFFER_BIT|GL::DEPTH_BUFFER_BIT);
+    Gl.glClearColor(0.0, 0.0, 0.0, 1.0);
+    Gl.glClear(Gl::GL_COLOR_BUFFER_BIT|Gl::GL_DEPTH_BUFFER_BIT);
 
-		GL::MatrixMode(GL::MODELVIEW);
-    GL::LoadIdentity( )
-    GL::Translate(0, 0, -4)
-    GL::Rotate(45, 0, 1, 0)
-    GL::Rotate(45, 1, 0, 0)
-    GL::Rotate(angle, 0.0, 0.0, 1.0)
-    GL::Rotate(angle*2, 0.0, 1.0, 0.0)
+    Gl.glMatrixMode(Gl::GL_MODELVIEW);
+    Gl.glLoadIdentity( )
+    Gl.glTranslate(0, 0, -4)
+    Gl.glRotate(45, 0, 1, 0)
+    Gl.glRotate(45, 1, 0, 0)
+    Gl.glRotate(angle, 0.0, 0.0, 1.0)
+    Gl.glRotate(angle*2, 0.0, 1.0, 0.0)
 
-    GL::CallList(cube_list)
+    Gl.glCallList(cube_list)
 
-		Rubygame::GL.swap_buffers()
-		ObjectSpace.garbage_collect
+    Rubygame::GL.swap_buffers()
+    ObjectSpace.garbage_collect
 
-    angle += clock.tick()/50.0
+    angle += clock.tick.milliseconds/50.0
     angle -= 360 if angle >= 360
 
-	end
+  end
 end
