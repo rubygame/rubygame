@@ -225,22 +225,13 @@ VALUE convert_mousebuttons( Uint8 state )
 }
 
 
-#if 0
-/* 
- * (This method is no longer used, as it depends on unicode enabled in SDL,
- * and doesn't work for KeyUpEvents)
- */
-/* Convert a unicode char into an ascii string or hex if it is not ascii */
+/* Convert a unicode char into a UTF8 string. */
 VALUE convert_unicode( Uint16 unicode )
 {
   char *str;
-  if( unicode < 0x80 && unicode > 0 )
-    asprintf( &str,"%c\0",(char)unicode );
-  else
-    asprintf( &str,"0x%04X\0",unicode );
-  return rb_str_new2(str);
+  asprintf( &str, "[%d].pack('U')", unicode );
+  return rb_eval_string( str );
 }
-#endif
 
 
 /*--
@@ -279,18 +270,21 @@ VALUE rbgm_convert_sdlevent( SDL_Event ev )
 
 
     case SDL_KEYDOWN:
-      /* KeyDownEvent.new(key,[mods,...]) */
-      return rb_funcall(cKeyDownEvent,new,2,\
-        key_symbol(ev.key.keysym.sym),\
-        convert_keymod(ev.key.keysym.mod)\
-        );
+      /* KeyDownEvent.new( key, mods=[], unicode=nil ) */
+      return rb_funcall(cKeyDownEvent, new,
+                        3,
+                        key_symbol(      ev.key.keysym.sym     ),
+                        convert_keymod(  ev.key.keysym.mod     ),
+                        convert_unicode( ev.key.keysym.unicode ) );
       break;
 
-    case SDL_KEYUP: /* Same as SDL_KEYDOWN */
-      /* KeyUpEvent.new(key,[mods,...]) */
-      return rb_funcall(cKeyUpEvent,new,2,\
-        key_symbol(ev.key.keysym.sym),\
-        convert_keymod(ev.key.keysym.mod));
+    case SDL_KEYUP:
+      /* KeyUpEvent.new( key, mods=[], unicode=nil ) */
+      return rb_funcall(cKeyUpEvent, new,
+                        3,
+                        key_symbol(      ev.key.keysym.sym     ),
+                        convert_keymod(  ev.key.keysym.mod     ),
+                        convert_unicode( ev.key.keysym.unicode ) );
       break;
 
 
