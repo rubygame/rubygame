@@ -24,88 +24,11 @@ module Rubygame
 		MouseMotionEvent,MouseDownEvent,MouseUpEvent,JoyAxisEvent,\
 		JoyBallEvent, JoyHatEvent,JoyDownEvent, JoyUpEvent,\
 		ResizeEvent, QuitEvent]
-  
+
 	# The parent class for all event classes. You can make custom event classes,
   # if desired; inheriting this class is not necessary, but makes it easier
   # to check if an object is an event or not.
 	class Event
-		
-		# Return a :symbol for the given key integer. For internal use.
-		def self.key_symbol( integer )
-			return Event.key_name(integer).downcase.gsub(" ","_").intern
-		end
-		
-		# Converts a keyboard symbol (keysym) into a human-readable text string.
-		# If either Shift key was being pressed, alphanumeric or punctuation keys 
-		# will be made uppercase or alternate, based on U.S. keyboard layout.
-		# E.g. "a" becomes "A", "1" becomes "!", and "/" becomes "?".
-		def self.key2str( sym, mods )
-			if( mods.include?(:lshift) or mods.include?(:rshift) )
-				return (KEY2UPPER[sym] or KEY2ASCII[sym] or sym.to_s.upcase!)
-			else
-				return (KEY2ASCII[sym] or sym.to_s)
-			end
-		end
-		
-		# All the keys which have ASCII print values that are different
-		# from their symbol name (e.g. :a -> "a", so it's not listed)
-		# Modifiers will return an empty string
-		KEY2ASCII = {
-			:backspace => "\b",
-			:tab => "\t",
-			:return => "\n",
-			:escape => "^[",
-			:space => " ",
-			:left_shift => "",
-			:right_shift => "",
-			:left_ctrl => "",
-			:right_ctrl => "",
-			:left_alt => "",
-			:right_alt => "",
-			:"[0]" => "0",
-			:"[1]" => "1",
-			:"[2]" => "2",
-			:"[3]" => "3",
-			:"[4]" => "4",
-			:"[5]" => "5",
-			:"[6]" => "6",
-			:"[7]" => "7",
-			:"[8]" => "8",
-			:"[9]" => "9",
-			:"[.]" => ".",
-			:"[/]" => "/",
-			:"[*]" => "*",
-			:"[-]" => "-",
-			:"[+]" => "+",
-			:"[=]" => "=",
-			:enter => "\n", # keypad enter
-		}
-
-		# All the keys affected by the Shift key on Sholes (QWERTY) keyboard,
-		# except letter keys (which are just upcase()'d)
-		KEY2UPPER = {
-			:"\'" => "\"",
-			:"," => "<",
-			:"-" => "_",
-			:"." => ">",
-			:"/" => "?",
-			:"0" => ")",
-			:"1" => "!",
-			:"2" => "@",
-			:"3" => "#",
-			:"4" => "$",
-			:"5" => "%",
-			:"6" => "^",
-			:"7" => "&",
-			:"8" => "*",
-			:"9" => "(",
-			:";" => ":",
-			:"=" => "+",
-			:"[" => "{",
-			:"\\" => "|",
-			:"]" => "}",
-			:"`" => "~",
-		}
 	end
 
 	# Indicates that the Rubygame window has gained or lost focus from the
