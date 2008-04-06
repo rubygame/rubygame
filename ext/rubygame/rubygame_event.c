@@ -94,17 +94,17 @@ VALUE convert_keymod( SDLMod mods )
   if(mods != 0)
   {
     /*        KEY MODIFIER                                   SYMBOL */
-    if(mods & KMOD_LSHIFT)   rb_ary_push(array, make_symbol( "lshift"   ));
-    if(mods & KMOD_RSHIFT)   rb_ary_push(array, make_symbol( "rshift"   ));
-    if(mods & KMOD_LCTRL)    rb_ary_push(array, make_symbol( "lctrl"    ));
-    if(mods & KMOD_RCTRL)    rb_ary_push(array, make_symbol( "rctrl"    ));
-    if(mods & KMOD_LALT)     rb_ary_push(array, make_symbol( "lalt"     ));
-    if(mods & KMOD_RALT)     rb_ary_push(array, make_symbol( "ralt"     ));
-    if(mods & KMOD_LMETA)    rb_ary_push(array, make_symbol( "lmeta"    ));
-    if(mods & KMOD_RMETA)    rb_ary_push(array, make_symbol( "rmeta"    ));
-    if(mods & KMOD_NUM)      rb_ary_push(array, make_symbol( "numlock"  ));
-    if(mods & KMOD_CAPS)     rb_ary_push(array, make_symbol( "capslock" ));
-    if(mods & KMOD_MODE)     rb_ary_push(array, make_symbol( "mode"     ));
+    if(mods & KMOD_LSHIFT)   rb_ary_push(array, make_symbol( "left_shift"  ));
+    if(mods & KMOD_RSHIFT)   rb_ary_push(array, make_symbol( "right_shift" ));
+    if(mods & KMOD_LCTRL)    rb_ary_push(array, make_symbol( "left_ctrl"   ));
+    if(mods & KMOD_RCTRL)    rb_ary_push(array, make_symbol( "right_ctrl"  ));
+    if(mods & KMOD_LALT)     rb_ary_push(array, make_symbol( "left_alt"    ));
+    if(mods & KMOD_RALT)     rb_ary_push(array, make_symbol( "right_alt"   ));
+    if(mods & KMOD_LMETA)    rb_ary_push(array, make_symbol( "left_meta"   ));
+    if(mods & KMOD_RMETA)    rb_ary_push(array, make_symbol( "right_meta"  ));
+    if(mods & KMOD_NUM)      rb_ary_push(array, make_symbol( "numlock"     ));
+    if(mods & KMOD_CAPS)     rb_ary_push(array, make_symbol( "capslock"    ));
+    if(mods & KMOD_MODE)     rb_ary_push(array, make_symbol( "mode"        ));
   }
   return array;
 }
