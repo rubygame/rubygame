@@ -74,15 +74,13 @@ VALUE rbgm_event_keyname(VALUE self, VALUE sym)
  */
 VALUE rbgm_init(VALUE module)
 {
-	if(SDL_Init(SDL_INIT_EVERYTHING)==0)
-	{
-		return Qnil;
-	}
-	else
+	if( SDL_Init(SDL_INIT_EVERYTHING) != 0 )
 	{
 		rb_raise(eSDLError,"Could not initialize SDL.");
 		return Qnil; /* should never get here */
 	}
+
+	SDL_EnableUNICODE(1);
 }
 
 /*
