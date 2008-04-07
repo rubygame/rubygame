@@ -123,6 +123,7 @@ $options = {
 	:"sdl-mixer"  => true,
 	:opengl       => true,
 	:"sdl-config" => true,
+	:ppc          => true,
 	:debug        => false,
 	:verbose      => false,
 	:sitearchdir  => CONFIG["sitearchdir"],
@@ -186,8 +187,9 @@ bool_option :"sdl-mixer",  nil,  "SDL_mixer support"
 bool_option :"sdl-ttf",    nil,  "SDL_ttf support"
 bool_option :"sdl-config", nil,  "guess compiler flags for SDL"
 bool_option :opengl,       nil,  "OpenGL support"
-bool_option :debug,        nil,  "compil with debug symbols"
+bool_option :debug,        nil,  "compile with debug symbols"
 bool_option :verbose,      nil,  "show compiler commands"
+bool_option :ppc,          nil,  "compile universal binary (MacOS X)"
 
 string_option "RUBYARCHDIR", :sitearchdir
 string_option :sitearchdir
@@ -245,7 +247,7 @@ class ExtensionModule
   # 
   # This is done so that the prerequisites don't have to be compiled when 
   # the final product already exists (such as in the precompiled win32 gem).
-	# 
+  # 
   def create_dl_task
     dynlib_full  = File.join( @directory, "#{dynlib}.#{DLEXT}" )
     objs_full = @objs.collect { |obj|
@@ -254,7 +256,12 @@ class ExtensionModule
 
     desc "Compile the #{@dynlib} extension"
     file dynlib_full => objs_full do |task|
+
       link_command = "#{from_env_or_config('LDSHARED')} #{LINK_FLAGS} #{@lflags} -o #{dynlib_full} #{task.prerequisites.join(' ')}"
+
+      # Strip "-arch ppc" to prevent building a universal binary.
+      link_command.gsub!("-arch ppc","") unless( $options[:ppc] )
+
       if( $options[:verbose] )
         try_shell { sh link_command }
       else
@@ -280,7 +287,12 @@ class ExtensionModule
           end
          ])\
     do |t|
+
       compile_command = "#{from_env_or_config('CC')} -c #{CFLAGS} #{t.source} -o #{t.name}"
+
+      # Strip "-arch ppc" to prevent building a universal binary.
+      compile_command.gsub!("-arch ppc","") unless( $options[:ppc] )
+
       if( $options[:verbose] )
         try_shell { sh compile_command }
       else
