@@ -50,7 +50,7 @@ DLEXT = from_env_or_config("DLEXT")
 
 RUBYGAME_VERSION = [3,0,0]
 
-spec = Gem::Specification.new do |s|
+gem_spec = Gem::Specification.new do |s|
   s.name     = "rubygame"
   s.version  = RUBYGAME_VERSION.join(".")
   s.author   = "John Croisant"
@@ -76,18 +76,18 @@ spec = Gem::Specification.new do |s|
 end
 
 task :linux do
-	spec.platform = Gem::Platform::LINUX_586
+	gem_spec.platform = Gem::Platform::LINUX_586
 end
 
 task :macosx do
-	spec.platform = Gem::Platform::DARWIN
+	gem_spec.platform = Gem::Platform::DARWIN
 end
 
 task :win32 do
-	spec.platform = Gem::Platform::WIN32
+	gem_spec.platform = Gem::Platform::WIN32
 end
 
-Rake::GemPackageTask.new(spec) do |pkg| 
+Rake::GemPackageTask.new(gem_spec) do |pkg| 
   pkg.need_tar_bz2 = true
 end
 
@@ -423,3 +423,18 @@ end
 
 desc "Install both the extensions and the library"
 task :install => [:install_ext, :install_lib]
+
+
+
+begin
+  require 'spec/rake/spectask'
+
+  desc "Run all specs (tests)"
+  Spec::Rake::SpecTask.new do |t|
+    t.spec_files = FileList['test/*_spec.rb']
+  end
+rescue LoadError
+  task :spec do 
+    puts "ERROR: RSpec is not installed?"
+  end
+end
