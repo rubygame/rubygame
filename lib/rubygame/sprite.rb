@@ -81,6 +81,9 @@ module Rubygame
 			# for change.
 			@_trans = {:rot => 0, :size => 1.0}
 			
+			# Store the rect of the previous draw position, for undrawing
+			@_dirty_rects = []
+
 			instance_eval(&block) if block_given?
 		end
 		
@@ -231,7 +234,8 @@ module Rubygame
 				rect = @_image.make_rect
 				rect.center = trans[:pos].to_ary
 
-				camera.mode.dirty_rects << @_image.blit( camera.mode.surface, rect )
+				@_dirty_rects << @_image.blit(camera.mode.surface, rect) 
+
 			else
 				return nil
 			end
@@ -239,21 +243,16 @@ module Rubygame
 		
 		
 		def _undraw_sdl( camera )
-			# Don't need to do anything if it's invisible!
-			if( @image )
-				
-				if @_image == nil
-					@_image = @image
+			# Don't need to do anything if there are no 
+			unless( @_dirty_rects.empty?)
+				bg = camera.mode.background
+
+				@_dirty_rects.each do |r|
+					bg.blit(camera.mode.surface, r, r)
+					camera.mode.dirty_rects << r
 				end
 
-				rect = @_image.make_rect
-				trans = camera.world_to_screen(:pos => @body.p)
-				rect.center = trans[:pos].to_ary
-
-				bg = camera.mode.background
-				bg.blit( camera.mode.surface, rect, rect )
-				
-				camera.mode.dirty_rects << rect
+				@_dirty_rects = []
 			else
 				return nil
 			end
