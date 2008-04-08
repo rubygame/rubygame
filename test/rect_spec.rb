@@ -561,3 +561,164 @@ describe Rect, "(clipping to already-containing rect)" do
     @rect.clip!(@other).size.should == [30,40]
   end
 end
+
+
+
+describe Rect, "(collide_array)" do 
+  before(:each) do 
+    @rect = Rect.new([0,0,30,40])
+  end
+
+  it "should return the index of the first colliding rect" do 
+    a = [Rect.new([100,100,20,20]), 
+         Rect.new([-10,-10,20,20]), 
+         Rect.new([0,0,20,20])]
+    @rect.collide_array(a).should == 1
+  end
+
+  it "should return nil if no rects collide" do 
+    a = [Rect.new([100,100,20,20]), 
+         Rect.new([-100,-100,20,20]),
+         Rect.new([200,20,20,20])]
+    @rect.collide_array(a).should == nil
+  end
+end
+
+
+describe Rect, "(collide_array_all)" do 
+  before(:each) do 
+    @rect = Rect.new([0,0,30,40])
+  end
+
+  it "should return the indices of all colliding rects" do 
+    a = [Rect.new([100,100,20,20]), 
+         Rect.new([-10,-10,20,20]), 
+         Rect.new([0,0,20,20])]
+    @rect.collide_array_all(a).should == [1,2]
+  end
+
+  it "should return an empty array if no rects collide" do 
+    a = [Rect.new([100,100,20,20]), 
+         Rect.new([-100,-100,20,20]), 
+         Rect.new([200,20,20,20])]
+    @rect.collide_array_all(a).should == []
+  end
+end
+
+
+
+describe Rect, "(collide_hash)" do 
+  before(:each) do 
+    @rect = Rect.new([0,0,30,40])
+  end
+
+  it "should return the first pair with a colliding rect in value" do 
+    h = {:foo => Rect.new([100,100,20,20]),
+         :bar => Rect.new([-10,-10,20,20]), 
+         :baz => Rect.new([0,0,20,20])}
+    @rect.collide_hash(h).should == {:bar => Rect.new([-10,-10,20,20])}
+  end
+
+  it "should return nil if no rects collide" do 
+    h = {:foo => Rect.new([100,100,20,20]),
+         :bar => Rect.new([-100,-100,20,20]), 
+         :baz => Rect.new([200,20,20,20])}
+    @rect.collide_hash(h).should == nil
+  end
+end
+
+
+describe Rect, "(collide_hash_all)" do 
+  before(:each) do 
+    @rect = Rect.new([0,0,30,40])
+  end
+
+  it "should return the all pairs with a colliding rect in value" do 
+    h = {:foo => Rect.new([100,100,20,20]),
+         :bar => Rect.new([-10,-10,20,20]), 
+         :baz => Rect.new([0,0,20,20])}
+    @rect.collide_hash_all(h).should == {:bar => Rect.new([-10,-10,20,20]),
+                                         :baz => Rect.new([0,0,20,20])}
+  end
+
+  it "should return an empty hash if no rects collide" do 
+    h = {:foo => Rect.new([100,100,20,20]),
+         :bar => Rect.new([-100,-100,20,20]), 
+         :baz => Rect.new([200,20,20,20])}
+    @rect.collide_hash_all(h).should == {}
+  end
+end
+
+
+
+describe Rect, "(collide_point?)" do 
+  before(:each) do 
+    @rect = Rect.new([0,0,30,40])
+  end
+
+  it "should collide with points inside its borders" do 
+    @rect.collide_point?(15,20).should be_true
+  end
+
+  it "should collide with points touching its borders" do 
+    @rect.collide_point?(30,40).should be_true
+  end
+
+  it "should not collide with points outside its borders" do 
+    @rect.collide_point?(31,40).should be_false
+  end
+end
+
+
+describe Rect, "(collide_rect?)" do 
+  before(:each) do 
+    @rect = Rect.new([0,0,30,40])
+  end
+
+  it "should collide with Rects completely inside its borders" do 
+    @other = Rect.new([10,10,10,10])
+    @rect.collide_rect?(@other).should be_true
+  end
+
+  it "should collide with Rects partially inside its borders" do 
+    @other = Rect.new([25,35,10,10])
+    @rect.collide_rect?(@other).should be_true
+  end
+
+  it "should collide with Rects touching its borders" do 
+    @other = Rect.new([30,30,10,10])
+    @rect.collide_rect?(@other).should be_true
+  end
+
+  it "should not collide with Rects completely outside its borders" do 
+    @other = Rect.new([100,100,10,10])
+    @rect.collide_rect?(@other).should be_false
+  end
+end
+
+
+describe Rect, "(contain?)" do 
+  before(:each) do 
+    @rect = Rect.new([0,0,30,40])
+  end
+
+  it "should contain Rects completely inside its borders" do 
+    @other = Rect.new([10,10,10,10])
+    @rect.contain?(@other).should be_true
+  end
+
+  it "should contain Rects inside but touching its borders" do 
+    @other = Rect.new([20,30,10,10])
+    @rect.contain?(@other).should be_true
+  end
+
+  it "should not contain Rects partially inside its borders" do 
+    @other = Rect.new([25,35,10,10])
+    @rect.contain?(@other).should be_false
+  end
+
+  it "should not contain Rects completely outside its borders" do 
+    @other = Rect.new([100,100,10,10])
+    @rect.contain?(@other).should be_false
+  end
+end
