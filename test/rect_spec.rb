@@ -722,3 +722,163 @@ describe Rect, "(contain?)" do
     @rect.contain?(@other).should be_false
   end
 end
+
+
+
+describe Rect, "(inflate)" do 
+  before(:each) do 
+    @rect = Rect.new([0,0,30,40])
+  end
+
+  it "size should increase by the inflation value" do 
+    @rect.inflate(10,20).size.should == [40,60]
+  end
+
+  it "position should move by half the inflation value" do 
+    @rect.inflate(10,20).topleft.should == [-5,-10]
+  end
+
+  it "can be inflated by a negative amount to shrink" do 
+    @rect.inflate(-10,-20).should == Rect.new([5,10,20,20])
+  end
+
+  it "inflate should not modify the original rect" do 
+    @rect.inflate(10,20)
+    @rect.should == Rect.new([0,0,30,40])
+  end
+
+  it "inflate! should modify the original rect" do 
+    @rect.inflate!(10,20)
+    @rect.should == Rect.new([-5,-10,40,60])
+  end
+end
+
+
+
+describe Rect, "(move)" do 
+  before(:each) do 
+    @rect = Rect.new([0,0,30,40])
+  end
+
+  it "should change the rect's position" do 
+    @rect.move(10,10).topleft.should == [10,10]
+  end
+
+  it "should not change the rect's size" do 
+    @rect.move(10,10).size.should == [30,40]
+  end
+
+  it "move should not modify the original rect" do 
+    @rect.move(10,10)
+    @rect.should == Rect.new([0,0,30,40])
+  end
+
+  it "move! should modify the original rect" do 
+    @rect.move!(10,10)
+    @rect.should == Rect.new([10,10,30,40])
+  end
+end
+
+
+
+describe Rect, "(normalize)" do 
+  it "should have no effects on rects with positive sizes" do 
+    rect = Rect.new([0,0,30,40])
+    rect.normalize.should == rect
+  end
+
+  it "should change the position of rects with negative sizes" do 
+    rect = Rect.new([0,0,-30,-40])
+    rect.normalize.topleft.should == [-30,-40]
+  end
+
+  it "should make positive the size of rects with negative sizes" do 
+    rect = Rect.new([0,0,-30,-40])
+    rect.normalize.size.should == [30,40]
+  end
+
+  it "normalize should not affect the original rect" do 
+    rect = Rect.new([0,0,-30,-40])
+    rect.normalize
+    rect.should == Rect.new([0,0,-30,-40])
+  end
+
+  it "normalize! should affect the original rect" do 
+    rect = Rect.new([0,0,-30,-40])
+    rect.normalize!
+    rect.should == Rect.new([-30,-40,30,40])
+  end
+end
+
+
+
+describe Rect, "(union)" do 
+  before(:each) do 
+    @rect = Rect.new([0,0,30,40])
+  end
+
+  it "should expand to contain the other rect" do 
+    @other = Rect.new([20,20,40,40])
+    @rect.union(@other).should == Rect.new([0,0,60,60])
+  end
+
+  it "should not change if it already contains the other rect" do 
+    @other = Rect.new([5,5,10,10])
+    @rect.union(@other).should == Rect.new([0,0,30,40])
+  end
+
+  it "union should not modify the original rect" do 
+    @rect.union( Rect.new([20,20,40,40]) )
+    @rect.should == Rect.new([0,0,30,40])
+  end
+
+  it "union! should modify the original rect" do 
+    @rect.union!( Rect.new([20,20,40,40]) )
+    @rect.should == Rect.new([0,0,60,60])
+  end
+end
+
+
+describe Rect, "(union_all)" do 
+  before(:each) do 
+    @rect = Rect.new([0,0,30,40])
+  end
+
+  it "should expand to contain the other rect" do 
+    @others = [Rect.new([20,20,40,40]), Rect.new([-20,-20,40,40])]
+    @rect.union_all(@others).should == Rect.new([-20,-20,80,80])
+  end
+
+  it "should not change if it already contains the other rects" do 
+    @others = [Rect.new([5,5,10,10]), Rect.new([0,0,20,20])]
+    @rect.union_all(@others).should == Rect.new([0,0,30,40])
+  end
+
+  it "union_all should not modify the original rect" do 
+    @others = [Rect.new([20,20,40,40]), Rect.new([-10,-20,40,40])]
+    @rect.union_all(@others)
+    @rect.should == Rect.new([0,0,30,40])
+  end
+
+  it "union! should modify the original rect" do 
+    @others = [Rect.new([20,20,40,40]), Rect.new([-20,-20,40,40])]
+    @rect.union_all!(@others)
+    @rect.should == Rect.new([-20,-20,80,80])
+  end
+end
+
+
+
+describe Surface, "(make_rect)" do 
+  before(:each) do 
+    @surface = Surface.new([30,40])
+  end
+
+  it "rect should be at position [0,0]" do 
+    @surface.make_rect.topleft.should == [0,0]
+  end
+
+  it "rect should have the same size as the surface" do 
+    @surface.make_rect.size.should == [30,40]
+  end
+end
