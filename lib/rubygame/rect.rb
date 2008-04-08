@@ -438,51 +438,50 @@ class Rect < Array
 	end
 
 	# Iterate through all key/value pairs in the given hash table, and
-	# return the first pair whose value is a Rect that collides with the
-	# caller.
+	# return the first pair (as a hash) whose value is a Rect that collides
+	# with the caller. If no Rect collides, return nil.
 	#
 	# Because a hash table is unordered, you should not expect any 
 	# particular Rect to be returned first.
 	def collide_hash(hash_rects)
-		hash_rects.each { |key,value|
-			if value.collide_rect?+(self); return [key,value]; end
+		hash_rects.each_pair { |key,value|
+			return {key => value} if self.collide_rect?(value)
 		}
 		return nil
 	end
 
 	# Iterate through all key/value pairs in the given hash table, and
-	# return an Array of every pair whose value is a Rect that collides
-	# the caller.
+	# return a Hash with every pair whose value is a Rect that collides
+	# the caller. If no Rect collides, return an empty Hash.
 	# 
 	# Because a hash table is unordered, you should not expect the returned
 	# pairs to be in any particular order.
 	def collide_hash_all(hash_rects)
-		hash_rects.select { |key,value|
-			value.collide_rect?+(self)
+		result = {}
+		hash_rects.each_pair { |key,value|
+			result[key] = value if collide_rect?(value)
 		}
+		return result
 	end
 
 	# Iterate through all elements in the given Array, and return
 	# the *index* of the first element which is a Rect that collides with
-	# the caller.
+	# the caller. If no Rect collides, return nil.
 	def collide_array(array_rects)
-		for i in (0...(array_rects.length))
-			if array_rects[i].collide_rect?(self)
-				return i
-			end
+		array_rects.each_with_index do |r, i|
+			return i if collide_rect?(r)
 		end
 		return nil
 	end
 
 	# Iterate through all elements in the given Array, and return
 	# an Array containing the *indices* of every element that is a Rect
-	# that collides with the caller.
+	# that collides with the caller. If no Rect collides, return an empty
+	# Array.
 	def collide_array_all(array_rects)
 		indexes = []
-		for i in (0...(array_rects.length))
-			if array_rects[i].collide_rect?(self)
-				indexes += [i]
-			end
+		array_rects.each_with_index do |r, i|
+			indexes += [i] if collide_rect?(r)
 		end
 		return indexes
 	end
