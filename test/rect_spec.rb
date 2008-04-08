@@ -423,3 +423,141 @@ describe Rect, "(midpoint writers)" do
     @rect.size.should == [3,4]
   end
 end
+
+
+
+describe Rect, "(clamping to larger rect)" do 
+  before(:each) do
+    @rect  = Rect.new([0,0,30,40])
+    @other = Rect.new([50,50,100,100])
+  end
+
+  it "should move to be inside the other rect" do 
+    @rect.clamp(@other).topleft.should == [50,50]
+  end
+
+  it "should stay the same size" do 
+    @rect.clamp(@other).size.should == [30,40]
+  end
+
+  it "clamp should not modify the original rect" do 
+    @rect.clamp(@other)
+    @rect.to_ary.should == [0,0,30,40]
+  end
+
+  it "clamp! should modify the original rect" do 
+    @rect.clamp!(@other)
+    @rect.to_ary.should == [50,50,30,40]
+  end
+end
+
+
+describe Rect, "(clamping to smaller rect)" do 
+  before(:each) do
+    @rect  = Rect.new([0,0,30,40])
+    @other = Rect.new([25,25,10,10])
+  end
+
+  it "should move to be centered on the other rect" do 
+    @rect.clamp(@other).center.should == [30,30]
+  end
+
+  it "should stay the same size" do 
+    @rect.clamp(@other).size.should == [30,40]
+  end
+
+  it "clamp should not modify the original rect" do 
+    @rect.clamp(@other)
+    @rect.to_ary.should == [0,0,30,40]
+  end
+
+  it "clamp! should modify the original rect" do 
+    @rect.clamp!(@other)
+    @rect.to_ary.should == [15,10,30,40]
+  end
+end
+
+
+describe Rect, "(clamping to already-containing rect)" do 
+  before(:each) do
+    @rect  = Rect.new([0,0,30,40])
+    @other = Rect.new([0,0,50,50])
+  end
+
+  it "should stay in the same place" do 
+    @rect.clamp(@other).should == @rect
+  end
+
+  it "should stay the same size" do 
+    @rect.clamp(@other).size.should == [30,40]
+  end
+end
+
+
+
+describe Rect, "(clipping to overlapping rect)" do 
+  before(:each) do
+    @rect  = Rect.new([0,0,30,40])
+    @other = Rect.new([10,10,100,100])
+  end
+
+  it "should clip to be inside the other rect" do 
+    @rect.clip(@other).topleft.should == [10,10]
+  end
+
+  it "the overlapping sides should not change" do 
+    @rect.clip(@other).bottomright.should == [30,40]
+  end
+
+  it "clip should not modify the original rect" do 
+    @rect.clip(@other)
+    @rect.to_ary.should == [0,0,30,40]
+  end
+
+  it "clip! should modify the original rect" do 
+    @rect.clip!(@other)
+    @rect.to_ary.should == [10,10,20,30]
+  end
+end
+
+
+describe Rect, "(clipping to non-overlapping rect)" do 
+  before(:each) do
+    @rect  = Rect.new([0,0,30,40])
+    @other = Rect.new([100,100,100,100])
+  end
+
+  it "should not move" do 
+    @rect.clip(@other).topleft.should == [0,0]
+  end
+
+  it "should have size [0,0]" do 
+    @rect.clip(@other).size.should == [0,0]
+  end
+
+  it "clamp should not modify the original rect" do 
+    @rect.clip(@other)
+    @rect.to_ary.should == [0,0,30,40]
+  end
+
+  it "clip! should modify the original rect" do 
+    @rect.clip!(@other)
+    @rect.to_ary.should == [0,0,0,0]
+  end
+end
+
+
+describe Rect, "(clipping to already-containing rect)" do 
+  before(:each) do
+    @rect  = Rect.new([0,0,30,40])
+    @other = Rect.new([0,0,100,100])
+  end
+
+  it "should stay in the same place" do 
+    @rect.clip(@other).topleft.should == [0,0]
+  end
+
+  it "should stay the same size" do 
+    @rect.clip!(@other).size.should == [30,40]
+  end
+end
