@@ -49,6 +49,7 @@ typedef struct RG_Music {
 
   /* 'private' */
   RG_WrapMusic *wrap;
+  int repeats;
 } RG_Music;
 
 
@@ -119,6 +120,7 @@ static RG_Music* _rg_music_alloc()
 
   music->wrap = NULL;
   music->volume = 1.f;
+  music->repeats = 0;
 
   return music;
 }
@@ -204,6 +206,9 @@ static int _rg_music_play( RG_Music *music,
   {
     start_at = 0;
   }
+
+  /* Remember repeats, for when we rewind or jump. */
+  music->repeats = repeats;
 
   /* Play music as specified, and return whether it worked. */
   return Mix_FadeInMusicPos( music->wrap->music,
@@ -750,6 +755,52 @@ static VALUE rg_music_setvolume( VALUE self, VALUE volume )
 }
 
 
+/*
+ *  call-seq:
+ *    rewind  ->  self
+ *
+ *  Rewind the Music to the beginning. If the Music was paused, it
+ *  will still be paused after the rewind. Does nothing if the Music
+ *  is stopped.
+ */
+static VALUE rg_music_rewind( VALUE self )
+{
+  RG_Music *music;
+  Data_Get_Struct(self, RG_Music, music);
+
+  /* Check that the music is current. */
+  if( _rg_music_current_check(self) )
+  {
+    /* Only do anything if it's not stopped */
+    if( !rg_music_stoppedp(self) )
+    {
+      /* Remember whether it was paused. */
+      int was_paused = Mix_PausedMusic();
+
+      /*
+       * Rather than using SDL_mixer's crippled Mix_RewindMusic,
+       * which only works for a few file types, we'll just stop and
+       * start the music again from the beginning.
+       */
+      Mix_HaltMusic();
+      int result = Mix_PlayMusic(music->wrap->music, music->repeats);
+
+      if( result == -1 )
+      {
+        rb_raise(eSDLError, "Could not play Music: %s", Mix_GetError());
+      }
+
+      /* Pause it again if it was paused before. */
+      if( was_paused )
+      {
+        Mix_PauseMusic();
+      }
+    }
+  }
+
+  return self;
+}
+
 
 void Rubygame_Init_Music()
 {
@@ -803,4 +854,6 @@ void Rubygame_Init_Music()
 
   rb_define_method( cMusic, "volume",          rg_music_getvolume,        0 );
   rb_define_method( cMusic, "volume=",         rg_music_setvolume,        1 );
+
+  rb_define_method( cMusic, "rewind",          rg_music_rewind,           0 );
 }

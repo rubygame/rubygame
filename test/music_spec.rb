@@ -197,10 +197,10 @@ describe Music, "(stopped)" do
   it { @music.should_not be_paused }
   it { @music.should be_stopped }
 
-  it "it should still be the current music" do 
+  it "it should still be the current music" do
     Music.current_music.should == @music
   end
-  
+
   it "should not be paused after being paused" do
     @music.pause
     @music.should_not be_paused
@@ -380,4 +380,57 @@ describe "Music that fades out for 0.3 seconds" do
     @music.volume.should_not == 0.5
   end
 
+end
+
+
+
+#########################
+##                     ##
+##       REWIND        ##
+##                     ##
+#########################
+
+
+describe Music, "(rewinding)" do
+
+  before :each do
+    Mixer.open_audio
+    @music = Music.new(short)
+    @music.volume = 0.1 # for programmer sanity
+  end
+
+  it "should be playing if it was playing before" do
+    @music.play
+    @music.rewind
+    @music.should be_playing
+  end
+
+  it "should be paused if it was paused before" do
+    @music.play
+    @music.pause
+    @music.rewind
+    @music.should be_paused
+  end
+
+  it "should be stopped if it was stopped before" do
+    @music.play
+    @music.stop
+    @music.rewind
+    @music.should be_stopped
+  end
+
+  it "should repeat if it was repeating before" do
+    @music.play( :repeats => -1 )
+    @music.rewind
+    sleep 0.3
+    @music.should be_playing
+  end
+
+  it "should play again" do
+    @music.play
+    sleep 0.09
+    @music.rewind
+    sleep 0.09
+    @music.should be_playing
+  end
 end
