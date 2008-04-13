@@ -23,6 +23,7 @@
 #include "rubygame_shared.h"
 #include "rubygame_mixer.h"
 #include "rubygame_sound.h"
+#include "rubygame_music.h"
 
 void Init_rubygame_mixer();
 VALUE mMixer;
@@ -691,6 +692,7 @@ void Init_rubygame_mixer()
   Init_rubygame_shared();
 
   Rubygame_Init_Sound();
+  Rubygame_Init_Music();
 
   rb_hash_aset(rb_ivar_get(mRubygame,rb_intern("VERSIONS")),
                ID2SYM(rb_intern("sdl_mixer")),
