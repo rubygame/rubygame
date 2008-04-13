@@ -399,7 +399,7 @@ static VALUE rg_music_play( int argc, VALUE *argv, VALUE self )
     temp = rb_hash_aref(options, make_symbol("start_at"));
     if( RTEST(temp) )
     {
-      start_at = (int)(1000 * NUM2DBL( temp ));
+      start_at = (double)(1000.f * NUM2DBL( temp ));
     }
 
   }
