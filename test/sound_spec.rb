@@ -4,7 +4,7 @@ include Rubygame
 samples_dir = File.join( File.dirname(__FILE__), "..", "samples", "")
 
 song = samples_dir + "song.ogg"
-whiff = samples_dir + "whiff.wav"
+short = "short.ogg"
 dne = samples_dir + "does_not_exist.ogg"
 panda = samples_dir + "panda.png"
 
@@ -217,26 +217,26 @@ end
 #########################
 
 
-describe "Sound set to stop after 0.5 seconds" do 
+describe "Sound set to stop after 0.2 seconds" do 
 	
 	before :each do
 		Mixer.open_audio
 		@sound = Sound.new(song)
 		@sound.volume = 0.01 # for programmer sanity
-		@sound.play( :stop_after => 0.5 )
+		@sound.play( :stop_after => 0.2 )
 	end
 	
 	after :each do 
 		Mixer.close_audio
 	end
 	
-	it "should still be playing at 0.45 seconds" do 
-		sleep 0.45
+	it "should still be playing at 0.15 seconds" do 
+		sleep 0.15
 		@sound.should be_playing
 	end
 	
-	it "should be stopped at 0.55 seconds" do 
-		sleep 0.55
+	it "should be stopped at 0.25 seconds" do 
+		sleep 0.25
 		@sound.should be_stopped
 	end
 	
@@ -248,7 +248,7 @@ describe "Sound that is short" do
 	
 	before :each do
 		Mixer.open_audio
-		@sound = Sound.new(whiff)
+		@sound = Sound.new(short)
 		@sound.volume = 0.01 # for programmer sanity
 		@sound.play
 	end
@@ -258,7 +258,7 @@ describe "Sound that is short" do
 	end
 	
 	it "should be stopped after it has expired" do 
-		sleep 0.6
+		sleep 0.15
 		@sound.should be_stopped
 	end
 	
@@ -266,26 +266,26 @@ end
 
 
 
-describe "Sound that repeats forever but stops after 1.5 seconds" do 
+describe "Sound that repeats forever but stops after 0.3 seconds" do 
 	
 	before :each do
 		Mixer.open_audio
-		@sound = Sound.new(whiff)
+		@sound = Sound.new(short)
 		@sound.volume = 0.01 # for programmer sanity
-		@sound.play( :repeats => -1, :stop_after => 1.5 )
+		@sound.play( :repeats => -1, :stop_after => 0.3 )
 	end
 	
 	after :each do 
 		Mixer.close_audio
 	end
 	
-	it "should still be playing at 1.45 second" do 
-		sleep 1.45
+	it "should still be playing at 0.25 second" do 
+		sleep 0.25
 		@sound.should be_playing
 	end
 	
-	it "should be stopped at 1.55 second" do 
-		sleep 1.55
+	it "should be stopped at 0.35 second" do 
+		sleep 0.35
 		@sound.should be_stopped
 	end
 	
@@ -304,7 +304,7 @@ describe "Sound that repeats forever" do
 	
 	before :each do
 		Mixer.open_audio
-		@sound = Sound.new(whiff)
+		@sound = Sound.new(short)
 		@sound.volume = 0.01 # for programmer sanity
 		@sound.play( :repeats => -1 )
 	end
@@ -313,8 +313,8 @@ describe "Sound that repeats forever" do
 		Mixer.close_audio
 	end
 	
-	it "should still be playing at 1 second" do 
-		sleep 1.0
+	it "should still be playing at 0.3 seconds" do 
+		sleep 0.3
 		@sound.should be_playing
 	end
 	
@@ -326,7 +326,7 @@ describe "Sound that repeats 3 times" do
 	
 	before :each do
 		Mixer.open_audio
-		@sound = Sound.new(whiff)
+		@sound = Sound.new(short)
 		@sound.volume = 0.01 # for programmer sanity
 		@sound.play( :repeats => 3 )
 	end
@@ -336,12 +336,12 @@ describe "Sound that repeats 3 times" do
 	end
 	
 	it "should still be playing after 3 plays" do 
-		sleep 0.6*3
+		sleep 0.1*3
 		@sound.should be_playing
 	end
 	
 	it "should be stopped after 4 plays" do 
-		sleep 0.6*4
+		sleep 0.1*4 + 0.05
 		@sound.should be_stopped
 	end
 	
@@ -356,13 +356,13 @@ end
 #########################
 
 
-describe "Sound that fades in for 0.5 seconds" do 
+describe "Sound that fades in for 0.2 seconds" do 
 	
 	before :each do
 		Mixer.open_audio
-		@sound = Sound.new(whiff)
+		@sound = Sound.new(short)
 		@sound.volume = 0.01 # for programmer sanity
-		@sound.play( :fade_in => 0.5 )
+		@sound.play( :repeats => -1, :fade_in => 0.2 )
 	end
 	
 	after :each do 
@@ -378,20 +378,20 @@ describe "Sound that fades in for 0.5 seconds" do
 		@sound.fading?(:in).should be_true
 	end
 	
-	it "should still be fading in after 0.45 seconds" do 
-		sleep 0.45
+	it "should still be fading in after 0.15 seconds" do 
+		sleep 0.15
 		@sound.should be_fading
 		@sound.fading?(:in).should be_true
 	end
 	
-	it "should not be fading in after 0.55 seconds" do 
-		sleep 0.55
+	it "should not be fading in after 0.25 seconds" do 
+		sleep 0.25
 		@sound.should_not be_fading
 		@sound.fading?(:in).should be_false
 	end
 	
 	it "should still be playing after it has faded in" do 
-		sleep 0.55
+		sleep 0.25
 		@sound.should be_playing
 	end
 	
@@ -403,14 +403,14 @@ describe "Sound that fades in for 0.5 seconds" do
 end
 
 
-describe "Sound that fades out for 0.5 seconds" do 
+describe "Sound that fades out for 0.2 seconds" do 
 	
 	before :each do
 		Mixer.open_audio
-		@sound = Sound.new(whiff)
+		@sound = Sound.new(short)
 		@sound.volume = 0.01 # for programmer sanity
 		@sound.play( :repeats => -1 )
-		@sound.fade_out( 0.5 )
+		@sound.fade_out( 0.2 )
 	end
 	
 	after :each do 
@@ -426,20 +426,20 @@ describe "Sound that fades out for 0.5 seconds" do
 		@sound.fading?(:out).should be_true
 	end
 	
-	it "should still be fading out after 0.45 seconds" do 
-		sleep 0.45
+	it "should still be fading out after 0.25 seconds" do 
+		sleep 0.15
 		@sound.should be_fading
 		@sound.fading?(:out).should be_true
 	end
 	
-	it "should not be fading out after 0.55 seconds" do 
-		sleep 0.55
+	it "should not be fading out after 0.35 seconds" do 
+		sleep 0.25
 		@sound.should_not be_fading
 		@sound.fading?(:out).should be_false
 	end
 	
 	it "should be stopped after it has faded out" do 
-		sleep 0.55
+		sleep 0.25
 		@sound.should be_stopped
 	end
 	
