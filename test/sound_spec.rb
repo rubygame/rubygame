@@ -2,9 +2,10 @@ require 'rubygame'
 include Rubygame
 
 samples_dir = File.join( File.dirname(__FILE__), "..", "samples", "")
+test_dir = File.dirname(__FILE__)
 
 song = samples_dir + "song.ogg"
-short = "short.ogg"
+short = File.join( File.dirname(__FILE__), "short.ogg")
 dne = samples_dir + "does_not_exist.ogg"
 panda = samples_dir + "panda.png"
 
