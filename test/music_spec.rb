@@ -5,6 +5,7 @@ samples_dir = File.join( File.dirname(__FILE__), "..", "samples", "")
 test_dir = File.dirname(__FILE__)
 
 song = samples_dir + "song.ogg"
+whiff = samples_dir + "whiff.wav"
 short = File.join( File.dirname(__FILE__), "short.ogg")
 dne = samples_dir + "does_not_exist.ogg"
 panda = samples_dir + "panda.png"
@@ -510,6 +511,10 @@ describe Music, "(rewinding)" do
     @music.volume = 0.1 # for programmer sanity
   end
 
+  after :each do
+    Mixer.close_audio
+  end
+
   it "should be playing if it was playing before" do
     @music.play
     @music.rewind
@@ -544,4 +549,94 @@ describe Music, "(rewinding)" do
     sleep 0.09
     @music.should be_playing
   end
+end
+
+
+#########################
+##                     ##
+##      JUMP  TO       ##
+##                     ##
+#########################
+
+
+describe Music, "(jump to)" do
+
+  before :each do
+    Mixer.open_audio
+    @music = Music.new(song)
+    @music.volume = 0.1 # for programmer sanity
+  end
+
+  after :each do
+    Mixer.close_audio
+  end
+
+  it "should still be playing if it was playing" do
+    @music.play
+    @music.jump_to(5)
+    @music.should be_playing
+  end
+
+  it "should end sooner if playing" do
+    @music.play
+    @music.jump_to(7.4)
+    sleep 0.2
+    @music.should be_stopped
+  end
+
+  it "should still be paused if it was paused" do
+    @music.play
+    @music.pause
+    @music.jump_to(5)
+    @music.should be_paused
+  end
+
+  it "should end sooner after being unpaused" do
+    @music.play
+    @music.pause
+    @music.jump_to(7.4)
+    @music.unpause
+    sleep 0.2
+    @music.should be_stopped
+  end
+end
+
+
+describe Music, "(jump to, unsupported format)" do
+
+  before :each do
+    Mixer.open_audio
+    @music = Music.new(whiff)
+    @music.volume = 0.1 # for programmer sanity
+  end
+
+  after :each do
+    Mixer.close_audio
+  end
+
+  it "should raise SDLError" do
+    @music.play
+    lambda { @music.jump_to(0.1) }.should raise_error(SDLError)
+  end
+
+end
+
+
+describe Music, "(jump to, negative time)" do
+
+  before :each do
+    Mixer.open_audio
+    @music = Music.new(whiff)
+    @music.volume = 0.1 # for programmer sanity
+  end
+
+  after :each do
+    Mixer.close_audio
+  end
+
+  it "should raise ArgumentError" do
+    @music.play
+    lambda { @music.jump_to }.should raise_error(ArgumentError)
+  end
+
 end

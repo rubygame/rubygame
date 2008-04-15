@@ -340,12 +340,15 @@ static VALUE rg_music_initialize_copy( VALUE self, VALUE other )
  *    :repeats::     Repeat the music the given number of times, or
  *                   forever (or until stopped) if -1. Default: 0.
  *                   (Integer, optional)
- *    :start_at::    Start playing the music at the given position
- *                   in the song, in seconds. Default: 0.
- *                   (Numeric, optional)
+ *    :start_at::    Start playing the music at the given time in the
+ *                   song, in seconds. Default: 0. (Numeric, optional)
+ *                   **NOTE**: Non-zero start times only work for
+ *                   OGG and MP3 formats! Please refer to #jump.
+ *
  *
  *  Returns::     The receiver (self).
- *  May raise::   SDLError, if the music file could not be played.
+ *  May raise::   SDLError, if the music file could not be played, or
+ *                if you used :start_at with an unsupported format.
  *
  *	**NOTE**: Only one music can be playing at once. If any music is
  *  already playing (or paused), it will be stopped before playing the
@@ -817,7 +820,7 @@ static VALUE rg_music_rewind( VALUE self )
 
       if( result == -1 )
       {
-        rb_raise(eSDLError, "Could not play Music: %s", Mix_GetError());
+        rb_raise(eSDLError, "Could not rewind Music: %s", Mix_GetError());
       }
 
       /* Pause it again if it was paused before. */
@@ -830,6 +833,69 @@ static VALUE rg_music_rewind( VALUE self )
 
   return self;
 }
+
+
+/*
+ *  call-seq:
+ *    jump_to( time )  ->  self
+ *
+ *  Jump to any time in the Music, in seconds since the beginning.
+ *  If the Music was paused, it will still be paused again after the
+ *  jump. Does nothing if the Music was stopped.
+ *
+ *  **NOTE**: Only works for OGG and MP3 formats! Other formats (e.g.
+ *  WAV) will usually raise SDLError.
+ *
+ *  time::   the time to jump to, in seconds since the beginning
+ *           of the song. (Numeric, required)
+ *
+ *  May raise::  SDLError if something goes wrong, or if the music
+ *               type does not support jumping.
+ *
+ *  **CAUTION**: This method may be unreliable (and could even crash!)
+ *  if you jump to a time after the end of the song. Unfortunately,
+ *  SDL_Mixer does not provide a way to find the song's length, so
+ *  Rubygame cannot warn you if you go off the end. Be careful!
+ */
+static VALUE rg_music_jumpto( VALUE self, VALUE vtime )
+{
+  RG_Music *music;
+  Data_Get_Struct(self, RG_Music, music);
+
+  /* Check that the music is current. */
+  if( _rg_music_current_check(self) )
+  {
+    /* Only do anything if it's not stopped */
+    if( !rg_music_stoppedp(self) )
+    {
+      /* Remember whether it was paused. */
+      int was_paused = Mix_PausedMusic();
+
+      double time = NUM2DBL(vtime); /* in seconds */
+
+      if( time < 0 )
+      {
+        rb_raise(rb_eArgError, "jump_to time cannot be negative (got %d)", time);
+      }
+
+      int result = Mix_SetMusicPosition( time );
+
+      if( result == -1 )
+      {
+        rb_raise(eSDLError, "Could not jump Music: %s", Mix_GetError());
+      }
+
+      /* Pause it again if it was paused before. */
+      if( was_paused )
+      {
+        Mix_PauseMusic();
+      }
+    }
+  }
+
+  return self;
+}
+
 
 
 void Rubygame_Init_Music()
@@ -850,11 +916,12 @@ void Rubygame_Init_Music()
    *       a second song, the first one will be stopped.
    *
    *    2. Music doesn't load the entire audio file, so it can begin
-   *       quickly and doesn't use much memory. This is important,
+   *       quickly and doesn't use much memory. This is good,
    *       because songs are usually much longer than sound effects!
    *
-   *  Music can #play, #pause/#unpause, #stop, adjust #volume,
-   *  and #fade_out (you can fade in by passing an option to #play).
+   *  Music can #play, #pause/#unpause, #stop, #rewind, #jump_to another
+   *  time, adjust #volume, and #fade_out (fade in by passing an option
+   *  to #play).
    *
    */
   cMusic = rb_define_class_under(mRubygame,"Music",rb_cObject);
@@ -886,4 +953,5 @@ void Rubygame_Init_Music()
   rb_define_method( cMusic, "volume=",         rg_music_setvolume,        1 );
 
   rb_define_method( cMusic, "rewind",          rg_music_rewind,           0 );
+  rb_define_method( cMusic, "jump_to",         rg_music_jumpto,           1 );
 }
