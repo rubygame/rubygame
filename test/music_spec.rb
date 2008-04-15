@@ -8,7 +8,8 @@ short = "short.ogg"
 dne = samples_dir + "does_not_exist.ogg"
 panda = samples_dir + "panda.png"
 
-
+# value for testing nearness of volume
+small = 0.00001
 
 #########################
 ##                     ##
@@ -120,8 +121,8 @@ describe Music, "(playing)" do
   end
 
   it "should be able to change volume" do
-    @music.volume = 0.5
-    @music.volume.should == 0.5
+    @music.volume = 0.2
+    @music.volume.should be_close(0.2, small)
   end
 
 end
@@ -171,8 +172,8 @@ describe Music, "(paused)" do
   end
 
   it "should be able to change volume" do
-    @music.volume = 0.5
-    @music.volume.should == 0.5
+    @music.volume = 0.2
+    @music.volume.should be_close(0.2, small)
   end
 
 end
@@ -217,8 +218,8 @@ describe Music, "(stopped)" do
   end
 
   it "should be able to change volume" do
-    @music.volume = 0.5
-    @music.volume.should == 0.5
+    @music.volume = 0.2
+    @music.volume.should be_close(0.2, small)
   end
 
 end
@@ -232,7 +233,49 @@ end
 #########################
 
 
-describe "Music that repeats forever" do
+describe Music, "(negative start at)" do
+  before :each do
+    Mixer.open_audio
+    @music = Music.new(short)
+    @music.volume = 0.1 # for programmer sanity
+  end
+
+  after :each do
+    Mixer.close_audio
+  end
+
+  it "should raise ArgumentError" do
+    lambda { @music.play(:start_at => -1) }.should raise_error(ArgumentError)
+  end
+end
+
+
+#########################
+##                     ##
+##      REPEATING      ##
+##                     ##
+#########################
+
+
+describe Music, "(negative repeats, except -1)" do
+
+  before :each do
+    Mixer.open_audio
+    @music = Music.new(song)
+    @music.volume = 0.1 # for programmer sanity
+  end
+
+  after :each do
+    Mixer.close_audio
+  end
+
+  it "should raise ArgumentError" do
+    lambda { @music.play(:repeats => -2) }.should raise_error(ArgumentError)
+  end
+end
+
+
+describe Music, "(repeats forever)" do
 
   before :each do
     Mixer.open_audio
@@ -245,7 +288,7 @@ describe "Music that repeats forever" do
     Mixer.close_audio
   end
 
-  it "should still be playing at 0.3 seconds" do
+  it "should still be playing after a while" do
     sleep 0.3
     @music.should be_playing
   end
@@ -253,8 +296,7 @@ describe "Music that repeats forever" do
 end
 
 
-
-describe "Music that repeats 3 times" do
+describe Music, "(repeats)" do
 
   before :each do
     Mixer.open_audio
@@ -267,18 +309,17 @@ describe "Music that repeats 3 times" do
     Mixer.close_audio
   end
 
-  it "should still be playing after 3 plays" do
+  it "should be playing before its last repeat" do
     sleep 0.1*3
     @music.should be_playing
   end
 
-  it "should be stopped after 4 plays" do
+  it "should not be stopped after its last repeat" do
     sleep 0.1*4 + 0.05
     @music.should be_stopped
   end
 
 end
-
 
 
 #########################
@@ -288,13 +329,29 @@ end
 #########################
 
 
-describe "Music that fades in for 0.3 seconds" do
+describe Music, "(negative fade in)" do
 
   before :each do
     Mixer.open_audio
     @music = Music.new(song)
     @music.volume = 0.1 # for programmer sanity
-    @music.play( :fade_in => 0.2 )
+  end
+
+  after :each do
+    Mixer.close_audio
+  end
+
+  it "should raise ArgumentError" do
+    lambda { @music.play(:fade_in => -1) }.should raise_error(ArgumentError)
+  end
+end
+
+describe Music, "(fading in)" do
+
+  before :each do
+    Mixer.open_audio
+    @music = Music.new(song)
+    @music.volume = 0.1 # for programmer sanity
   end
 
   after :each do
@@ -302,47 +359,51 @@ describe "Music that fades in for 0.3 seconds" do
   end
 
   it "should be playing right away" do
+    @music.play( :fade_in => 0.3 )
     @music.should be_playing
   end
 
   it "should be fading in right away" do
+    @music.play( :fade_in => 0.3 )
     @music.should be_fading
     @music.fading?(:in).should be_true
   end
 
-  it "should still be fading in after 0.1 seconds" do
-    sleep 0.1
+  it "should be fading in before it has faded in" do
+    @music.play( :fade_in => 0.3 )
+    sleep 0.2
     @music.should be_fading
     @music.fading?(:in).should be_true
   end
 
-  it "should not be fading in after 0.3 seconds" do
-    sleep 0.3
+  it "should not be fading in after it has faded in" do
+    @music.play( :fade_in => 0.3 )
+    sleep 0.4
     @music.should_not be_fading
     @music.fading?(:in).should be_false
   end
 
   it "should still be playing after it has faded in" do
-    sleep 0.3
+    @music.play( :fade_in => 0.3 )
+    sleep 0.4
     @music.should be_playing
   end
 
   it "should not allow changing volume" do
-    lambda { @music.volume = 0.5 }.should raise_error(SDLError)
-    @music.volume.should_not == 0.5
+    @music.play( :fade_in => 0.3 )
+    lambda { @music.volume = 0.2 }.should raise_error(SDLError)
+    @music.volume.should be_close(0.1, small)
   end
 
 end
 
 
-describe "Music that fades out for 0.3 seconds" do
+describe Music, "(negative fade out)" do
 
   before :each do
     Mixer.open_audio
     @music = Music.new(song)
     @music.volume = 0.1 # for programmer sanity
-    @music.play( :repeats => -1 )
-    @music.fade_out( 0.2 )
   end
 
   after :each do
@@ -350,34 +411,60 @@ describe "Music that fades out for 0.3 seconds" do
   end
 
   it "should be playing right away" do
+    @music.play
+    lambda { @music.fade_out( -1 ) }.should raise_error(ArgumentError)
+  end
+
+end
+
+describe Music, "(fading out)" do
+
+  before :each do
+    Mixer.open_audio
+    @music = Music.new(song)
+    @music.volume = 0.1 # for programmer sanity
+    @music.play
+  end
+
+  after :each do
+    Mixer.close_audio
+  end
+
+  it "should be playing right away" do
+    @music.fade_out( 0.3 )
     @music.should be_playing
   end
 
   it "should be fading out right away" do
+    @music.fade_out( 0.3 )
     @music.should be_fading
     @music.fading?(:out).should be_true
   end
 
-  it "should still be fading out after 0.1 seconds" do
-    sleep 0.1
+  it "should be fading out before it has faded out" do
+    @music.fade_out( 0.3 )
+    sleep 0.2
     @music.should be_fading
     @music.fading?(:out).should be_true
   end
 
-  it "should not be fading out after 0.3 seconds" do
-    sleep 0.3
+  it "should not be fading out after it has faded out" do
+    @music.fade_out( 0.3 )
+    sleep 0.4
     @music.should_not be_fading
     @music.fading?(:out).should be_false
   end
 
   it "should be stopped after it has faded out" do
-    sleep 0.3
+    @music.fade_out( 0.3 )
+    sleep 0.4
     @music.should be_stopped
   end
 
   it "should not allow changing volume" do
-    lambda { @music.volume = 0.5 }.should raise_error(SDLError)
-    @music.volume.should_not == 0.5
+    @music.fade_out( 0.3 )
+    lambda { @music.volume = 0.2 }.should raise_error(SDLError)
+    @music.volume.should be_close(0.1, small)
   end
 
 end
