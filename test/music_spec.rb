@@ -2,9 +2,10 @@ require 'rubygame'
 include Rubygame
 
 samples_dir = File.join( File.dirname(__FILE__), "..", "samples", "")
+test_dir = File.dirname(__FILE__)
 
 song = samples_dir + "song.ogg"
-short = "short.ogg"
+short = File.join( File.dirname(__FILE__), "short.ogg")
 dne = samples_dir + "does_not_exist.ogg"
 panda = samples_dir + "panda.png"
 
@@ -228,7 +229,7 @@ end
 
 #########################
 ##                     ##
-##      REPEATING      ##
+##      START AT       ##
 ##                     ##
 #########################
 
@@ -246,6 +247,29 @@ describe Music, "(negative start at)" do
 
   it "should raise ArgumentError" do
     lambda { @music.play(:start_at => -1) }.should raise_error(ArgumentError)
+  end
+end
+
+describe Music, "(start at)" do
+  before :each do
+    Mixer.open_audio
+    @music = Music.new(song)
+    @music.volume = 0.1 # for programmer sanity
+  end
+
+  after :each do
+    Mixer.close_audio
+  end
+
+  it "should be playing right away" do
+    @music.play( :start_at => 7 )
+    @music.should be_playing
+  end
+
+  it "should end sooner" do
+    @music.play( :start_at => 7.4 )
+    sleep 0.2
+    @music.should be_stopped
   end
 end
 

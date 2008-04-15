@@ -191,6 +191,9 @@ static void _rg_music_deepcopy( RG_Music *music, RG_Music *other )
 static int _rg_music_play( RG_Music *music, 
                            int fade_in, int repeats, double start_at )
 {
+
+  /* Doing a little restart dance to please the SDL_mixer gods. */
+  Mix_PlayMusic( music->wrap->music, 0 );
   Mix_HaltMusic();
 
   /* Set music channel volume before we play */
@@ -419,12 +422,12 @@ static VALUE rg_music_play( int argc, VALUE *argv, VALUE self )
     temp = rb_hash_aref(options, make_symbol("start_at"));
     if( RTEST(temp) )
     {
-      start_at = (double)(1000.f * NUM2DBL( temp ));
+      start_at = (double)(NUM2DBL( temp ));
 
       if( start_at < 0 )
       {
         rb_raise(rb_eArgError, ":start_at cannot be negative (got %.2f)",
-                 start_at / 1000);
+                 start_at);
       }
     }
 
