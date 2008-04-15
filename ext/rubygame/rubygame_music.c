@@ -363,7 +363,7 @@ static VALUE rg_music_play( int argc, VALUE *argv, VALUE self )
   rb_scan_args(argc, argv, "01", &options);
 
   int fade_in    =  0;
-  int repeats    =  0;
+  int repeats    =  1;
   double start_at   =  0;
 
   /* If we got some options */
@@ -378,11 +378,24 @@ static VALUE rg_music_play( int argc, VALUE *argv, VALUE self )
 
     VALUE temp;
 
+
     temp = rb_hash_aref(options, make_symbol("fade_in"));
     if( RTEST(temp) )
     {
       fade_in = (int)(1000 * NUM2DBL( temp ));
+
+      if( fade_in < 0 )
+      {
+        rb_raise(rb_eArgError, ":fade_in cannot be negative (got %.2f)",
+                 fade_in / 1000);
+      }
+      else if( fade_in < 50 )
+      {
+        /* Work-around for a bug with SDL_mixer not working with small non-zero fade-ins */
+        fade_in = 0;
+      }
     }
+
 
     temp = rb_hash_aref(options, make_symbol("repeats"));
     if( RTEST(temp) )
@@ -391,15 +404,28 @@ static VALUE rg_music_play( int argc, VALUE *argv, VALUE self )
 
       if( repeats > -1 )
       {
-        /* Adjust so repeats means the same as it does for Samples */
+        /* Adjust so repeats means the same as it does for Sound */
         repeats += 1;
       }
+
+      if( repeats < -1 )
+      {
+        rb_raise(rb_eArgError, ":repeats cannot be negative, except -1 (got %d)",
+                 repeats);
+      }
     }
+
 
     temp = rb_hash_aref(options, make_symbol("start_at"));
     if( RTEST(temp) )
     {
       start_at = (double)(1000.f * NUM2DBL( temp ));
+
+      if( start_at < 0 )
+      {
+        rb_raise(rb_eArgError, ":start_at cannot be negative (got %.2f)",
+                 start_at / 1000);
+      }
     }
 
   }
@@ -623,9 +649,10 @@ static VALUE rg_music_fadeout( VALUE self, VALUE fade_time )
 
   int fade_ms = (int)(1000 * NUM2DBL(fade_time));
 
-  if( fade_ms <= 0 )
+  if( fade_ms < 0 )
   {
-    fade_ms = 1;
+    rb_raise(rb_eArgError, "fade_time cannot be negative (got %.2f)",
+             fade_ms / 1000);
   }
 
   /* Check that the music is current */
