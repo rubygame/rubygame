@@ -24,6 +24,8 @@
 #include "SDL_audio.h"
 #include "SDL_mixer.h"
 
+extern int mixer_is_open();
+
 extern void Init_rubygame_mixer();
 extern VALUE mMixer;
 

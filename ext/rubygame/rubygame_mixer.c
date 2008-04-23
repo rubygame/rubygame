@@ -61,6 +61,19 @@ VALUE rbgm_mixmusic_fadeout(VALUE, VALUE);
 VALUE rbgm_mixmusic_fading(int, VALUE*, VALUE);
 
 
+
+/* Return 1 if SDL_mixer audio is open, or 0 if it is not. */
+int mixer_is_open()
+{
+  /* We don't actually care about these, but Mix_QuerySpec wants args. */
+  int frequency;  Uint16 format;  int channels;
+
+  int result = Mix_QuerySpec(&frequency, &format, &channels);
+
+  return ( (result > 0) ? 1 : 0 );
+}
+
+
 /* --
  * SETUP AND INITIALIZATION
  * ++
