@@ -40,7 +40,7 @@ extern VALUE rbgm_mixchan_stop( VALUE, VALUE );
 extern VALUE rbgm_mixchan_pause( VALUE, VALUE );
 extern VALUE rbgm_mixchan_resume( VALUE, VALUE );
 
-extern VALUE cMusic;
+extern VALUE cOldMusic;
 extern VALUE rbgm_mixmusic_setcommand(VALUE, VALUE); 
 extern VALUE rbgm_mixmusic_new(VALUE, VALUE);
 

@@ -41,7 +41,7 @@ VALUE rbgm_mixchan_stop( VALUE, VALUE );
 VALUE rbgm_mixchan_pause( VALUE, VALUE );
 VALUE rbgm_mixchan_resume( VALUE, VALUE );
 
-VALUE cMusic;
+VALUE cOldMusic;
 VALUE rbgm_mixmusic_setcommand(VALUE, VALUE); 
 VALUE rbgm_mixmusic_new(VALUE, VALUE);
 
@@ -377,7 +377,7 @@ VALUE rbgm_mixmusic_new(VALUE class, VALUE filev)
     rb_raise(eSDLError, "Error loading audio music from file `%s': %s",
              StringValuePtr(filev), Mix_GetError());
   }
-	self = Data_Wrap_Struct( cMusic, 0, Mix_FreeMusic, music );
+	self = Data_Wrap_Struct( cOldMusic, 0, Mix_FreeMusic, music );
 
 	//rb_obj_call_init(self,argc,argv);
 
@@ -701,6 +701,20 @@ void Init_rubygame_mixer()
                            INT2NUM(SDL_MIXER_MINOR_VERSION),
                            INT2NUM(SDL_MIXER_PATCHLEVEL)));
 
+  /*
+   * Moving these to be under Rubygame module instead of Mixer.
+   */
+  rb_define_const(mRubygame,"AUDIO_U8",     INT2NUM(AUDIO_U8));
+  rb_define_const(mRubygame,"AUDIO_S8",     INT2NUM(AUDIO_S8));
+  rb_define_const(mRubygame,"AUDIO_U16SYS", INT2NUM(AUDIO_U16SYS));
+  rb_define_const(mRubygame,"AUDIO_S16SYS", INT2NUM(AUDIO_S16SYS));
+
+  rb_define_module_function(mRubygame,"open_audio",rbgm_mixer_openaudio, -1);
+  rb_define_module_function(mRubygame,"close_audio",rbgm_mixer_closeaudio, 0);
+  rb_define_module_function(mRubygame,"driver_name", rbgm_mixer_getdrivername, 0);
+
+
+
 	/*
 	 *  The Mixer module provides access to the SDL_mixer library for audio
 	 *  playback and mixing. This module is still very basic, but it is
@@ -721,7 +735,6 @@ void Init_rubygame_mixer()
   rb_define_module_function(mMixer,"mix_channels",rbgm_mixer_getmixchans, 0);
   rb_define_module_function(mMixer,"mix_channels=",rbgm_mixer_setmixchans, 1);
   rb_define_module_function(mMixer,"driver_name", rbgm_mixer_getdrivername, 0);
-
 
 
   /* Stores audio data to play with Mixer.play() */
@@ -745,25 +758,25 @@ void Init_rubygame_mixer()
  *     be many Samples playing at once. If you play a second Music while one
  *     is already playing, the first one will be stopped. See #play.
  */
-  cMusic = rb_define_class_under(mMixer, "Music", rb_cObject);
-  rb_define_singleton_method(cMusic, "load_audio", rbgm_mixmusic_new, 1);
+  cOldMusic = rb_define_class_under(mMixer, "Music", rb_cObject);
+  rb_define_singleton_method(cOldMusic, "load_audio", rbgm_mixmusic_new, 1);
 
-  //rb_define_singleton_method(cMusic, "set_command", rbgm_mixmusic_setcommand, 1);
+  //rb_define_singleton_method(cOldMusic, "set_command", rbgm_mixmusic_setcommand, 1);
 	
-  rb_define_method(cMusic, "play",      rbgm_mixmusic_play,       -1);
-  rb_define_method(cMusic, "stop",      rbgm_mixmusic_stop,        0);
-  rb_define_method(cMusic, "pause",     rbgm_mixmusic_pause,       0);
-  rb_define_method(cMusic, "resume",    rbgm_mixmusic_resume,      0);
-  rb_define_method(cMusic, "rewind",    rbgm_mixmusic_rewind,      0);
-  rb_define_method(cMusic, "jump",      rbgm_mixmusic_jump,        1);
-  rb_define_method(cMusic, "paused?",   rbgm_mixmusic_paused,      0);
-  rb_define_method(cMusic, "playing?",  rbgm_mixmusic_playing,     0);
+  rb_define_method(cOldMusic, "play",      rbgm_mixmusic_play,       -1);
+  rb_define_method(cOldMusic, "stop",      rbgm_mixmusic_stop,        0);
+  rb_define_method(cOldMusic, "pause",     rbgm_mixmusic_pause,       0);
+  rb_define_method(cOldMusic, "resume",    rbgm_mixmusic_resume,      0);
+  rb_define_method(cOldMusic, "rewind",    rbgm_mixmusic_rewind,      0);
+  rb_define_method(cOldMusic, "jump",      rbgm_mixmusic_jump,        1);
+  rb_define_method(cOldMusic, "paused?",   rbgm_mixmusic_paused,      0);
+  rb_define_method(cOldMusic, "playing?",  rbgm_mixmusic_playing,     0);
 
-  rb_define_method(cMusic, "volume",    rbgm_mixmusic_getvolume,   0);
-  rb_define_method(cMusic, "volume=",   rbgm_mixmusic_setvolume,   1);
-  rb_define_method(cMusic, "fade_in",   rbgm_mixmusic_fadein,     -1);
-  rb_define_method(cMusic, "fade_out",  rbgm_mixmusic_fadeout,     1);
-  rb_define_method(cMusic, "fading?",   rbgm_mixmusic_fading,     -1);
+  rb_define_method(cOldMusic, "volume",    rbgm_mixmusic_getvolume,   0);
+  rb_define_method(cOldMusic, "volume=",   rbgm_mixmusic_setvolume,   1);
+  rb_define_method(cOldMusic, "fade_in",   rbgm_mixmusic_fadein,     -1);
+  rb_define_method(cOldMusic, "fade_out",  rbgm_mixmusic_fadeout,     1);
+  rb_define_method(cOldMusic, "fading?",   rbgm_mixmusic_fading,     -1);
 }
 
 
