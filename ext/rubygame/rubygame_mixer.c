@@ -169,6 +169,132 @@ VALUE rbgm_mixer_closeaudio(VALUE module)
   return Qnil;
 }
 
+
+
+/* call-seq:
+ *  open_audio( options={ :buffer => 1024, :channels => 2, :frequency => 22050 } )  ->  true or false
+ *
+ *  Initializes the audio device. You must call this before using the
+ *  other mixer functions.
+
+ *  Does nothing and returns false if you call it again while audio is
+ *  already open. If you want to change audio settings, you must
+ *  #close_audio() and then open it again.
+ *
+ *  options::    A Hash of any of the following options. (Hash, optional)
+ *
+ *     :frequency::  output sample rate in audio samples per second
+ *                   (Hz). Affects the quality of the sound output, at
+ *                   the expense of CPU usage. If omitted, the default
+ *                   (usually 22050) is used. The default is
+ *                   recommended for most cases. For reference, 44100
+ *                   is CD quality. The larger the value, the more
+ *                   processing required.
+ *
+ *     :channels::   output sound channels. Use 2 for stereo, 1 for mono.
+ *                   If omitted, the default (2) is used.
+ *
+ *     :buffer::     size of the sound buffer, in bytes. Must be a
+ *                   power of 2 (e.g. 512, 1024, 2048). If omitted, the
+ *                   default (1024) is used. Larger values have more
+ *                   delay before playing a sound, but require less CPU
+ *                   usage (and have less skipping on slow systems).
+ *
+ *  Returns::    true if the audio was opened by this action, or false
+ *               if it was already open before this action.
+ *
+ *  May raise::  SDLError, if initialization fails.
+ *               ArgumentError, if an invalid value is given for any option.
+ *
+ *
+ */
+VALUE rbgm_mixer_openaudio2(int argc, VALUE *argv, VALUE module)
+{
+  VALUE options;
+
+  int buffer = 1024;
+  int channels = 2;
+  int frequency = MIX_DEFAULT_FREQUENCY;
+
+  /* In general, format should always be the default. */
+  Uint16 format = MIX_DEFAULT_FORMAT;
+
+
+  /* Does nothing if audio is already open. */
+  if( mixer_is_open() )
+  {
+    return Qfalse;
+  }
+
+
+  rb_scan_args(argc, argv, "01", &options);
+
+
+  if( RTEST(options) )
+  {
+    /* Make sure options is a Hash table */
+    if( TYPE(options) != T_HASH )
+    {
+      rb_raise(rb_eTypeError, "wrong argument type %s (expected Hash)",
+               rb_obj_classname(options));
+    }
+
+    VALUE temp;
+
+    /* Buffer size */
+    temp = rb_hash_aref(options, make_symbol("buffer"));
+    if( RTEST(temp) )
+    {
+      buffer = NUM2INT(temp);
+
+      if( buffer <= 0 )
+      {
+        rb_raise(rb_eArgError, "buffer size must be positive (got %d)", buffer);
+      }
+
+      /* Check to see if it's not a power of two */
+      if( buffer & (buffer - 1) != 0 )
+      {
+        rb_raise(rb_eArgError, "buffer size must be a power of 2 (e.g. 512, 1024) (got %d)", buffer);
+      }
+    }
+
+    /* Channels */
+    temp = rb_hash_aref(options, make_symbol("channels"));
+    if( RTEST(temp) )
+    {
+      channels = NUM2INT(temp);
+
+      if( channels != 1 && channels != 2 )
+      {
+        rb_raise(rb_eArgError, "channels must be 1 (mono) or 2 (stereo) (got %d)", channels);
+      }
+    }
+
+    /* Frequency */
+    temp = rb_hash_aref(options, make_symbol("frequency"));
+    if( RTEST(temp) )
+    {
+      frequency = NUM2INT(temp);
+
+      if( frequency <= 0 )
+      {
+        rb_raise(rb_eArgError, "frequency must be positive (got %d)", frequency);
+      }
+    }
+  }
+
+  int result = Mix_OpenAudio(frequency, format, channels, buffer);
+
+  if( result < 0 )
+  {
+    rb_raise(eSDLError, "Could not open audio: %s", Mix_GetError());
+  }
+
+  return Qtrue;
+}
+
+
 /* call-seq:
  *  #mix_channels()  ->  integer
  *
@@ -722,8 +848,8 @@ void Init_rubygame_mixer()
   rb_define_const(mRubygame,"AUDIO_U16SYS", INT2NUM(AUDIO_U16SYS));
   rb_define_const(mRubygame,"AUDIO_S16SYS", INT2NUM(AUDIO_S16SYS));
 
-  rb_define_module_function(mRubygame,"open_audio",rbgm_mixer_openaudio, -1);
-  rb_define_module_function(mRubygame,"close_audio",rbgm_mixer_closeaudio, 0);
+  rb_define_module_function(mRubygame,"open_audio",  rbgm_mixer_openaudio2,   -1);
+  rb_define_module_function(mRubygame,"close_audio", rbgm_mixer_closeaudio,    0);
   rb_define_module_function(mRubygame,"driver_name", rbgm_mixer_getdrivername, 0);
 
 
