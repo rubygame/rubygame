@@ -63,7 +63,7 @@ VALUE rbgm_mixmusic_fading(int, VALUE*, VALUE);
 
 
 /* Return 1 if SDL_mixer audio is open, or 0 if it is not. */
-int mixer_is_open()
+int audio_is_open()
 {
   /* We don't actually care about these, but Mix_QuerySpec wants args. */
   int frequency;  Uint16 format;  int channels;
@@ -71,6 +71,26 @@ int mixer_is_open()
   int result = Mix_QuerySpec(&frequency, &format, &channels);
 
   return ( (result > 0) ? 1 : 0 );
+}
+
+/*
+ * If SDL_mixer audio is not open, try to open it with the default
+ * arguments, and return the result. If it's already open, return 0
+ * without doing anything.
+ */
+int ensure_open_audio()
+{
+  if( audio_is_open() )
+  {
+    return 0;
+  }
+  else
+  {
+    return Mix_OpenAudio( MIX_DEFAULT_FREQUENCY, 
+                          MIX_DEFAULT_FORMAT,
+                          2, 
+                          1024 );
+  }
 }
 
 
@@ -221,7 +241,7 @@ VALUE rbgm_mixer_openaudio2(int argc, VALUE *argv, VALUE module)
 
 
   /* Does nothing if audio is already open. */
-  if( mixer_is_open() )
+  if( audio_is_open() )
   {
     return Qfalse;
   }
