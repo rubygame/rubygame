@@ -41,6 +41,32 @@ end
 
 
 
+describe Sound, "loaded without open audio" do 
+
+	before :each do
+		@sound = Sound.new(song)
+	end
+
+	after :each do 
+		Rubygame.close_audio
+	end
+
+	it "should open audio" do
+		Rubygame.open_audio.should be_false
+	end
+
+	it "should have a volume of 1.0" do 
+		@sound.volume.should == 1.0
+	end
+
+	it { @sound.should_not be_playing }
+	it { @sound.should_not be_paused }
+	it { @sound.should be_stopped }	
+
+end
+
+
+
 describe "loading Sound from nonexistent file" do 
 	
 	before :each do
@@ -122,6 +148,28 @@ describe "Sound that is playing" do
 	
 end
 
+
+describe Sound, "played without open audio" do 
+
+	before :each do
+		@sound = Sound.new(song)
+		Rubygame.close_audio
+		@sound.play
+	end
+
+	after :each do 
+		Rubygame.close_audio
+	end
+
+	it "should open audio" do
+		Rubygame.open_audio.should be_false
+	end
+
+	it "should be playing" do
+		@sound.should be_playing
+	end
+
+end
 
 
 describe "Sound that is paused" do 

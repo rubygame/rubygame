@@ -22,6 +22,7 @@
 
 #include "SDL_mixer.h"
 #include "rubygame_shared.h"
+#include "rubygame_mixer.h"
 
 VALUE cSound;
 
@@ -68,8 +69,14 @@ static RG_WrapChunk* _rg_wrapchunk_alloc()
 /* Load a Mix_Chunk from a file and assign it to the RG_WrapChunk. */
 static int _rg_wrapchunk_load( RG_WrapChunk *wrap, char *file )
 {
+	/* Open audio if it's not already. Return -1 if it failed. */
+	if( ensure_open_audio() != 0 )
+	{
+		return -1;
+	}
+
 	wrap->chunk = Mix_LoadWAV( file );
-	
+
 	if( !(wrap->chunk) )
 		return -1;
 	else
@@ -204,6 +211,13 @@ static int _rg_sound_channel_check( RG_Sound *sound )
 static int _rg_sound_play( RG_Sound *sound, 
                             int fade_in, int repeats, int stop_after )
 {
+
+	/* Open audio if it's not already. Return -1 if it failed. */
+	if( ensure_open_audio() != 0 )
+	{
+		return -1;
+	}
+
 	/* If it's already playing on a channel, stop it first. */
 	if( _rg_sound_channel_check(sound) )
 	{
