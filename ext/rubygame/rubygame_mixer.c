@@ -194,34 +194,38 @@ VALUE rbgm_mixer_closeaudio(VALUE module)
 /* call-seq:
  *  open_audio( options={ :buffer => 1024, :channels => 2, :frequency => 22050 } )  ->  true or false
  *
- *  Initializes the audio device. You must call this before using the
- *  other mixer functions.
-
- *  Does nothing and returns false if you call it again while audio is
- *  already open. If you want to change audio settings, you must
- *  #close_audio() and then open it again.
+ *  Initializes the audio device using the given settings.
+ *
+ *  NOTE: Audio will be automatically opened when Rubygame::Sound or
+ *  Rubygame::Music are first used. You only need to open audio
+ *  manually if you want settings different from the default, or if
+ *  you are using the older, deprecated Music and Sample classes from
+ *  the Rubygame::Mixer module.
+ *
+ *  If audio is already open, this method has no effect, and returns false.
+ *  If you want to change audio settings, you must #close_audio() and
+ *  then open it again.
  *
  *  options::    A Hash of any of the following options. (Hash, optional)
  *
  *     :frequency::  output sample rate in audio samples per second
  *                   (Hz). Affects the quality of the sound output, at
  *                   the expense of CPU usage. If omitted, the default
- *                   (usually 22050) is used. The default is
- *                   recommended for most cases. For reference, 44100
- *                   is CD quality. The larger the value, the more
- *                   processing required.
+ *                   (22050) is used. The default is recommended for
+ *                   most games.
  *
  *     :channels::   output sound channels. Use 2 for stereo, 1 for mono.
  *                   If omitted, the default (2) is used.
  *
  *     :buffer::     size of the sound buffer, in bytes. Must be a
- *                   power of 2 (e.g. 512, 1024, 2048). If omitted, the
- *                   default (1024) is used. Larger values have more
- *                   delay before playing a sound, but require less CPU
- *                   usage (and have less skipping on slow systems).
+ *                   power of 2 (e.g. 512, 1024, 2048). If omitted,
+ *                   the default (1024) is used. If your game is
+ *                   fast-paced, you may want to use a smaller value
+ *                   to reduce audio delay, the time between when you
+ *                   play a sound and when it is heard.
  *
- *  Returns::    true if the audio was opened by this action, or false
- *               if it was already open before this action.
+ *  Returns::    true if the audio was newly opened by this action, or
+ *               false if it was already open before this action.
  *
  *  May raise::  SDLError, if initialization fails.
  *               ArgumentError, if an invalid value is given for any option.
