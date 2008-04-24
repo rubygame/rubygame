@@ -22,6 +22,7 @@
 
 #include "SDL_mixer.h"
 #include "rubygame_shared.h"
+#include "rubygame_mixer.h"
 
 VALUE cMusic;
 
@@ -191,6 +192,12 @@ static void _rg_music_deepcopy( RG_Music *music, RG_Music *other )
 static int _rg_music_play( RG_Music *music, 
                            int fade_in, int repeats, double start_at )
 {
+
+  /* Open audio if it's not already. Return -1 if it failed. */
+  if( ensure_open_audio() != 0 )
+  {
+    return -1;
+  }
 
   /* Doing a little restart dance to please the SDL_mixer gods. */
   Mix_PlayMusic( music->wrap->music, 0 );

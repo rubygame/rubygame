@@ -130,6 +130,29 @@ describe Music, "(playing)" do
 end
 
 
+describe Music, "(playing without open audio)" do
+
+  before :each do
+    @music = Music.new(song)
+    @music.volume = 0.1
+    @music.play
+  end
+
+  after :each do
+    Mixer.close_audio
+  end
+
+  it { @music.should be_playing }
+  it { @music.should_not be_paused }
+  it { @music.should_not be_stopped }
+
+  it "should be the current music" do
+    Music.current_music.should == @music
+  end
+
+end
+
+
 
 describe Music, "(paused)" do
 
