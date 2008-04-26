@@ -21,12 +21,12 @@ panda = samples_dir + "panda.png"
 describe "new loaded Sound" do 
 	
 	before :each do
-		Mixer.open_audio
+		Rubygame.open_audio
 		@sound = Sound.new(song)
 	end
 	
 	after :each do 
-		Mixer.close_audio
+		Rubygame.close_audio
 	end
 	
 	it "should have a volume of 1.0" do 
@@ -70,11 +70,11 @@ end
 describe "loading Sound from nonexistent file" do 
 	
 	before :each do
-		Mixer.open_audio
+		Rubygame.open_audio
 	end
 	
 	after :each do 
-		Mixer.close_audio
+		Rubygame.close_audio
 	end
 	
 	it "should raise SDLError" do 
@@ -88,11 +88,11 @@ end
 describe "loading Sound from non-sound file" do 
 	
 	before :each do
-		Mixer.open_audio
+		Rubygame.open_audio
 	end
 	
 	after :each do 
-		Mixer.close_audio
+		Rubygame.close_audio
 	end
 	
 	it "should raise SDLError" do 
@@ -113,13 +113,13 @@ end
 describe "Sound that is playing" do 
 	
 	before :each do
-		Mixer.open_audio
+		Rubygame.open_audio
 		@sound = Sound.new(song)
 		@sound.play
 	end
 	
 	after :each do 
-		Mixer.close_audio
+		Rubygame.close_audio
 	end
 	
 	it { @sound.should be_playing }
@@ -175,14 +175,14 @@ end
 describe "Sound that is paused" do 
 	
 	before :each do
-		Mixer.open_audio
+		Rubygame.open_audio
 		@sound = Sound.new(song)
 		@sound.play
 		@sound.pause
 	end
 	
 	after :each do 
-		Mixer.close_audio
+		Rubygame.close_audio
 	end
 	
 	it { @sound.should_not be_playing }
@@ -221,14 +221,14 @@ end
 describe "Sound that is stopped" do 
 	
 	before :each do
-		Mixer.open_audio
+		Rubygame.open_audio
 		@sound = Sound.new(song)
 		@sound.play
 		@sound.stop
 	end
 	
 	after :each do 
-		Mixer.close_audio
+		Rubygame.close_audio
 	end
 	
 	it { @sound.should_not be_playing }
@@ -269,14 +269,14 @@ end
 describe "Sound set to stop after 0.2 seconds" do 
 	
 	before :each do
-		Mixer.open_audio
+		Rubygame.open_audio
 		@sound = Sound.new(song)
 		@sound.volume = 0.01 # for programmer sanity
 		@sound.play( :stop_after => 0.2 )
 	end
 	
 	after :each do 
-		Mixer.close_audio
+		Rubygame.close_audio
 	end
 	
 	it "should still be playing at 0.15 seconds" do 
@@ -296,14 +296,14 @@ end
 describe "Sound that is short" do 
 	
 	before :each do
-		Mixer.open_audio
+		Rubygame.open_audio
 		@sound = Sound.new(short)
 		@sound.volume = 0.01 # for programmer sanity
 		@sound.play
 	end
 	
 	after :each do 
-		Mixer.close_audio
+		Rubygame.close_audio
 	end
 	
 	it "should be stopped after it has expired" do 
@@ -318,14 +318,14 @@ end
 describe "Sound that repeats forever but stops after 0.3 seconds" do 
 	
 	before :each do
-		Mixer.open_audio
+		Rubygame.open_audio
 		@sound = Sound.new(short)
 		@sound.volume = 0.01 # for programmer sanity
 		@sound.play( :repeats => -1, :stop_after => 0.3 )
 	end
 	
 	after :each do 
-		Mixer.close_audio
+		Rubygame.close_audio
 	end
 	
 	it "should still be playing at 0.25 second" do 
@@ -352,14 +352,14 @@ end
 describe "Sound that repeats forever" do 
 	
 	before :each do
-		Mixer.open_audio
+		Rubygame.open_audio
 		@sound = Sound.new(short)
 		@sound.volume = 0.01 # for programmer sanity
 		@sound.play( :repeats => -1 )
 	end
 	
 	after :each do 
-		Mixer.close_audio
+		Rubygame.close_audio
 	end
 	
 	it "should still be playing at 0.3 seconds" do 
@@ -374,14 +374,14 @@ end
 describe "Sound that repeats 3 times" do 
 	
 	before :each do
-		Mixer.open_audio
+		Rubygame.open_audio
 		@sound = Sound.new(short)
 		@sound.volume = 0.01 # for programmer sanity
 		@sound.play( :repeats => 3 )
 	end
 	
 	after :each do 
-		Mixer.close_audio
+		Rubygame.close_audio
 	end
 	
 	it "should still be playing after 3 plays" do 
@@ -408,14 +408,14 @@ end
 describe "Sound that fades in for 0.2 seconds" do 
 	
 	before :each do
-		Mixer.open_audio
+		Rubygame.open_audio
 		@sound = Sound.new(short)
 		@sound.volume = 0.01 # for programmer sanity
 		@sound.play( :repeats => -1, :fade_in => 0.2 )
 	end
 	
 	after :each do 
-		Mixer.close_audio
+		Rubygame.close_audio
 	end
 	
 	it "should be playing right away" do 
@@ -455,7 +455,7 @@ end
 describe "Sound that fades out for 0.2 seconds" do 
 	
 	before :each do
-		Mixer.open_audio
+		Rubygame.open_audio
 		@sound = Sound.new(short)
 		@sound.volume = 0.01 # for programmer sanity
 		@sound.play( :repeats => -1 )
@@ -463,7 +463,7 @@ describe "Sound that fades out for 0.2 seconds" do
 	end
 	
 	after :each do 
-		Mixer.close_audio
+		Rubygame.close_audio
 	end
 	
 	it "should be playing right away" do 

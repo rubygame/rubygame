@@ -23,12 +23,12 @@ small = 0.00001
 describe Music, "(new)" do
 
   before :each do
-    Mixer.open_audio
+    Rubygame.open_audio
     @music = Music.new(song)
   end
 
   after :each do
-    Mixer.close_audio
+    Rubygame.close_audio
   end
 
   it "should have a volume of 1.0" do
@@ -46,11 +46,11 @@ end
 describe Music, "(nonexistent file)" do
 
   before :each do
-    Mixer.open_audio
+    Rubygame.open_audio
   end
 
   after :each do
-    Mixer.close_audio
+    Rubygame.close_audio
   end
 
   it "should raise SDLError" do
@@ -64,11 +64,11 @@ end
 describe Music, "(non-music file)" do
 
   before :each do
-    Mixer.open_audio
+    Rubygame.open_audio
   end
 
   after :each do
-    Mixer.close_audio
+    Rubygame.close_audio
   end
 
   it "should raise SDLError" do
@@ -89,14 +89,14 @@ end
 describe Music, "(playing)" do
 
   before :each do
-    Mixer.open_audio
+    Rubygame.open_audio
     @music = Music.new(song)
     @music.volume = 0.1
     @music.play
   end
 
   after :each do
-    Mixer.close_audio
+    Rubygame.close_audio
   end
 
   it { @music.should be_playing }
@@ -139,7 +139,7 @@ describe Music, "(playing without open audio)" do
   end
 
   after :each do
-    Mixer.close_audio
+    Rubygame.close_audio
   end
 
   it { @music.should be_playing }
@@ -157,7 +157,7 @@ end
 describe Music, "(paused)" do
 
   before :each do
-    Mixer.open_audio
+    Rubygame.open_audio
     @music = Music.new(song)
     @music.volume = 0.1
     @music.play
@@ -165,7 +165,7 @@ describe Music, "(paused)" do
   end
 
   after :each do
-    Mixer.close_audio
+    Rubygame.close_audio
   end
 
   it { @music.should_not be_playing }
@@ -208,7 +208,7 @@ end
 describe Music, "(stopped)" do
 
   before :each do
-    Mixer.open_audio
+    Rubygame.open_audio
     @music = Music.new(song)
     @music.volume = 0.1
     @music.play
@@ -216,7 +216,7 @@ describe Music, "(stopped)" do
   end
 
   after :each do
-    Mixer.close_audio
+    Rubygame.close_audio
   end
 
   it { @music.should_not be_playing }
@@ -260,13 +260,13 @@ end
 
 describe Music, "(negative start at)" do
   before :each do
-    Mixer.open_audio
+    Rubygame.open_audio
     @music = Music.new(short)
     @music.volume = 0.1 # for programmer sanity
   end
 
   after :each do
-    Mixer.close_audio
+    Rubygame.close_audio
   end
 
   it "should raise ArgumentError" do
@@ -276,13 +276,13 @@ end
 
 describe Music, "(start at)" do
   before :each do
-    Mixer.open_audio
+    Rubygame.open_audio
     @music = Music.new(song)
     @music.volume = 0.1 # for programmer sanity
   end
 
   after :each do
-    Mixer.close_audio
+    Rubygame.close_audio
   end
 
   it "should be playing right away" do
@@ -308,13 +308,13 @@ end
 describe Music, "(negative repeats, except -1)" do
 
   before :each do
-    Mixer.open_audio
+    Rubygame.open_audio
     @music = Music.new(song)
     @music.volume = 0.1 # for programmer sanity
   end
 
   after :each do
-    Mixer.close_audio
+    Rubygame.close_audio
   end
 
   it "should raise ArgumentError" do
@@ -326,14 +326,14 @@ end
 describe Music, "(repeats forever)" do
 
   before :each do
-    Mixer.open_audio
+    Rubygame.open_audio
     @music = Music.new(short)
     @music.volume = 0.1 # for programmer sanity
     @music.play( :repeats => -1 )
   end
 
   after :each do
-    Mixer.close_audio
+    Rubygame.close_audio
   end
 
   it "should still be playing after a while" do
@@ -347,14 +347,14 @@ end
 describe Music, "(repeats)" do
 
   before :each do
-    Mixer.open_audio
+    Rubygame.open_audio
     @music = Music.new(short)
     @music.volume = 0.1 # for programmer sanity
     @music.play( :repeats => 3 )
   end
 
   after :each do
-    Mixer.close_audio
+    Rubygame.close_audio
   end
 
   it "should be playing before its last repeat" do
@@ -380,13 +380,13 @@ end
 describe Music, "(negative fade in)" do
 
   before :each do
-    Mixer.open_audio
+    Rubygame.open_audio
     @music = Music.new(song)
     @music.volume = 0.1 # for programmer sanity
   end
 
   after :each do
-    Mixer.close_audio
+    Rubygame.close_audio
   end
 
   it "should raise ArgumentError" do
@@ -397,13 +397,13 @@ end
 describe Music, "(fading in)" do
 
   before :each do
-    Mixer.open_audio
+    Rubygame.open_audio
     @music = Music.new(song)
     @music.volume = 0.1 # for programmer sanity
   end
 
   after :each do
-    Mixer.close_audio
+    Rubygame.close_audio
   end
 
   it "should be playing right away" do
@@ -449,13 +449,13 @@ end
 describe Music, "(negative fade out)" do
 
   before :each do
-    Mixer.open_audio
+    Rubygame.open_audio
     @music = Music.new(song)
     @music.volume = 0.1 # for programmer sanity
   end
 
   after :each do
-    Mixer.close_audio
+    Rubygame.close_audio
   end
 
   it "should be playing right away" do
@@ -468,14 +468,14 @@ end
 describe Music, "(fading out)" do
 
   before :each do
-    Mixer.open_audio
+    Rubygame.open_audio
     @music = Music.new(song)
     @music.volume = 0.1 # for programmer sanity
     @music.play
   end
 
   after :each do
-    Mixer.close_audio
+    Rubygame.close_audio
   end
 
   it "should be playing right away" do
@@ -529,13 +529,13 @@ end
 describe Music, "(rewinding)" do
 
   before :each do
-    Mixer.open_audio
+    Rubygame.open_audio
     @music = Music.new(short)
     @music.volume = 0.1 # for programmer sanity
   end
 
   after :each do
-    Mixer.close_audio
+    Rubygame.close_audio
   end
 
   it "should be playing if it was playing before" do
@@ -585,13 +585,13 @@ end
 describe Music, "(jump to)" do
 
   before :each do
-    Mixer.open_audio
+    Rubygame.open_audio
     @music = Music.new(song)
     @music.volume = 0.1 # for programmer sanity
   end
 
   after :each do
-    Mixer.close_audio
+    Rubygame.close_audio
   end
 
   it "should still be playing if it was playing" do
@@ -628,13 +628,13 @@ end
 describe Music, "(jump to, unsupported format)" do
 
   before :each do
-    Mixer.open_audio
+    Rubygame.open_audio
     @music = Music.new(whiff)
     @music.volume = 0.1 # for programmer sanity
   end
 
   after :each do
-    Mixer.close_audio
+    Rubygame.close_audio
   end
 
   it "should raise SDLError" do
@@ -648,13 +648,13 @@ end
 describe Music, "(jump to, negative time)" do
 
   before :each do
-    Mixer.open_audio
+    Rubygame.open_audio
     @music = Music.new(whiff)
     @music.volume = 0.1 # for programmer sanity
   end
 
   after :each do
-    Mixer.close_audio
+    Rubygame.close_audio
   end
 
   it "should raise ArgumentError" do
