@@ -320,6 +320,34 @@ VALUE rbgm_mixer_openaudio2(int argc, VALUE *argv, VALUE module)
 
 
 /* call-seq:
+ *  close_audio()  ->  true or false
+ *
+ *  Deinitializes and closes the audio device. If audio was not open,
+ *  this method does nothing, and returns false. See also #open_audio().
+ *
+ *  NOTE: The audio will be automatically closed when the program
+ *  exits. You only need to close audio manually if you want to
+ *  call #open_audio with different settings.
+ *
+ *  Returns::  true if the audio changed from open to closed, or
+ *             false if the audio was not open before this action.
+ */
+VALUE rbgm_mixer_closeaudio2(VALUE module)
+{
+  if( audio_is_open() )
+  {
+    Mix_CloseAudio();
+    return Qtrue;
+  }
+  else
+  {
+    return Qfalse;
+  }
+}
+
+
+
+/* call-seq:
  *  #mix_channels()  ->  integer
  *
  *  Returns the number of mixing channels currently allocated.
@@ -873,7 +901,7 @@ void Init_rubygame_mixer()
   rb_define_const(mRubygame,"AUDIO_S16SYS", INT2NUM(AUDIO_S16SYS));
 
   rb_define_module_function(mRubygame,"open_audio",  rbgm_mixer_openaudio2,   -1);
-  rb_define_module_function(mRubygame,"close_audio", rbgm_mixer_closeaudio,    0);
+  rb_define_module_function(mRubygame,"close_audio", rbgm_mixer_closeaudio2,   0);
   rb_define_module_function(mRubygame,"driver_name", rbgm_mixer_getdrivername, 0);
 
 

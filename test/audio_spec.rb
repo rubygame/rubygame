@@ -62,6 +62,35 @@ describe "Opening audio with invalid argument" do
 end
 
 
+describe "Closing audio that was open" do
+  before :each do
+    Rubygame.open_audio
+  end
+
+  after :each do
+    Rubygame.close_audio
+  end
+
+  it "should return true" do
+    Rubygame.close_audio.should be_true
+  end
+end
+
+
+describe "Closing audio that was not open" do
+  before :each do
+  end
+
+  after :each do
+    Rubygame.close_audio
+  end
+
+  it "should return false" do
+    Rubygame.close_audio.should be_false
+  end
+end
+
+
 
 #########################
 ##                     ##
