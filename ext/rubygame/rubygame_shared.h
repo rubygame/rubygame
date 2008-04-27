@@ -43,6 +43,8 @@ extern SDL_Color make_sdl_color(VALUE);
 extern void extract_rgb_u8_as_u8(VALUE, Uint8*, Uint8*, Uint8*);
 extern void extract_rgba_u8_as_u8(VALUE, Uint8*, Uint8*, Uint8*, Uint8*);
 
+extern void rg_deprecated( char *feature, char *version );
+
 extern int init_video_system();
 extern void Init_rubygame_shared();
 

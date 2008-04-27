@@ -168,6 +168,23 @@ void extract_rgba_u8_as_u8(VALUE color, Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a)
 	}
 }
 
+
+
+/* --
+ *
+ * Issues a deprecation warning for the given feature/method.
+ *
+ * ++
+ */
+void rg_deprecated( char *feature, char *version )
+{
+  rb_warning( "%s is DEPRECATED and will be removed in Rubygame %s! "
+              "Please see the migration guide in the docs.",
+              feature, version );
+}
+
+
+
 /* --
  *
  *  call-seq:
