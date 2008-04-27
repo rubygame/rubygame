@@ -909,11 +909,6 @@ void Init_rubygame_mixer()
   /*
    * Moving these to be under Rubygame module instead of Mixer.
    */
-  rb_define_const(mRubygame,"AUDIO_U8",     INT2NUM(AUDIO_U8));
-  rb_define_const(mRubygame,"AUDIO_S8",     INT2NUM(AUDIO_S8));
-  rb_define_const(mRubygame,"AUDIO_U16SYS", INT2NUM(AUDIO_U16SYS));
-  rb_define_const(mRubygame,"AUDIO_S16SYS", INT2NUM(AUDIO_S16SYS));
-
   rb_define_module_function(mRubygame,"open_audio",  rbgm_mixer_openaudio2,   -1);
   rb_define_module_function(mRubygame,"close_audio", rbgm_mixer_closeaudio2,   0);
   rb_define_module_function(mRubygame,"driver_name", rbgm_mixer_getdrivername, 0);
