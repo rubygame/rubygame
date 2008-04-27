@@ -70,7 +70,10 @@ int ensure_open_audio()
 
 /* call-seq:
  *  open_audio( frequency=nil, format=nil, channels=nil, buffer=nil)
- *  
+ *
+ *  **NOTE:** This method is DEPRECATED and will be removed in
+ *  Rubygame 3.0. Please use the Rubygame.open_audio instead.
+ *
  *  Initializes the audio device. You must call this before using the other
  *  mixer functions. See also #close_audio().
  *
@@ -107,6 +110,10 @@ int ensure_open_audio()
  */
 VALUE rbgm_mixer_openaudio(int argc, VALUE *argv, VALUE module)
 {
+
+  /* This feature will be removed in Rubygame 3.0. */
+  rg_deprecated("Rubygame::Mixer", "3.0");
+
   VALUE vfreq, vformat, vchannels, vbuffer;
   int freq = MIX_DEFAULT_FREQUENCY;
   Uint16 format = MIX_DEFAULT_FORMAT;
@@ -145,7 +152,10 @@ VALUE rbgm_mixer_openaudio(int argc, VALUE *argv, VALUE module)
 
 /* call-seq:
  *  close_audio()
- *  
+ *
+ *  **NOTE:** This method is DEPRECATED and will be removed in
+ *  Rubygame 3.0. Please use the Rubygame.close_audio instead.
+ *
  *  Close the audio device being used by the mixer. You should not use any
  *  mixer functions after this function, unless you use #open_audio() to
  *  re-open the audio device. See also #open_audio().
@@ -154,6 +164,9 @@ VALUE rbgm_mixer_openaudio(int argc, VALUE *argv, VALUE module)
  */
 VALUE rbgm_mixer_closeaudio(VALUE module)
 {
+  /* This feature will be removed in Rubygame 3.0. */
+  rg_deprecated("Rubygame::Mixer", "3.0");
+
   Mix_CloseAudio();
   return Qnil;
 }
@@ -319,11 +332,17 @@ VALUE rbgm_mixer_closeaudio2(VALUE module)
 /* call-seq:
  *  #mix_channels()  ->  integer
  *
+ *  **NOTE:** This method is DEPRECATED and will be removed in
+ *  Rubygame 3.0. Please use the Rubygame::Sound class instead.
+ *
  *  Returns the number of mixing channels currently allocated.
  *  See also #mix_channels=().
  */
 VALUE rbgm_mixer_getmixchans(VALUE module)
 {
+  /* This feature will be removed in Rubygame 3.0. */
+  rg_deprecated("Rubygame::Mixer", "3.0");
+
   int result;
   result = Mix_AllocateChannels(-1);
 
@@ -332,6 +351,9 @@ VALUE rbgm_mixer_getmixchans(VALUE module)
 
 /* call-seq:
  *  #mix_channels = num_channels 
+ *
+ *  **NOTE:** This method is DEPRECATED and will be removed in
+ *  Rubygame 3.0. Please use the Rubygame::Sound class instead.
  *
  *  Set the number of mixer channels, allocating or deallocating channels as
  *  needed. This can be called many times, even during audio playback. If this
@@ -352,6 +374,9 @@ VALUE rbgm_mixer_getmixchans(VALUE module)
  */
 VALUE rbgm_mixer_setmixchans(VALUE module, VALUE channelsv)
 {
+  /* This feature will be removed in Rubygame 3.0. */
+  rg_deprecated("Rubygame::Mixer", "3.0");
+
   int desired;
   int allocated;
 
@@ -389,6 +414,9 @@ VALUE rbgm_mixer_getdrivername(VALUE module)
 /* call-seq:
  *  load_audio( filename )  ->  Sample
  *
+ *  **NOTE:** Rubygame::Mixer::Sample is DEPRECATED and will be removed in
+ *  Rubygame 3.0. Please use the Rubygame::Sound class instead.
+ *
  *  Load an audio sample (a "chunk", to use SDL_mixer's term) from a file.
  *  Only WAV files are supported at this time.
  *
@@ -396,6 +424,9 @@ VALUE rbgm_mixer_getdrivername(VALUE module)
  */
 VALUE rbgm_sample_new(VALUE class, VALUE filev)
 {
+  /* This feature will be removed in Rubygame 3.0. */
+  rg_deprecated("Rubygame::Mixer::Sample", "3.0");
+
   VALUE self;
   Mix_Chunk* sample;
 
@@ -416,6 +447,9 @@ VALUE rbgm_sample_new(VALUE class, VALUE filev)
 /* call-seq:
  *  play(sample, channel_num, repeats )  ->  integer
  *
+ *  **NOTE:** This method is DEPRECATED and will be removed in
+ *  Rubygame 3.0. Please use the Rubygame::Sound class instead.
+ *
  *  Play an audio Sample on a mixing channel, repeating a certain number
  *  of extra times. Returns the number of the channel that the sample
  *  is being played on.
@@ -431,6 +465,10 @@ VALUE rbgm_sample_new(VALUE class, VALUE filev)
  */
 VALUE rbgm_mixchan_play( VALUE self, VALUE samplev, VALUE chanv, VALUE loopsv )
 {
+
+  /* This feature will be removed in Rubygame 3.0. */
+  rg_deprecated("Rubygame::Mixer", "3.0");
+
   Mix_Chunk* sample;
   int loops, channel, result;
 
@@ -521,12 +559,19 @@ VALUE rbgm_mixmusic_setcommand(VALUE class, VALUE commandv)
 /* call-seq:
  *  load_audio( filename )  ->  Music
  *
+ *  **NOTE:** Rubygame::Mixer::Music is DEPRECATED and will be removed
+ *  in Rubygame 3.0. Please use the Rubygame::Music class instead.
+ *
  *  Load music from a file. Supports WAVE, MOD, MIDI, OGG, and MP3 formats.
  *
  *  Raises SDLError if the music could not be loaded.
  */
 VALUE rbgm_mixmusic_new(VALUE class, VALUE filev)
 {
+
+  /* This feature will be removed in Rubygame 3.0. */
+  rg_deprecated("Rubygame::Mixer::Music", "3.0");
+
   VALUE self;
   Mix_Music* music;
 
@@ -875,14 +920,18 @@ void Init_rubygame_mixer()
 
 
 
-	/*
-	 *  The Mixer module provides access to the SDL_mixer library for audio
-	 *  playback and mixing. This module is still very basic, but it is
-	 *  good enough to load and play WAV files on multiple mix channels.
-	 *
-	 *  See the Sample class for loading audio files.
-	 *  See the Music class for streaming music from a file.
-	 */
+  /*
+   *  **NOTE:** This module is DEPRECATED and will be removed in Rubygame 3.0.
+   *  Please use Rubygame.open_audio, Rubygame.close_audio, Rubygame::Sound,
+   *  and Rubygame::Music instead.
+   *
+   *  The Mixer module provides access to the SDL_mixer library for audio
+   *  playback and mixing. This module is still very basic, but it is
+   *  good enough to load and play WAV files on multiple mix channels.
+   *
+   *  See the Sample class for loading audio files.
+   *  See the Music class for streaming music from a file.
+   */
   mMixer = rb_define_module_under(mRubygame, "Mixer");
 
   rb_define_const(mMixer,"AUDIO_U8", INT2NUM(AUDIO_U8));
@@ -897,7 +946,12 @@ void Init_rubygame_mixer()
   rb_define_module_function(mMixer,"driver_name", rbgm_mixer_getdrivername, 0);
 
 
-  /* Stores audio data to play with Mixer.play() */
+  /*
+   *  **NOTE:** This class is DEPRECATED and will be removed in Rubygame 3.0.
+   *  Please use the Rubygame::Sound class instead.
+   *
+   *  Stores audio data to play with Mixer.play() 
+   */
   cSample = rb_define_class_under(mMixer, "Sample", rb_cObject);
   rb_define_singleton_method(cSample, "load_audio", rbgm_sample_new, 1);
   rb_define_module_function(mMixer,"play", rbgm_mixchan_play, 3);
@@ -906,7 +960,11 @@ void Init_rubygame_mixer()
   rb_define_module_function(mMixer,"resume", rbgm_mixchan_resume, 1);
 
 
-/*  The Music class is used for playing music from a file. It supports
+/*
+ *  **NOTE:** This class is DEPRECATED and will be removed in Rubygame 3.0.
+ *  Please use the Rubygame::Music class instead.
+ *
+ *  The Music class is used for playing music from a file. It supports
  *  WAVE, MOD, MIDI, OGG, and MP3 files. There are two important differences
  *  between Music and Sample:
  *
