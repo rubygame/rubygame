@@ -113,7 +113,7 @@ disable optional features by passing a "no-???" command to rake before the word
 type this instead of the above:
 
  envsetup.bat
- rake no-gfx install
+ rake no-sdl-gfx install
 
 If all goes well, you have built and installed Rubygame.
 Try to execute <code>require 'rubygame'</code> in an irb session and run
