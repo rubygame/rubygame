@@ -93,7 +93,7 @@ end
 
 Rake::RDocTask.new do |rd|
   rd.main = "README"
-  rd.title = "Rubygame #{RUBYGAME_VERSION} Docs"
+  rd.title = "Rubygame #{RUBYGAME_VERSION.join(".")} Docs"
   rd.rdoc_files.include("ext/rubygame/*.c",
                         "lib/rubygame/**/*.rb",
                         "doc/*.rdoc",
