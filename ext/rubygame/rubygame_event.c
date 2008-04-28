@@ -225,19 +225,11 @@ VALUE convert_mousebuttons( Uint8 state )
 }
 
 
-/* Convert a unicode char into a UTF8 string. */
+/* Convert a unicode char into a UTF8 ruby byte-string. */
 VALUE convert_unicode( Uint16 unicode )
 {
-	
-  /* asprintf is a glibc extention and doesn't seem to want to play nice on 
-   * windows.  Until a more capable C programmer than me comes along and fixes
-   * it, this workaround should hopefully do the trick -- Roger */
-  /* char *str;
-	 asprintf( &str, "[%d].pack('U')", unicode ); */
-
-  char str[512]; /* Safe until the day someone makes a 513-byte unicode char */
-  snprintf(str, 511, "[%d].pack('U')", unicode);
-  str[511] = '\0'; /* Ensure null termination */
+  char str[32];
+  snprintf(str, 32, "[%d].pack('U')", unicode);
 
   return rb_eval_string( str );
 }
