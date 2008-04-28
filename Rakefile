@@ -123,7 +123,7 @@ $options = {
 	:"sdl-mixer"  => true,
 	:opengl       => true,
 	:"sdl-config" => true,
-	:ppc          => true,
+	:universal    => false,
 	:debug        => false,
 	:verbose      => false,
 	:sitearchdir  => CONFIG["sitearchdir"],
@@ -189,7 +189,7 @@ bool_option :"sdl-config", nil,  "guess compiler flags for SDL"
 bool_option :opengl,       nil,  "OpenGL support"
 bool_option :debug,        nil,  "compile with debug symbols"
 bool_option :verbose,      nil,  "show compiler commands"
-bool_option :ppc,          nil,  "compile universal binary (MacOS X)"
+bool_option :universal,    nil,  "compile universal binary (MacOS X Intel)"
 
 string_option "RUBYARCHDIR", :sitearchdir
 string_option :sitearchdir
@@ -259,8 +259,12 @@ class ExtensionModule
 
       link_command = "#{from_env_or_config('LDSHARED')} #{LINK_FLAGS} #{@lflags} -o #{dynlib_full} #{task.prerequisites.join(' ')}"
 
-      # Strip "-arch ppc" to prevent building a universal binary.
-      link_command.gsub!("-arch ppc","") unless( $options[:ppc] )
+
+      # If link command includes i386 arch, and we're not allowing universal
+      if( /-arch i386/ === link_command and not $options[:universal] )
+        # Strip "-arch ppc" to prevent building a universal binary.
+        link_command.gsub!("-arch ppc","")
+      end
 
       if( $options[:verbose] )
         try_shell { sh link_command }
@@ -290,8 +294,11 @@ class ExtensionModule
 
       compile_command = "#{from_env_or_config('CC')} -c #{CFLAGS} #{t.source} -o #{t.name}"
 
-      # Strip "-arch ppc" to prevent building a universal binary.
-      compile_command.gsub!("-arch ppc","") unless( $options[:ppc] )
+      # If compile command includes i386 arch, and we're not allowing universal
+      if( /-arch i386/ === compile_command and not $options[:universal] )
+        # Strip "-arch ppc" to prevent building a universal binary.
+        compile_command.gsub!("-arch ppc","")
+      end
 
       if( $options[:verbose] )
         try_shell { sh compile_command }
