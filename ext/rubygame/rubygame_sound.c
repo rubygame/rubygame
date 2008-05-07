@@ -268,7 +268,7 @@ static VALUE rg_sound_alloc( VALUE klass )
 
 /*
  *  call-seq:
- *    new( filename )  ->  sound
+ *    load( filename )  ->  sound
  *
  *  Load the given audio file.
  *  Supported file formats are WAV, AIFF, RIFF, OGG (Ogg Vorbis), and
@@ -280,12 +280,15 @@ static VALUE rg_sound_alloc( VALUE klass )
  *  May raise::   SDLError, if the sound file could not be loaded.
  *
  */
-static VALUE rg_sound_initialize( VALUE self, VALUE filename )
+static VALUE rg_sound_load( VALUE klass, VALUE filename )
 {
 	RG_Sound *sound;
-	Data_Get_Struct(self, RG_Sound, sound);
 
-	char *file = StringValuePtr(filename);
+	VALUE s = rg_sound_alloc( cSound );
+
+	Data_Get_Struct( s, RG_Sound, sound );
+
+	char *file = StringValuePtr( filename );
 
 	int result = _rg_sound_load( sound, file );
 
@@ -295,7 +298,26 @@ static VALUE rg_sound_initialize( VALUE self, VALUE filename )
 		                    file, Mix_GetError());
 	}
 
-	return self;
+	return s;
+}
+
+
+/*
+ *
+ *  call-seq:
+ *    new
+ *
+ *  **NOTE**: Don't use this method. Use Sound.load.
+ *
+ *  This method is not implemented. (In the future, it might be
+ *  used to create a new Sound with blank audio data.)
+ *
+ *  Raises NotImplementedError.
+ *
+ */
+static VALUE rg_sound_new( int argc, VALUE *ARGV, VALUE self )
+{
+	rb_raise(rb_eNotImpError, "Sound.new is not implemented yet. Use Sound.load to load a sound file.");
 }
 
 
@@ -783,7 +805,9 @@ void Rubygame_Init_Sound()
 
 	rb_define_alloc_func( cSound, rg_sound_alloc );
 
-	rb_define_method( cSound, "initialize",      rg_sound_initialize,       1 );
+	rb_define_singleton_method( cSound, "new",  rg_sound_new,  -1 );
+	rb_define_singleton_method( cSound, "load", rg_sound_load,  1 );
+
 	rb_define_method( cSound, "initialize_copy", rg_sound_initialize_copy,  1 );
 
 	rb_define_method( cSound, "play",            rg_sound_play,            -1 );

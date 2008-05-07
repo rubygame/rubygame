@@ -18,11 +18,18 @@ panda = samples_dir + "panda.png"
 #########################
 
 
-describe "new loaded Sound" do 
+describe Sound, "new" do
+	it "should raise NotImplementedError" do
+		lambda{ Sound.new }.should raise_error(NotImplementedError)
+	end
+end
+
+
+describe Sound, "load" do 
 	
 	before :each do
 		Rubygame.open_audio
-		@sound = Sound.new(song)
+		@sound = Sound.load(song)
 	end
 	
 	after :each do 
@@ -41,10 +48,10 @@ end
 
 
 
-describe Sound, "loaded without open audio" do 
+describe Sound, "load without open audio" do 
 
 	before :each do
-		@sound = Sound.new(song)
+		@sound = Sound.load(song)
 	end
 
 	after :each do 
@@ -78,7 +85,7 @@ describe "loading Sound from nonexistent file" do
 	end
 	
 	it "should raise SDLError" do 
-		lambda { @sound = Sound.new(dne) }.should raise_error(SDLError)
+		lambda { @sound = Sound.load(dne) }.should raise_error(SDLError)
 	end
 	
 end
@@ -96,7 +103,7 @@ describe "loading Sound from non-sound file" do
 	end
 	
 	it "should raise SDLError" do 
-		lambda { @sound = Sound.new(panda) }.should raise_error(SDLError)
+		lambda { @sound = Sound.load(panda) }.should raise_error(SDLError)
 	end
 	
 end
@@ -114,7 +121,7 @@ describe "Sound that is playing" do
 	
 	before :each do
 		Rubygame.open_audio
-		@sound = Sound.new(song)
+		@sound = Sound.load(song)
 		@sound.play
 	end
 	
@@ -152,7 +159,7 @@ end
 describe Sound, "played without open audio" do 
 
 	before :each do
-		@sound = Sound.new(song)
+		@sound = Sound.load(song)
 		Rubygame.close_audio
 		@sound.play
 	end
@@ -176,7 +183,7 @@ describe "Sound that is paused" do
 	
 	before :each do
 		Rubygame.open_audio
-		@sound = Sound.new(song)
+		@sound = Sound.load(song)
 		@sound.play
 		@sound.pause
 	end
@@ -222,7 +229,7 @@ describe "Sound that is stopped" do
 	
 	before :each do
 		Rubygame.open_audio
-		@sound = Sound.new(song)
+		@sound = Sound.load(song)
 		@sound.play
 		@sound.stop
 	end
@@ -270,7 +277,7 @@ describe "Sound set to stop after 0.2 seconds" do
 	
 	before :each do
 		Rubygame.open_audio
-		@sound = Sound.new(song)
+		@sound = Sound.load(song)
 		@sound.volume = 0.01 # for programmer sanity
 		@sound.play( :stop_after => 0.2 )
 	end
@@ -297,7 +304,7 @@ describe "Sound that is short" do
 	
 	before :each do
 		Rubygame.open_audio
-		@sound = Sound.new(short)
+		@sound = Sound.load(short)
 		@sound.volume = 0.01 # for programmer sanity
 		@sound.play
 	end
@@ -319,7 +326,7 @@ describe "Sound that repeats forever but stops after 0.3 seconds" do
 	
 	before :each do
 		Rubygame.open_audio
-		@sound = Sound.new(short)
+		@sound = Sound.load(short)
 		@sound.volume = 0.01 # for programmer sanity
 		@sound.play( :repeats => -1, :stop_after => 0.3 )
 	end
@@ -353,7 +360,7 @@ describe "Sound that repeats forever" do
 	
 	before :each do
 		Rubygame.open_audio
-		@sound = Sound.new(short)
+		@sound = Sound.load(short)
 		@sound.volume = 0.01 # for programmer sanity
 		@sound.play( :repeats => -1 )
 	end
@@ -375,7 +382,7 @@ describe "Sound that repeats 3 times" do
 	
 	before :each do
 		Rubygame.open_audio
-		@sound = Sound.new(short)
+		@sound = Sound.load(short)
 		@sound.volume = 0.01 # for programmer sanity
 		@sound.play( :repeats => 3 )
 	end
@@ -409,7 +416,7 @@ describe "Sound that fades in for 0.2 seconds" do
 	
 	before :each do
 		Rubygame.open_audio
-		@sound = Sound.new(short)
+		@sound = Sound.load(short)
 		@sound.volume = 0.01 # for programmer sanity
 		@sound.play( :repeats => -1, :fade_in => 0.2 )
 	end
@@ -456,7 +463,7 @@ describe "Sound that fades out for 0.2 seconds" do
 	
 	before :each do
 		Rubygame.open_audio
-		@sound = Sound.new(short)
+		@sound = Sound.load(short)
 		@sound.volume = 0.01 # for programmer sanity
 		@sound.play( :repeats => -1 )
 		@sound.fade_out( 0.2 )
