@@ -3,7 +3,12 @@
 require 'rubygame'
 include Rubygame
 
+samples_dir = File.join( File.dirname(__FILE__), "..", "samples", "")
+test_dir = File.join( File.dirname(__FILE__), "" )
 
+test_image = test_dir + "image.png"
+not_image = test_dir + "short.ogg"
+dne = test_dir + "does_not_exist.png"
 
 describe Surface, "(creation)" do
   before(:each) do
@@ -31,6 +36,28 @@ describe Surface, "(creation)" do
     lambda {
       Surface.new([1])
     }.should raise_error(ArgumentError)
+  end
+end
+
+
+
+describe Surface, "(loading)" do
+  before :each do
+    unless( Rubygame::VERSIONS[:sdl_image] )
+      raise "Can't test image loading, no SDL_image installed."
+    end
+  end
+
+  it "should load image to a new Surface" do
+    surface = Surface.load( test_image )
+  end
+
+  it "should raise an error if file is not an image" do
+    lambda{ Surface.load( not_image ) }.should raise_error( SDLError )
+  end
+
+  it "should raise an error if file doesn't exist" do
+    lambda{ Surface.load( dne ) }.should raise_error( SDLError )
   end
 end
 

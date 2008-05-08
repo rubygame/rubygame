@@ -32,6 +32,58 @@ VALUE rbgm_from_string(int, VALUE*, VALUE);
  *  call-seq:
  *    Surface.load_image( filename )  ->  Surface
  *
+ *  **NOTE:** This method name is DEPRECATED and will be removed in
+ *  Rubygame 3.0. Please use the Surface.load instead.
+ *
+ *  Load an image file from the disk to a Surface. If the image has an alpha
+ *  channel (e.g. PNG with transparency), the Surface will as well. If the
+ *  image cannot be loaded (for example if the image format is unsupported),
+ *  will raise SDLError.
+ *
+ *  This method is only usable if Rubygame was compiled with the SDL_image
+ *  library; you can check Rubygame::VERSIONS[:sdl_image] to see if it was.
+ *
+ *  This method takes this argument:
+ *  filename:: a string containing the relative or absolute path to the
+ *             image file. The file must have the proper file extension,
+ *             as it is used to determine image format.
+ *
+ *  These formats may be supported, but some may not be available on a
+ *  particular system.
+ *  BMP:: "Windows Bitmap" format.
+ *  GIF:: "Graphics Interchange Format."
+ *  JPG:: "Independent JPEG Group" format.
+ *  LBM:: "Linear Bitmap" format (?)
+ *  PCX:: "PC Paintbrush" format
+ *  PNG:: "Portable Network Graphics" format.
+ *  PNM:: "Portable Any Map" format. (i.e., PPM, PGM, or PBM)
+ *  TGA:: "Truevision TARGA" format.
+ *  TIF:: "Tagged Image File Format"
+ *  XCF:: "eXperimental Computing Facility" (GIMP native format).
+ *  XPM:: "XPixMap" format.
+ */
+VALUE rbgm_image_load_image( VALUE class, VALUE filename )
+{
+
+  /* This feature will be removed in Rubygame 3.0. */
+  rg_deprecated("Rubygame::Surface.load_image", "3.0");
+
+	char *name;
+	SDL_Surface *surf;
+
+	name = StringValuePtr(filename);
+	surf = IMG_Load( name );
+	if(surf == NULL)
+	{
+		rb_raise(eSDLError,"Couldn't load image `%s': %s", name, IMG_GetError());
+	}
+	return Data_Wrap_Struct( cSurface,0,SDL_FreeSurface,surf );
+}
+
+/*
+ *  call-seq:
+ *    Surface.load( filename )  ->  Surface
+ *
  *  Load an image file from the disk to a Surface. If the image has an alpha
  *  channel (e.g. PNG with transparency), the Surface will as well. If the
  *  image cannot be loaded (for example if the image format is unsupported),
@@ -163,6 +215,7 @@ void Init_rubygame_image()
                            INT2NUM(SDL_IMAGE_PATCHLEVEL)));
 
 	/* Image methods */
-	rb_define_singleton_method(cSurface,"load_image",rbgm_image_load,1);
-	rb_define_singleton_method(cSurface,"from_string",rbgm_from_string,-1);
+	rb_define_singleton_method(cSurface,"load_image", rbgm_image_load_image, 1);
+	rb_define_singleton_method(cSurface,"load",       rbgm_image_load,       1);
+	rb_define_singleton_method(cSurface,"from_string",rbgm_from_string,     -1);
 }
