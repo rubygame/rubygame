@@ -269,7 +269,7 @@ static VALUE rg_music_alloc( VALUE klass )
 
 /*
  *  call-seq:
- *    new( filename )  ->  music
+ *    load( filename )  ->  music
  *
  *  Load the given audio file.
  *  Supported file formats are WAVE, MOD, MIDI, OGG, and MP3.
@@ -280,24 +280,41 @@ static VALUE rg_music_alloc( VALUE klass )
  *  May raise::   SDLError, if the music file could not be loaded.
  *
  */
-static VALUE rg_music_initialize( VALUE self, VALUE filename )
+static VALUE rg_music_load( VALUE klass, VALUE filename )
 {
   RG_Music *music;
-  Data_Get_Struct(self, RG_Music, music);
 
-  char *file = StringValuePtr(filename);
+  VALUE s = rg_music_alloc( cMusic );
+
+  Data_Get_Struct( s, RG_Music, music );
+
+  char *file = StringValuePtr( filename );
 
   int result = _rg_music_load( music, file );
 
   if( result == -1 )
   {
     rb_raise(eSDLError, "Could not load Music file '%s': %s",
-             file, Mix_GetError());
+                        file, Mix_GetError());
   }
 
-  return self;
+  return s;
 }
 
+
+/*
+ *  call-seq:
+ *    new
+ *
+ *  **NOTE**: Don't use this method. Use Music.load.
+ *
+ *  Raises NotImplementedError.
+ *
+ */
+static VALUE rg_music_new( int argc, VALUE *ARGV, VALUE self )
+{
+  rb_raise(rb_eNotImpError, "Music.new is not implemented. Use Music.load to load a music file.");
+}
 
 /*
  *  call-seq:
@@ -940,7 +957,9 @@ void Rubygame_Init_Music()
 
   rb_define_alloc_func( cMusic, rg_music_alloc );
 
-  rb_define_method( cMusic, "initialize",      rg_music_initialize,       1 );
+  rb_define_singleton_method( cMusic, "new",  rg_music_new,  -1 );
+  rb_define_singleton_method( cMusic, "load", rg_music_load,  1 );
+
   rb_define_method( cMusic, "initialize_copy", rg_music_initialize_copy,  1 );
 
   rb_define_method( cMusic, "play",            rg_music_play,            -1 );

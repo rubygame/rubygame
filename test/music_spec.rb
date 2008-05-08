@@ -21,10 +21,16 @@ small = 0.00001
 
 
 describe Music, "(new)" do
+	it "should raise NotImplementedError" do
+		lambda{ Sound.new }.should raise_error(NotImplementedError)
+	end
+end
+
+describe Music, "(load)" do
 
   before :each do
     Rubygame.open_audio
-    @music = Music.new(song)
+    @music = Music.load(song)
   end
 
   after :each do
@@ -54,7 +60,7 @@ describe Music, "(nonexistent file)" do
   end
 
   it "should raise SDLError" do
-    lambda { @music = Music.new(dne) }.should raise_error(SDLError)
+    lambda { @music = Music.load(dne) }.should raise_error(SDLError)
   end
 
 end
@@ -72,7 +78,7 @@ describe Music, "(non-music file)" do
   end
 
   it "should raise SDLError" do
-    lambda { @music = Music.new(panda) }.should raise_error(SDLError)
+    lambda { @music = Music.load(panda) }.should raise_error(SDLError)
   end
 
 end
@@ -90,7 +96,7 @@ describe Music, "(playing)" do
 
   before :each do
     Rubygame.open_audio
-    @music = Music.new(song)
+    @music = Music.load(song)
     @music.volume = 0.1
     @music.play
   end
@@ -133,7 +139,7 @@ end
 describe Music, "(playing without open audio)" do
 
   before :each do
-    @music = Music.new(song)
+    @music = Music.load(song)
     @music.volume = 0.1
     @music.play
   end
@@ -158,7 +164,7 @@ describe Music, "(paused)" do
 
   before :each do
     Rubygame.open_audio
-    @music = Music.new(song)
+    @music = Music.load(song)
     @music.volume = 0.1
     @music.play
     @music.pause
@@ -209,7 +215,7 @@ describe Music, "(stopped)" do
 
   before :each do
     Rubygame.open_audio
-    @music = Music.new(song)
+    @music = Music.load(song)
     @music.volume = 0.1
     @music.play
     @music.stop
@@ -261,7 +267,7 @@ end
 describe Music, "(negative start at)" do
   before :each do
     Rubygame.open_audio
-    @music = Music.new(short)
+    @music = Music.load(short)
     @music.volume = 0.1 # for programmer sanity
   end
 
@@ -277,7 +283,7 @@ end
 describe Music, "(start at)" do
   before :each do
     Rubygame.open_audio
-    @music = Music.new(song)
+    @music = Music.load(song)
     @music.volume = 0.1 # for programmer sanity
   end
 
@@ -309,7 +315,7 @@ describe Music, "(negative repeats, except -1)" do
 
   before :each do
     Rubygame.open_audio
-    @music = Music.new(song)
+    @music = Music.load(song)
     @music.volume = 0.1 # for programmer sanity
   end
 
@@ -327,7 +333,7 @@ describe Music, "(repeats forever)" do
 
   before :each do
     Rubygame.open_audio
-    @music = Music.new(short)
+    @music = Music.load(short)
     @music.volume = 0.1 # for programmer sanity
     @music.play( :repeats => -1 )
   end
@@ -348,7 +354,7 @@ describe Music, "(repeats)" do
 
   before :each do
     Rubygame.open_audio
-    @music = Music.new(short)
+    @music = Music.load(short)
     @music.volume = 0.1 # for programmer sanity
     @music.play( :repeats => 3 )
   end
@@ -381,7 +387,7 @@ describe Music, "(negative fade in)" do
 
   before :each do
     Rubygame.open_audio
-    @music = Music.new(song)
+    @music = Music.load(song)
     @music.volume = 0.1 # for programmer sanity
   end
 
@@ -398,7 +404,7 @@ describe Music, "(fading in)" do
 
   before :each do
     Rubygame.open_audio
-    @music = Music.new(song)
+    @music = Music.load(song)
     @music.volume = 0.1 # for programmer sanity
   end
 
@@ -450,7 +456,7 @@ describe Music, "(negative fade out)" do
 
   before :each do
     Rubygame.open_audio
-    @music = Music.new(song)
+    @music = Music.load(song)
     @music.volume = 0.1 # for programmer sanity
   end
 
@@ -469,7 +475,7 @@ describe Music, "(fading out)" do
 
   before :each do
     Rubygame.open_audio
-    @music = Music.new(song)
+    @music = Music.load(song)
     @music.volume = 0.1 # for programmer sanity
     @music.play
   end
@@ -530,7 +536,7 @@ describe Music, "(rewinding)" do
 
   before :each do
     Rubygame.open_audio
-    @music = Music.new(short)
+    @music = Music.load(short)
     @music.volume = 0.1 # for programmer sanity
   end
 
@@ -586,7 +592,7 @@ describe Music, "(jump to)" do
 
   before :each do
     Rubygame.open_audio
-    @music = Music.new(song)
+    @music = Music.load(song)
     @music.volume = 0.1 # for programmer sanity
   end
 
@@ -629,7 +635,7 @@ describe Music, "(jump to, unsupported format)" do
 
   before :each do
     Rubygame.open_audio
-    @music = Music.new(whiff)
+    @music = Music.load(whiff)
     @music.volume = 0.1 # for programmer sanity
   end
 
@@ -649,7 +655,7 @@ describe Music, "(jump to, negative time)" do
 
   before :each do
     Rubygame.open_audio
-    @music = Music.new(whiff)
+    @music = Music.load(whiff)
     @music.volume = 0.1 # for programmer sanity
   end
 
