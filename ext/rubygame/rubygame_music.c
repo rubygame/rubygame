@@ -322,7 +322,7 @@ static VALUE rg_music_new( int argc, VALUE *ARGV, VALUE self )
  *    dup( other )  ->  music
  *
  *  Create a copy of the given Music instance. More efficient
- *  than using #new to load the music file again.
+ *  than using #load to load the music file again.
  *
  *  other::       An existing Music instance. (Music, required)
  *
@@ -932,7 +932,7 @@ void Rubygame_Init_Music()
    *  **IMPORTANT**: Music is only available if Rubygame was compiled
    *  with SDL_mixer support!
    *
-   *  Music holds a song, streamed from an audio file (see #new for
+   *  Music holds a song, streamed from an audio file (see #load for
    *  supported formats). There are two important differences between
    *  the Music and Sound classes:
    *

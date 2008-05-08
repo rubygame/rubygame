@@ -327,7 +327,7 @@ static VALUE rg_sound_new( int argc, VALUE *ARGV, VALUE self )
  *    dup( other )  ->  sound
  *
  *  Create a copy of the given Sound instance. Much more memory-efficient
- *  than using #new to load the sound file again.
+ *  than using #load to load the sound file again.
  *
  *  other::       An existing Sound instance. (Sound, required)
  *
@@ -788,7 +788,7 @@ void Rubygame_Init_Sound()
 	 *  **IMPORTANT**: Sound is only available if Rubygame was compiled
 	 *  with SDL_mixer support!
 	 *
-	 *  Sound holds a sound effect, loaded from an audio file (see #new for
+	 *  Sound holds a sound effect, loaded from an audio file (see #load for
 	 *  supported formats).
 	 *
 	 *  Sound can #play, #pause/#unpause, #stop, adjust #volume,
