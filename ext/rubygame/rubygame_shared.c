@@ -26,6 +26,9 @@ VALUE mRubygame;
 VALUE cSurface;
 VALUE cRect;
 VALUE eSDLError;
+VALUE mNamedResource;
+
+
 SDL_Rect *make_rect(int, int, int, int);
 SDL_Color make_sdl_color(VALUE);
 int init_video_system();
@@ -209,6 +212,20 @@ int init_video_system()
 	}
 }
 
+/* --
+ *
+ * Includes the Rubygame::NamedResource mixin in the given class
+ * and performs the `included' callback.
+ *
+ * ++
+ */
+void rg_include_named_resource( VALUE klass )
+{
+  /* Include the mixin, and manually perform the 'included' callback. */
+	rb_include_module( klass, mNamedResource );
+  rb_funcall( mNamedResource, rb_intern("included"), 1, klass );
+}
+
 
 void Init_rubygame_shared()
 {
@@ -243,4 +260,13 @@ void Init_rubygame_shared()
 		 *	 compile-time dependencies. */
 		rb_define_const(mRubygame,"VERSIONS",rb_hash_new());
 	}
+
+
+  /* Rubygame::NamedResource mixin. See named_resource.rb. */
+  if( mNamedResource == (int)NULL )
+  {
+    rb_require("rubygame/named_resource");
+    mNamedResource = rb_const_get(mRubygame, rb_intern("NamedResource"));
+  }
+
 }

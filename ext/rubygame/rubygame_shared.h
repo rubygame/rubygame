@@ -31,6 +31,7 @@ extern VALUE mRubygame;
 extern VALUE eSDLError;
 extern VALUE cSurface;
 extern VALUE cRect;
+extern VALUE mNamedResource;
 
 extern SDL_Rect *make_rect(int, int, int, int);
 extern VALUE make_symbol(char *);
@@ -44,6 +45,9 @@ extern void extract_rgb_u8_as_u8(VALUE, Uint8*, Uint8*, Uint8*);
 extern void extract_rgba_u8_as_u8(VALUE, Uint8*, Uint8*, Uint8*, Uint8*);
 
 extern void rg_deprecated( char *feature, char *version );
+
+/* Properly includes the Rubygame::NamedResource mixin in the klass */
+extern void rg_include_named_resource( VALUE klass );
 
 extern int init_video_system();
 extern void Init_rubygame_shared();
