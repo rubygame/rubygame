@@ -119,7 +119,6 @@ describe NamedResource do
 
             def autoload( name )
               instance = self.new
-              instance.name = name
               return instance
             end
           end
@@ -144,6 +143,10 @@ describe NamedResource do
         instance = @class["bar"]
         @class.resources["bar"].should == instance
       end
+
+      it "should set the name of autoloaded instances" do
+        @class["bar"].name.should == "bar"
+      end
     end
 
 
@@ -159,7 +162,6 @@ describe NamedResource do
               path = find_file( name )
               if path
                 instance = self.new
-                instance.name = name
                 instance.path = path
                 return instance
               end
