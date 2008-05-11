@@ -83,6 +83,62 @@ describe Music, "(non-music file)" do
 
 end
 
+describe Music, "(named resource)" do
+  before :each do
+    Music.autoload_dirs = [samples_dir]
+  end
+
+  after :each do
+    Music.autoload_dirs = []
+    Music.instance_eval { @resources = {} }
+  end
+
+  it "should include NamedResource" do
+    Music.included_modules.should include(NamedResource)
+  end
+
+  it "should respond to :[]" do
+    Music.should respond_to(:[])
+  end
+
+  it "should respond to :[]=" do
+    Music.should respond_to(:[]=)
+  end
+
+  it "should allow setting resources" do
+    s = Music.load(short)
+    Music["short"] = s
+    Music["short"].should == s
+  end
+
+  it "should reject non-Music resources" do
+    lambda { Music["foo"] = "bar" }.should raise_error(TypeError)
+  end
+
+  it "should autoload images as Music instances" do
+    unless( Rubygame::VERSIONS[:sdl_mixer] )
+      raise "Can't test sound loading, no SDL_mixer installed."
+    end
+
+    Music["song.ogg"].should be_instance_of(Music)
+  end
+
+  it "should return nil for nonexisting files" do
+    unless( Rubygame::VERSIONS[:sdl_mixer] )
+      raise "Can't test sound loading, no SDL_mixer installed."
+    end
+
+    Music["foobar.ogg"].should be_nil
+  end
+
+  it "should set names of autoload Musics" do
+    unless( Rubygame::VERSIONS[:sdl_mixer] )
+      raise "Can't test sound loading, no SDL_mixer installed."
+    end
+
+    Music["song.ogg"].name.should == "song.ogg"
+  end
+end
 
 
 #########################

@@ -304,6 +304,33 @@ static VALUE rg_music_load( VALUE klass, VALUE filename )
 
 /*
  *  call-seq:
+ *    Music.autoload( filename )  ->  Surface or nil
+ *
+ *  Searches each directory in Music.autoload_dirs for a file with
+ *  the given filename. If it finds that file, loads it and returns
+ *  a Music instance. If it doesn't find the file, returns nil.
+ *
+ *  See Rubygame::NamedResource for more information about this
+ *  functionality.
+ *
+ */
+VALUE rg_music_autoload( VALUE klass, VALUE namev )
+{
+  VALUE pathv = rb_funcall( klass, rb_intern("find_file"), 1, namev );
+
+  if( RTEST(pathv) )
+  {
+    return rg_music_load( klass, pathv );
+  }
+  else
+  {
+    return Qnil;
+  }
+}
+
+
+/*
+ *  call-seq:
  *    new
  *
  *  **NOTE**: Don't use this method. Use Music.load.
@@ -947,9 +974,14 @@ void Rubygame_Init_Music()
    *  time, adjust #volume, and #fade_out (fade in by passing an option
    *  to #play).
    *
+   *  Music includes the Rubygame::NamedResource mixin module, which
+   *  can perform autoloading of music on demand, among other things.
+   *
    */
   cMusic = rb_define_class_under(mRubygame,"Music",rb_cObject);
 
+	/* Include the Rubygame::NamedResource mixin module. */
+	rg_include_named_resource(cMusic);
 
   rb_define_singleton_method( cMusic, "current_music", rg_music_current, 0 );
   rb_iv_set( cMusic, "@current_music", Qnil );
@@ -959,6 +991,8 @@ void Rubygame_Init_Music()
 
   rb_define_singleton_method( cMusic, "new",  rg_music_new,  -1 );
   rb_define_singleton_method( cMusic, "load", rg_music_load,  1 );
+
+	rb_define_singleton_method( cMusic, "autoload", rg_music_autoload,  1 );
 
   rb_define_method( cMusic, "initialize_copy", rg_music_initialize_copy,  1 );
 
