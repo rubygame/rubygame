@@ -827,6 +827,8 @@ void Rubygame_Init_Sound()
 	 *  than having the first sound. Duplicates can different volume levels,
 	 *  too!
 	 *
+   *  Sound includes the Rubygame::NamedResource mixin module, which
+   *  can perform autoloading of images on demand, among other things.
 	 */
   cSound = rb_define_class_under(mRubygame,"Sound",rb_cObject);
 
