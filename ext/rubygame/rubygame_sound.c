@@ -303,6 +303,33 @@ static VALUE rg_sound_load( VALUE klass, VALUE filename )
 
 
 /*
+ *  call-seq:
+ *    Sound.autoload( filename )  ->  Surface or nil
+ *
+ *  Searches each directory in Sound.autoload_dirs for a file with
+ *  the given filename. If it finds that file, loads it and returns
+ *  a Sound instance. If it doesn't find the file, returns nil.
+ *
+ *  See Rubygame::NamedResource for more information about this
+ *  functionality.
+ *
+ */
+VALUE rg_sound_autoload( VALUE klass, VALUE namev )
+{
+  VALUE pathv = rb_funcall( klass, rb_intern("find_file"), 1, namev );
+
+  if( RTEST(pathv) )
+  {
+    return rg_sound_load( klass, pathv );
+  }
+  else
+  {
+    return Qnil;
+  }
+}
+
+
+/*
  *
  *  call-seq:
  *    new
@@ -803,10 +830,15 @@ void Rubygame_Init_Sound()
 	 */
   cSound = rb_define_class_under(mRubygame,"Sound",rb_cObject);
 
+	/* Include the Rubygame::NamedResource mixin module. */
+	rg_include_named_resource(cSound);
+
 	rb_define_alloc_func( cSound, rg_sound_alloc );
 
 	rb_define_singleton_method( cSound, "new",  rg_sound_new,  -1 );
 	rb_define_singleton_method( cSound, "load", rg_sound_load,  1 );
+
+	rb_define_singleton_method( cSound, "autoload", rg_sound_autoload,  1 );
 
 	rb_define_method( cSound, "initialize_copy", rg_sound_initialize_copy,  1 );
 

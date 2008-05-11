@@ -109,6 +109,63 @@ describe "loading Sound from non-sound file" do
 end
 
 
+describe Sound, "(named resource)" do
+  before :each do
+    Sound.autoload_dirs = [samples_dir]
+  end
+
+  after :each do
+    Sound.autoload_dirs = []
+    Sound.instance_eval { @resources = {} }
+  end
+
+  it "should include NamedResource" do
+    Sound.included_modules.should include(NamedResource)
+  end
+
+  it "should respond to :[]" do
+    Sound.should respond_to(:[])
+  end
+
+  it "should respond to :[]=" do
+    Sound.should respond_to(:[]=)
+  end
+
+  it "should allow setting resources" do
+    s = Sound.load(short)
+    Sound["short"] = s
+    Sound["short"].should == s
+  end
+
+  it "should reject non-Sound resources" do
+    lambda { Sound["foo"] = "bar" }.should raise_error(TypeError)
+  end
+
+  it "should autoload images as Sound instances" do
+    unless( Rubygame::VERSIONS[:sdl_mixer] )
+      raise "Can't test sound loading, no SDL_mixer installed."
+    end
+
+    Sound["whiff.wav"].should be_instance_of(Sound)
+  end
+
+  it "should return nil for nonexisting files" do
+    unless( Rubygame::VERSIONS[:sdl_mixer] )
+      raise "Can't test sound loading, no SDL_mixer installed."
+    end
+
+    Sound["foobar.wav"].should be_nil
+  end
+
+  it "should set names of autoload Sounds" do
+    unless( Rubygame::VERSIONS[:sdl_mixer] )
+      raise "Can't test sound loading, no SDL_mixer installed."
+    end
+
+    Sound["whiff.wav"].name.should == "whiff.wav"
+  end
+end
+
 
 ######################### 
 ##                     ##
