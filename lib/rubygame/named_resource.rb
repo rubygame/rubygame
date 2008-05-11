@@ -103,7 +103,10 @@ module Rubygame
 
         if result.nil?
           result = autoload(name)
-          self[name] = result if result
+          if result
+            self[name] = result
+            result.name = name
+          end
         end
 
         return result
