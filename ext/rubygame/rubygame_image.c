@@ -125,6 +125,33 @@ VALUE rbgm_image_load( VALUE class, VALUE filename )
 	return Data_Wrap_Struct( cSurface,0,SDL_FreeSurface,surf );
 }
 
+
+/*
+ *  call-seq:
+ *    Surface.autoload( filename )  ->  Surface or nil
+ *
+ *  Searches each directory in Surface.autoload_dirs for a file with
+ *  the given filename. If it finds that file, loads it and returns
+ *  a Surface instance. If it doesn't find the file, returns nil.
+ *
+ *  See Rubygame::NamedResource for more information about this
+ *  functionality.
+ *
+ */
+VALUE rbgm_image_autoload( VALUE class, VALUE namev )
+{
+  VALUE pathv = rb_funcall( class, rb_intern("find_file"), 1, namev );
+
+  if( RTEST(pathv) )
+  {
+    return rbgm_image_load( class, pathv );
+  }
+  else
+  {
+    return Qnil;
+  }
+}
+
 /*
  *  call-seq:
  *    Surface.from_string( data [,type] )  ->  Surface
@@ -196,6 +223,9 @@ VALUE rbgm_from_string( int argc, VALUE *argv, VALUE obj)
  *  Screen (which is a special type of Surface) and then using Screen#update,
  *  you can make images appear for the player to see.
  *
+ *  As of Rubygame 2.3.0, Surface includes the Rubygame::NamedResource mixin
+ *  module, which can perform autoloading of images on demand, among other
+ *  things.
  */
 void Init_rubygame_image()
 {
@@ -217,5 +247,6 @@ void Init_rubygame_image()
 	/* Image methods */
 	rb_define_singleton_method(cSurface,"load_image", rbgm_image_load_image, 1);
 	rb_define_singleton_method(cSurface,"load",       rbgm_image_load,       1);
+	rb_define_singleton_method(cSurface,"autoload",   rbgm_image_autoload,   1);
 	rb_define_singleton_method(cSurface,"from_string",rbgm_from_string,     -1);
 }

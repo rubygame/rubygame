@@ -63,6 +63,58 @@ end
 
 
 
+describe Surface, "(named resource)" do
+  before :each do
+    Surface.autoload_dirs = [samples_dir]
+  end
+
+  after :each do
+    Surface.autoload_dirs = []
+  end
+
+  it "should include NamedResource" do
+    Surface.included_modules.should include(NamedResource)
+  end
+
+  it "should respond to :[]" do
+    Surface.should respond_to(:[])
+  end
+
+  it "should respond to :[]=" do
+    Surface.should respond_to(:[]=)
+  end
+
+  it "should respond to :[]=" do
+    Surface.should respond_to(:[]=)
+  end
+
+  it "should autoload images as Surface instances" do
+    unless( Rubygame::VERSIONS[:sdl_image] )
+      raise "Can't test image loading, no SDL_image installed."
+    end
+
+    Surface["panda.png"].should be_instance_of(Surface)
+  end
+
+  it "should return nil for nonexisting files" do
+    unless( Rubygame::VERSIONS[:sdl_image] )
+      raise "Can't test image loading, no SDL_image installed."
+    end
+
+    Surface["foobar.png"].should be_nil
+  end
+
+  it "should set names of autoload Surfaces" do
+    unless( Rubygame::VERSIONS[:sdl_image] )
+      raise "Can't test image loading, no SDL_image installed."
+    end
+
+    Surface["panda.png"].name.should == "panda.png"
+  end
+end
+
+
+
 describe Surface, "(blit)" do
   before(:each) do
     Rubygame.init()
