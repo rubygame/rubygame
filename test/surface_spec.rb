@@ -8,6 +8,7 @@ test_dir = File.join( File.dirname(__FILE__), "" )
 
 test_image = test_dir + "image.png"
 not_image = test_dir + "short.ogg"
+panda = samples_dir + "panda.png"
 dne = test_dir + "does_not_exist.png"
 
 describe Surface, "(creation)" do
