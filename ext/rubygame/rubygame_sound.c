@@ -828,7 +828,8 @@ void Rubygame_Init_Sound()
 	 *  too!
 	 *
    *  Sound includes the Rubygame::NamedResource mixin module, which
-   *  can perform autoloading of images on demand, among other things.
+   *  can perform autoloading of sounds on demand, among other things.
+   *
 	 */
   cSound = rb_define_class_under(mRubygame,"Sound",rb_cObject);
 
