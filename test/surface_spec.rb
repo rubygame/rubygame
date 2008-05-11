@@ -70,6 +70,7 @@ describe Surface, "(named resource)" do
 
   after :each do
     Surface.autoload_dirs = []
+    Surface.instance_eval { @resources = {} }
   end
 
   it "should include NamedResource" do
@@ -84,8 +85,14 @@ describe Surface, "(named resource)" do
     Surface.should respond_to(:[]=)
   end
 
-  it "should respond to :[]=" do
-    Surface.should respond_to(:[]=)
+  it "should allow setting resources" do
+    s = Surface.load(panda)
+    Surface["panda"] = s
+    Surface["panda"].should == s
+  end
+
+  it "should reject non-Surface resources" do
+    lambda { Surface["foo"] = "bar" }.should raise_error(TypeError)
   end
 
   it "should autoload images as Surface instances" do
