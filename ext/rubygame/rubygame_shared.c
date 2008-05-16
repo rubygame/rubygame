@@ -26,6 +26,9 @@ VALUE mRubygame;
 VALUE cSurface;
 VALUE cRect;
 VALUE eSDLError;
+VALUE mNamedResource;
+
+
 SDL_Rect *make_rect(int, int, int, int);
 SDL_Color make_sdl_color(VALUE);
 int init_video_system();
@@ -42,9 +45,29 @@ SDL_Rect *make_rect(int x, int y, int w, int h)
 	return rect;
 }
 
+/* Returns a symbol from the given char* string */
 VALUE make_symbol(char *string)
 {
 	return ID2SYM(rb_intern(string));
+}
+
+/* Returns a char* string from the given symbol */
+char *unmake_symbol(VALUE symbol)
+{
+	return rb_id2name( SYM2ID(symbol) );
+}
+
+
+/* Lowercase, change spaces to underscores, and convert to symbol.
+ * Equivalent to: str.downcase!.gsub!(" ","_").intern
+ */
+VALUE sanitized_symbol(char *string)
+{
+	VALUE str = rb_str_new2(string);
+
+	rb_funcall( str, rb_intern("downcase!"), 0 );
+	rb_funcall( str, rb_intern("gsub!"), 2, rb_str_new2(" "), rb_str_new2("_") );
+	return rb_funcall( str, rb_intern("intern"), 0 );
 }
 
 /* Take either nil, Numeric or an Array of Numerics, returns Uint32. */
@@ -148,6 +171,23 @@ void extract_rgba_u8_as_u8(VALUE color, Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a)
 	}
 }
 
+
+
+/* --
+ *
+ * Issues a deprecation warning for the given feature/method.
+ *
+ * ++
+ */
+void rg_deprecated( char *feature, char *version )
+{
+  rb_warning( "%s is DEPRECATED and will be removed in Rubygame %s! "
+              "Please see the docs for more information.",
+              feature, version );
+}
+
+
+
 /* --
  *
  *  call-seq:
@@ -170,6 +210,20 @@ int init_video_system()
 	{
 		return 0;
 	}
+}
+
+/* --
+ *
+ * Includes the Rubygame::NamedResource mixin in the given class
+ * and performs the `included' callback.
+ *
+ * ++
+ */
+void rg_include_named_resource( VALUE klass )
+{
+  /* Include the mixin, and manually perform the 'included' callback. */
+	rb_include_module( klass, mNamedResource );
+  rb_funcall( mNamedResource, rb_intern("included"), 1, klass );
 }
 
 
@@ -206,4 +260,13 @@ void Init_rubygame_shared()
 		 *	 compile-time dependencies. */
 		rb_define_const(mRubygame,"VERSIONS",rb_hash_new());
 	}
+
+
+  /* Rubygame::NamedResource mixin. See named_resource.rb. */
+  if( mNamedResource == (int)NULL )
+  {
+    rb_require("rubygame/named_resource");
+    mNamedResource = rb_const_get(mRubygame, rb_intern("NamedResource"));
+  }
+
 }
