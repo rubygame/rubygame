@@ -154,9 +154,9 @@ VALUE rbgm_image_autoload( VALUE class, VALUE namev )
 
 /*
  *  call-seq:
- *    Surface.from_string( data [,type] )  ->  Surface
+ *    Surface.load_from_string( data [,type] )  ->  Surface
  *
- *  Load an image file from memory (in the form of the given data to a Surface.
+ *  Load an image file from memory (in the form of the given data) to a Surface.
  *  If the image has an alpha channel (e.g. PNG with transparency), the Surface
  *  will as well. If the image cannot be loaded (for example if the image
  *  format is unsupported), will raise SDLError.
@@ -185,7 +185,7 @@ VALUE rbgm_image_autoload( VALUE class, VALUE namev )
  *  XCF:: "eXperimental Computing Facility" (GIMP native format).
  *  XPM:: "XPixMap" format.
  */
-VALUE rbgm_from_string( int argc, VALUE *argv, VALUE obj)
+VALUE rbgm_image_load_from_string( int argc, VALUE *argv, VALUE obj)
 {
 	Check_Type(argv[0], T_STRING);
 	/* There's probably a better way of using a string as raw data than this,
@@ -245,8 +245,8 @@ void Init_rubygame_image()
                            INT2NUM(SDL_IMAGE_PATCHLEVEL)));
 
 	/* Image methods */
-	rb_define_singleton_method(cSurface,"load_image", rbgm_image_load_image, 1);
-	rb_define_singleton_method(cSurface,"load",       rbgm_image_load,       1);
-	rb_define_singleton_method(cSurface,"autoload",   rbgm_image_autoload,   1);
-	rb_define_singleton_method(cSurface,"from_string",rbgm_from_string,     -1);
+	rb_define_singleton_method(cSurface, "load_image",       rbgm_image_load_image,        1);
+	rb_define_singleton_method(cSurface, "load",             rbgm_image_load,              1);
+	rb_define_singleton_method(cSurface, "autoload",         rbgm_image_autoload,          1);
+	rb_define_singleton_method(cSurface, "load_from_string", rbgm_image_load_from_string, -1);
 }
