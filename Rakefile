@@ -48,11 +48,11 @@ end
 OBJEXT = from_env_or_config("OBJEXT")
 DLEXT = from_env_or_config("DLEXT")
 
-RUBYGAME_VERSION = "2.2.0"
+RUBYGAME_VERSION = [2,3,0]
 
-spec = Gem::Specification.new do |s|
+gem_spec = Gem::Specification.new do |s|
   s.name     = "rubygame"
-  s.version  = RUBYGAME_VERSION
+  s.version  = RUBYGAME_VERSION.join(".")
   s.author   = "John Croisant"
   s.email    = "jacius@users.sourceforge.net"
   s.homepage = "http://rubygame.sourceforge.net/"
@@ -76,24 +76,24 @@ spec = Gem::Specification.new do |s|
 end
 
 task :linux do
-	spec.platform = Gem::Platform::LINUX_586
+	gem_spec.platform = Gem::Platform::LINUX_586
 end
 
 task :macosx do
-	spec.platform = Gem::Platform::DARWIN
+	gem_spec.platform = Gem::Platform::DARWIN
 end
 
 task :win32 do
-	spec.platform = Gem::Platform::WIN32
+	gem_spec.platform = Gem::Platform::WIN32
 end
 
-Rake::GemPackageTask.new(spec) do |pkg| 
+Rake::GemPackageTask.new(gem_spec) do |pkg| 
   pkg.need_tar_bz2 = true
 end
 
 Rake::RDocTask.new do |rd|
   rd.main = "README"
-  rd.title = "Rubygame #{RUBYGAME_VERSION} Docs"
+  rd.title = "Rubygame #{RUBYGAME_VERSION.join(".")} Docs"
   rd.rdoc_files.include("ext/rubygame/*.c",
                         "lib/rubygame/**/*.rb",
                         "doc/*.rdoc",
@@ -123,6 +123,7 @@ $options = {
 	:"sdl-mixer"  => true,
 	:opengl       => true,
 	:"sdl-config" => true,
+	:universal    => false,
 	:debug        => false,
 	:verbose      => false,
 	:sitearchdir  => CONFIG["sitearchdir"],
@@ -186,8 +187,9 @@ bool_option :"sdl-mixer",  nil,  "SDL_mixer support"
 bool_option :"sdl-ttf",    nil,  "SDL_ttf support"
 bool_option :"sdl-config", nil,  "guess compiler flags for SDL"
 bool_option :opengl,       nil,  "OpenGL support"
-bool_option :debug,        nil,  "compil with debug symbols"
+bool_option :debug,        nil,  "compile with debug symbols"
 bool_option :verbose,      nil,  "show compiler commands"
+bool_option :universal,    nil,  "compile universal binary (MacOS X Intel)"
 
 string_option "RUBYARCHDIR", :sitearchdir
 string_option :sitearchdir
@@ -199,7 +201,11 @@ string_option :sitelibdir
 CFLAGS = [from_env_or_config("CFLAGS"),
           try_sdl_config("--cflags"),
           "-I. -I#{CONFIG['topdir']}",
-          ("-g" if $options[:debug]) ].join(" ")
+          ("-g" if $options[:debug]),
+          "-DRUBYGAME_MAJOR_VERSION=#{RUBYGAME_VERSION[0]}",
+          "-DRUBYGAME_MINOR_VERSION=#{RUBYGAME_VERSION[1]}",
+          "-DRUBYGAME_PATCHLEVEL=#{RUBYGAME_VERSION[2]}"
+         ].join(" ")
 
 LINK_FLAGS = [from_env_or_config("LIBRUBYARG_SHARED"),
               from_env_or_config("LDFLAGS"),
@@ -241,7 +247,7 @@ class ExtensionModule
   # 
   # This is done so that the prerequisites don't have to be compiled when 
   # the final product already exists (such as in the precompiled win32 gem).
-	# 
+  # 
   def create_dl_task
     dynlib_full  = File.join( @directory, "#{dynlib}.#{DLEXT}" )
     objs_full = @objs.collect { |obj|
@@ -250,7 +256,16 @@ class ExtensionModule
 
     desc "Compile the #{@dynlib} extension"
     file dynlib_full => objs_full do |task|
+
       link_command = "#{from_env_or_config('LDSHARED')} #{LINK_FLAGS} #{@lflags} -o #{dynlib_full} #{task.prerequisites.join(' ')}"
+
+
+      # If link command includes i386 arch, and we're not allowing universal
+      if( /-arch i386/ === link_command and not $options[:universal] )
+        # Strip "-arch ppc" to prevent building a universal binary.
+        link_command.gsub!("-arch ppc","")
+      end
+
       if( $options[:verbose] )
         try_shell { sh link_command }
       else
@@ -276,7 +291,15 @@ class ExtensionModule
           end
          ])\
     do |t|
+
       compile_command = "#{from_env_or_config('CC')} -c #{CFLAGS} #{t.source} -o #{t.name}"
+
+      # If compile command includes i386 arch, and we're not allowing universal
+      if( /-arch i386/ === compile_command and not $options[:universal] )
+        # Strip "-arch ppc" to prevent building a universal binary.
+        compile_command.gsub!("-arch ppc","")
+      end
+
       if( $options[:verbose] )
         try_shell { sh compile_command }
       else
@@ -350,7 +373,7 @@ end
 
 rubygame_mixer = ExtensionModule.new do |mixer|
   mixer.dynlib = 'rubygame_mixer'
-  mixer.objs = ['rubygame_shared', 'rubygame_mixer']
+  mixer.objs = ['rubygame_shared', 'rubygame_mixer', 'rubygame_sound', 'rubygame_music']
   mixer.add_lib('SDL_mixer')
   mixer.add_header('SDL_mixer.h')
   mixer.create_all_tasks() if $options[:"sdl-mixer"]
@@ -407,3 +430,18 @@ end
 
 desc "Install both the extensions and the library"
 task :install => [:install_ext, :install_lib]
+
+
+
+begin
+  require 'spec/rake/spectask'
+
+  desc "Run all specs (tests)"
+  Spec::Rake::SpecTask.new do |t|
+    t.spec_files = FileList['test/*_spec.rb']
+  end
+rescue LoadError
+  task :spec do 
+    puts "ERROR: RSpec is not installed?"
+  end
+end
