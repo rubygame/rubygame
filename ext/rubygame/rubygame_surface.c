@@ -1130,6 +1130,10 @@ void Rubygame_Init_Surface()
 	rb_define_method(cSurface,"savebmp",rbgm_image_savebmp,1);
 	rb_define_method(cSurface,"flip",rbgm_transform_flip,2);
 
+
+	/* Include the Rubygame::NamedResource mixin module. */
+	rg_include_named_resource(cSurface);
+
 	
 	/* Surface initialization flags */
 	rb_define_const(mRubygame,"SWSURFACE",UINT2NUM(SDL_SWSURFACE));
