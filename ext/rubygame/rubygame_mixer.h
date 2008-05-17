@@ -24,39 +24,13 @@
 #include "SDL_audio.h"
 #include "SDL_mixer.h"
 
+extern int audio_is_open();
+extern int ensure_open_audio();
+
 extern void Init_rubygame_mixer();
+
 extern VALUE mMixer;
-
-extern VALUE rbgm_mixer_openaudio(int, VALUE*, VALUE);
-extern VALUE rbgm_mixer_closeaudio(VALUE);
-extern VALUE rbgm_mixer_getmixchans();
-extern VALUE rbgm_mixer_setmixchans(VALUE, VALUE);
-extern VALUE rbgm_mixer_getdrivername(VALUE);
-
 extern VALUE cSample;
-extern VALUE rbgm_sample_new(VALUE, VALUE);
-extern VALUE rbgm_mixchan_play( VALUE, VALUE, VALUE, VALUE );
-extern VALUE rbgm_mixchan_stop( VALUE, VALUE );
-extern VALUE rbgm_mixchan_pause( VALUE, VALUE );
-extern VALUE rbgm_mixchan_resume( VALUE, VALUE );
-
-extern VALUE cMusic;
-extern VALUE rbgm_mixmusic_setcommand(VALUE, VALUE); 
-extern VALUE rbgm_mixmusic_new(VALUE, VALUE);
-
-extern VALUE rbgm_mixmusic_play(int, VALUE*, VALUE);
-extern VALUE rbgm_mixmusic_stop(VALUE);
-extern VALUE rbgm_mixmusic_resume(VALUE);
-extern VALUE rbgm_mixmusic_pause(VALUE);
-extern VALUE rbgm_mixmusic_rewind(VALUE);
-extern VALUE rbgm_mixmusic_jump(VALUE, VALUE);
-extern VALUE rbgm_mixmusic_paused(VALUE);
-extern VALUE rbgm_mixmusic_playing(VALUE);
-
-extern VALUE rbgm_mixmusic_getvolume(VALUE);
-extern VALUE rbgm_mixmusic_setvolume(VALUE, VALUE);
-extern VALUE rbgm_mixmusic_fadein(int, VALUE*, VALUE);
-extern VALUE rbgm_mixmusic_fadeout(VALUE, VALUE);
-extern VALUE rbgm_mixmusic_fading(int, VALUE*, VALUE);
+extern VALUE cOldMusic;
 
 #endif
