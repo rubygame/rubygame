@@ -21,13 +21,16 @@
 #ifndef _RUBYGAME_H
 #define _RUBYGAME_H
 
-#define RUBYGAME_MAJOR_VERSION 2
+#ifndef RUBYGAME_MAJOR_VERSION
+
+#define RUBYGAME_MAJOR_VERSION 0
 #define RUBYGAME_MINOR_VERSION 0
-#define RUBYGAME_PATCHLEVEL 1
+#define RUBYGAME_PATCHLEVEL 0
+
+#endif
 
 extern VALUE rbgm_keyname(VALUE, VALUE);
 extern VALUE rbgm_init(VALUE);
 extern VALUE rbgm_quit(VALUE);
-extern void Define_Rubygame_Constants();
 
 #endif
