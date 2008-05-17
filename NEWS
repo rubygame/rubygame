@@ -1,3 +1,48 @@
+== Changes from 2.2.0 to 2.3.0
+
+=== Features
+
+- Add: Rubygame::NamedResource mixin module
+  - Provides per-class resource repository and on-demand auto-loading
+    behavior.
+
+- Add: Rubygame::Sound class.
+  - Intended as a full replacement for Rubygame::Mixer::Sample.
+  - Includes NamedResources mixin.
+  - NOTE: Requires SDL_mixer support.
+
+- Add: Rubygame::Music class.
+  - Intended as a full replacement for Rubygame::Mixer::Music.
+  - Includes NamedResources mixin.
+  - NOTE: Requires SDL_mixer support.
+
+- Update: Rubygame::Surface class.
+  - Includes NamedResources mixin.
+  - Add: Surface.load_from_string (NOTE: Requires SDL_image support.)
+
+=== Fixes
+
+- ColorBase had been accidently placed in the top level namespace in
+  Rubygame 2.2.0. It is now correctly placed in the Rubygame::Color
+  module.
+
+=== Other Stuff
+
+- Deprecation (will be removed in Rubygame 3.0):
+  - Rubygame::Mixer module and methods are deprecated.
+  - Rubygame::Mixer::Sample class is deprecated.
+    Use Rubygame::Sound class instead.
+  - Rubygame::Mixer::Music class is deprecated.
+    Use Rubygame::Music class instead.
+  - Rubygame::Surface.load_image is deprecated.
+    Use Rubygame::Surface.load instead.
+
+- NOTE: Run ruby with -w flag or set $_v = true to enable run-time
+  deprecation warnings.
+
+
+
+
 == Changes from 2.1.0 to 2.2.0
 
 === Features
