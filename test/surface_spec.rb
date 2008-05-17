@@ -11,6 +11,7 @@ not_image = test_dir + "short.ogg"
 panda = samples_dir + "panda.png"
 dne = test_dir + "does_not_exist.png"
 
+
 describe Surface, "(creation)" do
   before(:each) do
     Rubygame.init()
@@ -62,6 +63,33 @@ describe Surface, "(loading)" do
   end
 end
 
+
+describe Surface, "(loading from string)" do
+  before :each do
+    unless( Rubygame::VERSIONS[:sdl_image] )
+      raise "Can't test image loading, no SDL_image installed."
+    end
+
+    @data = "\x42\x4d\x3a\x00\x00\x00\x00\x00"+
+            "\x00\x00\x36\x00\x00\x00\x28\x00"+
+            "\x00\x00\x01\x00\x00\x00\x01\x00"+
+            "\x00\x00\x01\x00\x18\x00\x00\x00"+
+            "\x00\x00\x04\x00\x00\x00\x13\x0b"+
+            "\x00\x00\x13\x0b\x00\x00\x00\x00"+
+            "\x00\x00\x00\x00\x00\x00\x00\x00"+
+            "\xff\x00"
+  end
+  
+  it "should be able to load from string" do
+    surf = Surface.load_from_string(@data)
+    surf.get_at(0,0).should == [255,0,0,255]
+  end
+  
+  it "should be able to load from string (typed)" do
+    surf = Surface.load_from_string(@data,"BMP")
+    surf.get_at(0,0).should == [255,0,0,255]
+  end
+end
 
 
 describe Surface, "(named resource)" do
