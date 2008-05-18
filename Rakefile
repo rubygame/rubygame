@@ -1,3 +1,11 @@
+
+
+
+# The version number for Rubygame.
+RUBYGAME_VERSION = [2,4,0]
+
+
+
 require 'rubygems'
 Gem::manage_gems
 
@@ -47,8 +55,6 @@ end
 
 OBJEXT = from_env_or_config("OBJEXT")
 DLEXT = from_env_or_config("DLEXT")
-
-RUBYGAME_VERSION = [2,3,0]
 
 gem_spec = Gem::Specification.new do |s|
   s.name     = "rubygame"
