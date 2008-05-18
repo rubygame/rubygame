@@ -189,7 +189,7 @@ bool_option :"sdl-config", nil,  "guess compiler flags for SDL"
 bool_option :opengl,       nil,  "OpenGL support"
 bool_option :debug,        nil,  "compile with debug symbols"
 bool_option :verbose,      nil,  "show compiler commands"
-bool_option :universal,    nil,  "compile universal binary (MacOS X Intel)"
+bool_option :universal,    nil,  "universal binary (MacOS X Intel)"
 
 string_option "RUBYARCHDIR", :sitearchdir
 string_option :sitearchdir
