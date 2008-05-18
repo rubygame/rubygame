@@ -25,12 +25,12 @@ def test_music()
 		puts "If you want, you could give a filename as an argument to this script."
 	end
 
-  Music.autoload_dirs = [ File.dirname(__FILE__) ]
+	Music.autoload_dirs = [ File.dirname(__FILE__) ]
 	mus = Music[file];
-  
-  unless mus
-    puts "ERROR: Couldn't find audio file '#{file}'."
-  end
+
+	unless mus
+		puts "ERROR: Couldn't find audio file '#{file}'."
+	end
 
 	puts "Testing fading in over 3 seconds, repeating forever."
 	mus.play( :fade_in => 3, :repeats => -1 );
