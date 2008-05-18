@@ -148,46 +148,37 @@ class PandaBall < Sprite
 	
 	def _draw_sdl( camera )
 		trans = camera.world_to_screen(:pos => @body.p, :size => @size)
-		trans[:size] *= 23.0
+		trans[:size] *= 22.0
 
 		camera.mode.surface.draw_circle_s( trans[:pos].to_ary, trans[:size], @color )
-		
-		rect = Rect.new(0,0,trans[:size]*2,trans[:size]*2)
+
+		rect_size = 2*trans[:size]+4 # extra padding
+
+		rect = Rect.new( [0, 0, rect_size, rect_size] )
 		rect.center = trans[:pos].to_ary
-		
-		camera.mode.dirty_rects << rect
-		
-		super
-	end
-	
-	def _undraw_sdl( camera )
-		trans = camera.world_to_screen(:pos => @body.p, :size => @size)
-		trans[:size] *= 23.0
-		
-		rect = Rect.new(0,0,trans[:size]*2+2,trans[:size]*2+2)
-		rect.center = trans[:pos].to_ary
-		
-		bg = camera.mode.background
-		bg.blit( camera.mode.surface, rect, rect )
-		
-		camera.mode.dirty_rects << rect
-		
+
+		@_dirty_rects << rect
+
 		super
 	end
 end
 
 # Create the SDL window
-screen = Screen.set_mode([320,240])
-#screen = Screen.set_mode([640,480])
+#screen = Screen.set_mode([320,240])
+screen = Screen.set_mode([640,480])
 
 # Make the background surface
 background = Surface.new(screen.size)
 
-camera_mode = Camera::RenderModeSDL.new(screen, background, screen.make_rect, 1.0)
-scene = Scene.new( camera_mode )
+camera_options = {
+	:mode => Camera::RenderModeSDL.new(screen, background, screen.make_rect, 1.0),
+	:size => screen.size
+}
+scene = Scene.new( camera_options )
 
-#scene.camera.position = vect(160,120)
-#scene.camera.zoom = 2
+scene.camera.position = vect(160,150)
+#scene.camera.position = vect(320,240)
+scene.camera.rotation = 0.4
 
 
 scene.space.gravity = vect(0,400)
@@ -216,6 +207,39 @@ class << scene
 		@camera.mode.surface.update
 	end
 	
+	def rotate_cw
+		@camera.rotation += 0.2
+	end
+
+	def rotate_ccw
+		@camera.rotation -= 0.2
+	end
+
+	def zoom_in
+		@camera.zoom *= 1.1
+	end
+
+	def zoom_out
+		@camera.zoom *= 0.9
+		@camera.zoom = 0.1 if @camera.zoom < 0.1
+	end
+	
+	def move_left
+		@camera.position.x -= 25
+	end
+	
+	def move_right
+		@camera.position.x += 25
+	end
+	
+	def move_up
+		@camera.position.y -= 25
+	end
+	
+	def move_down
+		@camera.position.y += 25
+	end
+	
 end
 
 p = PandaBall.new( scene, vect(100,50) )
@@ -224,12 +248,21 @@ p.name = "George"
 # When the event on the left happens, call the method on the right.
 # It's so easy, it's magic!
 scene.magic_hooks(:mouse_right  =>  :add_panda,
+                  :mouse_wheel_up   =>  :zoom_in,
+                  :mouse_wheel_down =>  :zoom_out,
+                  :left         =>  :move_left,
+                  :right        =>  :move_right,
+                  :up           =>  :move_up,
+                  :down         =>  :move_down,
+                  :comma        =>  :rotate_ccw,
+                  :period       =>  :rotate_cw,
                   :print_screen =>  :take_screenshot,
                   :r            =>  :refresh,
                   :s            =>  :toggle_smooth,
                   :q            =>  Proc.new{ throw :quit },
                   :escape       =>  Proc.new{ throw :quit },
                   QuitEvent     =>  Proc.new{ throw :quit })
+
 
 puts "Left click and hold  = grab ball"
 puts "Middle click = bounce ball"
@@ -257,6 +290,25 @@ floor = Sprite.new( scene ) {
 	@name = "floor"
 }
 
+class << floor
+	
+	def _draw_sdl( camera )
+		surf = camera.mode.surface
+		@shapes.each { |s|
+			a = scene.camera.world_to_screen(:pos => s.ta)[:pos].to_a
+			b = scene.camera.world_to_screen(:pos => s.tb)[:pos].to_a
+			surf.draw_line_a( a, b, :black )
+
+			left, right  = [a[0], b[0]].sort
+			top,  bottom = [a[1], b[1]].sort
+			@_dirty_rects << Rect.new( [left, top, right-left+5, bottom-top+5] )
+		}
+		
+		super
+	end
+	
+end
+
 
 # Filling with colors in a variety of ways
 background.fill( Color::ColorRGB.new([0.1, 0.2, 0.35]) )
@@ -264,10 +316,6 @@ background.fill( :black, [70,120,80,80] )
 background.fill( "dark red", [80,110,80,80] )
 
 
-floor.shapes.each { |s|
-	background.draw_line_a( scene.camera.world_to_screen(:pos => s.ta)[:pos],
-													scene.camera.world_to_screen(:pos => s.tb)[:pos], :black )
-}
 
 # Refresh the screen once. During the loop, we'll use 'dirty rect' updating
 # to refresh only the parts of the screen that have changed.
