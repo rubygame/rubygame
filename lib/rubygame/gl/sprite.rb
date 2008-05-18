@@ -35,12 +35,12 @@ class GLImageSprite < GLSprite
 		@size = Vector2[1,1]
 		@has_alpha = false
 		super
- 		@shape = Polygon::UNIT_SQUARE.scale(*@size[0..1])
+ 		@shape = Polygon::UNIT_SQUARE.transform(:scale => @size)
 		@base_shape = @shape
 	end
 
 	def setup_texture()
-		@size = Vector2[*@surface.size]
+		@size = @surface.size
 		@tex_id = glGenTextures(1)[0]
 		glBindTexture(GL_TEXTURE_2D, @tex_id)
 		if @has_alpha

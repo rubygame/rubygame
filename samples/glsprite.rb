@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+$stdout.sync = true
+
 require 'rubygame'
 require 'rubygame/gl/scene'
 require 'rubygame/gl/sprite'
@@ -15,13 +17,14 @@ def main()
 	Rubygame.init()
 	scene = Scene.new([WIDTH,HEIGHT])
 	scene.make_default_camera
+	scene.clock.target_framerate = 60
 
 	pic_in_pic = Camera.new {
 		bound = scene.cameras.first.screen_region
 		@screen_region = bound.scale(0.25,0.25)
-		@screen_region = \
-			@screen_region.move(Vector2[WIDTH-@screen_region.right - 20,
-			                            HEIGHT-@screen_region.top - 20])
+ 		@screen_region = \
+ 			@screen_region.move(Vector2[WIDTH-@screen_region.right - 20,
+ 			                            HEIGHT-@screen_region.top - 20])
 		@world_region = bound.scale(1,1)
 		@clear_screen = true
 		@background_color = [0.3, 0.3, 0.3, 0.5]
@@ -65,6 +68,7 @@ def main()
 	collision[:main] = [panda, ruby]
 
 	set_pos_action = BlockAction.new do |owner, event|
+		print "#{event.world_pos.inspect}      \r"
 		owner.pos = event.world_pos
 	end
 	
@@ -97,7 +101,7 @@ def main()
 	end
 	
 	handler.append_hook do
-		@owner = scene.cameras[0]
+		@owner = scene.cameras[1]
 		@trigger = InstanceTrigger.new( Rubygame::MouseMotionEvent )
 		@action = BlockAction.new do |owner, event|
 			scene.event_handler.handle( owner.make_mousehover(event) )
@@ -149,6 +153,7 @@ def main()
 	end
 ensure
 	Rubygame.quit()
+	puts
 end
 
 main()

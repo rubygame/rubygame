@@ -76,8 +76,10 @@ class Vector2
 	end
 	
 	def to_s
-		"#{self.class.name}[#{x}, #{y}]"
+		"#{self.class.name}[#{@x}, #{@y}]"
 	end
+	
+	alias :inspect :to_s
 	
 	def to_v
 		self

@@ -104,9 +104,10 @@ class Matrix3
 		return "#<Matrix3 [[%f, %f, %f], [%f, %f, %f], [%f, %f, %f]]>"%self.to_ary.flatten!
 	end
 	
+	alias :inspect :to_s
+	
 	def to_m
 		return self
 	end
 	
-	alias :inspect :to_s
 end

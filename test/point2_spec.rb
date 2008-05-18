@@ -48,7 +48,7 @@ describe Point2 do
 		result.should == Point2[7,12]
 	end
 	
-	it "should support addition with another Point2, yielding a Vector2" do 
+	it "should support subtraction with another Point2, yielding a Vector2" do 
 		result = @a - @b
 		result.should be_instance_of(Vector2)
 		result.should == Vector2[-8, 7]
@@ -75,6 +75,6 @@ describe Point2 do
 	it "should be convertible to a Point2" do 
 		result = @a.to_p
 		result.should be_instance_of(Point2)
-		result.should == @a
+		result.should == Point2[2,4]
 	end
 end

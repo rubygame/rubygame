@@ -37,6 +37,10 @@ class Point2
 		self.to_ary[index]
 	end
 	
+	def inspect
+		"#<#{self.class.name}:%#0x [#{@x}, #{@y}]>"%(self.object_id)
+	end
+	
 	def projected_onto( v )
 		self.class.new(  *(v * v.dot(self.to_v) * (1/v.magnitude**2) )  )
 	end
@@ -50,8 +54,10 @@ class Point2
 	end
 	
 	def to_s
-		"#{self.class.name}[#{x}, #{y}]"
+		"#{self.class.name}[#{@x}, #{@y}]"
 	end
+	
+	alias :inspect :to_s
 	
 	def to_v
 		Vector2.new( @x, @y )
