@@ -24,49 +24,41 @@
 # Rosetta Stone for a pygame user switching to Rubygame.
 
 require "rubygame"
+include Rubygame
 
 puts 'Warning, images disabled' unless 
-  ($image_ok = (Rubygame::VERSIONS[:sdl_image] != nil))
+  ($image_ok = (VERSIONS[:sdl_image] != nil))
 puts 'Warning, font disabled' unless 
-  ($font_ok = (Rubygame::VERSIONS[:sdl_ttf] != nil))
+  ($font_ok = (VERSIONS[:sdl_ttf] != nil))
 puts 'Warning, sound disabled' unless
-  ($sound_ok = (Rubygame::VERSIONS[:sdl_mixer] != nil))
+  ($sound_ok = (VERSIONS[:sdl_mixer] != nil))
 
-# Functions to create our resources:
-def load_image(name, colorkey=nil)
-	# Rubygame::Image.load has been replaced with Surface
-	image = Rubygame::Surface.load_image(name)
-	if colorkey != nil
-		if colorkey == -1
-			colorkey = image.get_at([0,0])
-		end
-		image.set_colorkey(colorkey)
-	end
-	return image, Rubygame::Rect.new(0,0,*image.size)
-end
 
-def load_sound(name)
-	return nil unless $sound_ok
-	begin
-		sound = Rubygame::Mixer::Sample.load_audio(name)
-		return sound
-	rescue Rubygame::SDLError => e
-		warn "Cannot load sound #{name}. (#{e})\nContinuing anyway..."
-		return nil
-	end
-end
+# Get the directory this script is in.
+resources_dir = File.dirname(__FILE__)
+
+# Set the directories to autoload images and sounds from.
+# See the docs for Rubygame::NamedResource.
+Surface.autoload_dirs = [ resources_dir ]
+Sound.autoload_dirs = [ resources_dir ]
+
 
 # Classes for our game objects:
 
 # The fist object, which follows the mouse and punches on mouseclick
 class Fist
 	# It's a sprite (an image with location data).
-	include Rubygame::Sprites::Sprite
+	include Sprites::Sprite
 
 	# Create and set up a new Fist object
 	def initialize
 		super					# initialize sprite
-		@image, @rect = load_image('fist.bmp', -1)
+
+		# Autoload the image and set its colorkey
+		@image = Surface['fist.bmp']
+		@image.set_colorkey( @image.get_at([0,0]) )
+
+		@rect = @image.make_rect()
 		@punching = false		# whether the fist is punching
 		@mpos = [0,0]			# mouse curson position
 	end
@@ -78,7 +70,7 @@ class Fist
 	# in @mpos for later use in Fist#update().
 	def tell(ev)
 		case ev
-		when Rubygame::MouseMotionEvent
+		when MouseMotionEvent
 			# mouse cursor moved, remember its last location for #update()
 			@mpos = ev.pos
 		end
@@ -110,17 +102,22 @@ end
 # A chimpanzee which moves across the screen and spins when punched.
 class Chimp
 	# It's a sprite (an image with location data).
-	include Rubygame::Sprites::Sprite
+	include Sprites::Sprite
 
 	# Create and set up a new Chimp object
 	def initialize
 		super					# initialize sprite
-		@original, @rect = load_image('chimp.bmp', -1)
+
+		# Autoload the image and set its colorkey
+		@original = Surface['chimp.bmp']
+		@original.set_colorkey( @original.get_at([0,0]) )
 		@image = @original 		# store original image during rotation
+
+		@rect = @image.make_rect()
 		@rect.topleft = 10,10
+
 		# @area is the area of the screen, which the chimp will walk across
-		@area = Rubygame::Rect.new(0,0,
-															 *Rubygame::Screen.get_surface().size())
+		@area = Rubygame::Screen.get_surface().make_rect()
 		@xvel = 9 # called self.move in the pygame example
 
 		# In python, the integer 0 signifies false, while in ruby it does not.
@@ -168,7 +165,7 @@ class Chimp
 			# and is just as efficient as incremental rotations.
 			@image = @original.rotozoom(@dizzy,1,true)
 		end
-		@rect = Rubygame::Rect.new(0,0,*@image.size)
+		@rect = image.make_rect()
 		@rect.center = center # re-center
 	end
 
@@ -193,24 +190,14 @@ def main
 	
 	# Initialize Everything
 	Rubygame.init()
-	screen = Rubygame::Screen.set_mode([468, 60])
+	screen = Screen.new([468, 60])
 	screen.title = 'Monkey Fever'
 	screen.show_cursor = false;
 	# In Rubygame, you make an EventQueue object; pygame just uses functions
-	queue = Rubygame::EventQueue.new()
+	queue = EventQueue.new()
 
-	begin
-		# Not in the pygame version - for Rubygame, we need to
-		# open the audio device. The default values are fine.
-		Rubygame::Mixer::open_audio
-	rescue Rubygame::SDLError => e
-		warn e
-		$sound_ok = false
-		warn "Continuing without sound..."
-	end
-	
 	# Create The Background
-	background = Rubygame::Surface.new(screen.size)
+	background = Surface.new(screen.size)
 	background.fill([250,250,250])
 	
 	# Put Text On The Background, Centered
@@ -223,9 +210,9 @@ def main
 		# 
 		# 25 is more or less the actual font size in the pygame example,
 		# based on scaling factor (0.6875) pygame applies to its default font.
-		font = Rubygame::TTF.new("FreeSans.ttf",25)
+		font = TTF.new("FreeSans.ttf",25)
 		text = font.render("Pummel The Chimp, And Win $$$", true, [10,10,10])
-		textpos = Rubygame::Rect.new(0,0,*text.size)
+		textpos = text.make_rect()
 		textpos.centerx = background.width/2
 		# ATTENTION: Note that the "actor" is reversed from the pygame usage.
 		# In pygame, a surface "pulls" another surface's data onto itself.
@@ -243,13 +230,16 @@ def main
 	# This also differs from pygame. Rather than pass the desired framerate
 	# when you call clock.tick, you set the framerate for the clock, either
 	# when you create it, or afterwards with the desired_fps accessors.
-	clock = Rubygame::Clock.new { |clock| clock.target_framerate = 30 }
+	clock = Clock.new { |clock| clock.target_framerate = 30 }
 
-	whiff_sound = load_sound('whiff.wav')
-	punch_sound = load_sound('punch.wav')
+	# Autoload the sound effects
+	whiff_sound = Sound['whiff.wav']
+	punch_sound = Sound['punch.wav']
+	
 	chimp = Chimp.new()
 	fist = Fist.new()
-	allsprites = Rubygame::Sprites::Group.new()
+	
+	allsprites = Sprites::Group.new()
 	allsprites.push(chimp, fist)
 	
 	#Main Loop
@@ -264,25 +254,25 @@ def main
 			# Unlike in pygame, each event is detected by class, not
 			# by an integer type identifier.
 			case(event)
-			when Rubygame::QuitEvent
+			when QuitEvent
 				return			# break out of the main function
-			when Rubygame::KeyDownEvent
+			when KeyDownEvent
 				case event.key 
-				when Rubygame::K_ESCAPE
+				when K_ESCAPE
 					return			# break out of the main function
 				end
-			when Rubygame::MouseMotionEvent
+			when MouseMotionEvent
 				fist.tell(event)
-			when Rubygame::MouseDownEvent
+			when MouseDownEvent
 				if fist.punch(chimp)
 					chimp.punched()
 					# Only try to play the sound if it isn't nil
-					Rubygame::Mixer::play(punch_sound,-1,0) if punch_sound
+					punch_sound.play if punch_sound
 				else
 					# Only try to play the sound if it isn't nil
-					Rubygame::Mixer::play(whiff_sound,-1,0) if whiff_sound
+					whiff_sound.play if whiff_sound
 				end
-			when Rubygame::MouseUpEvent
+			when MouseUpEvent
 				fist.unpunch()
 			end
 		end 					# end event handling
@@ -302,7 +292,6 @@ def main
 ensure
   # This ensures that we properly close and clean up everything at the end
   # of the game.
-	Rubygame::Mixer.close_audio()
 	Rubygame.quit()
 end								# end main function
 

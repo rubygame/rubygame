@@ -30,6 +30,7 @@
 
 VALUE rbgm_init(VALUE);
 VALUE rbgm_quit(VALUE);
+void Define_Rubygame_Constants();
 
 /* 
  *  call-seq:
@@ -43,12 +44,11 @@ VALUE rbgm_quit(VALUE);
  *  not be initialized for some reason.
  *
  *  Example:
- *    include Rubygame
- *    Event.key_name( K_A )       # => "a"
- *    Event.key_name( K_RETURN )  # => "return"
- *    Event.key_name( K_LEFT )    # => "left"
+ *    Rubygame.key_name( Rubygame::K_A )       # => "a"
+ *    Rubygame.key_name( Rubygame::K_RETURN )  # => "return"
+ *    Rubygame.key_name( Rubygame::K_LEFT )    # => "left"
  */
-VALUE rbgm_event_keyname(VALUE self, VALUE sym)
+VALUE rbgm_keyname(VALUE self, VALUE sym)
 {
 	/* SDL_GetKeyName only works when video system has been initialized. */
 	if( init_video_system() == 0 )
@@ -74,13 +74,15 @@ VALUE rbgm_event_keyname(VALUE self, VALUE sym)
  */
 VALUE rbgm_init(VALUE module)
 {
-	if( SDL_Init(SDL_INIT_EVERYTHING) != 0 )
+	if(SDL_Init(SDL_INIT_EVERYTHING)==0)
+	{
+		return Qnil;
+	}
+	else
 	{
 		rb_raise(eSDLError,"Could not initialize SDL.");
 		return Qnil; /* should never get here */
 	}
-
-	SDL_EnableUNICODE(1);
 }
 
 /*
@@ -107,6 +109,7 @@ void Init_rubygame_core()
 
 	rb_define_module_function(mRubygame,"init",rbgm_init,0);
 	rb_define_module_function(mRubygame,"quit",rbgm_quit,0);
+	rb_define_singleton_method(mRubygame,"key_name",rbgm_keyname, 1);
 	cRect = rb_define_class_under(mRubygame,"Rect",rb_cArray);
 
   rb_hash_aset(rb_ivar_get(mRubygame,rb_intern("VERSIONS")),
@@ -115,7 +118,6 @@ void Init_rubygame_core()
                            INT2NUM(RUBYGAME_MAJOR_VERSION),
                            INT2NUM(RUBYGAME_MINOR_VERSION),
                            INT2NUM(RUBYGAME_PATCHLEVEL)));
-
   rb_hash_aset(rb_ivar_get(mRubygame,rb_intern("VERSIONS")),
                ID2SYM(rb_intern("sdl")),
                rb_ary_new3(3,
@@ -130,11 +132,24 @@ void Init_rubygame_core()
 	Rubygame_Init_Joystick();
   Rubygame_Init_GL();
 
-	VALUE cEvent = rb_define_class_under(mRubygame,"Event",rb_cObject);
-	rb_define_singleton_method(cEvent,"key_name",rbgm_event_keyname, 1);
+	/* Flags for subsystem initialization */
+	rb_define_const(mRubygame,"INIT_TIMER",INT2NUM(SDL_INIT_TIMER));
+	rb_define_const(mRubygame,"INIT_AUDIO",INT2NUM(SDL_INIT_AUDIO));
+	rb_define_const(mRubygame,"INIT_VIDEO",INT2NUM(SDL_INIT_VIDEO));
+	rb_define_const(mRubygame,"INIT_CDROM",INT2NUM(SDL_INIT_CDROM));
+	rb_define_const(mRubygame,"INIT_JOYSTICK",INT2NUM(SDL_INIT_JOYSTICK));
+	rb_define_const(mRubygame,"INIT_NOPARACHUTE",INT2NUM(SDL_INIT_NOPARACHUTE));
+	rb_define_const(mRubygame,"INIT_EVENTTHREAD",UINT2NUM(SDL_INIT_EVENTTHREAD));
+	rb_define_const(mRubygame,"INIT_EVERYTHING",UINT2NUM(SDL_INIT_EVERYTHING));
 
+	
 	/* Define fully opaque and full transparent (0 and 255) */
 	rb_define_const(mRubygame,"ALPHA_OPAQUE",UINT2NUM(SDL_ALPHA_OPAQUE));
 	rb_define_const(mRubygame,"ALPHA_TRANSPARENT",
 	                UINT2NUM(SDL_ALPHA_TRANSPARENT));
+
+
+	/* Flags for palettes (?) */
+	rb_define_const(mRubygame,"LOGPAL",UINT2NUM(SDL_LOGPAL));
+	rb_define_const(mRubygame,"PHYSPAL",UINT2NUM(SDL_PHYSPAL));
 }

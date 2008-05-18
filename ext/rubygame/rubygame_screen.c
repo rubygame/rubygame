@@ -45,9 +45,8 @@ VALUE rbgm_screen_getshowcursor(VALUE);
 VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
 
 
-
 /* call-seq:
- *     new(size, depth=0, flags=[])  ->  Screen
+ *     new(size, depth=0, flags=[SWSURFACE])  ->  Screen
  *     (aliases: set_mode, instance)
  *
  *  Create a new Rubygame window if there is none, or modify the existing one.
@@ -59,48 +58,47 @@ VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
  *  size::  requested window size (in pixels), in the form [width,height]
  *  depth:: requested color depth (in bits per pixel). If 0 (default), the
  *          current system color depth.
- *  flags:: an Array of zero or more of the following symbols:
+ *  flags:: an Array of zero or more of the following flags (located under the
+ *          Rubygame module).
  *          
- *          :hardware::   Try to create the video surface in video card memory
- *                        instead of in general memory. This makes it very fast
- *                        to blit hardware surfaces onto other hardware surfaces,
- *                        but slower to access the image data (e.g to draw shapes
- *                        or rotate it).
- *          :asyncblit::  Enables the use of asynchronous updates of the 
- *                        display surface. This will usually slow down 
- *                        blitting on single CPU machines, but may provide a
- *                        speed increase on SMP systems.
- *          :anyformat::  Normally, if a video surface of the requested 
- *                        bits-per-pixel (bpp) is not available, Rubygame
- *                        will emulate one with a shadow surface. Passing 
- *                        this flag prevents this and causes Rubygame to
- *                        use the video surface regardless of its depth.
- *          :doublebuf::  Enable hardware double buffering; only valid with 
- *                        +:hwsurface+. Calling #flip will flip the
- *                        buffers and update the screen. All drawing will
- *                        take place on the surface that is not displayed at
- *                        the moment. If double buffering could not be 
- *                        enabled then #flip will just update the
- *                        entire screen.
- *          :fullscreen:: Rubygame will attempt to use a fullscreen mode. If
- *                        a hardware resolution change is not possible (for 
- *                        whatever reason), the next higher resolution will
- *                        be used and the display window centered on a black
- *                        background.
- *          :opengl::     Create an OpenGL rendering context. You must set
- *                        proper OpenGL video attributes with GL#set_attrib
- *                        before calling this method with this flag. You can
- *                        then use separate OpenGL libraries (e.g. ruby-opengl)
- *                        to do all OpenGL-related functions.
- *                        Please note that you can't blit or draw regular SDL
- *                        Surfaces onto an OpenGL-mode screen; you must use
- *                        OpenGL functions.
- *          :resizable::  Allow the window to be resized by the user. When the
- *                        window is resized, a ResizeEvent is generated and
- *                        you should re-make the Screen with the new size.
- *          :noframe::    If possible, create a window with no title bar or
- *                        frame decoration.
- *                        Fullscreen modes automatically have this flag set.
+ *          SWSURFACE::  Create the video surface in system memory.
+ *          HWSURFACE::  Create the video surface in video memory.
+ *          ASYNCBLIT::  Enables the use of asynchronous updates of the 
+ *                       display surface. This will usually slow down 
+ *                       blitting on single CPU machines, but may provide a
+ *                       speed increase on SMP systems.
+ *          ANYFORMAT::  Normally, if a video surface of the requested 
+ *                       bits-per-pixel (bpp) is not available, Rubygame
+ *                       will emulate one with a shadow surface. Passing 
+ *                       +ANYFORMAT+ prevents this and causes Rubygame to
+ *                       use the video surface regardless of its depth.
+ *          DOUBLEBUF::  Enable hardware double buffering; only valid with 
+ *                       +HWSURFACE+. Calling #flip will flip the
+ *                       buffers and update the screen. All drawing will
+ *                       take place on the surface that is not displayed at
+ *                       the moment. If double buffering could not be 
+ *                       enabled then #flip will just update the
+ *                       entire screen.
+ *          FULLSCREEN:: Rubygame will attempt to use a fullscreen mode. If
+ *                       a hardware resolution change is not possible (for 
+ *                       whatever reason), the next higher resolution will
+ *                       be used and the display window centered on a black
+ *                       background.
+ *          OPENGL::     Create an OpenGL rendering context. You must set
+ *                       proper OpenGL video attributes with GL#set_attrib
+ *                       before calling this method with this flag. You can
+ *                       then use separate opengl libraries (for example rbogl)
+ *                       to do all OpenGL-related functions.
+ *                       Please note that you can't blit or draw regular SDL
+ *                       Surfaces onto an OpenGL-mode screen; you must use
+ *                       OpenGL functions.
+ *          RESIZABLE::  Create a resizable window. When the window is 
+ *                       resized by the user, a ResizeEvent is
+ *                       generated and #set_mode can be called again
+ *                       with the new size.
+ *          NOFRAME::    If possible, create a window with no title bar or
+ *                       frame decoration.
+ *                       Fullscreen modes automatically have this flag set.
  */
 VALUE rbgm_screen_setmode(int argc, VALUE *argv, VALUE module)
 {
@@ -121,19 +119,7 @@ VALUE rbgm_screen_setmode(int argc, VALUE *argv, VALUE module)
 		depth = NUM2INT(vdepth);
 	}
 
-	flags = 0;
-	if( RTEST(vflags) )
-	{
-		flags = surface_extract_flags( vflags, 
-		                               SDL_HWSURFACE  |
-		                               SDL_ASYNCBLIT  |
-		                               SDL_ANYFORMAT  |
-		                               SDL_DOUBLEBUF  |
-		                               SDL_FULLSCREEN |
-		                               SDL_OPENGL     |
-		                               SDL_RESIZABLE  |
-		                               SDL_NOFRAME    );
-	}
+	flags = collapse_flags(vflags); /* in rubygame_shared */
 
   screen = SDL_SetVideoMode( w,h,depth,flags );
 
@@ -142,7 +128,8 @@ VALUE rbgm_screen_setmode(int argc, VALUE *argv, VALUE module)
 	  rb_raise(eSDLError,"Couldn't set [%d x %d] %d bpp video mode: %s",
 			   w, h, depth, SDL_GetError());
 	}
-
+  //format = screen->format;
+  //printf("New screen will be: %dx%d, %d bpp. Masks: %d, %d, %d, %d\n",w,h,depth,format->Rmask,format->Gmask,format->Bmask,format->Amask);
   return Data_Wrap_Struct( cScreen,0,0,screen ); 
 }
 

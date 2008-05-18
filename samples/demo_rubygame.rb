@@ -28,10 +28,21 @@ unless ($gfx_ok = (VERSIONS[:sdl_gfx] != nil))
   raise "SDL_gfx is not available. Bailing out." 
 end
 
+
+# Set up autoloading for Surfaces. Surfaces will be loaded automatically
+# the first time you use Surface["filename"]. Check out the docs for
+# Rubygame::NamedResource for more info about that.
+#
+Surface.autoload_dirs = [ File.dirname(__FILE__) ]
+
+
 class Panda
 	include Sprites::Sprite
-	@@pandapic = Surface.load_image("panda.png")
+  
+  # Autoload the "panda.png" image and set its colorkey
+	@@pandapic = Surface["panda.png"]
 	@@pandapic.set_colorkey(@@pandapic.get_at(0,0))
+  
 	attr_accessor :vx, :vy, :speed
 	def initialize(x,y)
 		super()
@@ -173,11 +184,12 @@ background.draw_ellipse_a([200,150],[30,25], :beige )
 
 # Let's make some labels
 require "rubygame/sfont"
-sfont = SFont.new("term16.png")
+sfont = SFont.new( Surface["term16.png"] )
 sfont.render("Arrow keys move the spinning panda!").blit(background,[10,10])
 
 TTF.setup()
-ttfont = TTF.new("FreeSans.ttf",20)
+ttfont_path = File.join(File.dirname(__FILE__),"FreeSans.ttf")
+ttfont = TTF.new( ttfont_path, 20 )
 ttfont.render("This is some TTF text!",true,[250,250,250]).blit(background,[20,200])
 
 
@@ -205,33 +217,33 @@ catch(:rubygame_quit) do
 			case event
 			when KeyDownEvent
 				case event.key
-				when :escape
+				when K_ESCAPE
 					throw :rubygame_quit 
-				when :q
+				when K_Q
 					throw :rubygame_quit 
-				when :up
+				when K_UP
 					panda1.vy = -1
-				when :down
+				when K_DOWN
 					panda1.vy = 1
-				when :left
+				when K_LEFT
 					panda1.vx = -1
-				when :right
+				when K_RIGHT
 					panda1.vx = 1
-				when :s
+				when K_S
 					$smooth = !$smooth
 					puts "#{$smooth?'En':'Dis'}abling smooth scale/rotate."
 				else
-					print "%s "%[event.key]
+					print "%s"%[event.string]
 				end
 			when KeyUpEvent
 				case event.key
-				when :up
+				when K_UP
 					panda1.vy = 0
-				when :down
+				when K_DOWN
 					panda1.vy = 0
-				when :left
+				when K_LEFT
 					panda1.vx = 0
-				when :right
+				when K_RIGHT
 					panda1.vx = 0
 				end
 			when ActiveEvent
@@ -242,7 +254,7 @@ catch(:rubygame_quit) do
 			when QuitEvent
 				throw :rubygame_quit
 			when MouseDownEvent
-				puts "click: %s at [%d,%d]"%[event.button, *event.pos]
+				puts "click: [%d,%d]"%event.pos
 			when JoyDownEvent
 				case event.button
 				when 4; panda1.speed = 80
@@ -272,7 +284,7 @@ catch(:rubygame_quit) do
 		dirty_rects = pandas.draw(screen)
 		screen.update_rects(dirty_rects)
 
-		update_time = clock.tick().milliseconds
+		update_time = clock.tick()
 		unless framerate == clock.framerate
 			framerate = clock.framerate
 			screen.title = "Rubygame test [%d fps]"%framerate

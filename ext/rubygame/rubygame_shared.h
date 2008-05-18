@@ -24,7 +24,6 @@
 #include <SDL.h>
 #include <ruby.h>
 #include <stdio.h>
-#include <string.h>
 
 /* General */
 extern VALUE mRubygame;
@@ -65,10 +64,5 @@ static inline int min(int a, int b) {
 }
 
 #endif
-
-/* True if the two strings are equal. */
-static inline int rg_streql(char *stra, char *strb) {
-	return (strcmp(stra,strb) == 0);
-}
 
 #endif

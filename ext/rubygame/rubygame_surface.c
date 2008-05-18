@@ -60,94 +60,9 @@ VALUE rbgm_image_savebmp(VALUE, VALUE);
 
 VALUE rbgm_transform_flip(VALUE, VALUE, VALUE);
 
-
-
-
-Uint32 surface_syms_to_flags( VALUE ary )
-{
-	ary = convert_to_array(ary);
-
-	Uint32 flags = 0;
-	int i;
-	int len = RARRAY(ary)->len;
-	char *symbol;
-
-	for(i = 0; i < len; i++ )
-	{
-		symbol = rb_id2name( SYM2ID( rb_ary_entry(ary,i) ) );
-
-		if     ( rg_streql(symbol, "hardware"  ))  flags |= SDL_HWSURFACE;
-		else if( rg_streql(symbol, "asyncblit" ))  flags |= SDL_ASYNCBLIT;
-		else if( rg_streql(symbol, "anyformat" ))  flags |= SDL_ANYFORMAT;
-		else if( rg_streql(symbol, "doublebuf" ))  flags |= SDL_DOUBLEBUF;
-		else if( rg_streql(symbol, "fullscreen"))  flags |= SDL_FULLSCREEN;
-		else if( rg_streql(symbol, "opengl"    ))  flags |= SDL_OPENGL;
-		else if( rg_streql(symbol, "resizable" ))  flags |= SDL_RESIZABLE;
-		else if( rg_streql(symbol, "noframe"   ))  flags |= SDL_NOFRAME;
-		else if( rg_streql(symbol, "colorkey"  ))  flags |= SDL_SRCCOLORKEY;
-		else if( rg_streql(symbol, "alpha"     ))  flags |= SDL_SRCALPHA;
-		else if( rg_streql(symbol, "rleaccel"  ))  flags |= SDL_RLEACCEL;
-		else rb_raise( rb_eArgError, "Unknown flag ':%s'.", symbol);
-	}
-
-	return flags;
-}
-
-
-VALUE surface_flags_to_syms( Uint32 flags )
-{
-	VALUE ary = rb_ary_new();
-
-	if(flags & SDL_HWSURFACE  )  rb_ary_push( ary, make_symbol("hardware")   );
-	if(flags & SDL_ASYNCBLIT  )  rb_ary_push( ary, make_symbol("asyncblit")  );
-	if(flags & SDL_ANYFORMAT  )  rb_ary_push( ary, make_symbol("anyformat")  );
-	if(flags & SDL_DOUBLEBUF  )  rb_ary_push( ary, make_symbol("doublebuf")  );
-	if(flags & SDL_FULLSCREEN )  rb_ary_push( ary, make_symbol("fullscreen") );
-	if(flags & SDL_OPENGL     )  rb_ary_push( ary, make_symbol("opengl")     );
-	if(flags & SDL_RESIZABLE  )  rb_ary_push( ary, make_symbol("resizable")  );
-	if(flags & SDL_NOFRAME    )  rb_ary_push( ary, make_symbol("noframe")    );
-	if(flags & SDL_SRCCOLORKEY)  rb_ary_push( ary, make_symbol("colorkey")   );
-	if(flags & SDL_SRCALPHA   )  rb_ary_push( ary, make_symbol("alpha")      );
-	if(flags & SDL_RLEACCEL   )  rb_ary_push( ary, make_symbol("rleaccel")   );
-
-	return ary;
-}
-
-
-Uint32 surface_extract_flags( VALUE ary_symbols, Uint32 allowed )
-{
-	/* Convert to bitwise flags, and also filter out
-	 * totally unknown symbols.
-	 */
-	Uint32 given = surface_syms_to_flags( ary_symbols );
-
-	/* Arcane bitwise operation to filter out allowed flags,
-	 * leaving behind only the unallowed ones (if any).
-	 */
-	Uint32 bad_flags = (given ^ ( given & allowed));
-
-	if( bad_flags )
-	{
-		VALUE bad = surface_flags_to_syms( bad_flags );
-
-		/* Raise error with the only the first bad flag. 
-		 * Multiple flags in one error considered bad style. -J
-		 */
-		rb_raise( rb_eArgError, "Inappropriate flag ':%s'.",
-		          rb_id2name(SYM2ID( rb_ary_entry(bad,0) )) );
-	}
-	else
-	{
-		return given;
-	}
-}
-
-
-
-
 /* 
  *  call-seq:
- *     new(size, depth=0, flags=[])  ->  Surface
+ *     new(size, depth=0, flags=0)  ->  Surface
  *
  *  Create and initialize a new Surface object. 
  *
@@ -165,17 +80,21 @@ Uint32 surface_extract_flags( VALUE ary_symbols, Uint32 allowed )
  *          automatically choose a color depth: either the depth of the Screen
  *          mode (if one has been set), or the greatest color depth available
  *          on the system.
- *  flags:: an Array of zero or more of the following flags:
- *          :hardware::  request a hardware-accelerated surface (using a 
- *                       graphics card), if available. Creates a software
- *                       surface if hardware surfaces are not available.
- *          :colorkey::  request a colorkeyed surface. #set_colorkey will
- *                       also enable colorkey as needed. For a description
- *                       of colorkeys, see #set_colorkey.
- *          :alpha::     request an alpha channel. #set_alpha will
- *                       also enable alpha. as needed. For a description
- *                       of alpha, see #alpha.
- *
+ *  flags:: an Array or Bitwise-OR'd list of zero or more of the following 
+ *          flags (located in the Rubygame module, e.g. Rubygame::SWSURFACE).
+ *          This argument may be omitted, in which case the Surface 
+ *          will be a normal software surface (this is not necessarily a bad
+ *          thing).
+ *          SWSURFACE::   (default) request a software surface.
+ *          HWSURFACE::   request a hardware-accelerated surface (using a 
+ *                        graphics card), if available. Creates a software
+ *                        surface if hardware surfaces are not available.
+ *          SRCCOLORKEY:: request a colorkeyed surface. #set_colorkey will
+ *                        also enable colorkey as needed. For a description
+ *                        of colorkeys, see #set_colorkey.
+ *          SRCALPHA::    request an alpha channel. #set_alpha will
+ *                        also enable alpha. as needed. For a description
+ *                        of alpha, see #alpha.
  */
 VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 {
@@ -186,9 +105,7 @@ VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 	int w, h, depth;
 	VALUE vsize, vdepth, vflags;
 
-
 	rb_scan_args(argc, argv, "12", &vsize, &vdepth, &vflags);
-
 
 	if( SDL_GetVideoSurface() )
 	{
@@ -215,8 +132,7 @@ VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 	Bmask = pixformat->Bmask;
 	Amask = pixformat->Amask;
 
-
-	if( RTEST(vdepth) && NUM2INT(vdepth) > 0 )
+	if( !NIL_P(vdepth) && NUM2INT(vdepth) > 0 )
 	{
 		/* TODO: We might want to check that the requested depth makes sense. */
 		depth = NUM2INT(vdepth);
@@ -238,17 +154,8 @@ VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 	else
 		rb_raise(rb_eArgError,"Array is too short for Surface size (%d for 2)",\
 			RARRAY(vsize)->len);
-
-
-	flags = 0;
-	if( RTEST(vflags) )
-	{
-		flags = surface_extract_flags( vflags, 
-		                               SDL_HWSURFACE |
-		                               SDL_SRCCOLORKEY |
-		                               SDL_SRCALPHA );
-	}
-
+	
+	flags = collapse_flags(vflags); /* in rubygame_shared */
 
 	/* Finally, we can create the new Surface! Or try, anyway... */
 	self_surf = SDL_CreateRGBSurface(flags,w,h,depth,Rmask,Gmask,Bmask,Amask);
@@ -326,15 +233,14 @@ VALUE rbgm_surface_get_depth(VALUE self)
 /*  call-seq:
  *     flags
  *
- *  Return the flags the Surface has enabled (an Array of symbols).
- *  See Surface.new (or Screen.new) for a list of possible flags.
- *  
+ *  Return any flags the surface was initialized with 
+ *  (as a bitwise OR'd integer).
  */
 VALUE rbgm_surface_get_flags(VALUE self)
 {
 	SDL_Surface *surf;
 	Data_Get_Struct(self, SDL_Surface, surf);
-	return surface_flags_to_syms(surf->flags);
+	return UINT2NUM(surf->flags);
 }
 
 /* 
@@ -1228,7 +1134,7 @@ void Rubygame_Init_Surface()
 	/* Include the Rubygame::NamedResource mixin module. */
 	rg_include_named_resource(cSurface);
 
-
+	
 	/* Surface initialization flags */
 	rb_define_const(mRubygame,"SWSURFACE",UINT2NUM(SDL_SWSURFACE));
 	rb_define_const(mRubygame,"HWSURFACE",UINT2NUM(SDL_HWSURFACE));

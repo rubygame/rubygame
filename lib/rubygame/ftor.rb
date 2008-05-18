@@ -74,7 +74,6 @@ class Ftor
 	# Create a new Ftor by specifying its x and y components. See also #new_am
   # and #new_from_to.
 	def initialize(x,y)
-	_clear()
     @x, @y = x, y
 	end
 
@@ -93,7 +92,7 @@ class Ftor
   # In other words, assuming +v+ is the Ftor returned by this function:
   #   p1 + v = p2
   def self.new_from_to(p1,p2)
-    return Ftor.new(p2[0]-p1[0],p2[1]-p1[1])
+    return self.class.new(p2[0]-p1[0],p2[1]-p1[1])
   end
 
 	attr_reader :x                # The x component of the Ftor.

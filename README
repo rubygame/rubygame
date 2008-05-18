@@ -8,24 +8,15 @@
  worrying about low-level technical details, you can focus your energy on
  more interesting things (like making a fun game).
 
- Rubygame's core is written in C to bind low-level SDL functions in ruby.
- On top of that is a pure ruby library for higher-level behavior like
+ Rubygame's core is written in C to bind low-level SDL functions into Ruby.
+ On top of that is a pure Ruby library for higher-level behavior like
  event and game object management.
-
- There are two other Ruby-SDL bindings which are worth mentioning: Ruby/SDL
- and RUDL. Ruby/SDL is a simple wrapper which closely mirrors SDL's C API,
- while RUDL tries to provide some high-level concepts. 
- The main differences with Rubygame come down to a matter of priorities:
- a great deal of care and effort goes into making Rubygame especially clean,
- well-documented, powerful, and easy to use.
 
  === Relevant Links
  1. Rubygame: http://rubygame.sourceforge.net
  2. Ruby: http://www.ruby-lang.org
  3. Pygame: http://www.pygame.org
  4. SDL: http://www.libsdl.org
- 5. Ruby/SDL: http://www.kmc.gr.jp/~ohai/rubysdl.en.html
- 6. RUDL: http://rudl.sourceforge.net
 
  == Requirements
 
@@ -72,32 +63,33 @@
  The build and install tasks can be configured by providing certain commands
  to rake:
 
-  * no-sdl-gfx::    do not build modules which depend on SDL_gfx
-  * no-sdl-image::  do not build modules which depend on SDL_image
-  * no-sdl-mixer::  do not build modules which depend on SDL_mixer
-  * no-sdl-ttf::    do not build modules which depend on SDL_ttf
-  * no-opengl::     do not build modules which depend on OpenGL
+ no-sdl-gfx::    do not build modules which depend on SDL_gfx
+ no-sdl-image::  do not build modules which depend on SDL_image
+ no-sdl-mixer::  do not build modules which depend on SDL_mixer
+ no-sdl-ttf::    do not build modules which depend on SDL_ttf
+ no-opengl::     do not build modules which depend on OpenGL
 
-  * no-sdl-config:: do not guess compiler/linker flags using `sdl-config'
+ no-sdl-config:: do not guess compiler/linker flags using `sdl-config'
 
-  * debug::         build modules with debbugging flags enabled
-  * verbose::       display the build commands as they are run
+ debug::         build modules with debbugging flags enabled
+ universal::     on MacOS X, try to compile for both PPC and Intel
+ verbose::       display the build commands as they are run
 
  Additionally, the build process respects certain environmental variables.
  In particular, CFLAGS and LDFLAGS are important for users compiling with
  the no-sdl-config command.
 
-  * CC::            C compiler command
-  * CFLAGS::        flags passed to the C compiler
-  * LDSHARED::      linker command
-  * LDFLAGS::       flags passed to the linker
-  * RUBYARCHDIR::   where to install platform-specific compiled extensions
-  * RUBYLIBDIR::    where to install platform-independent interpreted libs
+ CC::            C compiler command
+ CFLAGS::        flags passed to the C compiler
+ LDSHARED::      linker command
+ LDFLAGS::       flags passed to the linker
+ RUBYARCHDIR::   where to install platform-specific compiled extensions
+ RUBYLIBDIR::    where to install platform-independent interpreted libs
 
  IMPORTANT: if you are missing any optional SDL_* libraries, you must specify
  "no-*" flags for those libraries. For example, if you don't have SDL_gfx:
 
-  $ rake no-gfx build
+  $ rake no-sdl-gfx build
 
  If you don't disable the features, the compile will probably fail when it
  looks for the headers and libraries. (The build system is not smart enough to
@@ -114,26 +106,18 @@
 
  == Usage
  
- To use Rubygame in an application, do:
+ See the documentation (online at http://rubygame.sourceforge.net, or
+ generated locally with the 'rake rdoc' command). 
 
-   require 'rubygame'
-
- You will probably also want a display window and event queue:
-
-   screen = Rubygame::Screen.new( [640,480] )
-   queue = Rubygame::EventQueue.new()
-
- For more information, see the documentation (online at 
- http://rubygame.sourceforge.net, or generated locally with the 
- 'rake rdoc' command). You should also take a peek at the demo applications
- in the 'samples' directory.
+ We also recommend that you take a peek at the demo applications in
+ the 'samples' directory, especially chimp.rb.
 
  == License
 
  Rubygame is distributed under the terms of the GNU Lesser GPL.
  See LICENSE for more details.
 
- Some of the sample files are distributed under other licenses than the
+ Some of the sample files are distributed under licenses other than the
  GNU Lesser GPL. See 'samples/README' and 'samples/GPL' for more details.
 
  John Croisant (jacius at users.sourceforge.net)
