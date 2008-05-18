@@ -28,10 +28,21 @@ unless ($gfx_ok = (VERSIONS[:sdl_gfx] != nil))
   raise "SDL_gfx is not available. Bailing out." 
 end
 
+
+# Set up autoloading for Surfaces. Surfaces will be loaded automatically
+# the first time you use Surface["filename"]. Check out the docs for
+# Rubygame::NamedResource for more info about that.
+#
+Surface.autoload_dirs = [ File.dirname(__FILE__) ]
+
+
 class Panda
 	include Sprites::Sprite
-	@@pandapic = Surface.load_image("panda.png")
+  
+  # Autoload the "panda.png" image and set its colorkey
+	@@pandapic = Surface["panda.png"]
 	@@pandapic.set_colorkey(@@pandapic.get_at(0,0))
+  
 	attr_accessor :vx, :vy, :speed
 	def initialize(x,y)
 		super()
@@ -173,11 +184,12 @@ background.draw_ellipse_a([200,150],[30,25], :beige )
 
 # Let's make some labels
 require "rubygame/sfont"
-sfont = SFont.new("term16.png")
+sfont = SFont.new( Surface["term16.png"] )
 sfont.render("Arrow keys move the spinning panda!").blit(background,[10,10])
 
 TTF.setup()
-ttfont = TTF.new("FreeSans.ttf",20)
+ttfont_path = File.join(File.dirname(__FILE__),"FreeSans.ttf")
+ttfont = TTF.new( ttfont_path, 20 )
 ttfont.render("This is some TTF text!",true,[250,250,250]).blit(background,[20,200])
 
 
