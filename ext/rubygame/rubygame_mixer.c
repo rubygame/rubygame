@@ -389,6 +389,9 @@ VALUE rbgm_mixer_setmixchans(VALUE module, VALUE channelsv)
 /* call-seq:
  *  driver_name -> string 
  *
+ *  **NOTE:** This method is DEPRECATED and will be removed in
+ *  Rubygame 3.0. Please use the Rubygame.audio_driver instead.
+ *
  *  Returns the name of the audio driver that SDL is using.
  *
  *  May raise an SDLError if initialization fails.
@@ -396,10 +399,36 @@ VALUE rbgm_mixer_setmixchans(VALUE module, VALUE channelsv)
 
 VALUE rbgm_mixer_getdrivername(VALUE module)
 {
+  /* This feature will be removed in Rubygame 3.0. */
+  rg_deprecated("Rubygame::Mixer", "3.0");
+
   char driver_name[1024];
   if(SDL_AudioDriverName(driver_name, sizeof(driver_name)) == NULL)
   {	
-    rb_raise(eSDLError, "Error fetrching audio driver name: %s", SDL_GetError());
+    rb_raise(eSDLError, "Error fetching audio driver name: %s", SDL_GetError());
+  }
+  return rb_str_new2(driver_name);
+}
+
+/* call-seq:
+ *  audio_driver -> string 
+ *
+ *  Returns the name of the audio driver that SDL is using.
+ *
+ *  May raise an SDLError if initialization fails.
+ */
+
+VALUE rbgm_mixer_audiodriver(VALUE module)
+{
+  if( ensure_open_audio() != 0 )
+  {
+    rb_raise(eSDLError, "Could not initialize audio: %s", Mix_GetError());
+  }
+
+  char driver_name[1024];
+  if(SDL_AudioDriverName(driver_name, sizeof(driver_name)) == NULL)
+  {	
+    rb_raise(eSDLError, "Could not get audio driver name: %s", Mix_GetError());
   }
   return rb_str_new2(driver_name);
 }
@@ -909,9 +938,9 @@ void Init_rubygame_mixer()
   /*
    * Moving these to be under Rubygame module instead of Mixer.
    */
-  rb_define_module_function(mRubygame,"open_audio",  rbgm_mixer_openaudio2,   -1);
-  rb_define_module_function(mRubygame,"close_audio", rbgm_mixer_closeaudio2,   0);
-  rb_define_module_function(mRubygame,"driver_name", rbgm_mixer_getdrivername, 0);
+  rb_define_module_function(mRubygame,"open_audio",  rbgm_mixer_openaudio2, -1);
+  rb_define_module_function(mRubygame,"close_audio", rbgm_mixer_closeaudio2, 0);
+  rb_define_module_function(mRubygame,"audio_driver",rbgm_mixer_audiodriver, 0);
 
 
 
