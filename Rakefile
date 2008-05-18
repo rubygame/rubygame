@@ -66,7 +66,6 @@ gem_spec = Gem::Specification.new do |s|
   end
 
   s.require_paths = ["lib", "lib/rubygame/", "ext/rubygame/"]
-  s.autorequire = "rubygame.rb"
   s.extensions = ["Rakefile"]
 
   s.extra_rdoc_files = FileList.new do |fl|
@@ -75,16 +74,8 @@ gem_spec = Gem::Specification.new do |s|
   end
 end
 
-task :linux do
-	gem_spec.platform = Gem::Platform::LINUX_586
-end
-
-task :macosx do
-	gem_spec.platform = Gem::Platform::DARWIN
-end
-
-task :win32 do
-	gem_spec.platform = Gem::Platform::WIN32
+task :binary do
+	gem_spec.platform = Gem::Platform::CURRENT
 end
 
 Rake::GemPackageTask.new(gem_spec) do |pkg| 
