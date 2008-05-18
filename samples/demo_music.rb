@@ -2,10 +2,10 @@
 
 require 'rubygame'
 
+include Rubygame
 Rubygame.init()
 
 def test_music() 
-	mix = Rubygame::Mixer
 
 	# Use the lines below to get rid of artsd and contact ALSA directly on Linux.
 	# ARTSD happens to be buggy on my old, old linux distro. 
@@ -16,9 +16,7 @@ def test_music()
 		end
 	end
 
-	mix.open_audio
-	puts "Using audio driver:" + mix.driver_name
-	music = mix::Music
+	puts "Using audio driver:" + Rubygame.audio_driver
 
 	if ARGV[0]
 		file = ARGV[0]
@@ -27,10 +25,15 @@ def test_music()
 		puts "If you want, you could give a filename as an argument to this script."
 	end
 
-	mus = music.load_audio(file);
+  Music.autoload_dirs = [ File.dirname(__FILE__) ]
+	mus = Music[file];
+  
+  unless mus
+    puts "ERROR: Couldn't find audio file '#{file}'."
+  end
 
 	puts "Testing fading in over 3 seconds, repeating forever."
-	mus.fade_in(3, -1);
+	mus.play( :fade_in => 3, :repeats => -1 );
 	puts('ERROR: Music not fading in') unless mus.fading?(:in)
 	sleep 3
 
@@ -52,7 +55,7 @@ def test_music()
 	sleep 1
 
 	puts "Resuming."
-	mus.resume
+	mus.unpause
 	puts "ERROR: Music not resumed" unless mus.playing?
 
 	puts "Playing for 2 seconds."
@@ -66,7 +69,6 @@ def test_music()
 	# Test playing of music to the end
 
 	puts "ERROR: Music not ended" if mus.playing?
-	mix.close_audio
 end
 
 music_thread = Thread.new do test_music() end
