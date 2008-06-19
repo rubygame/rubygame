@@ -1,6 +1,6 @@
 #--
 #  Rubygame -- Ruby code and bindings to SDL to facilitate game creation
-#  Copyright (C) 2004-2007  John Croisant
+#  Copyright (C) 2004-2007, 2008  John Croisant
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Lesser General Public
@@ -17,8 +17,9 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #++
 
-# This is the file that should be imported, it in turn imports rubygame.so
-# (which has all of the C code for rubygame) and all the other rubygame modules
+# This file is loaded when you "require 'rubygame'".
+# It loads up the compiled C extensions and the rest of
+# the Rubygame library modules.
 
 require "rbconfig"
 
