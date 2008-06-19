@@ -42,6 +42,7 @@ module Rubygame
       end
     end
 
+
     class KeyPressed
       include KeyboardEvent
 
@@ -49,6 +50,11 @@ module Rubygame
 
       def initialize( key, modifiers=[], string="" )
         super( key, modifiers )
+
+        unless string.kind_of? String
+          raise ArgumentError, "string must be a String"
+        end
+
         @string = string
       end
     end
