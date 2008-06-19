@@ -28,6 +28,11 @@ module Rubygame
       attr_reader :key, :modifiers
 
       def initialize( key, modifiers=[] )
+
+        unless key.kind_of? Symbol
+          raise ArgumentError, "key must be a :symbol"
+        end
+
         @key = key
         @modifiers = modifiers
       end
