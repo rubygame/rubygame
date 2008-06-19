@@ -43,6 +43,7 @@ require "rubygame/color"
 require "rubygame/constants"
 
 require "rubygame/event"
+require "rubygame/events"
 require "rubygame/queue"
 require "rubygame/event_handler"
 
