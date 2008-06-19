@@ -14,7 +14,9 @@ describe "a keyboard event", :shared => true do
     @event.key.should == :a
   end
 
-  it "should have an array of modifiers"
+  it "should have an array of modifiers" do
+    @event.modifiers.should == [:shift]
+  end
  
 end
 
