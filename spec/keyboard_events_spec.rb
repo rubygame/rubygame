@@ -21,6 +21,10 @@ describe "a keyboard event", :shared => true do
   it "should have an array of modifiers" do
     @event.modifiers.should == [:shift]
   end
+
+  it "should complain if modifiers is not an array" do
+    lambda { @event.class.new( :a, 4 ) }.should raise_error(ArgumentError)
+  end
  
 end
 
