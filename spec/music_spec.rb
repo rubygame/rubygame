@@ -1,5 +1,11 @@
+
+# Prefer local library over installed version.
+$:.unshift( File.join( File.dirname(__FILE__), "..", "lib" ) )
+$:.unshift( File.join( File.dirname(__FILE__), "..", "ext", "rubygame" ) )
+
 require 'rubygame'
 include Rubygame
+
 
 samples_dir = File.join( File.dirname(__FILE__), "..", "samples", "")
 test_dir = File.dirname(__FILE__)
