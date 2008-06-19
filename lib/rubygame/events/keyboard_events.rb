@@ -27,7 +27,7 @@ module Rubygame
     module KeyboardEvent
       attr_reader :key, :modifiers
 
-      def initialize( key, mmodifiers=[] )
+      def initialize( key, modifiers=[] )
         @key = key
         @modifiers = modifiers
       end
