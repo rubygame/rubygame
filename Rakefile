@@ -430,13 +430,25 @@ task :install => [:install_ext, :install_lib]
 
 
 
+#########
+# SPECS #
+#########
+
 begin
   require 'spec/rake/spectask'
 
-  desc "Run all specs (tests)"
+  desc "Run all specs"
   Spec::Rake::SpecTask.new do |t|
     t.spec_files = FileList['spec/*_spec.rb']
   end
+
+  namespace :spec do
+    desc "Run all specs"
+    Spec::Rake::SpecTask.new(:all) do |t|
+      t.spec_files = FileList['spec/*_spec.rb']
+    end
+  end
+
 rescue LoadError
   task :spec do 
     puts "ERROR: RSpec is not installed?"
