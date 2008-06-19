@@ -21,6 +21,12 @@
 # It loads up the compiled C extensions and the rest of
 # the Rubygame library modules.
 
+
+# Prefer local library over global installed version.
+$:.unshift( File.join( File.dirname(__FILE__), "..", "lib" ) )
+$:.unshift( File.join( File.dirname(__FILE__), "..", "ext", "rubygame" ) )
+
+
 require "rbconfig"
 
 require "rubygame_core"
