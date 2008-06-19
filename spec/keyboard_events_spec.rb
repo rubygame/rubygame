@@ -30,7 +30,9 @@ describe "KeyPressed Event" do
 
   it_should_behave_like "a keyboard event"
 
-  it "should have a utf8 string"
+  it "should have a string" do
+    @event.string.should == "A"
+  end
 
 end
 
