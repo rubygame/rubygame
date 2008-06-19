@@ -20,6 +20,23 @@
 #++
 
 
+module Rubygame
+
+  # The Events module contains classes representing various
+  # hardware events (e.g. keyboard presses, mouse clicks)
+  # and software events (e.g. clock tick, window becomes active)
+  # 
+  # This event classes are meant as a full replacement for
+  # the older event classes defined in the Rubygame module 
+  # (e.g. KeyDownEvent, QuitEvent). The old classes are
+  # deprecated and should not be used anymore.
+  # 
+  module Events
+  end
+
+end
+
+
 # Load all the ruby files in events/
 glob = File.join( File.dirname(__FILE__), "events", "*.rb" )
 Dir.glob( glob ).each do |path|
