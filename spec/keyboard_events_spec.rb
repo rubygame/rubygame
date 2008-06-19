@@ -10,7 +10,9 @@ include Rubygame::Events
 
 describe "a keyboard event", :shared => true do
   
-  it "should have a key symbol"
+  it "should have a key symbol" do
+    @event.key.should == :a
+  end
 
   it "should have an array of modifiers"
  
