@@ -22,7 +22,7 @@ end
 
 
 
-describe "KeyPressed Event" do
+describe KeyPressed do
 
   before :each do
     @event = KeyPressed.new( :a, [:shift], "A" )
@@ -37,7 +37,7 @@ describe "KeyPressed Event" do
 end
 
 
-describe "KeyReleased Event" do
+describe KeyReleased do
   
   before :each do
     @event = KeyReleased.new( :a, [:shift] )
