@@ -14,6 +14,10 @@ describe "a keyboard event", :shared => true do
     @event.key.should == :a
   end
 
+  it "should complain if key symbol is not a symbol" do
+    lambda { @event.class.new( 4 ) }.should raise_error(ArgumentError)
+  end
+
   it "should have an array of modifiers" do
     @event.modifiers.should == [:shift]
   end
