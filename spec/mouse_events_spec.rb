@@ -77,7 +77,9 @@ describe "MouseMoved" do
     lambda { @event.class.new( 4 ) }.should raise_error(ArgumentError)
   end
 
-  it "should complain if position is omitted"
+  it "should complain if position is omitted" do
+    lambda { @event.class.new() }.should raise_error(ArgumentError)
+  end
 
   it "should have a relative movement"
 
