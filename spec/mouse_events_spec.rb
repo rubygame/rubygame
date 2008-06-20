@@ -89,7 +89,9 @@ describe "MouseMoved" do
     lambda { @event.class.new( [1,2], 4 ) }.should raise_error(ArgumentError)
   end
 
-  it "should complain if relative movement is omitted"
+  it "should complain if relative movement is omitted" do
+    lambda { @event.class.new( [1,2] ) }.should raise_error(ArgumentError)
+  end
 
   it "should have an array of held buttons"
 
