@@ -18,7 +18,9 @@ describe "a mouse button event", :shared => true do
     lambda { @event.class.new(4) }.should raise_error(ArgumentError)
   end
 
-  it "should complain if button symbol is omitted"
+  it "should complain if button symbol is omitted" do
+    lambda { @event.class.new }.should raise_error(ArgumentError)
+  end
 
 
   it "should have a screen position"
