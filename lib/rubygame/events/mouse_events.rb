@@ -57,6 +57,10 @@ module Rubygame
       attr_reader :pos
 
       def initialize( pos )
+        unless pos.kind_of? Array
+          raise ArgumentError, "pos must be an Array"
+        end
+
         @pos = pos
       end
     end
