@@ -50,6 +50,7 @@ describe "MousePressed" do
 end
 
 
+
 describe "MouseReleased" do
   
   before :each do
@@ -57,5 +58,34 @@ describe "MouseReleased" do
   end
 
   it_should_behave_like "a mouse button event"
+
+end
+
+
+
+describe "MouseMoved" do
+  
+  before :each do
+    @event = MouseMoved.new( [1,2], [3,4], [:mouse_left] )
+  end
+
+  it "should have a position"
+
+  it "should complain if position is not an Array"
+
+  it "should complain if position is omitted"
+
+  it "should have a relative movement"
+
+  it "should complain if relative movement is not an Array"
+
+  it "should complain if relative movement is omitted"
+
+  it "should have an array of held buttons"
+
+  it "should complain if held buttons is not an Array"
+
+  it "should have no held buttons if omitted"
+
 
 end
