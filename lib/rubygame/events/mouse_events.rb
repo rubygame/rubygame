@@ -54,9 +54,9 @@ module Rubygame
 
     class MouseMoved
       
-      attr_reader :pos, :rel
+      attr_reader :pos, :rel, :buttons
 
-      def initialize( pos, rel )
+      def initialize( pos, rel, buttons=[] )
         unless pos.kind_of? Array
           raise ArgumentError, "pos must be an Array"
         end
@@ -67,6 +67,7 @@ module Rubygame
 
         @pos = pos
         @rel = rel
+        @buttons = buttons
       end
     end
 
