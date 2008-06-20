@@ -33,6 +33,10 @@ module Rubygame
           raise ArgumentError, "button must be a :symbol"
         end
 
+        unless pos.kind_of? Array
+          raise ArgumentError, "pos must be an Array"
+        end
+
         @button = button
         @pos = pos
 
