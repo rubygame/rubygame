@@ -53,6 +53,12 @@ module Rubygame
 
 
     class MouseMoved
+      
+      attr_reader :pos
+
+      def initialize( pos )
+        @pos = pos
+      end
     end
 
   end
