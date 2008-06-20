@@ -51,5 +51,9 @@ module Rubygame
       include MouseButtonEvent
     end
 
+
+    class MouseMoved
+    end
+
   end
 end
