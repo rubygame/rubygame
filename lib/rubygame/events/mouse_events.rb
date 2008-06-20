@@ -61,6 +61,10 @@ module Rubygame
           raise ArgumentError, "pos must be an Array"
         end
 
+        unless rel.kind_of? Array
+          raise ArgumentError, "rel must be an Array"
+        end
+
         @pos = pos
         @rel = rel
       end
