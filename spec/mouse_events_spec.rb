@@ -73,7 +73,9 @@ describe "MouseMoved" do
     @event.pos.should == [1,2]
   end
 
-  it "should complain if position is not an Array"
+  it "should complain if position is not an Array" do
+    lambda { @event.class.new( 4 ) }.should raise_error(ArgumentError)
+  end
 
   it "should complain if position is omitted"
 
