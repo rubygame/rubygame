@@ -23,11 +23,11 @@ describe "a mouse button event", :shared => true do
   end
 
 
-  it "should have a screen position"
+  it "should have a position"
 
-  it "should complain if screen position is not an array"
+  it "should complain if position is not an array"
 
-  it "should complain if screen position is omitted" do
+  it "should complain if position is omitted" do
     lambda { @event.class.new(:mouse_left) }.should raise_error(ArgumentError)
   end
  
