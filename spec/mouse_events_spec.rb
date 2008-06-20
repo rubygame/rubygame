@@ -66,10 +66,12 @@ end
 describe "MouseMoved" do
   
   before :each do
-    @event = MouseMoved.new( [1,2], [3,4], [:mouse_left] )
+    @event = MouseMoved.new( [1,2] )
   end
 
-  it "should have a position"
+  it "should have a position" do
+    @event.pos.should == [1,2]
+  end
 
   it "should complain if position is not an Array"
 
