@@ -23,7 +23,9 @@ describe "a mouse button event", :shared => true do
   end
 
 
-  it "should have a position"
+  it "should have a position" do
+    @event.pos.should == [1,2]
+  end
 
   it "should complain if position is not an array"
 
