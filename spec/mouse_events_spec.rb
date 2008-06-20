@@ -66,7 +66,7 @@ end
 describe "MouseMoved" do
   
   before :each do
-    @event = MouseMoved.new( [1,2] )
+    @event = MouseMoved.new( [1,2], [3,4] )
   end
 
   it "should have a position" do
@@ -74,14 +74,16 @@ describe "MouseMoved" do
   end
 
   it "should complain if position is not an Array" do
-    lambda { @event.class.new( 4 ) }.should raise_error(ArgumentError)
+    lambda { @event.class.new( 4, [3,4] ) }.should raise_error(ArgumentError)
   end
 
   it "should complain if position is omitted" do
     lambda { @event.class.new() }.should raise_error(ArgumentError)
   end
 
-  it "should have a relative movement"
+  it "should have a relative movement" do
+    @event.rel.should == [3,4]
+  end
 
   it "should complain if relative movement is not an Array"
 
