@@ -65,6 +65,10 @@ module Rubygame
           raise ArgumentError, "rel must be an Array"
         end
 
+        unless buttons.kind_of? Array
+          raise ArgumentError, "buttons must be an Array"
+        end
+
         @pos = pos
         @rel = rel
         @buttons = buttons
