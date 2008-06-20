@@ -66,7 +66,7 @@ end
 describe "MouseMoved" do
   
   before :each do
-    @event = MouseMoved.new( [1,2], [3,4] )
+    @event = MouseMoved.new( [1,2], [3,4], [:mouse_left] )
   end
 
   it "should have a position" do
@@ -93,7 +93,9 @@ describe "MouseMoved" do
     lambda { @event.class.new( [1,2] ) }.should raise_error(ArgumentError)
   end
 
-  it "should have an array of held buttons"
+  it "should have an array of held buttons" do
+    @event.buttons.should == [:mouse_left]
+  end
 
   it "should complain if held buttons is not an Array"
 
