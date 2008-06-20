@@ -54,14 +54,15 @@ module Rubygame
 
     class MouseMoved
       
-      attr_reader :pos
+      attr_reader :pos, :rel
 
-      def initialize( pos )
+      def initialize( pos, rel )
         unless pos.kind_of? Array
           raise ArgumentError, "pos must be an Array"
         end
 
         @pos = pos
+        @rel = rel
       end
     end
 
