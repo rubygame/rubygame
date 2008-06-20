@@ -42,7 +42,7 @@ end
 describe "MousePressed" do
 
   before :each do
-    @event = MousePressed.new( :mouse_left, [1,2] )
+    @event = MousePressed.new( [1,2], :mouse_left )
   end
 
   it_should_behave_like "a mouse button event"
@@ -53,7 +53,7 @@ end
 describe "MouseReleased" do
   
   before :each do
-    @event = MouseReleased.new( :mouse_left, [1,2] )
+    @event = MouseReleased.new( [1,2], :mouse_left )
   end
 
   it_should_behave_like "a mouse button event"

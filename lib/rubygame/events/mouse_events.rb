@@ -27,7 +27,7 @@ module Rubygame
     module MouseButtonEvent
       attr_reader :button, :pos
 
-      def initialize( button, pos )
+      def initialize( pos, button )
 
         unless button.kind_of? Symbol
           raise ArgumentError, "button must be a :symbol"
