@@ -101,7 +101,9 @@ describe "MouseMoved" do
     lambda { @event.class.new( [1,2], [3,4], 4 ) }.should raise_error(ArgumentError)
   end
 
-  it "should have no held buttons if omitted"
-
+  it "should have no held buttons if omitted" do
+    @event = MouseMoved.new( [1,2], [3,4] )
+    @event.buttons.should == []
+  end
 
 end
