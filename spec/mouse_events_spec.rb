@@ -39,7 +39,7 @@ end
 
 
 
-describe "MousePressed" do
+describe MousePressed do
 
   before :each do
     @event = MousePressed.new( [1,2], :mouse_left )
@@ -51,7 +51,7 @@ end
 
 
 
-describe "MouseReleased" do
+describe MouseReleased do
   
   before :each do
     @event = MouseReleased.new( [1,2], :mouse_left )
@@ -63,7 +63,7 @@ end
 
 
 
-describe "MouseMoved" do
+describe MouseMoved do
   
   before :each do
     @event = MouseMoved.new( [1,2], [3,4], [:mouse_left] )
