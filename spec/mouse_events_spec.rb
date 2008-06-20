@@ -27,7 +27,9 @@ describe "a mouse button event", :shared => true do
     @event.pos.should == [1,2]
   end
 
-  it "should complain if position is not an array"
+  it "should complain if position is not an array" do
+    lambda { @event.class.new(:mouse_left,4) }.should raise_error(ArgumentError)
+  end
 
   it "should complain if position is omitted" do
     lambda { @event.class.new(:mouse_left) }.should raise_error(ArgumentError)
