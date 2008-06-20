@@ -97,7 +97,9 @@ describe "MouseMoved" do
     @event.buttons.should == [:mouse_left]
   end
 
-  it "should complain if held buttons is not an Array"
+  it "should complain if held buttons is not an Array" do
+    lambda { @event.class.new( [1,2], [3,4], 4 ) }.should raise_error(ArgumentError)
+  end
 
   it "should have no held buttons if omitted"
 
