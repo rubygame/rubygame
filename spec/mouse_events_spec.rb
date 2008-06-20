@@ -14,7 +14,9 @@ describe "a mouse button event", :shared => true do
     @event.button.should == :mouse_left
   end
 
-  it "should complain if button symbol is not a symbol"
+  it "should complain if button symbol is not a symbol" do
+    lambda { @event.class.new(4) }.should raise_error(ArgumentError)
+  end
 
   it "should complain if button symbol is omitted"
 
