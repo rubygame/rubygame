@@ -85,7 +85,9 @@ describe "MouseMoved" do
     @event.rel.should == [3,4]
   end
 
-  it "should complain if relative movement is not an Array"
+  it "should complain if relative movement is not an Array" do
+    lambda { @event.class.new( [1,2], 4 ) }.should raise_error(ArgumentError)
+  end
 
   it "should complain if relative movement is omitted"
 
