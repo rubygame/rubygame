@@ -14,9 +14,14 @@ describe "a mouse button event", :shared => true do
 
   it "should complain if button symbol is not a symbol"
 
+  it "should complain if button symbol is omitted"
+
+
   it "should have a position"
 
   it "should complain if position is not an array"
+
+  it "should complain if position is omitted"
  
 end
 
