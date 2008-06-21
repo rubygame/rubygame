@@ -105,8 +105,30 @@ module Rubygame
     end
 
 
+    # 
+    # KeyReleased is an event class which occurs when a key
+    # on the keyboard is released (no longer being pressed).
+    # 
+    # This class gains #key and #modifiers readers from
+    # the KeyboardEvent mixin module.
+    # 
     class KeyReleased
       include KeyboardEvent
+
+      # 
+      # Create a new KeyReleased instance.
+      # 
+      # key::       a key symbol for the key that was pressed or
+      #             released. (Symbol, required)
+      # 
+      # modifiers:: an Array of key symbols for the modifier keys
+      #             that were active when the event occured.
+      #             (Array, optional)
+      # 
+      def initialize( key, modifiers=[] )
+        super
+      end
+
     end
 
   end
