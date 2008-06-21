@@ -24,9 +24,23 @@ module Rubygame
 
   module Events
 
+    # 
+    # KeyboardEvent is a mixin module included in the KeyPressed
+    # and KeyReleased classes. It defines the #key and #modifiers
+    # accessors.
+    # 
     module KeyboardEvent
       attr_reader :key, :modifiers
 
+      # 
+      # Initialize the KeyboardEvent.
+      # 
+      # key::       a key symbol for the key that was pressed or
+      #             released. (Symbol, required)
+      # modifiers:: an Array of key symbols for the modifier keys
+      #             that were active when the event occured.
+      #             (Array, optional)
+      # 
       def initialize( key, modifiers=[] )
 
         unless key.kind_of? Symbol
