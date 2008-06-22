@@ -24,9 +24,25 @@ module Rubygame
 
   module Events
 
+    # 
+    # MouseButtonEvent is a mixin module included in the MousePressed
+    # and MouseReleased classes. It defines the #button and #pos
+    # attribute readers.
+    # 
     module MouseButtonEvent
       attr_reader :button, :pos
 
+      # 
+      # Initialize the MouseButtonEvent.
+      # 
+      # button:: a symbol for the button that was pressed or
+      #          released. (Symbol, required)
+      # 
+      # pos::    an Array for the position of the mouse cursor
+      #          when the event occured. [0,0] is the top-left
+      #          corner of the window (or the screen if running 
+      #          full-screen). (Array, required)
+      # 
       def initialize( pos, button )
 
         unless button.kind_of? Symbol
