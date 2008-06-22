@@ -114,10 +114,30 @@ module Rubygame
     end
 
 
+    # 
+    # MouseMoved is an event class which occurs when the mouse
+    # cursor moves. It has attribute readers for #pos (new position),
+    # #rel (change since the last MouseMoved event), and #buttons
+    # (an Array of the mouse buttons that were held down while moving).
+    # 
     class MouseMoved
       
       attr_reader :pos, :rel, :buttons
 
+      # 
+      # Create a new MouseReleased instance.
+      # 
+      # pos::     an Array for the new position of the mouse cursor.
+      #           [0,0] is the top-left corner of the window (or the
+      #           screen if running full-screen). (Array, required)
+      # 
+      # rel::     an Array for the position change since the last
+      #           MouseMoved event, in pixels. (Array, required)
+      # 
+      # buttons:: an Array of symbols for the mouse buttons that were
+      #           being held down while the mouse was moving. [] if
+      #           no buttons were being held. (Array, optional)
+      # 
       def initialize( pos, rel, buttons=[] )
         unless pos.kind_of? Array
           raise ArgumentError, "pos must be an Array"
