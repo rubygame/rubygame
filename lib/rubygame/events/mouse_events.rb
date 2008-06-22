@@ -86,8 +86,31 @@ module Rubygame
       end
     end
 
+
+    # 
+    # MouseReleased is an event class which occurs when a button
+    # on the mouse is released (no longer being pressed). 
+    # 
+    # This class gains #button and #pos attribute readers from
+    # the MouseButtonEvent mixin module.
+    # 
     class MouseReleased
       include MouseButtonEvent
+
+      # 
+      # Create a new MouseReleased instance.
+      # 
+      # button:: a symbol for the button that was pressed or
+      #          released. (Symbol, required)
+      # 
+      # pos::    an Array for the position of the mouse cursor
+      #          when the event occured. [0,0] is the top-left
+      #          corner of the window (or the screen if running 
+      #          full-screen). (Array, required)
+      # 
+      def initialize( pos, button )
+        super
+      end
     end
 
 
