@@ -119,6 +119,7 @@ module Rubygame
     # any changes (blits, drawing, etc.).
     # 
     class WindowResized
+      attr_reader :size
     end
 
 
