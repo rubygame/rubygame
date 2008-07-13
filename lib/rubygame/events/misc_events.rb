@@ -61,5 +61,19 @@ module Rubygame
     # 
     class MouseFocusLost; end
 
+
+
+    # WindowMinimized is an event class which occurs when
+    # the Rubygame application window becomes minimized (also
+    # called 'iconified').
+    # 
+    class WindowMinimized; end
+
+    # WindowRestored is an event class which occurs when the
+    # Rubygame application window is restored after it had been
+    # minimized.
+    # 
+    class WindowUnminimized; end
+
   end
 end
