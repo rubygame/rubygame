@@ -91,3 +91,20 @@ describe QuitRequested do
 
   it_should_behave_like "a simple event"
 end
+
+
+
+
+describe WindowResized do
+  
+  it "should have a size"
+
+  it "should accept an [x,y] Array as size"
+  it "should reject non-positive sizes"
+  it "should reject invalid types as size"
+
+  it "size should be read-only"
+  it "size should be frozen"
+  it "should not freeze the original Array passed as size"
+
+end
