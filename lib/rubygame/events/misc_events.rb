@@ -77,6 +77,20 @@ module Rubygame
 
 
 
+    # WindowExposed is an event class which occurs in
+    # certain situations when the Rubygame application
+    # window is exposed after being covered by another
+    # application.
+    # 
+    # This event may not occur on all platforms, but
+    # when it does occur, your app should refresh the
+    # entire window via Screen#flip (or 
+    # Rubygame::GL.swap_buffers, if using OpenGL).
+    # 
+    class WindowExposed; end
+
+
+
     # QuitRequested is an event class which occurs when the
     # application receives a quit request, usually due to the
     # user clicking the "Close" button on the app window.
