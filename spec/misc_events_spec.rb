@@ -97,7 +97,9 @@ end
 
 describe WindowResized do
   
-  it "should have a size"
+  it "should have a size" do
+    WindowResized.new.should respond_to(:size)
+  end
 
   it "should accept an [x,y] Array as size"
   it "should reject non-positive sizes"
