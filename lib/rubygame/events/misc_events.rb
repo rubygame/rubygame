@@ -43,5 +43,23 @@ module Rubygame
     # 
     class InputFocusLost; end
 
+
+
+    # MouseFocusGained is an event class which occurs when
+    # the Rubygame application gains mouse focus.
+    # 
+    # Mouse focus means that the mouse cursor is inside the
+    # app window. When the app has mouse focus, it will receive
+    # mouse events, particularly MouseMoved.
+    # 
+    class MouseFocusGained; end
+
+    # MouseFocusLost is an event class which occurs when
+    # the Rubygame application loses mouse focus.
+    # 
+    # See MouseFocusGained for a description of "mouse focus".
+    # 
+    class MouseFocusLost; end
+
   end
 end
