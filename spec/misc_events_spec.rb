@@ -98,10 +98,13 @@ end
 describe WindowResized do
   
   it "should have a size" do
-    WindowResized.new.should respond_to(:size)
+    WindowResized.new([20,20]).should respond_to(:size)
   end
 
-  it "should accept an [x,y] Array as size"
+  it "should accept an [x,y] Array as size" do
+    lambda { WindowResized.new([20,20]) }.should_not raise_error(ArgumentError)
+  end
+
   it "should reject non-positive sizes"
   it "should reject invalid types as size"
 
