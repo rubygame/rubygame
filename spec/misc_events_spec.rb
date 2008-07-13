@@ -105,7 +105,12 @@ describe WindowResized do
     lambda { WindowResized.new([20,20]) }.should_not raise_error(ArgumentError)
   end
 
-  it "should reject non-positive sizes"
+  it "should reject negative sizes" do
+    lambda { WindowResized.new([-20, 20]) }.should raise_error(ArgumentError)
+    lambda { WindowResized.new([ 20,-20]) }.should raise_error(ArgumentError)
+    lambda { WindowResized.new([-20,-20]) }.should raise_error(ArgumentError)
+  end
+
   it "should reject invalid types as size"
 
   it "size should be read-only"
