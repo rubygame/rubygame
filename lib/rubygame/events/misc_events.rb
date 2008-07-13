@@ -102,5 +102,25 @@ module Rubygame
     # 
     class QuitRequested; end
 
+
+
+    # WindowResized is an event that occurs when the
+    # Rubygame application window is resized by the user.
+    # This can only happen if the Screen mode was set with
+    # the "resizable" flag.
+    # 
+    # Your application should respond to this event by
+    # setting the Screen mode again with the new #size and
+    # redrawing.
+    # 
+    # If you ignore this event, the "active" area of the
+    # Screen will stay the same size, and the rest (if the
+    # window was enlarged) will be black and won't receive
+    # any changes (blits, drawing, etc.).
+    # 
+    class WindowResized
+    end
+
+
   end
 end
