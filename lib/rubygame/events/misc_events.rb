@@ -120,6 +120,9 @@ module Rubygame
     # 
     class WindowResized
       attr_reader :size
+
+      def initialize( size )
+      end
     end
 
 
