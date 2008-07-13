@@ -122,6 +122,13 @@ module Rubygame
       attr_reader :size
 
       def initialize( size )
+
+        size.each do |part|
+          if part <= 0
+            raise ArgumentError, "size must be positive (got %s)"%part
+          end
+        end
+
       end
     end
 
