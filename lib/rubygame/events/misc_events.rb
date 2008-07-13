@@ -24,7 +24,7 @@ module Rubygame
 
   module Events
 
-    # InputFocusGained is an event class which occurs when
+    # InputFocusGained is an event that occurs when
     # the Rubygame application gains input focus.
     # 
     # Input focus means that the app will receive events from
@@ -36,7 +36,7 @@ module Rubygame
     # 
     class InputFocusGained; end
 
-    # InputFocusLost is an event class which occurs when
+    # InputFocusLost is an event that occurs when
     # the Rubygame application loses input focus.
     # 
     # See InputFocusGained for a description of "input focus".
@@ -45,7 +45,7 @@ module Rubygame
 
 
 
-    # MouseFocusGained is an event class which occurs when
+    # MouseFocusGained is an event that occurs when
     # the Rubygame application gains mouse focus.
     # 
     # Mouse focus means that the mouse cursor is inside the
@@ -54,7 +54,7 @@ module Rubygame
     # 
     class MouseFocusGained; end
 
-    # MouseFocusLost is an event class which occurs when
+    # MouseFocusLost is an event that occurs when
     # the Rubygame application loses mouse focus.
     # 
     # See MouseFocusGained for a description of "mouse focus".
@@ -63,13 +63,13 @@ module Rubygame
 
 
 
-    # WindowMinimized is an event class which occurs when
+    # WindowMinimized is an event that occurs when
     # the Rubygame application window becomes minimized (also
     # called 'iconified').
     # 
     class WindowMinimized; end
 
-    # WindowRestored is an event class which occurs when the
+    # WindowRestored is an event that occurs when the
     # Rubygame application window is restored after it had been
     # minimized.
     # 
@@ -77,7 +77,7 @@ module Rubygame
 
 
 
-    # WindowExposed is an event class which occurs in
+    # WindowExposed is an event that occurs in
     # certain situations when the Rubygame application
     # window is exposed after being covered by another
     # application.
@@ -91,7 +91,7 @@ module Rubygame
 
 
 
-    # QuitRequested is an event class which occurs when the
+    # QuitRequested is an event that occurs when the
     # application receives a quit request, usually due to the
     # user clicking the "Close" button on the app window.
     # 
