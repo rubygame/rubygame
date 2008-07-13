@@ -75,5 +75,18 @@ module Rubygame
     # 
     class WindowUnminimized; end
 
+
+
+    # QuitRequested is an event class which occurs when the
+    # application receives a quit request, usually due to the
+    # user clicking the "Close" button on the app window.
+    # 
+    # Almost always, your application should respond to this
+    # event by quitting or by displaying a "Quit/Cancel"
+    # dialog. If you ignore this event, the user may become
+    # frustrated that your app won't close properly!
+    # 
+    class QuitRequested; end
+
   end
 end
