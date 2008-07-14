@@ -123,7 +123,9 @@ module Rubygame
 
       def initialize( size )
 
-        size.each do |part|
+        @size = size.to_ary
+
+        @size.each do |part|
           if part <= 0
             raise ArgumentError, "size must be positive (got %s)"%part
           end
