@@ -127,7 +127,10 @@ describe WindowResized do
     WindowResized.new([20,20]).should_not respond_to(:size=)
   end
 
-  it "size should be frozen"
+  it "size should be frozen" do
+    WindowResized.new([20,20]).size.should be_frozen
+  end
+
   it "should not freeze the original Array passed as size"
 
 end
