@@ -27,6 +27,7 @@ module Rubygame
     class JoystickAxisMoved
       attr_reader :joystick_id
       attr_reader :axis
+      attr_reader :value
     end
 
   end
