@@ -118,9 +118,9 @@ describe WindowResized do
   end
 
   it "should reject non-Array-like objects as size" do
-    lambda { WindowResized.new( 20     ) }.should raise_error(ArgumentError)
-    lambda { WindowResized.new( :foo   ) }.should raise_error(ArgumentError)
-    lambda { WindowResized.new( "blue" ) }.should raise_error(ArgumentError)
+    lambda { WindowResized.new( 20     ) }.should raise_error(NoMethodError)
+    lambda { WindowResized.new( :foo   ) }.should raise_error(NoMethodError)
+    lambda { WindowResized.new( "blue" ) }.should raise_error(NoMethodError)
   end
 
   it "size should be read-only"
