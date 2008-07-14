@@ -20,7 +20,10 @@ describe JoystickAxisMoved do
   it "joystick id should be read-only"
 
 
-  it "should have an axis number"
+  it "should have an axis number" do
+    JoystickAxisMoved.new.should respond_to(:axis)
+  end
+
   it "should accept positive integers for axis number"
   it "should reject all except positive integers for axis number"
   it "axis number should be read-only"
