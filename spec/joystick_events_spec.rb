@@ -29,7 +29,10 @@ describe JoystickAxisMoved do
   it "axis number should be read-only"
 
 
-  it "should have a value"
+  it "should have a value" do
+    JoystickAxisMoved.new.should respond_to(:value)
+  end
+
   it "should only accept numbers for value"
   it "should reject non-numeric values"
   it "should convert values to float"
