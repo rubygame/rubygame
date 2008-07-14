@@ -126,6 +126,10 @@ module Rubygame
         @size = size.to_ary.dup
         @size.freeze
 
+        unless @size.length == 2
+          raise ArgumentError, "size must have exactly 2 parts (got %s)"%@size.length
+        end
+
         @size.each do |part|
           if part <= 0
             raise ArgumentError, "size must be positive (got %s)"%part
