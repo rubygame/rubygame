@@ -131,6 +131,10 @@ describe WindowResized do
     WindowResized.new([20,20]).size.should be_frozen
   end
 
-  it "should not freeze the original Array passed as size"
+  it "should not freeze the original Array passed as size" do
+    a = [20,20]
+    WindowResized.new(a)
+    a.should_not be_frozen
+  end
 
 end
