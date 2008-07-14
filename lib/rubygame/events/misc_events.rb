@@ -123,7 +123,7 @@ module Rubygame
 
       def initialize( size )
 
-        @size = size.to_ary
+        @size = size.to_ary.dup
         @size.freeze
 
         @size.each do |part|
