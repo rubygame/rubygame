@@ -123,6 +123,12 @@ describe WindowResized do
     lambda { WindowResized.new( "blue" ) }.should raise_error(NoMethodError)
   end
 
+  it "should reject sizes with wrong number of elements" do
+    lambda { WindowResized.new([          ]) }.should raise_error(ArgumentError)
+    lambda { WindowResized.new([ 20       ]) }.should raise_error(ArgumentError)
+    lambda { WindowResized.new([ 20,20,20 ]) }.should raise_error(ArgumentError)
+  end
+
   it "size should be read-only" do
     WindowResized.new([20,20]).should_not respond_to(:size=)
   end
