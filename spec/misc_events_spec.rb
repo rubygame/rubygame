@@ -123,7 +123,10 @@ describe WindowResized do
     lambda { WindowResized.new( "blue" ) }.should raise_error(NoMethodError)
   end
 
-  it "size should be read-only"
+  it "size should be read-only" do
+    WindowResized.new([20,20]).should_not respond_to(:size=)
+  end
+
   it "size should be frozen"
   it "should not freeze the original Array passed as size"
 
