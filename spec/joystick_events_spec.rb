@@ -48,6 +48,9 @@ describe JoystickAxisMoved do
   it "should convert values to float"
   it "should only accept values from -1.0 to 1.0"
   it "should reject values outside of range"
-  it "value should be read-only"
+
+  it "value should be read-only" do
+    @event.should_not respond_to(:value=)
+  end
 
 end
