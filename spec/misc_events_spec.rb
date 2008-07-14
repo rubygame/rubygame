@@ -117,7 +117,7 @@ describe WindowResized do
     lambda { WindowResized.new([  0,  0]) }.should raise_error(ArgumentError)
   end
 
-  it "should reject invalid objects as size" do
+  it "should reject non-Array-like objects as size" do
     lambda { WindowResized.new( 20     ) }.should raise_error(ArgumentError)
     lambda { WindowResized.new( :foo   ) }.should raise_error(ArgumentError)
     lambda { WindowResized.new( "blue" ) }.should raise_error(ArgumentError)
