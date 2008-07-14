@@ -21,7 +21,10 @@ describe JoystickAxisMoved do
 
   it "should accept positive integers for joystick id"
   it "should reject all except positive integers for joystick id"
-  it "joystick id should be read-only"
+
+  it "joystick id should be read-only" do
+    @event.should_not respond_to(:joystick_id=)
+  end
 
 
   it "should have an axis number" do
