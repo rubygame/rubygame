@@ -25,6 +25,7 @@ module Rubygame
   module Events
 
     class JoystickAxisMoved
+      attr_reader :joystick_id
     end
 
   end
