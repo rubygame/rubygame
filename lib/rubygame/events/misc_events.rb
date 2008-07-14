@@ -124,6 +124,7 @@ module Rubygame
       def initialize( size )
 
         @size = size.to_ary
+        @size.freeze
 
         @size.each do |part|
           if part <= 0
