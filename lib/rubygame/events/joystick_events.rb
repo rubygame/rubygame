@@ -104,6 +104,8 @@ module Rubygame
 
         @ball = ball
 
+        @rel = rel
+
       end
 
     end
