@@ -106,6 +106,10 @@ module Rubygame
 
         @rel = rel.to_ary
 
+        unless @rel.length == 2
+          raise ArgumentError, "rel must have exactly 2 parts (got %s)"%@rel.length
+        end
+
       end
 
     end
