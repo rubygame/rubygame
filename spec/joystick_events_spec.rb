@@ -103,3 +103,27 @@ describe JoystickAxisMoved do
   end
 
 end
+
+
+
+
+
+describe JoystickBallMoved do
+
+  def make_event( mods = {} )
+    args = {
+      :joystick_id => 0
+    }.update(mods)
+
+    JoystickBallMoved.new( args[:joystick_id]  )
+  end
+
+  before :each do
+    @event = make_event
+  end
+  
+
+
+  it_should_behave_like "a joystick event"
+
+end
