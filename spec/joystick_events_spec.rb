@@ -49,7 +49,13 @@ describe JoystickAxisMoved do
     lambda { JoystickAxisMoved.new( 1, 2 ) }.should_not raise_error
   end
 
-  it "should reject all except positive integers for axis number"
+  it "should reject all except positive integers for axis number" do
+    lambda { JoystickAxisMoved.new( 1,    -1 ) }.should raise_error(ArgumentError)
+    lambda { JoystickAxisMoved.new( 1,     0 ) }.should raise_error(ArgumentError)
+    lambda { JoystickAxisMoved.new( 1,   1.2 ) }.should raise_error(ArgumentError)
+    lambda { JoystickAxisMoved.new( 1,  :foo ) }.should raise_error(ArgumentError)
+    lambda { JoystickAxisMoved.new( 1, "red" ) }.should raise_error(ArgumentError)
+  end
 
   it "axis number should be read-only" do
     @event.should_not respond_to(:axis=)
