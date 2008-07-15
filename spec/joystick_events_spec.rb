@@ -23,6 +23,10 @@ describe JoystickAxisMoved do
     lambda { JoystickAxisMoved.new( 1 ) }.should_not raise_error
   end
 
+  it "should set joystick id from initialize arg" do
+    JoystickAxisMoved.new( 1 ).joystick_id.should == 1
+  end
+
   it "should reject all except positive integers for joystick id"
 
   it "joystick id should be read-only" do
