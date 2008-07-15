@@ -112,11 +112,12 @@ describe JoystickBallMoved do
 
   def make_event( mods = {} )
     args = {
-      :joystick_id => 0, :ball => 0
+      :joystick_id => 0, :ball => 0, :rel => [0,0]
     }.update(mods)
 
     JoystickBallMoved.new( args[:joystick_id],
-                           args[:ball] )
+                           args[:ball],
+                           args[:rel] )
   end
 
   before :each do
@@ -148,5 +149,9 @@ describe JoystickBallMoved do
   end
 
 
+
+  it "should have a relative position" do
+    @event.should respond_to(:rel)
+  end
 
 end
