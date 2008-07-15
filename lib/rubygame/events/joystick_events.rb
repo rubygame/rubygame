@@ -47,7 +47,7 @@ module Rubygame
           raise ArgumentError, "value must be a number"
         end
 
-        @value = value
+        @value = value.to_f
 
      end
 
