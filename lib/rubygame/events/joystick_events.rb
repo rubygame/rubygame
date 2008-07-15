@@ -104,7 +104,7 @@ module Rubygame
 
         @ball = ball
 
-        @rel = rel.to_ary
+        @rel = rel.to_ary.dup
         @rel.freeze
 
         unless @rel.length == 2
