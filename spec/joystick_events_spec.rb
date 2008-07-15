@@ -174,4 +174,8 @@ describe JoystickBallMoved do
     @event.should_not respond_to(:rel=)
   end
 
+  it "rel should be frozen" do
+    @event.rel.should be_frozen
+  end
+
 end
