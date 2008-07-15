@@ -164,4 +164,10 @@ describe JoystickBallMoved do
     end
   end
 
+  it "should reject relative positions with wrong number of elements" do
+    [ [], [0], [0,0,0] ].each do |thing|
+      lambda { make_event(:rel => thing) }.should raise_error
+    end
+  end
+
 end
