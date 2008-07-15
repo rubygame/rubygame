@@ -178,4 +178,11 @@ describe JoystickBallMoved do
     @event.rel.should be_frozen
   end
 
+  it "should not freeze the original Array passed as relative position" do
+    a = [20,20]
+    make_event(:rel => a)
+    a.should_not be_frozen
+  end
+
+
 end
