@@ -158,4 +158,10 @@ describe JoystickBallMoved do
     make_event(:rel => [1,2]).rel.should == [1,2]
   end
 
+  it "should reject non-Array relative positions" do
+    [1, 1.2, :foo, "red", {}].each do |thing|
+      lambda { make_event(:rel => thing) }.should raise_error
+    end
+  end
+
 end
