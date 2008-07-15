@@ -28,12 +28,8 @@ describe JoystickAxisMoved do
     @event.should respond_to(:joystick_id)
   end
 
-  it "should accept positive integers for joystick id" do
-    lambda { make_jam }.should_not raise_error
-  end
-
   it "should set joystick id from initialize arg" do
-    make_jam.joystick_id.should == 1
+    @event.joystick_id.should == 1
   end
 
   it "should reject all except positive integers for joystick id" do
@@ -53,12 +49,8 @@ describe JoystickAxisMoved do
     @event.should respond_to(:axis)
   end
 
-  it "should accept positive integers for axis number" do
-    lambda { make_jam }.should_not raise_error
-  end
-
   it "should set axis from initialize arg" do
-    make_jam.axis.should == 2
+    @event.axis.should == 2
   end
 
   it "should reject all except positive integers for axis number" do
@@ -74,11 +66,11 @@ describe JoystickAxisMoved do
   end
 
 
+
   it "should have a value" do
     @event.should respond_to(:value)
   end
 
-  it "should only accept numbers for value"
   it "should reject non-numeric values"
   it "should convert values to float"
   it "should only accept values from -1.0 to 1.0"
