@@ -31,6 +31,7 @@ module Rubygame
       attr_reader :value
 
       def initialize( joystick_id )
+        @joystick_id = joystick_id
       end
 
     end
