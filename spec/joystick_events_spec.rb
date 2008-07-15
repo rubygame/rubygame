@@ -79,7 +79,10 @@ describe JoystickAxisMoved do
     end
   end
 
-  it "should convert values to float"
+  it "should convert values to float" do
+    make_jam(:value => 1).value.should eql(1.0)
+  end
+
   it "should only accept values from -1.0 to 1.0"
   it "should reject values outside of range"
 
