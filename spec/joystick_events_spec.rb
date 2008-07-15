@@ -69,7 +69,12 @@ describe JoystickAxisMoved do
     @event.should respond_to(:value)
   end
 
-  it "should reject non-numeric values"
+  it "should reject non-numeric values" do
+    [:foo, "red", [], {}].each do |thing|
+      lambda { make_jam(:value => thing) }.should raise_error
+    end
+  end
+
   it "should convert values to float"
   it "should only accept values from -1.0 to 1.0"
   it "should reject values outside of range"
