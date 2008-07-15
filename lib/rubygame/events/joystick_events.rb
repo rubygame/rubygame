@@ -41,6 +41,8 @@ module Rubygame
           raise ArgumentError, "axis must be a positive integer"
         end
 
+        @axis = axis
+
       end
 
     end
