@@ -104,7 +104,7 @@ module Rubygame
 
         @ball = ball
 
-        @rel = rel
+        @rel = rel.to_ary
 
       end
 
