@@ -154,4 +154,8 @@ describe JoystickBallMoved do
     @event.should respond_to(:rel)
   end
 
+  it "should set relative position from initialize arg" do
+    make_event(:rel => [1,2]).rel.should == [1,2]
+  end
+
 end
