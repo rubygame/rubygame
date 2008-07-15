@@ -43,7 +43,11 @@ module Rubygame
 
         @axis = axis
 
-        @value = value.to_f
+        unless value.kind_of?(Numeric)
+          raise ArgumentError, "value must be a number"
+        end
+
+        @value = value
 
      end
 
