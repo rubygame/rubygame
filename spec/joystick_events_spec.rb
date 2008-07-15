@@ -49,6 +49,10 @@ describe JoystickAxisMoved do
     lambda { JoystickAxisMoved.new( 1, 2 ) }.should_not raise_error
   end
 
+  it "should set axis from initialize arg" do
+    JoystickAxisMoved.new( 1, 2 ).axis.should == 2
+  end
+
   it "should reject all except positive integers for axis number" do
     lambda { JoystickAxisMoved.new( 1,    -1 ) }.should raise_error(ArgumentError)
     lambda { JoystickAxisMoved.new( 1,     0 ) }.should raise_error(ArgumentError)
