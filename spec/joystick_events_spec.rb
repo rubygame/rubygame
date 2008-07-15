@@ -170,4 +170,8 @@ describe JoystickBallMoved do
     end
   end
 
+  it "rel should be read-only" do
+    @event.should_not respond_to(:rel=)
+  end
+
 end
