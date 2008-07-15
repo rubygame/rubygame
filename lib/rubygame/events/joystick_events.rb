@@ -36,6 +36,11 @@ module Rubygame
         end
 
         @joystick_id = joystick_id
+
+        unless axis.kind_of?(Fixnum) and axis > 0
+          raise ArgumentError, "axis must be a positive integer"
+        end
+
       end
 
     end
