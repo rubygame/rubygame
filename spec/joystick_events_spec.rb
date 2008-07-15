@@ -8,9 +8,33 @@ include Rubygame::Events
 
 
 
+describe "a joystick event", :shared => true do
+
+  it "should have a joystick id" do
+    make_event.should respond_to(:joystick_id)
+  end
+
+  it "should set joystick id from initialize arg" do
+    make_event(:joystick_id => 1).joystick_id.should == 1
+  end
+
+  it "should accept only non-negative integers for joystick id" do
+    [-1, 1.2, :foo, "red", [], {}].each do |thing|
+      lambda { make_event(:joystick_id => thing) }.should raise_error
+    end
+  end
+
+  it "joystick id should be read-only" do
+    make_event.should_not respond_to(:joystick_id=)
+  end
+
+end
+
+
+
 describe JoystickAxisMoved do
 
-  def make_jam( mods = {} )
+  def make_event( mods = {} )
     args = {
       :joystick_id => 0, :axis => 0, :value => 0.0
     }.update(mods)
@@ -21,27 +45,12 @@ describe JoystickAxisMoved do
   end
 
   before :each do
-    @event = make_jam
+    @event = make_event
   end
   
 
-  it "should have a joystick id" do
-    @event.should respond_to(:joystick_id)
-  end
 
-  it "should set joystick id from initialize arg" do
-    make_jam(:joystick_id => 1).joystick_id.should == 1
-  end
-
-  it "should accept only non-negative integers for joystick id" do
-    [-1, 1.2, :foo, "red", [], {}].each do |thing|
-      lambda { make_jam(:joystick_id => thing) }.should raise_error
-    end
-  end
-
-  it "joystick id should be read-only" do
-    @event.should_not respond_to(:joystick_id=)
-  end
+  it_should_behave_like "a joystick event"
 
 
 
@@ -50,12 +59,12 @@ describe JoystickAxisMoved do
   end
 
   it "should set axis from initialize arg" do
-    make_jam(:axis => 1).axis.should == 1
+    make_event(:axis => 1).axis.should == 1
   end
 
   it "should accept only non-negative integers for axis" do
     [-1, 1.2, :foo, "red", [], {}].each do |thing|
-      lambda { make_jam(:axis => thing) }.should raise_error
+      lambda { make_event(:axis => thing) }.should raise_error
     end
   end
 
@@ -70,22 +79,22 @@ describe JoystickAxisMoved do
   end
 
   it "should set value from initialize arg" do
-    make_jam(:value => 0.5).value.should == 0.5
+    make_event(:value => 0.5).value.should == 0.5
   end
 
   it "should reject non-numeric values" do
     [:foo, "red", [], {}].each do |thing|
-      lambda { make_jam(:value => thing) }.should raise_error
+      lambda { make_event(:value => thing) }.should raise_error
     end
   end
 
   it "should convert values to float" do
-    make_jam(:value => 1).value.should eql(1.0)
+    make_event(:value => 1).value.should eql(1.0)
   end
 
   it "should reject values not in -1.0 to 1.0" do
     [-10, -1.01, 1.01, 10].each do |thing|
-      lambda { make_jam(:value => thing) }.should raise_error
+      lambda { make_event(:value => thing) }.should raise_error
     end
   end
 
