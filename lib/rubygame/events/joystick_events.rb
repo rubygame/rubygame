@@ -43,7 +43,9 @@ module Rubygame
 
         @axis = axis
 
-      end
+        @value = value.to_f
+
+     end
 
     end
 
