@@ -87,14 +87,21 @@ module Rubygame
     class JoystickBallMoved
 
       attr_reader :joystick_id
+      attr_reader :ball
 
-      def initialize( joystick_id )
+      def initialize( joystick_id, ball )
 
         unless joystick_id.kind_of?(Fixnum) and joystick_id >= 0
           raise ArgumentError, "joystick_id must be an integer >= 0"
         end
 
         @joystick_id = joystick_id
+
+        unless ball.kind_of?(Fixnum) and ball >= 0
+          raise ArgumentError, "ball must be an integer >= 0"
+        end
+
+        @ball = ball
 
       end
 
