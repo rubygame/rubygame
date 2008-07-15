@@ -84,12 +84,33 @@ module Rubygame
 
 
 
+    # JoystickBallMoved is an event that occurs when a
+    # joystick's trackball has changed position.
+    # 
+    # A joystick trackball is a ball which rotates freely in
+    # a socket, controlled by the user's fingers or thumb.
+    # 
+    # A trackball reports movement on x and y axes, measured
+    # in pixels, just like a mouse does. However, a trackball
+    # does not report its current position, only its movement
+    # since the previous event.
+    # 
     class JoystickBallMoved
 
       attr_reader :joystick_id
       attr_reader :ball
       attr_reader :rel
 
+
+      # Creates a new JoystickBallMoved instance.
+      # 
+      # joystick_id::  an integer identifying which joystick
+      #                changed. The first joystick is 0.
+      # ball::         an integer identifying which ball changed.
+      #                The first ball on each joystick is 0.
+      # rel::          relative position (how much the ball moved
+      #                since the previous event). [x,y], in pixels.
+      # 
       def initialize( joystick_id, ball, rel )
 
         unless joystick_id.kind_of?(Fixnum) and joystick_id >= 0
