@@ -11,7 +11,7 @@ include Rubygame::Events
 describe JoystickAxisMoved do
 
   before :each do
-    @event = JoystickAxisMoved.new
+    @event = JoystickAxisMoved.new( 1 )
   end
   
 
@@ -19,7 +19,10 @@ describe JoystickAxisMoved do
     @event.should respond_to(:joystick_id)
   end
 
-  it "should accept positive integers for joystick id"
+  it "should accept positive integers for joystick id" do
+    lambda { JoystickAxisMoved.new( 1 ) }.should_not raise_error
+  end
+
   it "should reject all except positive integers for joystick id"
 
   it "joystick id should be read-only" do
