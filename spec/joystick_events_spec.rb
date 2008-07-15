@@ -12,11 +12,12 @@ describe JoystickAxisMoved do
 
   def make_jam( mods = {} )
     args = {
-      :joystick_id => 1, :axis => 2
+      :joystick_id => 1, :axis => 2, :value => 3
     }.update(mods)
 
     JoystickAxisMoved.new( args[:joystick_id],
-                           args[:axis] )
+                           args[:axis],
+                           args[:value] )
   end
 
   before :each do
