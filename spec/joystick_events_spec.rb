@@ -112,10 +112,11 @@ describe JoystickBallMoved do
 
   def make_event( mods = {} )
     args = {
-      :joystick_id => 0
+      :joystick_id => 0, :ball => 0
     }.update(mods)
 
-    JoystickBallMoved.new( args[:joystick_id]  )
+    JoystickBallMoved.new( args[:joystick_id],
+                           args[:ball] )
   end
 
   before :each do
@@ -125,5 +126,27 @@ describe JoystickBallMoved do
 
 
   it_should_behave_like "a joystick event"
+
+
+
+  it "should have an ball number" do
+    @event.should respond_to(:ball)
+  end
+
+  it "should set ball from initialize arg" do
+    make_event(:ball => 1).ball.should == 1
+  end
+
+  it "should accept only non-negative integers for ball" do
+    [-1, 1.2, :foo, "red", [], {}].each do |thing|
+      lambda { make_event(:ball => thing) }.should raise_error
+    end
+  end
+
+  it "ball number should be read-only" do
+    @event.should_not respond_to(:ball=)
+  end
+
+
 
 end
