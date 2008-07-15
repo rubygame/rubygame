@@ -24,12 +24,40 @@ module Rubygame
 
   module Events
 
+
+    # JoystickAxisMoved is an event that occurs when a
+    # joystick's control stick has changed position on
+    # one of its axes.
+    # 
+    # A joystick axis measures the movement of the control
+    # stick. Most joysticks have at least 2 axes for each
+    # stick, one for horizontal movement, and one for
+    # vertical movement. Fancy ones have a third axis for
+    # measuring twist, and controllers with two sticks have
+    # at least 4 axes.
+    # 
+    # Unlike simple buttons or keys, which have only 2 values
+    # (pressed or not-pressed), a joystick axis has a smooth
+    # spectrum of possible values, ranging from -1.0 to 1.0.
+    # This allows for smoother, more precise control than
+    # is possible with the keyboard.
+    # 
     class JoystickAxisMoved
 
       attr_reader :joystick_id
       attr_reader :axis
       attr_reader :value
 
+
+      # Creates a new JoystickAxisMoved instance.
+      # 
+      # joystick_id::  an integer identifying which joystick
+      #                changed. The first joystick is 0.
+      # axis::         an integer identifying which axis changed.
+      #                The first axis on each joystick is 0.
+      # value::        a Float representing the current value
+      #                of the axis. Ranges from -1.0 to 1.0.
+      # 
       def initialize( joystick_id, axis, value )
 
         unless joystick_id.kind_of?(Fixnum) and joystick_id >= 0
