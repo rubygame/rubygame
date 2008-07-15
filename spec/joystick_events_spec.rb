@@ -33,10 +33,9 @@ describe JoystickAxisMoved do
   end
 
   it "should reject all except positive integers for joystick id" do
-    lambda { make_jam( :joystick_id => 0     ) }.should raise_error(ArgumentError)
-    lambda { make_jam( :joystick_id => -1    ) }.should raise_error(ArgumentError)
-    lambda { make_jam( :joystick_id => :foo  ) }.should raise_error(ArgumentError)
-    lambda { make_jam( :joystick_id => "red" ) }.should raise_error(ArgumentError)
+    [0, -1, 1.2, :foo, "red", [], {}].each do |thing|
+      lambda { make_jam(:joystick_id => thing) }.should raise_error
+    end
   end
 
   it "joystick id should be read-only" do
@@ -54,11 +53,9 @@ describe JoystickAxisMoved do
   end
 
   it "should reject all except positive integers for axis number" do
-    lambda { make_jam( :axis => 0     ) }.should raise_error(ArgumentError)
-    lambda { make_jam( :axis => -1    ) }.should raise_error(ArgumentError)
-    lambda { make_jam( :axis => 1.2   ) }.should raise_error(ArgumentError)
-    lambda { make_jam( :axis => :foo  ) }.should raise_error(ArgumentError)
-    lambda { make_jam( :axis => "red" ) }.should raise_error(ArgumentError)
+    [0, -1, 1.2, :foo, "red", [], {}].each do |thing|
+      lambda { make_jam(:axis => thing) }.should raise_error
+    end
   end
 
   it "axis number should be read-only" do
