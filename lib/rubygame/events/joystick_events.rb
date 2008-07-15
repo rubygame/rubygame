@@ -43,8 +43,8 @@ module Rubygame
 
         @axis = axis
 
-        unless value.kind_of?(Numeric)
-          raise ArgumentError, "value must be a number"
+        unless value.kind_of?(Numeric) and value.between?(-1.0, 1.0)
+          raise ArgumentError, "value must be a number in the range (-1.0)..(1.0)"
         end
 
         @value = value.to_f
