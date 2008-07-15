@@ -12,7 +12,7 @@ describe JoystickAxisMoved do
 
   def make_jam( mods = {} )
     args = {
-      :joystick_id => 1, :axis => 2, :value => 3
+      :joystick_id => 1, :axis => 2, :value => 0.5
     }.update(mods)
 
     JoystickAxisMoved.new( args[:joystick_id],
@@ -67,6 +67,10 @@ describe JoystickAxisMoved do
 
   it "should have a value" do
     @event.should respond_to(:value)
+  end
+
+  it "should set value from initialize arg" do
+    @event.value.should == 0.5
   end
 
   it "should reject non-numeric values" do
