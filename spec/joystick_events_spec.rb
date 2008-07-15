@@ -83,8 +83,11 @@ describe JoystickAxisMoved do
     make_jam(:value => 1).value.should eql(1.0)
   end
 
-  it "should only accept values from -1.0 to 1.0"
-  it "should reject values outside of range"
+  it "should reject values not in -1.0 to 1.0" do
+    [-10, -1.01, 1.01, 10].each do |thing|
+      lambda { make_jam(:value => thing) }.should raise_error
+    end
+  end
 
   it "value should be read-only" do
     @event.should_not respond_to(:value=)
