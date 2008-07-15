@@ -30,7 +30,7 @@ module Rubygame
       attr_reader :axis
       attr_reader :value
 
-      def initialize( joystick_id )
+      def initialize( joystick_id, axis )
         unless joystick_id.kind_of?(Fixnum) and joystick_id > 0
           raise ArgumentError, "joystick_id must be a positive integer"
         end
