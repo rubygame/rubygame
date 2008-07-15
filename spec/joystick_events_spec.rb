@@ -33,8 +33,8 @@ describe JoystickAxisMoved do
     @event.joystick_id.should == 1
   end
 
-  it "should reject all except positive integers for joystick id" do
-    [0, -1, 1.2, :foo, "red", [], {}].each do |thing|
+  it "should accept only non-negative integers for joystick id" do
+    [-1, 1.2, :foo, "red", [], {}].each do |thing|
       lambda { make_jam(:joystick_id => thing) }.should raise_error
     end
   end
@@ -53,8 +53,8 @@ describe JoystickAxisMoved do
     @event.axis.should == 2
   end
 
-  it "should reject all except positive integers for axis number" do
-    [0, -1, 1.2, :foo, "red", [], {}].each do |thing|
+  it "should accept only non-negative integers for axis" do
+    [-1, 1.2, :foo, "red", [], {}].each do |thing|
       lambda { make_jam(:axis => thing) }.should raise_error
     end
   end
