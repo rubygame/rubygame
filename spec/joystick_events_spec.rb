@@ -225,4 +225,8 @@ describe JoystickHatMoved do
     end
   end
 
+  it "hat number should be read-only" do
+    @event.should_not respond_to(:hat=)
+  end
+
 end
