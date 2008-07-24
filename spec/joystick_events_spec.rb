@@ -290,6 +290,12 @@ describe JoystickHatMoved do
     @event.should respond_to(:vertical)
   end
 
+  it "vertical direction should be derived from direction" do
+    @dir_map.each_pair do |dir, hv|
+      make_event(:direction => dir).vertical.should == hv[1]
+    end
+  end
+
   it "vertical direction should be read-only" do
     @event.should_not respond_to(:vertical=)
   end
