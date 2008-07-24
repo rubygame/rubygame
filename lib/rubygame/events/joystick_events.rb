@@ -185,6 +185,9 @@ module Rubygame
       end
 
 
+      def center?
+      end
+
       def left?
         @horizontal == -1
       end
