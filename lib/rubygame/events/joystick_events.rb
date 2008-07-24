@@ -189,6 +189,10 @@ module Rubygame
         @horizontal == -1
       end
 
+      def right?
+        @horizontal == 1
+      end
+
     end
 
   end
