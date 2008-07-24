@@ -306,4 +306,11 @@ describe JoystickHatMoved do
     @event.should respond_to(:left?)
   end
 
+  it "#left? should be true when leftish" do
+    [:left, :up_left, :down_left].each do |thing|
+      make_event(:direction => thing).left?.should be_true
+    end
+  end
+
+
 end
