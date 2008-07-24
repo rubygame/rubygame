@@ -263,4 +263,8 @@ describe JoystickHatMoved do
     @event.should respond_to(:horizontal)
   end
 
+  it "horizontal direction should be read-only" do
+    @event.should_not respond_to(:horizontal=)
+  end
+
 end
