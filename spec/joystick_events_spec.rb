@@ -205,6 +205,17 @@ describe JoystickHatMoved do
     @event = make_event
     @valid_directions = [:up, :up_right, :right, :down_right,
                          :down, :down_left, :left, :up_left, nil]
+    @dir_map = {
+      :up         => [ 0, -1],
+      :up_right   => [ 1, -1],
+      :right      => [ 1,  0],
+      :down_right => [ 1,  1],
+      :down       => [ 0,  1],
+      :down_left  => [-1,  1],
+      :left       => [-1,  0],
+      :up_left    => [-1, -1],
+      nil         => [ 0,  0]
+    }
   end
   
 
@@ -261,6 +272,12 @@ describe JoystickHatMoved do
 
   it "should have a horizontal direction" do
     @event.should respond_to(:horizontal)
+  end
+
+  it "horizontal direction should be derived from direction" do
+    @dir_map.each_pair do |dir, hv|
+      make_event(:direction => dir).horizontal.should == hv[0]
+    end
   end
 
   it "horizontal direction should be read-only" do
