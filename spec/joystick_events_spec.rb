@@ -195,10 +195,10 @@ describe JoystickHatMoved do
 
   def make_event( mods = {} )
     args = {
-      :joystick_id => 0, :hat => 0, :direction => [0,0]
+      :joystick_id => 0, :hat => 0, :direction => nil
     }.update(mods)
 
-    JoystickHatMoved.new( args[:joystick_id], args[:hat] )
+    JoystickHatMoved.new( args[:joystick_id], args[:hat], args[:direction] )
   end
 
   before :each do
@@ -233,6 +233,10 @@ describe JoystickHatMoved do
 
   it "should have a direction" do
     @event.should respond_to(:direction)
+  end
+
+  it "should set direction from initialize arg" do
+    make_event(:direction => :up).direction.should == :up
   end
 
   it "direction should be read-only" do
