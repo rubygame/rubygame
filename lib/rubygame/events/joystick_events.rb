@@ -142,6 +142,10 @@ module Rubygame
 
       attr_reader :joystick_id, :hat, :direction
 
+      @@valid_directions = [:up,   :up_right,  :right, :down_right, 
+                            :down, :down_left, :left,  :up_left,
+                            nil]
+
       def initialize( joystick_id, hat, direction )
 
         unless joystick_id.kind_of?(Fixnum) and joystick_id >= 0
@@ -155,6 +159,12 @@ module Rubygame
         end
 
         @hat = hat
+
+        unless @@valid_directions.include? direction
+          raise ArgumentError, 
+                "invalid direction '%s'. "%[direction.inspect] +\
+                "Check the docs for valid directions."
+        end
 
         @direction = direction
 
