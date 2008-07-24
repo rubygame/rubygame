@@ -198,7 +198,7 @@ describe JoystickHatMoved do
       :joystick_id => 0, :hat => 0, :direction => [0,0]
     }.update(mods)
 
-    JoystickHatMoved.new( args[:joystick_id] )
+    JoystickHatMoved.new( args[:joystick_id], args[:hat] )
   end
 
   before :each do
@@ -213,6 +213,10 @@ describe JoystickHatMoved do
 
   it "should have a hat number" do
     @event.should respond_to(:hat)
+  end
+
+  it "should set hat from initialize arg" do
+    make_event(:hat => 1).hat.should == 1
   end
 
 end
