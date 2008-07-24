@@ -186,6 +186,7 @@ module Rubygame
 
 
       def center?
+        @direction == nil
       end
 
       def left?
