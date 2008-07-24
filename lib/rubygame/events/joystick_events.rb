@@ -186,6 +186,7 @@ module Rubygame
 
 
       def left?
+        @horizontal == -1
       end
 
     end
