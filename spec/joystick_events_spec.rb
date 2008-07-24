@@ -247,6 +247,12 @@ describe JoystickHatMoved do
     end
   end
 
+  it "should not accept invalid directions" do
+    [-1, 1.2, "red", :foo, [], {}].each do |thing|
+      lambda { make_event(:direction => thing) }.should raise_error
+    end
+  end
+
   it "direction should be read-only" do
     @event.should_not respond_to(:direction=)
   end
