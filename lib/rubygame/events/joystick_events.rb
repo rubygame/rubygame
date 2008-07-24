@@ -143,6 +143,7 @@ module Rubygame
       attr_reader :joystick_id, :hat, :direction
       attr_reader :horizontal, :vertical
 
+
       # Mapping direction symbol to horizontal and vertical parts
       @@direction_map = {
         :up         => [ 0, -1],
@@ -155,6 +156,7 @@ module Rubygame
         :up_left    => [-1, -1],
         nil         => [ 0,  0]
       }
+
 
       def initialize( joystick_id, hat, direction )
 
@@ -180,6 +182,10 @@ module Rubygame
 
         @horizontal, @vertical = @@direction_map[direction]
 
+      end
+
+
+      def left?
       end
 
     end
