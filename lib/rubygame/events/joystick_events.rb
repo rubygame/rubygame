@@ -140,7 +140,7 @@ module Rubygame
 
     class JoystickHatMoved
 
-      attr_reader :joystick_id
+      attr_reader :joystick_id, :hat
 
       def initialize( joystick_id )
         unless joystick_id.kind_of?(Fixnum) and joystick_id >= 0
