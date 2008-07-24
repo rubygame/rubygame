@@ -203,8 +203,7 @@ describe JoystickHatMoved do
 
   before :each do
     @event = make_event
-    @valid_directions = [:up, :up_right, :right, :down_right,
-                         :down, :down_left, :left, :up_left, nil]
+
     @dir_map = {
       :up         => [ 0, -1],
       :up_right   => [ 1, -1],
@@ -253,7 +252,7 @@ describe JoystickHatMoved do
   end
 
   it "should accept valid directions" do
-    @valid_directions.each do |thing|
+    @dir_map.keys.each do |thing|
       lambda { make_event(:direction => thing) }.should_not raise_error
     end
   end
