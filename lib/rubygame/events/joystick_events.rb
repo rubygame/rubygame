@@ -141,7 +141,7 @@ module Rubygame
     class JoystickHatMoved
 
       attr_reader :joystick_id, :hat, :direction
-      attr_reader :horizontal
+      attr_reader :horizontal, :vertical
 
       @@valid_directions = [:up,   :up_right,  :right, :down_right, 
                             :down, :down_left, :left,  :up_left,
