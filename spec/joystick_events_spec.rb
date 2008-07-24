@@ -235,4 +235,8 @@ describe JoystickHatMoved do
     @event.should respond_to(:direction)
   end
 
+  it "direction should be read-only" do
+    @event.should_not respond_to(:direction=)
+  end
+
 end
