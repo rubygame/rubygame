@@ -219,4 +219,10 @@ describe JoystickHatMoved do
     make_event(:hat => 1).hat.should == 1
   end
 
+  it "should accept only non-negative integers for hat" do
+    [-1, 1.2, :foo, "red", [], {}].each do |thing|
+      lambda { make_event(:hat => thing) }.should raise_error
+    end
+  end
+
 end
