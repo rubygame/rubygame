@@ -138,6 +138,15 @@ module Rubygame
 
 
 
+    # JoystickHatMoved is an event that occurs when a
+    # joystick's hat switch has changed direction.
+    # 
+    # A joystick hat switch is a round switch that can be pressed
+    # in 8 possible directions: up, down, left, right, or the four
+    # diagonal directions. (Some hat switches support extra diagonal
+    # directions, but only those 8 directions are supported by
+    # Rubygame.)
+    # 
     class JoystickHatMoved
 
       attr_reader :joystick_id, :hat, :direction
@@ -158,6 +167,26 @@ module Rubygame
       }
 
 
+      # Creates a new JoystickHatMoved instance.
+      # 
+      # joystick_id::  an integer identifying which joystick
+      #                changed. The first joystick is 0.
+      # hat::          an integer identifying which hat switch
+      #                changed. The first hat switch on each joystick
+      #                is 0.
+      # direction::    a symbol telling the direction the hat switch
+      #                is being pressed. The direction is either nil
+      #                or one of these 8 symbols:
+      # 
+      #                1. :up
+      #                2. :up_right
+      #                3. :right
+      #                4. :down_right
+      #                5. :down
+      #                6. :down_left
+      #                7. :left
+      #                8. :up_left
+      # 
       def initialize( joystick_id, hat, direction )
 
         unless joystick_id.kind_of?(Fixnum) and joystick_id >= 0
@@ -185,22 +214,29 @@ module Rubygame
       end
 
 
+      # True if the hat is in the center (not pressed in any
+      # direction).
       def center?
         @direction == nil
       end
 
+
+      # True if the hat is pressed left, up-left, or down-left.
       def left?
         @horizontal == -1
       end
 
+      # True if the hat is pressed right, up-right, or down-right.
       def right?
         @horizontal == 1
       end
 
+      # True if the hat is pressed up, up-right, or up-left.
       def up?
         @vertical == -1
       end
 
+      # True if the hat is pressed down, down-right, or down-left.
       def down?
         @vertical == 1
       end
