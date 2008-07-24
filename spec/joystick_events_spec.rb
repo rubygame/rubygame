@@ -337,6 +337,7 @@ describe JoystickHatMoved do
   end
 
 
+
   it "should have #up?" do
     @event.should respond_to(:up?)
   end
@@ -354,6 +355,7 @@ describe JoystickHatMoved do
   end
 
 
+
   it "should have #down?" do
     @event.should respond_to(:down?)
   end
@@ -368,6 +370,12 @@ describe JoystickHatMoved do
     [:up, :up_right, :right, :left, :up_left, nil].each do |thing|
       make_event(:direction => thing).down?.should be_false
     end
+  end
+
+
+
+  it "should have #center?" do
+    @event.should respond_to(:center?)
   end
 
 
