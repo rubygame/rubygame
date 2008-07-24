@@ -143,10 +143,6 @@ module Rubygame
       attr_reader :joystick_id, :hat, :direction
       attr_reader :horizontal, :vertical
 
-      @@valid_directions = [:up,   :up_right,  :right, :down_right, 
-                            :down, :down_left, :left,  :up_left,
-                            nil]
-
       # Mapping direction symbol to horizontal and vertical parts
       @@direction_map = {
         :up         => [ 0, -1],
@@ -174,7 +170,7 @@ module Rubygame
 
         @hat = hat
 
-        unless @@valid_directions.include? direction
+        unless @@direction_map.keys.include? direction
           raise ArgumentError, 
                 "invalid direction '%s'. "%[direction.inspect] +\
                 "Check the docs for valid directions."
