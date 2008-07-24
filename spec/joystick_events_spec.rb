@@ -229,4 +229,10 @@ describe JoystickHatMoved do
     @event.should_not respond_to(:hat=)
   end
 
+
+
+  it "should have a direction" do
+    @event.should respond_to(:direction)
+  end
+
 end
