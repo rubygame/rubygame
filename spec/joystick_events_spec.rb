@@ -209,4 +209,10 @@ describe JoystickHatMoved do
 
   it_should_behave_like "a joystick event"
 
+
+
+  it "should have a hat number" do
+    @event.should respond_to(:hat)
+  end
+
 end
