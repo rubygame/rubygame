@@ -300,4 +300,10 @@ describe JoystickHatMoved do
     @event.should_not respond_to(:vertical=)
   end
 
+
+
+  it "should have #left?" do
+    @event.should respond_to(:left?)
+  end
+
 end
