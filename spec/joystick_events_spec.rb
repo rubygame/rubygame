@@ -130,7 +130,7 @@ describe JoystickBallMoved do
 
 
 
-  it "should have an ball number" do
+  it "should have a ball number" do
     @event.should respond_to(:ball)
   end
 
