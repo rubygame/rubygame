@@ -312,5 +312,11 @@ describe JoystickHatMoved do
     end
   end
 
+  it "#left? should be false when not leftish" do
+    [:up, :up_right, :right, :down_right, :down, nil].each do |thing|
+      make_event(:direction => thing).left?.should be_false
+    end
+  end
+
 
 end
