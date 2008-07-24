@@ -337,4 +337,21 @@ describe JoystickHatMoved do
   end
 
 
+  it "should have #up?" do
+    @event.should respond_to(:up?)
+  end
+
+  it "#up? should be true when uppish" do
+    [:up, :up_right, :up_left].each do |thing|
+      make_event(:direction => thing).up?.should be_true
+    end
+  end
+
+  it "#up? should be false when not uppish" do
+    [:right, :down_right, :down, :down_left, :left, nil].each do |thing|
+      make_event(:direction => thing).up?.should be_false
+    end
+  end
+
+
 end
