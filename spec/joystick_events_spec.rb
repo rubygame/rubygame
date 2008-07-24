@@ -378,5 +378,9 @@ describe JoystickHatMoved do
     @event.should respond_to(:center?)
   end
 
+  it "#center should be true when direction is nil" do
+    make_event(:direction => nil).center?.should be_true
+  end
+
 
 end
