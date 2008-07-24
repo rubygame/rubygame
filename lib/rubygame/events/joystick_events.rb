@@ -197,6 +197,10 @@ module Rubygame
         @vertical == -1
       end
 
+      def down?
+        @vertical == 1
+      end
+
     end
 
   end
