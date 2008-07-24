@@ -203,6 +203,8 @@ describe JoystickHatMoved do
 
   before :each do
     @event = make_event
+    @valid_directions = [:up, :up_right, :right, :down_right,
+                         :down, :down_left, :left, :up_left, nil]
   end
   
 
@@ -237,6 +239,12 @@ describe JoystickHatMoved do
 
   it "should set direction from initialize arg" do
     make_event(:direction => :up).direction.should == :up
+  end
+
+  it "should accept valid directions" do
+    @valid_directions.each do |thing|
+      lambda { make_event(:direction => thing) }.should_not raise_error
+    end
   end
 
   it "direction should be read-only" do
