@@ -147,6 +147,19 @@ module Rubygame
                             :down, :down_left, :left,  :up_left,
                             nil]
 
+      # Mapping direction symbol to horizontal and vertical parts
+      @@direction_map = {
+        :up         => [ 0, -1],
+        :up_right   => [ 1, -1],
+        :right      => [ 1,  0],
+        :down_right => [ 1,  1],
+        :down       => [ 0,  1],
+        :down_left  => [-1,  1],
+        :left       => [-1,  0],
+        :up_left    => [-1, -1],
+        nil         => [ 0,  0]
+      }
+
       def initialize( joystick_id, hat, direction )
 
         unless joystick_id.kind_of?(Fixnum) and joystick_id >= 0
@@ -168,6 +181,8 @@ module Rubygame
         end
 
         @direction = direction
+
+        @horizontal, @vertical = @@direction_map[direction]
 
       end
 
