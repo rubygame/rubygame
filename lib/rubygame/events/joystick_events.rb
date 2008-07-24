@@ -142,12 +142,18 @@ module Rubygame
 
       attr_reader :joystick_id, :hat
 
-      def initialize( joystick_id )
+      def initialize( joystick_id, hat )
         unless joystick_id.kind_of?(Fixnum) and joystick_id >= 0
           raise ArgumentError, "joystick_id must be an integer >= 0"
         end
 
         @joystick_id = joystick_id
+
+        unless hat.kind_of?(Fixnum) and hat >= 0
+          raise ArgumentError, "hat must be an integer >= 0"
+        end
+
+        @hat = hat
 
       end
 
