@@ -382,5 +382,13 @@ describe JoystickHatMoved do
     make_event(:direction => nil).center?.should be_true
   end
 
+  it "#center should be false when direction is not nil" do
+    dirs = @dir_map.keys - [nil]
+
+    dirs.each do |dir|
+      make_event(:direction => dir).center?.should be_false
+    end
+  end
+
 
 end
