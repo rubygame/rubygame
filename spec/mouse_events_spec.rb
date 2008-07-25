@@ -22,6 +22,11 @@ describe "a mouse button event", :shared => true do
     lambda { @event.class.new }.should raise_error(ArgumentError)
   end
 
+  it "button symbol should be read-only" do
+    @event.should_not respond_to(:button=)
+  end
+
+
 
   it "should have a position" do
     @event.pos.should == [1,2]
