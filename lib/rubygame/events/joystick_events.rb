@@ -92,6 +92,18 @@ module Rubygame
 
       include JoystickButtonEvent
 
+      attr_reader :joystick_id
+
+      def initialize( joystick_id )
+
+        unless joystick_id.kind_of?(Fixnum) and joystick_id >= 0
+          raise ArgumentError, "joystick_id must be an integer >= 0"
+        end
+
+        @joystick_id = joystick_id
+
+      end
+
     end
 
 
