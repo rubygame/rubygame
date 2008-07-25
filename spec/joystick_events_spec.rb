@@ -240,6 +240,19 @@ end
 
 
 
+describe JoystickButtonReleased do
+
+  before :each do
+    @class = JoystickButtonReleased
+    @event = make_event
+  end
+
+  it_should_behave_like "a joystick button event"
+
+end
+
+
+
 
 
 describe JoystickHatMoved do
