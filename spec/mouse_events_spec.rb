@@ -128,6 +128,12 @@ describe MouseMoved do
     @event.rel.should be_frozen
   end
 
+  it "should not freeze the original relative movement Array" do
+    a = [0,0]
+    @event.class.new([1,2], a)
+    a.should_not be_frozen
+  end
+
 
 
   it "should have an array of held buttons" do
