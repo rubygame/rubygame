@@ -95,11 +95,8 @@ module Rubygame
       def initialize( key, modifiers=[], string="" )
         super( key, modifiers )
 
-        unless string.kind_of? String
-          raise ArgumentError, "string must be a String"
-        end
+        @string = string.to_str.dup
 
-        @string = string
       end
     end
 
