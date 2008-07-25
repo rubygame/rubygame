@@ -207,9 +207,9 @@ describe "a joystick button event", :shared => true do
     end
   end
 
-#   it "button should be read-only" do
-#     @event.should_not respond_to(:button=)
-#   end
+  it "button should be read-only" do
+    @event.should_not respond_to(:button=)
+  end
   
 end
 
