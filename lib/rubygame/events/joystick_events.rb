@@ -107,8 +107,35 @@ module Rubygame
     end
 
 
+
+    # JoystickButtonPressed is an event that occurs when a
+    # joystick button has been pressed.
+    # 
+    # A joystick button is a button that can be pressed
+    # by the user's thumbs or fingers. The number of buttons
+    # varies with the joystick. Most joysticks have at least
+    # two buttons; fancy ones can have up to 12 or even 20
+    # buttons.
+    # 
+    # Like a mouse button, a joystick button is either "pressed"
+    # or "not pressed", with no middle states.
+    # 
     class JoystickButtonPressed
       include JoystickButtonEvent
+
+
+      # Creates a new JoystickButtonPressed instance.
+      # 
+      # joystick_id::  an integer identifying which joystick
+      #                changed. The first joystick is 0.
+      # button::       an integer identifying which button was 
+      #                pressed . The first button on each
+      #                joystick is 0.
+      # 
+      def initialize( joystick_id, button )
+        super
+      end
+
     end
 
     class JoystickButtonReleased
