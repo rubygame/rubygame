@@ -56,6 +56,10 @@ describe KeyPressed do
     lambda {@event.class.new( :a, [:shift], 4 )}.should raise_error
   end
 
+  it "string should be frozen" do
+    @event.string.should be_frozen
+  end
+
 end
 
 
