@@ -47,6 +47,12 @@ describe "a mouse button event", :shared => true do
   it "position should be frozen" do
     @event.pos.should be_frozen
   end
+
+  it "should not freeze the original position Array" do
+    a = [0,0]
+    @event.class.new(a, :mouse_left)
+    a.should_not be_frozen
+  end
  
 end
 
