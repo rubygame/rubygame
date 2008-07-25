@@ -95,6 +95,12 @@ describe MouseMoved do
     lambda { @event.class.new() }.should raise_error(ArgumentError)
   end
 
+  it "position should be frozen" do
+    @event.pos.should be_frozen
+  end
+
+
+
   it "should have a relative movement" do
     @event.rel.should == [3,4]
   end
@@ -107,6 +113,12 @@ describe MouseMoved do
     lambda { @event.class.new( [1,2] ) }.should raise_error(ArgumentError)
   end
 
+  it "relative movement should be frozen" do
+    @event.rel.should be_frozen
+  end
+
+
+
   it "should have an array of held buttons" do
     @event.buttons.should == [:mouse_left]
   end
@@ -118,6 +130,10 @@ describe MouseMoved do
   it "should have no held buttons if omitted" do
     @event = MouseMoved.new( [1,2], [3,4] )
     @event.buttons.should == []
+  end
+
+  it "buttons should be frozen" do
+    @event.buttons.should be_frozen
   end
 
 end
