@@ -54,7 +54,9 @@ module Rubygame
         end
 
         @button = button
-        @pos = pos
+
+        @pos = pos.to_ary.dup
+        @pos.freeze
 
       end
     end
