@@ -51,6 +51,7 @@ module Rubygame
         @key = key
 
         @modifiers = modifiers.to_ary.dup
+        @modifiers.freeze
 
       end
     end
