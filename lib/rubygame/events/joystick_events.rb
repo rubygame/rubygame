@@ -108,9 +108,11 @@ module Rubygame
 
 
     class JoystickButtonPressed
-
       include JoystickButtonEvent
+    end
 
+    class JoystickButtonReleased
+      include JoystickButtonEvent
     end
 
 
