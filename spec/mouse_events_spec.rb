@@ -87,8 +87,8 @@ describe MouseMoved do
     @event.pos.should == [1,2]
   end
 
-  it "should complain if position is not an Array" do
-    lambda { @event.class.new( 4, [3,4] ) }.should raise_error(ArgumentError)
+  it "should complain if position is not Array-like" do
+    lambda { @event.class.new( 4, [3,4] ) }.should raise_error
   end
 
   it "should complain if position is omitted" do
@@ -99,8 +99,8 @@ describe MouseMoved do
     @event.rel.should == [3,4]
   end
 
-  it "should complain if relative movement is not an Array" do
-    lambda { @event.class.new( [1,2], 4 ) }.should raise_error(ArgumentError)
+  it "should complain if relative movement is not Array-like" do
+    lambda { @event.class.new( [1,2], 4 ) }.should raise_error
   end
 
   it "should complain if relative movement is omitted" do
@@ -111,8 +111,8 @@ describe MouseMoved do
     @event.buttons.should == [:mouse_left]
   end
 
-  it "should complain if held buttons is not an Array" do
-    lambda { @event.class.new( [1,2], [3,4], 4 ) }.should raise_error(ArgumentError)
+  it "should complain if held buttons is not Array-like" do
+    lambda { @event.class.new( [1,2], [3,4], 4 ) }.should raise_error
   end
 
   it "should have no held buttons if omitted" do
