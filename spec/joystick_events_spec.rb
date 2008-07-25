@@ -191,6 +191,33 @@ end
 
 
 
+describe "a joystick button event", :shared => true do
+  
+end
+
+
+describe JoystickButtonPressed do
+
+  def make_event( mods = {} )
+    args = {
+      :joystick_id => 0, :button => 0
+    }.update(mods)
+
+    JoystickButtonPressed.new( args[:joystick_id] )
+  end
+
+  before :each do
+    @event = make_event
+  end
+
+  it_should_behave_like "a joystick button event"
+
+end
+
+
+
+
+
 describe JoystickHatMoved do
 
   def make_event( mods = {} )
