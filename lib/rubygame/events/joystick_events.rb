@@ -92,7 +92,7 @@ module Rubygame
 
       include JoystickButtonEvent
 
-      attr_reader :joystick_id
+      attr_reader :joystick_id, :button
 
       def initialize( joystick_id )
 
