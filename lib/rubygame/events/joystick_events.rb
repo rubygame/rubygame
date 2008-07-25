@@ -84,6 +84,11 @@ module Rubygame
 
 
 
+    module JoystickButtonEvent
+    end
+
+
+
     # JoystickBallMoved is an event that occurs when a
     # joystick's trackball has changed position.
     # 
