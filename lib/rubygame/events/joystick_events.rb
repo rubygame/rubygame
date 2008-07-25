@@ -84,10 +84,24 @@ module Rubygame
 
 
 
+    # JoystickButtonEvent is a mixin module included in
+    # the JoystickButtonPressed and JoystickButtonReleased
+    # classes. It defines the #joystick_id and #button
+    # attribute readers.
+    # 
     module JoystickButtonEvent
 
       attr_reader :joystick_id, :button
 
+
+      # Initializes the JoystickButtonEvent.
+      # 
+      # joystick_id::  an integer identifying which joystick
+      #                changed. The first joystick is 0.
+      # button::       an integer identifying which button was 
+      #                pressed or released. The first button 
+      #                on each joystick is 0.
+      # 
       def initialize( joystick_id, button )
 
         unless joystick_id.kind_of?(Fixnum) and joystick_id >= 0
@@ -129,7 +143,7 @@ module Rubygame
       # joystick_id::  an integer identifying which joystick
       #                changed. The first joystick is 0.
       # button::       an integer identifying which button was 
-      #                pressed . The first button on each
+      #                pressed. The first button on each
       #                joystick is 0.
       # 
       def initialize( joystick_id, button )
@@ -154,7 +168,7 @@ module Rubygame
       # joystick_id::  an integer identifying which joystick
       #                changed. The first joystick is 0.
       # button::       an integer identifying which button was 
-      #                pressed . The first button on each
+      #                released. The first button on each
       #                joystick is 0.
       # 
       def initialize( joystick_id, button )
