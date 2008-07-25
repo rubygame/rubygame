@@ -44,6 +44,10 @@ describe "a mouse button event", :shared => true do
     @event.should_not respond_to(:pos=)
   end
 
+  it "position should be frozen" do
+    @event.pos.should be_frozen
+  end
+
  
 end
 
