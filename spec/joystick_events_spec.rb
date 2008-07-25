@@ -10,6 +10,11 @@ include Rubygame::Events
 
 describe "a joystick event", :shared => true do
 
+
+  ###############
+  # JOYSTICK ID #
+  ###############
+
   it "should have a joystick id" do
     make_event.should respond_to(:joystick_id)
   end
@@ -60,6 +65,10 @@ describe JoystickAxisMoved do
 
 
 
+  ########
+  # AXIS #
+  ########
+
   it "should have an axis number" do
     @event.should respond_to(:axis)
   end
@@ -79,6 +88,10 @@ describe JoystickAxisMoved do
   end
 
 
+
+  #########
+  # VALUE #
+  #########
 
   it "should have a value" do
     @event.should respond_to(:value)
@@ -142,6 +155,9 @@ describe JoystickBallMoved do
   it_should_behave_like "a joystick event"
 
 
+  ########
+  # BALL #
+  ########
 
   it "should have a ball number" do
     @event.should respond_to(:ball)
@@ -162,6 +178,9 @@ describe JoystickBallMoved do
   end
 
 
+  #######
+  # REL #
+  #######
 
   it "should have a relative position" do
     @event.should respond_to(:rel)
@@ -224,6 +243,10 @@ describe "a joystick button event", :shared => true do
 
   it_should_behave_like "a joystick event"
 
+
+  ##########
+  # BUTTON #
+  ##########
 
   it "should have a button number" do
     @event.should respond_to(:button)
@@ -313,6 +336,9 @@ describe JoystickHatMoved do
   it_should_behave_like "a joystick event"
 
 
+  #######
+  # HAT #
+  #######
 
   it "should have a hat number" do
     @event.should respond_to(:hat)
@@ -333,6 +359,9 @@ describe JoystickHatMoved do
   end
 
 
+  #############
+  # DIRECTION #
+  #############
 
   it "should have a direction" do
     @event.should respond_to(:direction)
@@ -359,6 +388,9 @@ describe JoystickHatMoved do
   end
 
 
+  ##############
+  # HORIZONTAL #
+  ##############
 
   it "should have a horizontal direction" do
     @event.should respond_to(:horizontal)
@@ -375,6 +407,9 @@ describe JoystickHatMoved do
   end
 
 
+  ############
+  # VERTICAL #
+  ############
 
   it "should have a vertical direction" do
     @event.should respond_to(:vertical)
@@ -391,6 +426,9 @@ describe JoystickHatMoved do
   end
 
 
+  #########
+  # LEFT? #
+  #########
 
   it "should have #left?" do
     @event.should respond_to(:left?)
@@ -409,6 +447,9 @@ describe JoystickHatMoved do
   end
 
 
+  ##########
+  # RIGHT? #
+  ##########
 
   it "should have #right?" do
     @event.should respond_to(:right?)
@@ -427,6 +468,9 @@ describe JoystickHatMoved do
   end
 
 
+  #######
+  # UP? #
+  #######
 
   it "should have #up?" do
     @event.should respond_to(:up?)
@@ -445,6 +489,9 @@ describe JoystickHatMoved do
   end
 
 
+  #########
+  # DOWN? #
+  #########
 
   it "should have #down?" do
     @event.should respond_to(:down?)
@@ -463,6 +510,9 @@ describe JoystickHatMoved do
   end
 
 
+  ###########
+  # CENTER? #
+  ###########
 
   it "should have #center?" do
     @event.should respond_to(:center?)
