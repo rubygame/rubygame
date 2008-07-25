@@ -48,12 +48,10 @@ module Rubygame
           raise ArgumentError, "key must be a :symbol"
         end
 
-        unless modifiers.kind_of? Array
-          raise ArgumentError, "modifiers must be an Array"
-        end
-
         @key = key
-        @modifiers = modifiers
+
+        @modifiers = modifiers.to_ary.dup
+
       end
     end
 
