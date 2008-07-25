@@ -96,6 +96,7 @@ module Rubygame
         super( key, modifiers )
 
         @string = string.to_str.dup
+        @string.freeze
 
       end
     end
