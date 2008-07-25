@@ -153,4 +153,10 @@ describe MouseMoved do
     @event.buttons.should be_frozen
   end
 
+  it "should not freeze the original buttons Array" do
+    a = [:mouse_left]
+    @event.class.new([1,2], [3,4], a)
+    a.should_not be_frozen
+  end
+
 end
