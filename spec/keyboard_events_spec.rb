@@ -25,6 +25,10 @@ describe "a keyboard event", :shared => true do
   it "should complain if modifiers is not Array-like" do
     lambda { @event.class.new( :a, 4 ) }.should raise_error
   end
+
+  it "modifiers should be frozen" do
+    @event.modifiers.should be_frozen
+  end
  
 end
 
