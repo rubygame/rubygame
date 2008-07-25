@@ -102,6 +102,10 @@ module Rubygame
 
         @joystick_id = joystick_id
 
+        unless button.kind_of?(Fixnum) and button >= 0
+          raise ArgumentError, "button must be an integer >= 0"
+        end
+
         @button = button
 
       end
