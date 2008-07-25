@@ -52,10 +52,8 @@ describe KeyPressed do
     @event.string.should == "A"
   end
 
-  it "should complain if string is not a string" do
-    lambda {
-      @event.class.new( :a, [:shift], 4 ) 
-    }.should raise_error(ArgumentError)
+  it "should complain if string is not String-like" do
+    lambda {@event.class.new( :a, [:shift], 4 )}.should raise_error
   end
 
 end
