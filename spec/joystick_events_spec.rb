@@ -197,9 +197,9 @@ describe "a joystick button event", :shared => true do
     @event.should respond_to(:button)
   end
 
-#   it "should set button from initialize arg" do
-#     make_event(:button => 1).button.should == 1
-#   end
+  it "should set button from initialize arg" do
+    make_event(:button => 1).button.should == 1
+  end
 
 #   it "should accept only non-negative integers for button" do
 #     [-1, 1.2, :foo, "red", [], {}].each do |thing|
@@ -221,7 +221,7 @@ describe JoystickButtonPressed do
       :joystick_id => 0, :button => 0
     }.update(mods)
 
-    JoystickButtonPressed.new( args[:joystick_id] )
+    JoystickButtonPressed.new( args[:joystick_id], args[:button] )
   end
 
   before :each do
