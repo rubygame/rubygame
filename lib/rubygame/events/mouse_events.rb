@@ -139,10 +139,13 @@ module Rubygame
       def initialize( pos, rel, buttons=[] )
 
         @pos = pos.to_ary.dup
+        @pos.freeze
 
         @rel = rel.to_ary.dup
+        @rel.freeze
 
         @buttons = buttons.to_ary.dup
+        @buttons.freeze
 
       end
     end
