@@ -193,9 +193,9 @@ end
 
 describe "a joystick button event", :shared => true do
 
-#   it "should have a button number" do
-#     @event.should respond_to(:button)
-#   end
+  it "should have a button number" do
+    @event.should respond_to(:button)
+  end
 
 #   it "should set button from initialize arg" do
 #     make_event(:button => 1).button.should == 1
