@@ -138,8 +138,29 @@ module Rubygame
 
     end
 
+
+
+    # JoystickButtonReleased is an event that occurs when a
+    # joystick button is released (no longer being pressed).
+    # 
+    # See also JoystickButtonPressed.
+    # 
     class JoystickButtonReleased
       include JoystickButtonEvent
+
+
+      # Creates a new JoystickButtonPressed instance.
+      # 
+      # joystick_id::  an integer identifying which joystick
+      #                changed. The first joystick is 0.
+      # button::       an integer identifying which button was 
+      #                pressed . The first button on each
+      #                joystick is 0.
+      # 
+      def initialize( joystick_id, button )
+        super
+      end
+
     end
 
 
