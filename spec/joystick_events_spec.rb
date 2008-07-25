@@ -210,6 +210,8 @@ describe JoystickButtonPressed do
     @event = make_event
   end
 
+  it_should_behave_like "a joystick event"
+
   it_should_behave_like "a joystick button event"
 
 end
