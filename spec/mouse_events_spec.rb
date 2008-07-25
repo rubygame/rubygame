@@ -104,6 +104,12 @@ describe MouseMoved do
     @event.pos.should be_frozen
   end
 
+  it "should not freeze the original position Array" do
+    a = [0,0]
+    @event.class.new(a, [3,4])
+    a.should_not be_frozen
+  end
+ 
 
 
   it "should have a relative movement" do
