@@ -137,21 +137,13 @@ module Rubygame
       #           no buttons were being held. (Array, optional)
       # 
       def initialize( pos, rel, buttons=[] )
-        unless pos.kind_of? Array
-          raise ArgumentError, "pos must be an Array"
-        end
 
-        unless rel.kind_of? Array
-          raise ArgumentError, "rel must be an Array"
-        end
+        @pos = pos.to_ary.dup
 
-        unless buttons.kind_of? Array
-          raise ArgumentError, "buttons must be an Array"
-        end
+        @rel = rel.to_ary.dup
 
-        @pos = pos
-        @rel = rel
-        @buttons = buttons
+        @buttons = buttons.to_ary.dup
+
       end
     end
 
