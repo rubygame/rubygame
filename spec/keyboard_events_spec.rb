@@ -29,6 +29,12 @@ describe "a keyboard event", :shared => true do
   it "modifiers should be frozen" do
     @event.modifiers.should be_frozen
   end
+
+  it "should not freeze the original modifiers Array" do
+    mods = [:shift]
+    @event.class.new( :a, mods )
+    mods.should_not be_frozen
+  end
  
 end
 
