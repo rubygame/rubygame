@@ -201,11 +201,11 @@ describe "a joystick button event", :shared => true do
     make_event(:button => 1).button.should == 1
   end
 
-#   it "should accept only non-negative integers for button" do
-#     [-1, 1.2, :foo, "red", [], {}].each do |thing|
-#       lambda { make_event(:button => thing) }.should raise_error
-#     end
-#   end
+  it "should accept only non-negative integers for button" do
+    [-1, 1.2, :foo, "red", [], {}].each do |thing|
+      lambda { make_event(:button => thing) }.should raise_error
+    end
+  end
 
 #   it "button should be read-only" do
 #     @event.should_not respond_to(:button=)
