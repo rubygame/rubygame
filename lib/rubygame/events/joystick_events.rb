@@ -85,12 +85,6 @@ module Rubygame
 
 
     module JoystickButtonEvent
-    end
-
-
-    class JoystickButtonPressed
-
-      include JoystickButtonEvent
 
       attr_reader :joystick_id, :button
 
@@ -109,6 +103,13 @@ module Rubygame
         @button = button
 
       end
+
+    end
+
+
+    class JoystickButtonPressed
+
+      include JoystickButtonEvent
 
     end
 
