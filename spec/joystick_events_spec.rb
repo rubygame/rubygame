@@ -193,6 +193,18 @@ end
 
 describe "a joystick button event", :shared => true do
 
+  def make_event( mods = {} )
+    args = {
+      :joystick_id => 0, :button => 0
+    }.update(mods)
+
+    @class.new( args[:joystick_id], args[:button] )
+  end
+
+
+  it_should_behave_like "a joystick event"
+
+
   it "should have a button number" do
     @event.should respond_to(:button)
   end
@@ -214,21 +226,13 @@ describe "a joystick button event", :shared => true do
 end
 
 
+
 describe JoystickButtonPressed do
 
-  def make_event( mods = {} )
-    args = {
-      :joystick_id => 0, :button => 0
-    }.update(mods)
-
-    JoystickButtonPressed.new( args[:joystick_id], args[:button] )
-  end
-
   before :each do
+    @class = JoystickButtonPressed
     @event = make_event
   end
-
-  it_should_behave_like "a joystick event"
 
   it_should_behave_like "a joystick button event"
 
