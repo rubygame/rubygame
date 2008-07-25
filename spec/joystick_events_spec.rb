@@ -31,6 +31,12 @@ describe "a joystick event", :shared => true do
 end
 
 
+##############################
+#                            #
+#           AXIS             #
+#                            #
+##############################
+
 
 describe JoystickAxisMoved do
 
@@ -106,6 +112,13 @@ end
 
 
 
+
+
+##############################
+#                            #
+#           BALL             #
+#                            #
+##############################
 
 
 describe JoystickBallMoved do
@@ -191,6 +204,13 @@ end
 
 
 
+##############################
+#                            #
+#          BUTTONS           #
+#                            #
+##############################
+
+
 describe "a joystick button event", :shared => true do
 
   def make_event( mods = {} )
@@ -253,6 +273,13 @@ end
 
 
 
+
+
+##############################
+#                            #
+#            HAT             #
+#                            #
+##############################
 
 
 describe JoystickHatMoved do
