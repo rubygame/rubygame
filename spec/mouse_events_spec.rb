@@ -39,6 +39,11 @@ describe "a mouse button event", :shared => true do
   it "should complain if position is omitted" do
     lambda { @event.class.new(:mouse_left) }.should raise_error(ArgumentError)
   end
+
+  it "position should be read-only" do
+    @event.should_not respond_to(:pos=)
+  end
+
  
 end
 
