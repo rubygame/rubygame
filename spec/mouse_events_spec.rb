@@ -33,7 +33,7 @@ describe "a mouse button event", :shared => true do
   end
 
   it "should complain if position isn't Array-like" do
-    lambda { @event.class.new(:mouse_left,4) }.should raise_error(ArgumentError)
+    lambda { @event.class.new(4,:mouse_left) }.should raise_error
   end
 
   it "should complain if position is omitted" do
@@ -47,7 +47,6 @@ describe "a mouse button event", :shared => true do
   it "position should be frozen" do
     @event.pos.should be_frozen
   end
-
  
 end
 
