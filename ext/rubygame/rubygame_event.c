@@ -316,6 +316,43 @@ VALUE rg_make_rbevent( char *klassname, int argc, VALUE *argv )
 
 
 
+/*
+ * Convert SDL's ACTIVEEVENT into one of:
+ *
+ *   InputFocusGained / InputFocusLost
+ *   MouseFocusGained / MouseFocusLost
+ *   WindowMinimized  / WindowUnMinimized
+ *
+ * Which class we use depends on the details of the ACTIVEEVENT.
+ *
+ */
+VALUE rg_convert_activeevent( SDL_Event ev )
+{
+  char *klassname;
+
+  switch( ev.active.state )
+  {
+    case SDL_APPINPUTFOCUS:
+      klassname = ev.active.gain ? "InputFocusGained" : "InputFocusLost";
+      break;
+
+    case SDL_APPMOUSEFOCUS:
+      klassname = ev.active.gain ? "MouseFocusGained" : "MouseFocusLost";
+      break;
+
+    case SDL_APPACTIVE:
+      klassname = ev.active.gain ? "WindowUnminimized" : "WindowMinimized";
+      break;
+
+    default:
+      rb_raise(eSDLError, 
+               "unknown ACTIVEEVENT state %d. This is a bug in Rubygame.",
+               ev.active.state);
+  }
+
+  return rb_make_rbevent( klassname, 0, (VALUE *)NULL );
+}
+
 
 
 /*
