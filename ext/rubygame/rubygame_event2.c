@@ -162,4 +162,7 @@ void Rubygame_Init_Event2()
 
   mEvents = rb_define_module_under( mRubygame, "Events" );
 
+  rb_define_singleton_method( mEvents, "fetch_sdl_events",
+                              rg_fetch_sdl_events2, 0);
+
 }
