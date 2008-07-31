@@ -214,14 +214,11 @@ VALUE rg_convert_unicode2( Uint16 unicode )
  */
 VALUE rg_convert_keyboardevent( SDL_Event ev )
 {
-  char *klassname;
-
   VALUE key  = rg_convert_key_symbol2( ev.key.keysym.sym );
   VALUE mods = rg_convert_keymods2(    ev.key.keysym.mod );
 
   switch( ev.key.state )
   {
-
     case SDL_PRESSED: {
       VALUE unicode = rg_convert_unicode2( ev.key.keysym.unicode );
       VALUE args[] = { key, mods, unicode };
@@ -229,21 +226,17 @@ VALUE rg_convert_keyboardevent( SDL_Event ev )
       return rg_make_rbevent( "KeyPressed", 3, args);
     }
 
-
     case SDL_RELEASED: {
       VALUE args[] = { key, mods };
 
       return rg_make_rbevent( "KeyReleased", 2, args );
     }
 
-
     default:
       rb_raise(eSDLError, 
                "unknown keyboard event state %d. This is a bug in Rubygame.",
                ev.active.state);
   }
-
-  return rg_make_rbevent( klassname, 0, (VALUE *)NULL );
 }
 
 
