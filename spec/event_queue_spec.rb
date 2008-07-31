@@ -26,4 +26,12 @@ describe EventQueue do
     @queue.should be_empty
   end
 
+
+  it "#peek_each should yield each event in the queue in order" do 
+    collect = []
+    @queue.push( [1,2,3] )
+    @queue.peek_each { |e| collect << e}
+    collect.should == [1,2,3]
+  end
+
 end
