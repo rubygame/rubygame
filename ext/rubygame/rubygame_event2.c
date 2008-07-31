@@ -379,6 +379,18 @@ VALUE rg_convert_resizeevent( SDL_Event ev )
 
 
 
+/*
+ * Convert SDL's quit event into QuitRequested
+ *
+ */
+VALUE rg_convert_quitevent( SDL_Event ev )
+{
+  return rg_make_rbevent( "QuitRequested", 0, (VALUE *)NULL );
+}
+
+
+
+
 /*--
  *
  *  call-seq:
@@ -415,6 +427,9 @@ VALUE rg_convert_sdlevent2( SDL_Event ev )
 
     case SDL_VIDEORESIZE:
       return rg_convert_resizeevent(ev);
+
+    case SDL_QUIT:
+      return rg_convert_quitevent(ev);
 
     default:
       rb_warn("Cannot convert unknown event type (%d).", ev.type);
