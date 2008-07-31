@@ -92,6 +92,31 @@ VALUE rg_convert_exposeevent( SDL_Event ev )
 
 
 
+/* Convert an OR'd list of KMODs into a Ruby array of symbols. */
+VALUE rg_convert_keymods2( SDLMod mods )
+{
+  VALUE array;
+
+  array = rb_ary_new();
+  if(mods != 0)
+  {
+    /* KEY MODIFIER SYMBOL */
+    if(mods & KMOD_LSHIFT) rb_ary_push(array, make_symbol( "left_shift"  ));
+    if(mods & KMOD_RSHIFT) rb_ary_push(array, make_symbol( "right_shift" ));
+    if(mods & KMOD_LCTRL)  rb_ary_push(array, make_symbol( "left_ctrl"   ));
+    if(mods & KMOD_RCTRL)  rb_ary_push(array, make_symbol( "right_ctrl"  ));
+    if(mods & KMOD_LALT)   rb_ary_push(array, make_symbol( "left_alt"    ));
+    if(mods & KMOD_RALT)   rb_ary_push(array, make_symbol( "right_alt"   ));
+    if(mods & KMOD_LMETA)  rb_ary_push(array, make_symbol( "left_meta"   ));
+    if(mods & KMOD_RMETA)  rb_ary_push(array, make_symbol( "right_meta"  ));
+    if(mods & KMOD_NUM)    rb_ary_push(array, make_symbol( "numlock"     ));
+    if(mods & KMOD_CAPS)   rb_ary_push(array, make_symbol( "capslock"    ));
+    if(mods & KMOD_MODE)   rb_ary_push(array, make_symbol( "mode"        ));
+  }
+  return array;
+}
+
+
 
 /*--
  *
