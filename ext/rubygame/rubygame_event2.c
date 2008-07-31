@@ -359,6 +359,26 @@ VALUE rg_convert_mousemotionevent( SDL_Event ev )
 
 
 
+/*
+ * Convert SDL's resize events into WindowResized
+ *
+ */
+VALUE rg_convert_resizeevent( SDL_Event ev )
+{
+
+  VALUE size = rb_ary_new();
+  rb_ary_push( size, UINT2NUM( ev.resize.w ) );
+  rb_ary_push( size, UINT2NUM( ev.resize.h ) );
+
+  VALUE args[] = { size };
+
+  return rg_make_rbevent( "WindowResized", 1, args);
+
+}
+
+
+
+
 /*--
  *
  *  call-seq:
@@ -392,6 +412,9 @@ VALUE rg_convert_sdlevent2( SDL_Event ev )
 
     case SDL_MOUSEMOTION:
       return rg_convert_mousemotionevent(ev);
+
+    case SDL_VIDEORESIZE:
+      return rg_convert_resizeevent(ev);
 
     default:
       rb_warn("Cannot convert unknown event type (%d).", ev.type);
