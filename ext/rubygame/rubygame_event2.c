@@ -82,6 +82,42 @@ VALUE rg_convert_activeevent( SDL_Event ev )
 
 
 
+
+
+
+/*--
+ *
+ *  call-seq:
+ *    rg_convert_sdlevent2( SDL_Event )  ->  VALUE rubygame_event
+ *
+ *  Converts an SDL_Event (C type) into a Rubygame event of the corresponding
+ *  class.
+ *
+ *++
+ */
+
+VALUE rg_convert_sdlevent2( SDL_Event ev )
+{
+
+  switch(ev.type)
+  {
+
+    case SDL_ACTIVEEVENT:
+      return rg_convert_activeevent(ev);
+
+    default:
+      rb_warn("Cannot convert unknown event type (%d).", ev.type);
+      return Qnil;
+
+  }
+
+}
+
+
+
+
+
+
 void Rubygame_Init_Event2()
 {
 #if 0
