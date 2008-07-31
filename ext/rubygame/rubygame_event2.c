@@ -116,6 +116,42 @@ VALUE rg_convert_sdlevent2( SDL_Event ev )
 
 
 
+/* 
+ *  call-seq:
+ *    fetch_sdl_events -> [event, ...]
+ *
+ *  NOTE: This method converts the SDL events into the new-style event
+ *  classes, located in the Rubygame::Events module. For converting to
+ *  the older (deprecated) events, see Rubygame.fetch_sdl_events.
+ *
+ *  Retrieves all pending events from SDL's event stack and converts them
+ *  into Rubygame event objects. Returns an Array of all the events, in
+ *  the order they were read.
+ *
+ *  This method is used by the EventQueue class (among others), so
+ *  don't call it if you are using any of Rubygame's event management
+ *  classes (e.g. EventQueue)! If you do, they will not receive all
+ *  the events, because some events will have been removed from SDL's
+ *  event stack by this method.
+ *
+ *  However, if you aren't using EventQueue, you can safely use this method
+ *  to make your own event management system.
+ *
+ */
+VALUE rg_fetch_sdl_events2( VALUE module )
+{
+  SDL_Event event;
+  VALUE event_array = rb_ary_new();
+
+  while(SDL_PollEvent(&event)==1) 
+  {
+    rb_ary_push( event_array, rg_convert_sdlevent2(event) );
+  }
+
+  return event_array;
+}
+
+
 
 
 void Rubygame_Init_Event2()
