@@ -93,6 +93,41 @@ VALUE rg_convert_exposeevent( SDL_Event ev )
 
 
 
+/*
+ * Convert SDL's joystick axis events into JoystickAxisMoved.
+ *
+ */
+VALUE rg_convert_joyaxisevent( SDL_Event ev )
+{
+
+  VALUE joystick_id = UINT2NUM( ev.jaxis.which );
+
+  VALUE axis = UINT2NUM( ev.jaxis.axis );
+
+
+  double dvalue = 0.0;
+
+  /* Convert value to the -1.0 .. 1.0 range */
+  if( ev.jaxis.value > 0 )
+  {
+    dvalue = (double)(ev.jaxis.value)/32767.f;
+  }
+  else if( ev.jaxis.value < 0 )
+  {
+    dvalue = (double)(ev.jaxis.value)/32768.f;
+  }
+
+  VALUE value = rb_float_new( dvalue );
+
+
+  VALUE args[] = { joystick_id, axis, value };
+
+  return rg_make_rbevent( "JoystickAxisMoved", 3, args);
+
+}
+
+
+
 
 /* Returns a sanitized symbol for the given key. */
 VALUE rg_convert_key_symbol2( SDLKey key )
