@@ -77,6 +77,7 @@ VALUE rbgm_init(VALUE module)
 {
 	if(SDL_Init(SDL_INIT_EVERYTHING)==0)
 	{
+    SDL_EnableUNICODE(1);
 		return Qnil;
 	}
 	else
