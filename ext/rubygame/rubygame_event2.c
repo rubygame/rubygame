@@ -193,10 +193,17 @@ VALUE rg_convert_keymods2( SDLMod mods )
 /* Convert a unicode char into a UTF8 ruby byte-string. */
 VALUE rg_convert_unicode2( Uint16 unicode )
 {
-  char str[32];
-  snprintf(str, 32, "[%d].pack('U')", unicode);
+  if( unicode > 0 )
+  {
+    char str[32];
+    snprintf(str, 32, "[%d].pack('U')", unicode);
 
-  return rb_eval_string( str );
+    return rb_eval_string( str );
+  }
+  else
+  {
+    return rb_str_new("", 0);
+  }
 }
 
 
