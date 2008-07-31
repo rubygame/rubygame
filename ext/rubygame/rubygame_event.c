@@ -22,6 +22,9 @@
 #include "rubygame_event.h"
 
 void Rubygame_Init_Event();
+
+VALUE mEvents;
+
 VALUE cEvent;
 VALUE cActiveEvent;
 VALUE cKeyDownEvent;
@@ -298,6 +301,23 @@ VALUE rbgm_fetchevents(VALUE self)
   return event_array;
 }
 
+
+
+
+/* 
+ * Make a new event from the given klassname and array of arguments.
+ *
+ */
+VALUE rg_make_rbevent( char *klassname, int argc, VALUE *argv )
+{
+  VALUE klass = rb_const_get( mEvents, rb_intern(klassname) );
+  return rb_funcall2( klass, rb_intern("new"), argc, argv );
+}
+
+
+
+
+
 /*
  *--
  *  The event documentation is in rubygame/lib/rubygame/event.rb
@@ -308,6 +328,8 @@ void Rubygame_Init_Event()
 #if 0
   mRubygame = rb_define_module("Rubygame");
 #endif
+
+  mEvents = rb_define_module_under( mRubygame, "Events" );
 
   rb_define_singleton_method(mRubygame, "fetch_sdl_events",rbgm_fetchevents,0);
 
