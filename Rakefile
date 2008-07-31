@@ -340,6 +340,7 @@ rubygame_core = ExtensionModule.new do |core|
   core.objs = ['rubygame_main',
                'rubygame_shared',
                'rubygame_event',
+               'rubygame_event2',
                'rubygame_gl',
                'rubygame_joystick',
                'rubygame_screen',
