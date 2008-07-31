@@ -23,8 +23,6 @@
 
 void Rubygame_Init_Event();
 
-VALUE mEvents;
-
 VALUE cEvent;
 VALUE cActiveEvent;
 VALUE cKeyDownEvent;
@@ -303,58 +301,6 @@ VALUE rbgm_fetchevents(VALUE self)
 
 
 
-
-/* 
- * Make a new event from the given klassname and array of arguments.
- *
- */
-VALUE rg_make_rbevent( char *klassname, int argc, VALUE *argv )
-{
-  VALUE klass = rb_const_get( mEvents, rb_intern(klassname) );
-  return rb_funcall2( klass, rb_intern("new"), argc, argv );
-}
-
-
-
-/*
- * Convert SDL's ACTIVEEVENT into one of:
- *
- *   InputFocusGained / InputFocusLost
- *   MouseFocusGained / MouseFocusLost
- *   WindowMinimized  / WindowUnMinimized
- *
- * Which class we use depends on the details of the ACTIVEEVENT.
- *
- */
-VALUE rg_convert_activeevent( SDL_Event ev )
-{
-  char *klassname;
-
-  switch( ev.active.state )
-  {
-    case SDL_APPINPUTFOCUS:
-      klassname = ev.active.gain ? "InputFocusGained" : "InputFocusLost";
-      break;
-
-    case SDL_APPMOUSEFOCUS:
-      klassname = ev.active.gain ? "MouseFocusGained" : "MouseFocusLost";
-      break;
-
-    case SDL_APPACTIVE:
-      klassname = ev.active.gain ? "WindowUnminimized" : "WindowMinimized";
-      break;
-
-    default:
-      rb_raise(eSDLError, 
-               "unknown ACTIVEEVENT state %d. This is a bug in Rubygame.",
-               ev.active.state);
-  }
-
-  return rb_make_rbevent( klassname, 0, (VALUE *)NULL );
-}
-
-
-
 /*
  *--
  *  The event documentation is in rubygame/lib/rubygame/event.rb
@@ -365,8 +311,6 @@ void Rubygame_Init_Event()
 #if 0
   mRubygame = rb_define_module("Rubygame");
 #endif
-
-  mEvents = rb_define_module_under( mRubygame, "Events" );
 
   rb_define_singleton_method(mRubygame, "fetch_sdl_events",rbgm_fetchevents,0);
 
