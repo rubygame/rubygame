@@ -204,6 +204,23 @@ VALUE rg_convert_joyhatsymbol( Uint8 value )
 }
 
 
+/*
+ * Convert SDL's joystick hat events into JoystickHatMoved.
+ *
+ */
+VALUE rg_convert_joyhatevent( SDL_Event ev )
+{
+
+  VALUE joystick_id = UINT2NUM( ev.jhat.which );
+  VALUE hat = UINT2NUM( ev.jhat.hat );
+  VALUE direction = rg_convert_joyhatsymbol( ev.jhat.value );
+
+  VALUE args[] = { joystick_id, hat, direction };
+
+  return rg_make_rbevent( "JoystickHatMoved", 3, args);
+
+}
+
 
 
 
