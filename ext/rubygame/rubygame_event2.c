@@ -280,6 +280,41 @@ VALUE rg_convert_mouse_symbol2( Uint8 button )
 
 
 
+/*
+ * Convert SDL's mouse click events into MousePressed / MouseReleased.
+ *
+ */
+VALUE rg_convert_mouseclickevent( SDL_Event ev )
+{
+
+  VALUE button = rg_convert_mouse_symbol2( ev.button.button );
+
+  VALUE pos = rb_ary_new();
+  rb_ary_push( pos, UINT2NUM( ev.button.x ) );
+  rb_ary_push( pos, UINT2NUM( ev.button.y ) );
+
+  VALUE args[] = { pos, button };
+
+
+  switch( ev.button.state )
+  {
+    case SDL_PRESSED:
+      return rg_make_rbevent( "MousePressed", 2, args);
+
+    case SDL_RELEASED:
+      return rg_make_rbevent( "MouseReleased", 2, args );
+
+    default:
+      rb_raise(eSDLError, 
+               "unknown mouse event state %d. This is a bug in Rubygame.",
+               ev.active.state);
+  }
+
+}
+
+
+
+
 /*--
  *
  *  call-seq:
