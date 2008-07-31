@@ -74,8 +74,26 @@ module Rubygame
     def initialize()
       @autofetch = true
       @ignore = []
+      @new_style_events = false
       yield self if block_given?
     end
+
+
+    # Enable new-style events. These are the event classes in the 
+    # Rubygame::Events module, which were added in Rubygame 2.4.
+    # 
+    # If you call this method, the new event classes will be used.
+    # Otherwise, the old classes will be used, for backwards
+    # compatibility.
+    # 
+    # It is **strongly recommended** that you use the new event
+    # classes. The old classes are deprecated as of Rubygame 2.4,
+    # and will be removed entirely in Rubygame 3.0.
+    # 
+    def enable_new_style_events
+      @new_style_events = true
+    end
+
 
     # Append events to the EventQueue.
     # Silently ignores events whose class is in @ignore.
@@ -108,7 +126,11 @@ module Rubygame
     # events may be removed from SDL's event stack before they can be properly
     # processed!
 		def fetch_sdl_events
-			self.push(Rubygame.fetch_sdl_events())
+      if @new_style_events
+        self.push( Rubygame::Events.fetch_sdl_events() )
+      else
+        self.push( Rubygame.fetch_sdl_events() )
+      end
 		end
 
     # Wait for an event to be posted, then return that event.
