@@ -154,6 +154,39 @@ VALUE rg_convert_joyballevent( SDL_Event ev )
 
 
 
+/*
+ * Convert SDL's joystick button events into JoystickButtonPressed or
+ * JoystickButtonReleased.
+ *
+ */
+VALUE rg_convert_joybuttonevent( SDL_Event ev )
+{
+
+  VALUE joystick_id = UINT2NUM( ev.jball.which );
+
+  VALUE button = UINT2NUM( ev.jbutton.button );
+
+  VALUE args[] = { joystick_id, button };
+
+  switch( ev.jbutton.state )
+  {
+    case SDL_PRESSED:
+      return rg_make_rbevent( "JoystickButtonPressed", 2, args);
+
+    case SDL_RELEASED:
+      return rg_make_rbevent( "JoystickButtonPressed", 2, args);
+
+    default:
+      rb_raise(eSDLError, 
+               "unknown joystick button state %d. This is a bug in Rubygame.",
+               ev.active.state);
+  }
+
+}
+
+
+
+
 /* Returns a sanitized symbol for the given key. */
 VALUE rg_convert_key_symbol2( SDLKey key )
 {
