@@ -250,6 +250,36 @@ VALUE rg_convert_keyboardevent( SDL_Event ev )
 
 
 
+/*
+ * Return a descriptive symbol for the given mouse button.
+ * e.g. :mouse_left, :mouse_wheel_up, etc.
+ *
+ */
+VALUE rg_convert_mouse_symbol2( Uint8 button )
+{
+	switch( button )
+	{
+		case SDL_BUTTON_LEFT:
+			return make_symbol("mouse_left");
+		case SDL_BUTTON_MIDDLE:
+			return make_symbol("mouse_middle");
+		case SDL_BUTTON_RIGHT:
+			return make_symbol("mouse_right");
+		case SDL_BUTTON_WHEELUP:
+			return make_symbol("mouse_wheel_up");
+		case SDL_BUTTON_WHEELDOWN:
+			return make_symbol("mouse_wheel_down");
+		default: {
+			int size = 32;
+			char *name = (char *)malloc(size);
+			snprintf( name, size, "mouse_%d", button );
+			return make_symbol(name);
+		}
+	}
+}
+
+
+
 /*--
  *
  *  call-seq:
