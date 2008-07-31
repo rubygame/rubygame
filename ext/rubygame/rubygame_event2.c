@@ -390,6 +390,9 @@ VALUE rg_convert_sdlevent2( SDL_Event ev )
     case SDL_MOUSEBUTTONUP:
       return rg_convert_mouseclickevent(ev);
 
+    case SDL_MOUSEMOTION:
+      return rg_convert_mousemotionevent(ev);
+
     default:
       rb_warn("Cannot convert unknown event type (%d).", ev.type);
       return Qnil;
