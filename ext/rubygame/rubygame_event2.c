@@ -92,6 +92,78 @@ VALUE rg_convert_exposeevent( SDL_Event ev )
 
 
 
+
+
+/* Returns a sanitized symbol for the given key. */
+VALUE rg_convert_key_symbol2( SDLKey key )
+{
+	char *name;
+
+	switch(key)
+	{
+#if 1
+		case SDLK_1:              name = "number 1";            break;
+		case SDLK_2:              name = "number 2";            break;
+		case SDLK_3:              name = "number 3";            break;
+		case SDLK_4:              name = "number 4";            break;
+		case SDLK_5:              name = "number 5";            break;
+		case SDLK_6:              name = "number 6";            break;
+		case SDLK_7:              name = "number 7";            break;
+		case SDLK_8:              name = "number 8";            break;
+		case SDLK_9:              name = "number 9";            break;
+		case SDLK_0:              name = "number 0";            break;
+		case SDLK_EXCLAIM:        name = "exclamation mark";    break;
+		case SDLK_QUOTEDBL:       name = "double quote";        break;
+		case SDLK_HASH:           name = "hash";                break;
+		case SDLK_DOLLAR:         name = "dollar";              break;
+		case SDLK_AMPERSAND:      name = "ampersand";           break;
+		case SDLK_QUOTE:          name = "quote";               break;
+		case SDLK_LEFTPAREN:      name = "left parenthesis";    break;
+		case SDLK_RIGHTPAREN:     name = "right parenthesis";   break;
+		case SDLK_ASTERISK:       name = "asterisk";            break;
+		case SDLK_PLUS:           name = "plus";                break;
+		case SDLK_MINUS:          name = "minus";               break;
+		case SDLK_PERIOD:         name = "period";              break;
+		case SDLK_COMMA:          name = "comma";               break;
+		case SDLK_SLASH:          name = "slash";               break;
+		case SDLK_SEMICOLON:      name = "semicolon";           break;
+		case SDLK_LESS:           name = "less than";           break;
+		case SDLK_EQUALS:         name = "equals";              break;
+		case SDLK_GREATER:        name = "greater than";        break;
+		case SDLK_QUESTION:       name = "question mark";       break;
+		case SDLK_AT:             name = "at";                  break;
+		case SDLK_LEFTBRACKET:    name = "left bracket";        break;
+		case SDLK_BACKSLASH:      name = "backslash";           break;
+		case SDLK_RIGHTBRACKET:   name = "right bracket";       break;
+		case SDLK_CARET:          name = "caret";               break;
+		case SDLK_UNDERSCORE:     name = "underscore";          break;
+		case SDLK_BACKQUOTE:      name = "backquote";           break;
+		case SDLK_KP1:            name = "keypad 1";            break;
+		case SDLK_KP2:            name = "keypad 2";            break;
+		case SDLK_KP3:            name = "keypad 3";            break;
+		case SDLK_KP4:            name = "keypad 4";            break;
+		case SDLK_KP5:            name = "keypad 5";            break;
+		case SDLK_KP6:            name = "keypad 6";            break;
+		case SDLK_KP7:            name = "keypad 7";            break;
+		case SDLK_KP8:            name = "keypad 8";            break;
+		case SDLK_KP9:            name = "keypad 9";            break;
+		case SDLK_KP0:            name = "keypad 0";            break;
+		case SDLK_KP_PERIOD:      name = "keypad period";       break;
+		case SDLK_KP_DIVIDE:      name = "keypad divide";       break;
+		case SDLK_KP_MULTIPLY:    name = "keypad multiply";     break;
+		case SDLK_KP_MINUS:       name = "keypad minus";        break;
+		case SDLK_KP_PLUS:        name = "keypad plus";         break;
+		case SDLK_KP_EQUALS:      name = "keypad equals";       break;
+		case SDLK_KP_ENTER:       name = "keypad enter";        break;
+#endif
+		default:                  name = SDL_GetKeyName(key);   break;
+	}
+
+	return sanitized_symbol( name );
+}
+
+
+
 /* Convert an OR'd list of KMODs into a Ruby array of symbols. */
 VALUE rg_convert_keymods2( SDLMod mods )
 {
