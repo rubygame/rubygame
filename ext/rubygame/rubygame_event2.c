@@ -129,6 +129,31 @@ VALUE rg_convert_joyaxisevent( SDL_Event ev )
 
 
 
+/*
+ * Convert SDL's joystick ball events into JoystickBallMoved.
+ *
+ */
+VALUE rg_convert_joyballevent( SDL_Event ev )
+{
+
+  VALUE joystick_id = UINT2NUM( ev.jball.which );
+
+  VALUE ball = UINT2NUM( ev.jball.ball );
+
+  VALUE rel = rb_ary_new();
+  rb_ary_push( rel, UINT2NUM( ev.jball.xrel ) );
+  rb_ary_push( rel, UINT2NUM( ev.jball.yrel ) );
+
+
+  VALUE args[] = { joystick_id, ball, rel };
+
+  return rg_make_rbevent( "JoystickBallMoved", 3, args);
+
+}
+
+
+
+
 /* Returns a sanitized symbol for the given key. */
 VALUE rg_convert_key_symbol2( SDLKey key )
 {
