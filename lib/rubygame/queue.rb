@@ -26,16 +26,17 @@ module Rubygame
 	# joystick movement, etc. You can also post custom events to the
   # EventQueue to help manage the game state.
   # 
-  # This class replaces the old Rubygame::Queue class, which is no longer
-  # available. While EventQueue class serves the same purpose as the old
-  # class, they are somewhat different in behavior. Please note that while
-  # the old class was a Singleton, this class is not; you may have as many
-  # separate instances of EventQueue as you wish (although it is strongly
-  # recommended that only one be used to #fetch_sdl_events).
-  # 
   # For basic usage, create a #new EventQueue with autofetch, then call the
   # #each method once per game loop, passing a block which handles events.
   # See the sample applications for examples of this.
+  # 
+  # In Rubygame 2.4 and later, you can call #enable_new_style_events to make
+  # EventQueue fetch the new event classes (in the Rubygame::Events module).
+  # Otherwise, the old classes will be used, for backwards compatibility.
+  # 
+  # It is **strongly recommended** that you use the new event classes.
+  # The old classes are deprecated as of Rubygame 2.4, and will be removed
+  # entirely in Rubygame 3.0.
   #
   # If you wish to ignore all events of a certain class, append those classes
   # the instance variable @ignore (accessors are provided). You can ignore as
@@ -45,22 +46,6 @@ module Rubygame
   # If the program has to pause and wait for an event (for example, if the
   # player must press a button to begin playing), you might find the #wait
   # method to be convenient.
-	# 
-	# For reference, the full list of SDL events is:
-	# - Event (base class, not used by itself)
-	# - ActiveEvent
-	# - JoyAxisEvent
-	# - JoyBallEvent
-	# - JoyDownEvent
-	# - JoyHatEvent
-	# - JoyUpEvent
-	# - KeyDownEvent
-	# - KeyUpEvent
-	# - MouseDownEvent
-	# - MouseMotionEvent
-	# - MouseUpEvent
-	# - QuitEvent
-	# - ResizeEvent
 	# 
 	class EventQueue < Array
     # Array of classes to be ignored by #push.
