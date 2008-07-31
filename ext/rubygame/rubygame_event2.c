@@ -81,6 +81,14 @@ VALUE rg_convert_activeevent( SDL_Event ev )
 
 
 
+/*
+ * Convert SDL's ExposeEvent into WindowExposed.
+ *
+ */
+VALUE rg_convert_exposeevent( SDL_Event ev )
+{
+  return rg_make_rbevent( "WindowExposed", 0, (VALUE *)NULL );
+}
 
 
 
@@ -104,6 +112,9 @@ VALUE rg_convert_sdlevent2( SDL_Event ev )
 
     case SDL_ACTIVEEVENT:
       return rg_convert_activeevent(ev);
+
+    case SDL_VIDEOEXPOSE:
+      return rg_convert_exposeevent(ev);
 
     default:
       rb_warn("Cannot convert unknown event type (%d).", ev.type);
