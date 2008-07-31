@@ -34,4 +34,10 @@ describe EventQueue do
     collect.should == [1,2,3]
   end
 
+  it "#peek_each should not flush the buffer afterwards" do
+    @queue.push( [1,2,3] )
+    @queue.peek_each { |e| "do nothing" }
+    @queue.should_not be_empty
+  end
+
 end
