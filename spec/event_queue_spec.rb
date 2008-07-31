@@ -20,4 +20,10 @@ describe EventQueue do
     collect.should == [1,2,3]
   end
 
+  it "#each should flush the buffer afterwards" do
+    @queue.push( [1,2,3] )
+    @queue.each { |e| "do nothing" }
+    @queue.should be_empty
+  end
+
 end
