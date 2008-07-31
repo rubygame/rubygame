@@ -330,6 +330,33 @@ VALUE rg_convert_mousebuttons2( Uint8 state )
 }
 
 
+/*
+ * Convert SDL's mouse motion events into MouseMoved
+ *
+ */
+VALUE rg_convert_mousemotionevent( SDL_Event ev )
+{
+
+  VALUE buttons = rg_convert_mousebuttons2( ev.motion.state );
+
+
+  VALUE pos = rb_ary_new();
+  rb_ary_push( pos, UINT2NUM( ev.motion.x ) );
+  rb_ary_push( pos, UINT2NUM( ev.motion.y ) );
+
+
+  VALUE rel = rb_ary_new();
+  rb_ary_push( rel, UINT2NUM( ev.motion.xrel ) );
+  rb_ary_push( rel, UINT2NUM( ev.motion.yrel ) );
+
+
+  VALUE args[] = { pos, rel, buttons };
+
+  return rg_make_rbevent( "MouseMoved", 3, args);
+
+}
+
+
 
 
 /*--
