@@ -307,6 +307,30 @@ VALUE rg_convert_mouseclickevent( SDL_Event ev )
 
 
 
+/*
+ * Convert a button state into a list of mouse button symbols.
+ *
+ */
+VALUE rg_convert_mousebuttons2( Uint8 state )
+{
+  VALUE buttons;
+
+  buttons = rb_ary_new();
+  if(state & SDL_BUTTON(SDL_BUTTON_LEFT))
+    rb_ary_push(buttons, make_symbol("mouse_left"));
+  if(state & SDL_BUTTON(SDL_BUTTON_MIDDLE))
+    rb_ary_push(buttons, make_symbol("mouse_middle"));
+  if(state & SDL_BUTTON(SDL_BUTTON_RIGHT))
+    rb_ary_push(buttons, make_symbol("mouse_right"));
+  if(state & SDL_BUTTON(SDL_BUTTON_WHEELUP))
+    rb_ary_push(buttons, make_symbol("mouse_wheel_up"));
+  if(state & SDL_BUTTON(SDL_BUTTON_WHEELDOWN))
+    rb_ary_push(buttons, make_symbol("mouse_wheel_down"));
+  return buttons;
+}
+
+
+
 
 /*--
  *
