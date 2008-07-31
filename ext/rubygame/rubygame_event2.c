@@ -513,6 +513,10 @@ VALUE rg_convert_sdlevent2( SDL_Event ev )
     case SDL_JOYBALLMOTION:
       return rg_convert_joyballevent(ev);
 
+    case SDL_JOYBUTTONDOWN:
+    case SDL_JOYBUTTONUP:
+      return rg_convert_joystickbuttonevent(ev);
+
     case SDL_KEYDOWN:
     case SDL_KEYUP:
       return rg_convert_keyboardevent(ev);
