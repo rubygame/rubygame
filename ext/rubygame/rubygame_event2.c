@@ -187,6 +187,26 @@ VALUE rg_convert_joybuttonevent( SDL_Event ev )
 
 
 
+VALUE rg_convert_joyhatsymbol( Uint8 value )
+{
+  switch(value)
+  {
+    case SDL_HAT_RIGHTUP:    return make_symbol("up_right");
+    case SDL_HAT_RIGHTDOWN:  return make_symbol("down_right");
+    case SDL_HAT_LEFTUP:     return make_symbol("up_left");
+    case SDL_HAT_LEFTDOWN:   return make_symbol("down_left");
+    case SDL_HAT_UP:         return make_symbol("up");
+    case SDL_HAT_RIGHT:      return make_symbol("right");
+    case SDL_HAT_DOWN:       return make_symbol("down");
+    case SDL_HAT_LEFT:       return make_symbol("left");
+    default:                 return Qnil;
+  }
+}
+
+
+
+
+
 /* Returns a sanitized symbol for the given key. */
 VALUE rg_convert_key_symbol2( SDLKey key )
 {
