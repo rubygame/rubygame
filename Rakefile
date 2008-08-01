@@ -198,7 +198,6 @@ string_option :sitelibdir
 CFLAGS = [from_env_or_config("CFLAGS"),
           try_sdl_config("--cflags"),
           "-I. -I#{CONFIG['topdir']}",
-          ("-g" if $options[:debug]),
           "-DRUBYGAME_MAJOR_VERSION=#{RUBYGAME_VERSION[0]}",
           "-DRUBYGAME_MINOR_VERSION=#{RUBYGAME_VERSION[1]}",
           "-DRUBYGAME_PATCHLEVEL=#{RUBYGAME_VERSION[2]}"
@@ -289,7 +288,7 @@ class ExtensionModule
          ])\
     do |t|
 
-      compile_command = "#{from_env_or_config('CC')} -c #{CFLAGS} #{t.source} -o #{t.name}"
+      compile_command = "#{from_env_or_config('CC')} -c #{CFLAGS} #{"-g " if $options[:debug]} #{t.source} -o #{t.name}"
 
       # If compile command includes i386 arch, and we're not allowing universal
       if( /-arch i386/ === compile_command and not $options[:universal] )
@@ -309,7 +308,7 @@ class ExtensionModule
     FileList.new("#{@directory}*.c").each do |source|
       object = source.sub(".c", ".#{OBJEXT}")
       file object => ([source] + depends_headers( source )) do |t|
-        compile_command = "#{CONFIG['CC']} -c #{CFLAGS} #{source} -o #{t.name}"
+        compile_command = "#{CONFIG['CC']} -c #{CFLAGS} #{"-g " if $options[:debug]} #{source} -o #{t.name}"
         if( $options[:verbose] )
           try_shell { sh compile_command }
         else
