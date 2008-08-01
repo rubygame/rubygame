@@ -18,6 +18,11 @@ describe EventQueue do
     @queue.autofetch.should be_true
   end
 
+  it "should have autofetch read-write accessors" do
+    @queue.should respond_to(:autofetch)
+    @queue.should respond_to(:autofetch=)
+  end
+
 
 
   ########
