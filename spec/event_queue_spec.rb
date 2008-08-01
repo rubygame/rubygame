@@ -93,4 +93,16 @@ describe EventQueue do
     @queue.should_not_receive(:fetch_sdl_events)
     @queue.peek_each {}
   end
+
+
+
+  ###############
+  # PUSH / POST #
+  ###############
+
+  it "should accept pushes" do
+    @queue.push( :foo )
+    @queue.to_ary.should == [:foo]
+  end
+
 end
