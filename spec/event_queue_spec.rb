@@ -70,4 +70,11 @@ describe EventQueue do
     @queue.should_not be_empty
   end
 
+  it "#peek_each should fetch SDL events if autofetch is on" do
+    @queue.autofetch = true
+
+    @queue.should_receive(:fetch_sdl_events).and_return([:foo])
+    @queue.peek_each {}
+  end
+
 end
