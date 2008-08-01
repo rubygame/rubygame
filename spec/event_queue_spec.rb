@@ -32,6 +32,14 @@ describe EventQueue do
     @queue.each { |e| e.should == :foo }
   end
 
+  it "#each should not fetch SDL events if autofetch is off" do
+    @queue.autofetch = false
+    @queue.stub!(:fetch_sdl_events).and_return([:foo])
+    collect = []
+    @queue.each { |e| collect << e}
+    collect.should == []
+  end
+
 
   it "#peek_each should yield each event in the queue in order" do 
     collect = []
