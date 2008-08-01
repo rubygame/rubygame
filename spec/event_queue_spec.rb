@@ -33,7 +33,7 @@ describe EventQueue do
 
   it "#each should flush the buffer afterwards" do
     @queue.push( [1,2,3] )
-    @queue.each { |e| "do nothing" }
+    @queue.each {}
     @queue.should be_empty
   end
 
@@ -66,7 +66,7 @@ describe EventQueue do
 
   it "#peek_each should not flush the buffer afterwards" do
     @queue.push( [1,2,3] )
-    @queue.peek_each { |e| "do nothing" }
+    @queue.peek_each {}
     @queue.should_not be_empty
   end
 
