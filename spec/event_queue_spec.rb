@@ -96,6 +96,18 @@ describe EventQueue do
 
 
 
+  ####################
+  # FETCH SDL EVENTS #
+  ####################
+
+  it "should fetch SDL events from the old place by default" do
+    Rubygame.should_receive(:fetch_sdl_events).and_return([])
+    @queue.fetch_sdl_events
+  end
+
+
+
+
   ###############
   # PUSH / POST #
   ###############
