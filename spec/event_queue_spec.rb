@@ -105,6 +105,11 @@ describe EventQueue do
     @queue.fetch_sdl_events
   end
 
+  it "should fetch SDL events from the new place if enabled" do
+    Rubygame::Events.should_receive(:fetch_sdl_events).and_return([])
+    @queue.enable_new_style_events
+    @queue.fetch_sdl_events
+  end
 
 
 
