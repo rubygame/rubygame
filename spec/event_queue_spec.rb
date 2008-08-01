@@ -77,4 +77,10 @@ describe EventQueue do
     @queue.peek_each {}
   end
 
+  it "#peek_each should not fetch SDL events if autofetch is off" do
+    @queue.autofetch = false
+
+    @queue.should_not_receive(:fetch_sdl_events)
+    @queue.peek_each {}
+  end
 end
