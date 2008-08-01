@@ -105,4 +105,9 @@ describe EventQueue do
     @queue.to_ary.should == [:foo]
   end
 
+  it "should accept posts" do
+    @queue.post( :foo )
+    @queue.to_ary.should == [:foo]
+  end
+
 end
