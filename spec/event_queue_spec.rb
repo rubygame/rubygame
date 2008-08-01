@@ -110,4 +110,9 @@ describe EventQueue do
     @queue.to_ary.should == [:foo]
   end
 
+  it "should accept <<" do
+    @queue << :foo
+    @queue.to_ary.should == [:foo]
+  end
+
 end
