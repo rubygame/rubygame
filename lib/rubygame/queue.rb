@@ -95,7 +95,9 @@ module Rubygame
 
     alias post push
 
-    alias peek_each each        # Iterate through all events without removing.
+
+    alias :_old_each :each
+    private :_old_each
 
     # Iterate through all events in the EventQueue, yielding them one at a time
     # to the given block. The EventQueue is flushed after all events have been
@@ -103,11 +105,19 @@ module Rubygame
     #
     # If the internal variable @autofetch is true, this method will call
     # #fetch_sdl_events once before iterating.
-    def each(&block)
+    def each( &block )
       fetch_sdl_events if @autofetch
-      super
+      _old_each( &block )
       self.clear
     end
+
+    # Like #each, but doesn't remove the events from the queue after
+    # iterating. 
+    def peek_each( &block )
+      fetch_sdl_events if @autofetch
+      _old_each( &block )
+    end
+
 
     # Posts pending SDL hardware events to the EventQueue. Only one EventQueue
     # should call this method per application, and only if you are not using
