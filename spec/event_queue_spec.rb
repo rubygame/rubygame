@@ -14,6 +14,11 @@ describe EventQueue do
   end
 
 
+
+  #############
+  # AUTOFETCH #
+  #############
+
   it "autofetch should be on by default" do
     @queue.autofetch.should be_true
   end
