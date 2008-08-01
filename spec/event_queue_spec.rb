@@ -125,6 +125,11 @@ describe EventQueue do
     @queue.to_ary.should == [:foo, :bar, :baz]
   end
 
+  it "should accept a posted array" do
+    @queue.post( [:foo, :bar] )
+    @queue.to_ary.should == [:foo, :bar]
+  end
+
   it "should accept <<" do
     @queue << :foo
     @queue.to_ary.should == [:foo]
