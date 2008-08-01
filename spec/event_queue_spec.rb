@@ -113,6 +113,18 @@ describe EventQueue do
 
 
 
+
+  ##########
+  # IGNORE #
+  ##########
+
+  it "should provide @ignore read-write accessors" do
+    @queue.should respond_to(:ignore)
+    @queue.should respond_to(:ignore=)
+  end
+
+
+
   ###############
   # PUSH / POST #
   ###############
