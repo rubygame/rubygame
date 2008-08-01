@@ -13,6 +13,12 @@ describe EventQueue do
     @queue = EventQueue.new
   end
 
+
+  it "autofetch should be on by default" do
+    @queue.autofetch.should be_true
+  end
+
+
   it "#each should yield each event in the queue in order" do 
     collect = []
     @queue.push( [1,2,3] )
