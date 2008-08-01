@@ -19,6 +19,11 @@ describe EventQueue do
   end
 
 
+
+  ########
+  # EACH #
+  ########
+
   it "#each should yield each event in the queue in order" do 
     collect = []
     @queue.push( [1,2,3] )
@@ -46,6 +51,11 @@ describe EventQueue do
     collect.should == []
   end
 
+
+
+  #############
+  # PEEK EACH #
+  #############
 
   it "#peek_each should yield each event in the queue in order" do 
     collect = []
