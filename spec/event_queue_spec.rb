@@ -39,16 +39,16 @@ describe EventQueue do
 
   it "#each should fetch SDL events if autofetch is on" do
     @queue.autofetch = true
-    @queue.stub!(:fetch_sdl_events).and_return([:foo])
-    @queue.each { |e| e.should == :foo }
+
+    @queue.should_receive(:fetch_sdl_events).and_return([:foo])
+    @queue.each {}
   end
 
   it "#each should not fetch SDL events if autofetch is off" do
     @queue.autofetch = false
-    @queue.stub!(:fetch_sdl_events).and_return([:foo])
-    collect = []
-    @queue.each { |e| collect << e}
-    collect.should == []
+
+    @queue.should_not_receive(:fetch_sdl_events)
+    @queue.each {}
   end
 
 
