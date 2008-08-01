@@ -58,3 +58,8 @@
   Email::         mokkan at users.sourceforge.net
   Contribution::  Patch to add Screen.icon=
   Date::          2007-11-21 (r597)
+
+- <b>Elio Cuevas Gómez</b> / elcugo
+  Email::         elcugo at gmail.com
+  Contribution::  Patch to fix color conversion segfault on x86_64.
+  Date::          2008-07-31
