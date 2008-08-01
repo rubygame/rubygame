@@ -123,6 +123,11 @@ describe EventQueue do
     @queue.should respond_to(:ignore=)
   end
 
+  it "should silently reject pushed objects whose class is ignored" do
+    @queue.ignore << Fixnum
+    @queue.push( :foo, 3, :baz )
+    @queue.to_ary.should == [:foo, :baz]
+  end
 
 
   ###############
