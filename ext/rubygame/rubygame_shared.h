@@ -39,6 +39,7 @@ extern VALUE sanitized_symbol(char *);
 extern Uint32 collapse_flags(VALUE);
 extern VALUE convert_to_array(VALUE);
 
+extern VALUE convert_color(VALUE);
 extern SDL_Color make_sdl_color(VALUE);
 extern void extract_rgb_u8_as_u8(VALUE, Uint8*, Uint8*, Uint8*);
 extern void extract_rgba_u8_as_u8(VALUE, Uint8*, Uint8*, Uint8*, Uint8*);
