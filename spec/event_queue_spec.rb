@@ -105,6 +105,11 @@ describe EventQueue do
     @queue.to_ary.should == [:foo]
   end
 
+  it "should accept multiple pushes at once" do
+    @queue.push( :foo, :bar, :baz )
+    @queue.to_ary.should == [:foo, :bar, :baz]
+  end
+
   it "should accept posts" do
     @queue.post( :foo )
     @queue.to_ary.should == [:foo]
