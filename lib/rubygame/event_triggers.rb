@@ -21,6 +21,7 @@ require 'rubygame'
 
 module Rubygame
 
+
 class AllTrigger
 	def initialize( *triggers )
 		@triggers = triggers
@@ -31,6 +32,8 @@ class AllTrigger
 	end
 end
 
+
+
 class AnyTrigger
 	def initialize( *triggers )
 		@triggers = triggers
@@ -40,6 +43,8 @@ class AnyTrigger
 		@triggers.any? { |trigger| trigger.match? event }
 	end
 end
+
+
 
 class AttrTrigger
 	def initialize( attributes )
@@ -53,6 +58,8 @@ class AttrTrigger
 	end
 end
 
+
+
 class BlockTrigger
 	def initialize( &block )
 		raise ArgumentError, "BlockTrigger needs a block" unless block_given?
@@ -63,6 +70,8 @@ class BlockTrigger
 		@block.call( event ) == true
 	end
 end
+
+
 
 # class CollisionTrigger
 #
@@ -100,6 +109,8 @@ end
 # 	end
 #end
 
+
+
 class InstanceOfTrigger
 	def initialize( klass )
 		@klass = klass
@@ -109,6 +120,8 @@ class InstanceOfTrigger
 		event.instance_of?( @klass )
 	end
 end
+
+
 
 class KeyPressTrigger
 	def initialize( key=:any, mods=:any )
@@ -125,6 +138,8 @@ class KeyPressTrigger
 	end
 end
 
+
+
 class KeyReleaseTrigger
 	def initialize( key=:any, mods=:any )
 		@key = key
@@ -140,6 +155,8 @@ class KeyReleaseTrigger
 	end
 end
 
+
+
 class KindOfTrigger
 	def initialize( klass )
 		@klass = klass
@@ -149,6 +166,8 @@ class KindOfTrigger
 		event.kind_of?( @klass )
 	end
 end
+
+
 
 class MouseClickTrigger
 	def initialize( button=:any, area=:anywhere )
@@ -166,6 +185,8 @@ class MouseClickTrigger
 	end
 end
 
+
+
 class MouseHoverTrigger
 	def initialize( button=:any, area=:anywhere )
 		@button = button
@@ -181,6 +202,8 @@ class MouseHoverTrigger
 		end
 	end
 end
+
+
 
 class MouseReleaseTrigger
 	def initialize( button=:any, area=:anywhere )
@@ -198,11 +221,15 @@ class MouseReleaseTrigger
 	end
 end
 
+
+
 # class TickTrigger
 # 	def match?( event )
 # 		event.kind_of?( Events::ClockTicked )
 # 	end
 # end
+
+
 
 class YesTrigger
 	def match?( event )
