@@ -208,6 +208,11 @@ describe KeyPressTrigger do
 		@trigger = KeyPressTrigger.new( :a, [:left_shift] )
     @trigger.match?( KeyPressed.new(:a, [:left_shift], "A") ).should be_true
   end
+
+  it "should match if the event key is :any and mods match :none" do
+		@trigger = KeyPressTrigger.new( :any, :none )
+    @trigger.match?( KeyPressed.new(:a, [], "a") ).should be_true
+  end
 	
 end
 
