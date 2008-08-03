@@ -184,39 +184,41 @@ end
 describe KeyPressTrigger do
   
 	before :each do 
-		@trigger = KeyPressTrigger.new( :a )
+    @event_class   = KeyPressed
+    @trigger_class = KeyPressTrigger
+		@trigger       = @trigger_class.new
 	end
 
 	it_should_behave_like "an event trigger"
 
   it "should match if the event key is :any and mods is :any" do
-		@trigger = KeyPressTrigger.new()
-    @trigger.match?( KeyPressed.new(:z, [:left_shift], "Z") ).should be_true
+		@trigger = @trigger_class.new()
+    @trigger.match?( @event_class.new(:z, [:left_shift]) ).should be_true
   end
 
   it "should match if the event key is the same and mods is :any" do
-		@trigger = KeyPressTrigger.new( :a )
-    @trigger.match?( KeyPressed.new(:a, [], "a") ).should be_true
+		@trigger = @trigger_class.new( :a )
+    @trigger.match?( @event_class.new(:a, []) ).should be_true
   end
 	
   it "should match if the event key is :any and mods are the same" do
-		@trigger = KeyPressTrigger.new( :any, [:left_shift] )
-    @trigger.match?( KeyPressed.new(:z, [:left_shift], "Z") ).should be_true
+		@trigger = @trigger_class.new( :any, [:left_shift] )
+    @trigger.match?( @event_class.new(:z, [:left_shift]) ).should be_true
   end
 
   it "should match if the event key is the same and mods are the same" do
-		@trigger = KeyPressTrigger.new( :a, [:left_shift] )
-    @trigger.match?( KeyPressed.new(:a, [:left_shift], "A") ).should be_true
+		@trigger = @trigger_class.new( :a, [:left_shift] )
+    @trigger.match?( @event_class.new(:a, [:left_shift]) ).should be_true
   end
 
   it "should match if the event key is :any and mods match :none" do
-		@trigger = KeyPressTrigger.new( :any, :none )
-    @trigger.match?( KeyPressed.new(:a, [], "a") ).should be_true
+		@trigger = @trigger_class.new( :any, :none )
+    @trigger.match?( @event_class.new(:a, []) ).should be_true
   end
 	
   it "should match if the event key is the same and mods match :none" do
-		@trigger = KeyPressTrigger.new( :a, :none )
-    @trigger.match?( KeyPressed.new(:a, [], "a") ).should be_true
+		@trigger = @trigger_class.new( :a, :none )
+    @trigger.match?( @event_class.new(:a, []) ).should be_true
   end
 	
 end
