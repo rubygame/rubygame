@@ -203,6 +203,11 @@ describe KeyPressTrigger do
 		@trigger = KeyPressTrigger.new( :any, [:left_shift] )
     @trigger.match?( KeyPressed.new(:z, [:left_shift], "Z") ).should be_true
   end
+
+  it "should match if the event key is the same and mods are the same" do
+		@trigger = KeyPressTrigger.new( :a, [:left_shift] )
+    @trigger.match?( KeyPressed.new(:a, [:left_shift], "A") ).should be_true
+  end
 	
 end
 
