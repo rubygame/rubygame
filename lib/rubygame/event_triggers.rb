@@ -117,7 +117,7 @@ class KeyPressTrigger
 	end
 	
 	def match?( event )
-		if event.kind_of?( Rubygame::KeyDownEvent )
+		if event.kind_of?( Events::KeyPressed )
 			((@key == :any) or (event.key == @key)) and \
 			((@mods == :any) or (@mods == :none and event.mods == [])\
 			                 or (event.mods == @mods))
@@ -132,7 +132,7 @@ class KeyReleaseTrigger
 	end
 	
 	def match?( event )
-		if event.kind_of?( Rubygame::KeyUpEvent )
+		if event.kind_of?( Events::KeyReleased )
 			((@key == :any) or (event.key == @key)) and \
 			((@mods == :any) or (@mods == :none and event.mods == [])\
 			                 or (event.mods == @mods))
@@ -157,7 +157,7 @@ class MouseClickTrigger
 	end
 	
 	def match?( event )
-		if event.kind_of?( MouseDownEvent )
+		if event.kind_of?( Events::MousePressed )
 			((@button == :any) or (event.button == @button)) and \
 			((@area == :anywhere) or (@area.contain_vect?( event.world_pos )))
 		else
@@ -173,7 +173,7 @@ class MouseHoverTrigger
 	end
 	
 	def match?( event )
-		if event.kind_of?( MouseMotionEvent )
+		if event.kind_of?( Events::MouseMoved )
 			((@button == :any) or (event.buttons.include?(@button))) and \
 			((@area == :anywhere) or (@area.contain_vect?( event.world_pos )))
 		else
@@ -189,7 +189,7 @@ class MouseReleaseTrigger
 	end
 	
 	def match?( event )
-		if event.kind_of?( MouseUpEvent )
+		if event.kind_of?( Events::MouseReleased )
 			((@button == :any) or (event.button == @button)) and \
 			((@area == :anywhere) or (@area.contain_vect?( event.world_pos )))
 		else
@@ -200,7 +200,7 @@ end
 
 class TickTrigger
 	def match?( event )
-		event.kind_of?( Rubygame::TickEvent )
+		event.kind_of?( Events::ClockTicked )
 	end
 end
 
