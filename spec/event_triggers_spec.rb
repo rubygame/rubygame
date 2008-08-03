@@ -232,6 +232,18 @@ describe KeyPressTrigger do
 
 end
 
+describe KeyReleaseTrigger do
+  
+	before :each do 
+    @event_class   = KeyReleased
+    @trigger_class = KeyReleaseTrigger
+		@trigger       = @trigger_class.new
+	end
+
+  it_should_behave_like "a keyboard event trigger"
+
+end
+
 
 
 describe KindOfTrigger do 
