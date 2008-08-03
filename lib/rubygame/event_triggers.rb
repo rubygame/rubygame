@@ -64,41 +64,41 @@ class BlockTrigger
 	end
 end
 
-class CollisionTrigger
-
-	# type can be :start, :hold, :end, or :any
-	def initialize( a=:any, b=:any, type=:any )
-		@a, @b, @type = a, b, type
-	end
-	
-	def match?( event )
-		matching_types =
-			case( event )
-			when CollisionStartEvent
-				[:start, :any]
-			when CollisionEvent
-				[:hold, :any]
-			when CollisionEndEvent
-				[:end, :any]
-			else
-				[]
-			end
-		
-		matching_types.include?(@type) and _has_objects?( event )
-	end
-	
-	private
-
-	# True if the event concerns the object(s) this trigger
-	# is watching. It's not important that the event's pair order
-	# matches the trigger's pair order.
-	def _has_objects?( event )
-		obs = [event.a, event.a.sprite, event.b, event.b.sprite]
-		
-		(@a == :any  or  obs.include?(@a)) and \
-		(@b == :any  or  obs.include?(@b))
-	end
-end
+# class CollisionTrigger
+#
+# 	# type can be :start, :hold, :end, or :any
+# 	def initialize( a=:any, b=:any, type=:any )
+# 		@a, @b, @type = a, b, type
+# 	end
+#	
+# 	def match?( event )
+# 		matching_types =
+# 			case( event )
+# 			when CollisionStartEvent
+# 				[:start, :any]
+# 			when CollisionEvent
+# 				[:hold, :any]
+# 			when CollisionEndEvent
+# 				[:end, :any]
+# 			else
+# 				[]
+# 			end
+#		
+# 		matching_types.include?(@type) and _has_objects?( event )
+# 	end
+#	
+# 	private
+#
+# 	# True if the event concerns the object(s) this trigger
+# 	# is watching. It's not important that the event's pair order
+# 	# matches the trigger's pair order.
+# 	def _has_objects?( event )
+# 		obs = [event.a, event.a.sprite, event.b, event.b.sprite]
+#		
+# 		(@a == :any  or  obs.include?(@a)) and \
+# 		(@b == :any  or  obs.include?(@b))
+# 	end
+#end
 
 class InstanceOfTrigger
 	def initialize( klass )
