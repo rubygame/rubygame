@@ -5,7 +5,7 @@ $:.unshift( File.join( File.dirname(__FILE__), "..", "ext", "rubygame" ) )
 
 require 'rubygame'
 include Rubygame
-
+include Rubygame::Events
 
 FakeEvent = Struct.new(:a)
 
@@ -177,6 +177,23 @@ describe InstanceOfTrigger do
 		@trigger.match?( :foo ).should be_false
 	end
 
+end
+
+
+
+describe KeyPressTrigger do
+  
+	before :each do 
+		@trigger = KeyPressTrigger.new( :a )
+	end
+
+	it_should_behave_like "an event trigger"
+
+  it "should match if the event key is the same and mods is :any" do
+		@trigger = KeyPressTrigger.new( :a )
+    @trigger.match?( KeyPressed.new(:a, [], "a") ).should be_true
+  end
+	
 end
 
 
