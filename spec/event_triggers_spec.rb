@@ -181,13 +181,8 @@ end
 
 
 
-describe KeyPressTrigger do
-  
-	before :each do 
-    @event_class   = KeyPressed
-    @trigger_class = KeyPressTrigger
-		@trigger       = @trigger_class.new
-	end
+
+describe "a keyboard event trigger", :shared => true do
 
 	it_should_behave_like "an event trigger"
 
@@ -220,7 +215,21 @@ describe KeyPressTrigger do
 		@trigger = @trigger_class.new( :a, :none )
     @trigger.match?( @event_class.new(:a, []) ).should be_true
   end
-	
+
+end
+
+
+
+describe KeyPressTrigger do
+  
+	before :each do 
+    @event_class   = KeyPressed
+    @trigger_class = KeyPressTrigger
+		@trigger       = @trigger_class.new
+	end
+
+  it_should_behave_like "a keyboard event trigger"
+
 end
 
 
