@@ -198,11 +198,11 @@ class MouseReleaseTrigger
 	end
 end
 
-class TickTrigger
-	def match?( event )
-		event.kind_of?( Events::ClockTicked )
-	end
-end
+# class TickTrigger
+# 	def match?( event )
+# 		event.kind_of?( Events::ClockTicked )
+# 	end
+# end
 
 class YesTrigger
 	def match?( event )
