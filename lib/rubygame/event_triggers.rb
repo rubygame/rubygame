@@ -132,8 +132,8 @@ class KeyPressTrigger
 	def match?( event )
 		if event.kind_of?( Events::KeyPressed )
 			((@key == :any) or (event.key == @key)) and \
-			((@mods == :any) or (@mods == :none and event.mods == [])\
-			                 or (event.mods == @mods))
+			((@mods == :any) or (@mods == :none and event.modifiers == [])\
+			                 or (event.modifiers == @mods))
 		end
 	end
 end
@@ -149,8 +149,8 @@ class KeyReleaseTrigger
 	def match?( event )
 		if event.kind_of?( Events::KeyReleased )
 			((@key == :any) or (event.key == @key)) and \
-			((@mods == :any) or (@mods == :none and event.mods == [])\
-			                 or (event.mods == @mods))
+			((@mods == :any) or (@mods == :none and event.modifiers == [])\
+			                 or (event.modifiers == @mods))
 		end
 	end
 end
