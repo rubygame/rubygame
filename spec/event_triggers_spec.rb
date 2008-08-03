@@ -214,6 +214,11 @@ describe KeyPressTrigger do
     @trigger.match?( KeyPressed.new(:a, [], "a") ).should be_true
   end
 	
+  it "should match if the event key is the same and mods match :none" do
+		@trigger = KeyPressTrigger.new( :a, :none )
+    @trigger.match?( KeyPressed.new(:a, [], "a") ).should be_true
+  end
+	
 end
 
 
