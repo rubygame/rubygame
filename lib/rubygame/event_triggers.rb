@@ -170,15 +170,13 @@ end
 
 
 class MouseClickTrigger
-	def initialize( button=:any, area=:anywhere )
+	def initialize( button=:any )
 		@button = button
-		@area = area
 	end
 	
 	def match?( event )
 		if event.kind_of?( Events::MousePressed )
-			((@button == :any) or (event.button == @button)) and \
-			((@area == :anywhere) or (@area.contain_vect?( event.world_pos )))
+			((@button == :any) or (event.button == @button))
 		else
 			false
 		end
@@ -188,15 +186,13 @@ end
 
 
 class MouseHoverTrigger
-	def initialize( button=:any, area=:anywhere )
+	def initialize( button=:any )
 		@button = button
-		@area = area
 	end
 	
 	def match?( event )
 		if event.kind_of?( Events::MouseMoved )
-			((@button == :any) or (event.buttons.include?(@button))) and \
-			((@area == :anywhere) or (@area.contain_vect?( event.world_pos )))
+			((@button == :any) or (event.buttons.include?(@button)))
 		else
 			false
 		end
@@ -206,15 +202,13 @@ end
 
 
 class MouseReleaseTrigger
-	def initialize( button=:any, area=:anywhere )
+	def initialize( button=:any )
 		@button = button
-		@area = area
 	end
 	
 	def match?( event )
 		if event.kind_of?( Events::MouseReleased )
-			((@button == :any) or (event.button == @button)) and \
-			((@area == :anywhere) or (@area.contain_vect?( event.world_pos )))
+			((@button == :any) or (event.button == @button))
 		else
 			false
 		end
