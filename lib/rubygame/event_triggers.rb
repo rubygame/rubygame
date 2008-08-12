@@ -186,19 +186,63 @@ end
 
 
 # 
-# buttons can be:
-# 
-#  :any              - matches regardless of which buttons are held.
-#  :none             - matches when zero buttons are being held.
-#  :mouse_left, etc. - matches when at least the given button is being held.
-#  [ ... ]           - matches when exactly all buttons in the Array 
-#                      are being held, and nothing else.
+# MouseHoverTrigger is an event trigger which fires when the
+# mouse cursor is moved (MouseMoved). If buttons are given,
+# it only matches events with those buttons. See #new for details.
 # 
 class MouseHoverTrigger
+
+	# 
+	# Create a new instance of MouseHoverTrigger.
+	# 
+	# The buttons parameter determines which mouse buttons can
+	# be held down and still match this trigger. It can be one of:
+	# 
+	# 1. +:any+. Matches if zero or more buttons are held.
+	# 2. +:none+. Matches when zero buttons are being held.
+	# 3. +:mouse_left+, etc. Matches when at least the given 
+	#    button is being held.
+	# 4. An array of +:mouse_*+ symbols. Matches when exactly all
+	#    buttons in the Array are being held, and nothing else.
+	# 
+	# 
+	# Example:
+	# 
+	#    # Matches all MouseMoved events, regardless of buttons:
+	#    MouseHoverTrigger.new()
+	#    MouseHoverTrigger.new( :any )
+	#    
+	#    
+	#    # Matches only if no buttons pressed:
+	#    MouseHoverTrigger.new( :none )
+	#    MouseHoverTrigger.new( [] )
+	#    
+	#    
+	#    # Matches if left mouse is held down, maybe with others:
+	#    MouseHoverTrigger.new( :mouse_left )
+	#    
+	#    
+	#    # Matches if ONLY left mouse held down, nothing else:
+	#    MouseHoverTrigger.new( [:mouse_left] )
+	#    
+	#    
+	#    # Matches if BOTH left AND right mouse are held down, nothing else:
+	#    MouseHoverTrigger.new( [:mouse_left, :mouse_right] )
+	#    
+	#    
+	#    # Matches if EITHER left OR right mouse are held down:
+	#    AnyTrigger.new( MouseHoverTrigger.new(:mouse_left),
+	#                    MouseHoverTrigger.new(:mouse_right) )
+	# 
+	# 
 	def initialize( buttons=:any )
 		@buttons = buttons
 	end
 	
+	# 
+	# Returns true if the given event matches this trigger.
+	# See #new for information about how events match.
+	# 
 	def match?( event )
 		if event.kind_of?( Events::MouseMoved )
 			((@buttons == :any) or 
