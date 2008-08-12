@@ -185,14 +185,26 @@ end
 
 
 
+# 
+# buttons can be:
+# 
+#  :any              - matches regardless of which buttons are held.
+#  :none             - matches when zero buttons are being held.
+#  :mouse_left, etc. - matches when at least the given button is being held.
+#  [ ... ]           - matches when exactly all buttons in the Array 
+#                      are being held, and nothing else.
+# 
 class MouseHoverTrigger
-	def initialize( button=:any )
-		@button = button
+	def initialize( buttons=:any )
+		@buttons = buttons
 	end
 	
 	def match?( event )
 		if event.kind_of?( Events::MouseMoved )
-			((@button == :any) or (event.buttons.include?(@button)))
+			((@buttons == :any) or 
+			 (@buttons == :none and event.buttons == []) or 
+			 (@buttons == event.buttons) or
+			 (event.buttons.include?(@buttons)))
 		else
 			false
 		end
