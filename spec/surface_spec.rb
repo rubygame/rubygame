@@ -290,4 +290,9 @@ describe Surface, "(get_at)" do
 #     @surface = Surface.new([100,100], 0, [SRCALPHA])
 #     @surface.get_at(0,0).should == [0,0,0,0]
 #   end
+
+  it "get_at should get the color of a filled surface" do
+    @surface.fill([255,0,0])
+    @surface.get_at(0,0).should == [255,0,0,255]
+  end
 end
