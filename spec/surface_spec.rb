@@ -268,3 +268,21 @@ describe Surface, "(colorkey)" do
     (@surface.flags & SRCCOLORKEY).should == 0
   end
 end
+
+
+
+
+describe Surface, "(get_at)" do 
+  before(:each) do
+    Rubygame.init()
+    @surface = Surface.new([100,100])
+  end
+
+  after(:each) do
+    Rubygame.quit
+  end
+
+  it "get_at should get [0,0,0,255] on a new non-alpha surface" do
+    @surface.get_at(0,0).should == [0,0,0,255]
+  end
+end
