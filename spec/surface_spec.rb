@@ -254,4 +254,12 @@ describe Surface, "(colorkey)" do
     @surface.set_colorkey([1,2,3])
     (@surface.flags & SRCCOLORKEY).should == SRCCOLORKEY
   end
+
+
+  it "colorkey should be nil after it is set to nil" do
+    @surface.set_colorkey([1,2,3])
+    @surface.set_colorkey( nil )
+    @surface.colorkey.should be_nil
+  end
+ 
 end
