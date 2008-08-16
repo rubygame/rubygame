@@ -238,4 +238,8 @@ describe Surface, "(colorkey)" do
   it "colorkey should be nil by default" do
     @surface.colorkey.should be_nil
   end
+
+  it "should not have colorkey flag by default" do
+    (@surface.flags & SRCCOLORKEY).should == 0
+  end
 end
