@@ -249,4 +249,9 @@ describe Surface, "(colorkey)" do
     @surface.set_colorkey([1,2,3])
     @surface.colorkey.should == [1,2,3]
   end
+
+  it "should have colorkey flag after colorkey is set" do
+    @surface.set_colorkey([1,2,3])
+    (@surface.flags & SRCCOLORKEY).should == SRCCOLORKEY
+  end
 end
