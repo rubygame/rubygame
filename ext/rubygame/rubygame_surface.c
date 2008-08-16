@@ -333,10 +333,18 @@ VALUE rbgm_surface_get_colorkey( VALUE self )
 
 	Data_Get_Struct(self, SDL_Surface, surf);
 	colorkey = surf->format->colorkey;
-	if((int *)colorkey == NULL)
+
+	if( surf->flags & SDL_SRCCOLORKEY )
+	{
+		SDL_GetRGB(colorkey, surf->format, &r, &g, &b);
+		return rb_ary_new3(3,UINT2NUM(r),UINT2NUM(g),UINT2NUM(b));
+	}
+	else
+	{
+		/* No colorkey set. */
 		return Qnil;
-	SDL_GetRGB(colorkey, surf->format, &r, &g, &b);
-	return rb_ary_new3(3,UINT2NUM(r),UINT2NUM(g),UINT2NUM(b));
+	}
+
 }
 
 /*
