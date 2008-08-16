@@ -235,11 +235,18 @@ describe Surface, "(colorkey)" do
     Rubygame.quit
   end
 
+
   it "colorkey should be nil by default" do
     @surface.colorkey.should be_nil
   end
 
   it "should not have colorkey flag by default" do
     (@surface.flags & SRCCOLORKEY).should == 0
+  end
+
+
+  it "colorkey should be a color after it is set" do
+    @surface.set_colorkey([1,2,3])
+    @surface.colorkey.should == [1,2,3]
   end
 end
