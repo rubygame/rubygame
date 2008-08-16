@@ -222,3 +222,20 @@ describe Surface, "(fill)" do
     }.should raise_error(TypeError)
   end
 end
+
+
+
+describe Surface, "(colorkey)" do 
+  before(:each) do
+    Rubygame.init()
+    @surface = Surface.new([100,100])
+  end
+
+  after(:each) do
+    Rubygame.quit
+  end
+
+  it "colorkey should be nil by default" do
+    @surface.colorkey.should be_nil
+  end
+end
