@@ -263,10 +263,7 @@ void Init_rubygame_shared()
 
 
   /* Rubygame::NamedResource mixin. See named_resource.rb. */
-  if( mNamedResource == (int)NULL )
-  {
-    rb_require("rubygame/named_resource");
-    mNamedResource = rb_const_get(mRubygame, rb_intern("NamedResource"));
-  }
+  rb_require("rubygame/named_resource");
+  mNamedResource = rb_const_get(mRubygame, rb_intern("NamedResource"));
 
 }
