@@ -12,6 +12,7 @@ samples_dir = File.join( File.dirname(__FILE__), "..", "samples", "")
 test_dir = File.join( File.dirname(__FILE__), "" )
 
 test_image = test_dir + "image.png"
+test_image_8bit = test_dir + "image_8bit.png"
 not_image = test_dir + "short.ogg"
 panda = samples_dir + "panda.png"
 dne = test_dir + "does_not_exist.png"
@@ -294,5 +295,18 @@ describe Surface, "(get_at)" do
   it "get_at should get the color of a filled surface" do
     @surface.fill([255,0,0])
     @surface.get_at(0,0).should == [255,0,0,255]
+  end
+
+
+  describe "(8-bit)" do
+    before(:each) do
+      Rubygame.init()
+      @surface = Surface.load( test_image_8bit )
+    end
+
+    it "get_at should get the color of the pixel" do
+      @surface.get_at(0,0).should == [255,0,0,255]
+    end
+
   end
 end
