@@ -285,4 +285,9 @@ describe Surface, "(get_at)" do
   it "get_at should get [0,0,0,255] on a new non-alpha surface" do
     @surface.get_at(0,0).should == [0,0,0,255]
   end
+
+#   it "get_at should get [0,0,0,0] on a new alpha surface" do
+#     @surface = Surface.new([100,100], 0, [SRCALPHA])
+#     @surface.get_at(0,0).should == [0,0,0,0]
+#   end
 end
