@@ -298,6 +298,29 @@ VALUE rbgm_fetchevents(VALUE self)
   return event_array;
 }
 
+/* 
+ *  call-seq:
+ *    enable_key_repeat -> nil
+ *
+ *  By default, when a key is pressed down, only one keydown event happens.
+ *  Using this function, you can change the behavior.  If a key is held
+ *  down more than delay milliseconds, a keyup and keydown event for that key
+ *  will fire every interval milliseconds.  The module constants
+ *  DEFAULT_KEY_REPEAT_DELAY and DEFAULT_KEY_REPEAT_INTERVAL are available as
+ *  good values. To re-enable the default behavior,
+ *  use zero for both arguments.
+ */
+VALUE rbgm_enableKeyRepeat(VALUE self, VALUE delay, VALUE interval)
+{
+	int cDelay = NUM2INT(delay);
+	int cInterval = NUM2INT(interval);
+	int res = SDL_EnableKeyRepeat(cDelay, cInterval);
+	if (res != 0) {
+		rb_raise(eSDLError, "SDL_EnableKeyRepeat failure!");
+	}
+	return Qnil;
+}
+
 /*
  *--
  *  The event documentation is in rubygame/lib/rubygame/event.rb
@@ -310,6 +333,8 @@ void Rubygame_Init_Event()
 #endif
 
   rb_define_singleton_method(mRubygame, "fetch_sdl_events",rbgm_fetchevents,0);
+  rb_define_singleton_method(mRubygame, "enable_key_repeat",
+  	rbgm_enableKeyRepeat,2);
 
   cEvent =        rb_define_class_under(mRubygame,"Event",rb_cObject);
   cActiveEvent =  rb_define_class_under(mRubygame,"ActiveEvent",cEvent);
@@ -346,6 +371,12 @@ void Rubygame_Init_Event()
 	rb_define_const(mRubygame,"VIDEORESIZE",UINT2NUM(SDL_VIDEORESIZE));
 	rb_define_const(mRubygame,"VIDEOEXPOSE",UINT2NUM(SDL_VIDEOEXPOSE));
 	rb_define_const(mRubygame,"USEREVENT",UINT2NUM(SDL_USEREVENT));
+
+	/* Constants for key repeating */
+	rb_define_const(mRubygame,"DEFAULT_KEY_REPEAT_DELAY",
+		UINT2NUM(SDL_DEFAULT_REPEAT_DELAY));
+	rb_define_const(mRubygame,"DEFAULT_KEY_REPEAT_INTERVAL",
+		UINT2NUM(SDL_DEFAULT_REPEAT_INTERVAL));
 
 	/* Joystick constants */	
 	rb_define_const(mRubygame,"HAT_CENTERED",UINT2NUM(SDL_HAT_CENTERED));
