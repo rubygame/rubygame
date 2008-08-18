@@ -298,6 +298,51 @@ VALUE rbgm_fetchevents(VALUE self)
   return event_array;
 }
 
+
+
+/* Convert an argument to #enable_key_repeat into an integer
+ * number of milliseconds.
+ *
+ * Argument must be nil, :default, or a numeric greater than 0.001.
+ */
+int rg_get_keyrepeat_value( VALUE vvalue, int default_value, char *name )
+{
+
+	int value;
+
+	if( NIL_P(vvalue) )
+	{
+		return default_value;
+	}
+
+	switch( TYPE(vvalue) ){
+		case T_SYMBOL: {
+				if( make_symbol("default") == vvalue )
+				{
+					return default_value;
+				}
+				else
+				{
+					rb_raise( rb_eArgError, "unsupported symbol '%s' for %s", 
+					          RSTRING(rb_inspect(vvalue))->ptr, name );
+				}
+		}
+
+		default: {
+				int value = NUM2INT(vvalue) * 1000; /* seconds -> milleseconds */
+
+				if( value < 1 )
+				{
+					rb_raise( rb_eArgError, "%s must be at least 0.001 seconds (got %s)",
+					          name, RSTRING(rb_inspect(vvalue))->ptr);
+				}
+
+				return value;
+		}
+	}
+}
+
+
 /* 
  *  call-seq:
  *    enable_key_repeat -> nil
