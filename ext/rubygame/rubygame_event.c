@@ -301,6 +301,115 @@ VALUE rbgm_fetchevents(VALUE self)
 
 
 
+/* Convert an argument to #enable_key_repeat into an integer
+ * number of milliseconds.
+ *
+ * Argument must be nil, :default, or a numeric greater than 0.001.
+ */
+int rg_get_keyrepeat_value( VALUE vvalue, int default_value, char *name )
+{
+
+	int value;
+
+	if( NIL_P(vvalue) )
+	{
+		return default_value;
+	}
+
+	switch( TYPE(vvalue) ){
+		case T_SYMBOL: {
+				if( make_symbol("default") == vvalue )
+				{
+					return default_value;
+				}
+				else
+				{
+					rb_raise( rb_eArgError, "unsupported symbol '%s' for %s", 
+					          RSTRING(rb_inspect(vvalue))->ptr, name );
+				}
+		}
+
+		default: {
+				int value = NUM2INT(vvalue) * 1000; /* seconds -> milleseconds */
+
+				if( value < 1 )
+				{
+					rb_raise( rb_eArgError, "%s must be at least 0.001 seconds (got %s)",
+					          name, RSTRING(rb_inspect(vvalue))->ptr);
+				}
+
+				return value;
+		}
+	}
+}
+
+
+
+/* 
+ *  call-seq:
+ *    enable_key_repeat( delay=:default, interval=:default )
+ *
+ *  Enable key repeat, so that additional keyboard release and press
+ *  events are automatically generated for as long as the key is held
+ *  down. See also #disable_key_repeat.
+ *
+ *  * delay::    how many seconds to wait before starting to repeat.
+ *               Default is 0.5 seconds. (Numeric or :default, optional)
+ *
+ *  * interval:: how many seconds to wait in between repetitions after
+ *               the first one. Default is 0.03 seconds. 
+ *               (Numeric or :default, optional)
+ *
+ */
+VALUE rg_enable_key_repeat(int argc, VALUE *argv, VALUE module)
+{
+
+	VALUE vdelay, vinterval;
+	rb_scan_args(argc, argv, "02", &vdelay, &vinterval);
+
+
+	int delay = rg_get_keyrepeat_value( vdelay,
+	                                    SDL_DEFAULT_REPEAT_DELAY,
+	                                    "delay" );
+
+	int interval = rg_get_keyrepeat_value( vinterval,
+	                                       SDL_DEFAULT_REPEAT_INTERVAL,
+	                                       "interval" );
+
+
+	int result = SDL_EnableKeyRepeat( delay, interval );
+
+	if (result != 0) {
+		rb_raise(eSDLError, "Could not enable key repeat: %s",
+		         SDL_GetError());
+	}
+
+	return Qnil;
+}
+
+
+
+/* 
+ *  call-seq:
+ *    disable_key_repeat
+ *
+ *  Disable key repeat, undoing the effect of #enable_key_repeat.
+ *
+ */
+VALUE rg_disable_key_repeat(VALUE module)
+{
+	int result = SDL_EnableKeyRepeat( 0, 0 );
+
+	if (result != 0) {
+		rb_raise(eSDLError, "Could not disable key repeat: %s",
+		         SDL_GetError());
+	}
+
+	return Qnil;
+}
+
+
+
 /*
  *--
  *  The event documentation is in rubygame/lib/rubygame/event.rb
@@ -313,6 +422,10 @@ void Rubygame_Init_Event()
 #endif
 
   rb_define_singleton_method(mRubygame, "fetch_sdl_events",rbgm_fetchevents,0);
+  rb_define_singleton_method(mRubygame, "enable_key_repeat", 
+	                           rg_enable_key_repeat, -1);
+  rb_define_singleton_method(mRubygame, "disable_key_repeat", 
+	                           rg_disable_key_repeat, 0);
 
   cEvent =        rb_define_class_under(mRubygame,"Event",rb_cObject);
   cActiveEvent =  rb_define_class_under(mRubygame,"ActiveEvent",cEvent);
