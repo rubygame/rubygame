@@ -343,28 +343,6 @@ int rg_get_keyrepeat_value( VALUE vvalue, int default_value, char *name )
 }
 
 
-/* 
- *  call-seq:
- *    enable_key_repeat -> nil
- *
- *  By default, when a key is pressed down, only one keydown event happens.
- *  Using this function, you can change the behavior.  If a key is held
- *  down more than delay milliseconds, a keyup and keydown event for that key
- *  will fire every interval milliseconds.  The module constants
- *  DEFAULT_KEY_REPEAT_DELAY and DEFAULT_KEY_REPEAT_INTERVAL are available as
- *  good values. To re-enable the default behavior,
- *  use zero for both arguments.
- */
-VALUE rbgm_enableKeyRepeat(VALUE self, VALUE delay, VALUE interval)
-{
-	int cDelay = NUM2INT(delay);
-	int cInterval = NUM2INT(interval);
-	int res = SDL_EnableKeyRepeat(cDelay, cInterval);
-	if (res != 0) {
-		rb_raise(eSDLError, "SDL_EnableKeyRepeat failure!");
-	}
-	return Qnil;
-}
 
 /*
  *--
