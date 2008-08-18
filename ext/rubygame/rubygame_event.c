@@ -462,12 +462,6 @@ void Rubygame_Init_Event()
 	rb_define_const(mRubygame,"VIDEOEXPOSE",UINT2NUM(SDL_VIDEOEXPOSE));
 	rb_define_const(mRubygame,"USEREVENT",UINT2NUM(SDL_USEREVENT));
 
-	/* Constants for key repeating */
-	rb_define_const(mRubygame,"DEFAULT_KEY_REPEAT_DELAY",
-		UINT2NUM(SDL_DEFAULT_REPEAT_DELAY));
-	rb_define_const(mRubygame,"DEFAULT_KEY_REPEAT_INTERVAL",
-		UINT2NUM(SDL_DEFAULT_REPEAT_INTERVAL));
-
 	/* Joystick constants */	
 	rb_define_const(mRubygame,"HAT_CENTERED",UINT2NUM(SDL_HAT_CENTERED));
 	rb_define_const(mRubygame,"HAT_UP",UINT2NUM(SDL_HAT_UP));
