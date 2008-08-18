@@ -1,6 +1,9 @@
 #--
-#	Rubygame -- Ruby code and bindings to SDL to facilitate game creation
-#	Copyright (C) 2004-2007  John Croisant
+# 
+# This file is one part of:
+#	  Rubygame -- Ruby code and bindings to SDL to facilitate game creation
+# 
+#	Copyright (C) 2004-2008  John Croisant
 #
 #	This library is free software; you can redistribute it and/or
 #	modify it under the terms of the GNU Lesser General Public
@@ -15,6 +18,7 @@
 #	You should have received a copy of the GNU Lesser General Public
 #	License along with this library; if not, write to the Free Software
 #	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# 
 #++
 
 require "rubygame/event"
@@ -26,16 +30,17 @@ module Rubygame
 	# joystick movement, etc. You can also post custom events to the
   # EventQueue to help manage the game state.
   # 
-  # This class replaces the old Rubygame::Queue class, which is no longer
-  # available. While EventQueue class serves the same purpose as the old
-  # class, they are somewhat different in behavior. Please note that while
-  # the old class was a Singleton, this class is not; you may have as many
-  # separate instances of EventQueue as you wish (although it is strongly
-  # recommended that only one be used to #fetch_sdl_events).
-  # 
   # For basic usage, create a #new EventQueue with autofetch, then call the
   # #each method once per game loop, passing a block which handles events.
   # See the sample applications for examples of this.
+  # 
+  # In Rubygame 2.4 and later, you can call #enable_new_style_events to make
+  # EventQueue fetch the new event classes (in the Rubygame::Events module).
+  # Otherwise, the old classes will be used, for backwards compatibility.
+  # 
+  # It is **strongly recommended** that you use the new event classes.
+  # The old classes are deprecated as of Rubygame 2.4, and will be removed
+  # entirely in Rubygame 3.0.
   #
   # If you wish to ignore all events of a certain class, append those classes
   # the instance variable @ignore (accessors are provided). You can ignore as
@@ -45,22 +50,6 @@ module Rubygame
   # If the program has to pause and wait for an event (for example, if the
   # player must press a button to begin playing), you might find the #wait
   # method to be convenient.
-	# 
-	# For reference, the full list of SDL events is:
-	# - Event (base class, not used by itself)
-	# - ActiveEvent
-	# - JoyAxisEvent
-	# - JoyBallEvent
-	# - JoyDownEvent
-	# - JoyHatEvent
-	# - JoyUpEvent
-	# - KeyDownEvent
-	# - KeyUpEvent
-	# - MouseDownEvent
-	# - MouseMotionEvent
-	# - MouseUpEvent
-	# - QuitEvent
-	# - ResizeEvent
 	# 
 	class EventQueue < Array
     # Array of classes to be ignored by #push.
@@ -74,8 +63,26 @@ module Rubygame
     def initialize()
       @autofetch = true
       @ignore = []
+      @new_style_events = false
       yield self if block_given?
     end
+
+
+    # Enable new-style events. These are the event classes in the 
+    # Rubygame::Events module, which were added in Rubygame 2.4.
+    # 
+    # If you call this method, the new event classes will be used.
+    # Otherwise, the old classes will be used, for backwards
+    # compatibility.
+    # 
+    # It is **strongly recommended** that you use the new event
+    # classes. The old classes are deprecated as of Rubygame 2.4,
+    # and will be removed entirely in Rubygame 3.0.
+    # 
+    def enable_new_style_events
+      @new_style_events = true
+    end
+
 
     # Append events to the EventQueue.
     # Silently ignores events whose class is in @ignore.
@@ -88,7 +95,9 @@ module Rubygame
 
     alias post push
 
-    alias peek_each each        # Iterate through all events without removing.
+
+    alias :_old_each :each
+    private :_old_each
 
     # Iterate through all events in the EventQueue, yielding them one at a time
     # to the given block. The EventQueue is flushed after all events have been
@@ -96,11 +105,19 @@ module Rubygame
     #
     # If the internal variable @autofetch is true, this method will call
     # #fetch_sdl_events once before iterating.
-    def each(&block)
+    def each( &block )
       fetch_sdl_events if @autofetch
-      super
+      _old_each( &block )
       self.clear
     end
+
+    # Like #each, but doesn't remove the events from the queue after
+    # iterating. 
+    def peek_each( &block )
+      fetch_sdl_events if @autofetch
+      _old_each( &block )
+    end
+
 
     # Posts pending SDL hardware events to the EventQueue. Only one EventQueue
     # should call this method per application, and only if you are not using
@@ -108,7 +125,11 @@ module Rubygame
     # events may be removed from SDL's event stack before they can be properly
     # processed!
 		def fetch_sdl_events
-			self.push(Rubygame.fetch_sdl_events())
+      if @new_style_events
+        self.push( Rubygame::Events.fetch_sdl_events() )
+      else
+        self.push( Rubygame.fetch_sdl_events() )
+      end
 		end
 
     # Wait for an event to be posted, then return that event.

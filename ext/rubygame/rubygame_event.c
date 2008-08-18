@@ -22,6 +22,7 @@
 #include "rubygame_event.h"
 
 void Rubygame_Init_Event();
+
 VALUE cEvent;
 VALUE cActiveEvent;
 VALUE cKeyDownEvent;
@@ -297,6 +298,8 @@ VALUE rbgm_fetchevents(VALUE self)
   }
   return event_array;
 }
+
+
 
 /*
  *--

@@ -22,6 +22,7 @@
 #include "rubygame_shared.h"
 #include "rubygame_main.h"
 #include "rubygame_event.h"
+#include "rubygame_event2.h"
 #include "rubygame_gl.h"
 #include "rubygame_joystick.h"
 #include "rubygame_screen.h"
@@ -76,6 +77,7 @@ VALUE rbgm_init(VALUE module)
 {
 	if(SDL_Init(SDL_INIT_EVERYTHING)==0)
 	{
+    SDL_EnableUNICODE(1);
 		return Qnil;
 	}
 	else
@@ -129,6 +131,7 @@ void Init_rubygame_core()
 	Rubygame_Init_Surface();
 	Rubygame_Init_Screen();
 	Rubygame_Init_Event();
+	Rubygame_Init_Event2();
 	Rubygame_Init_Joystick();
   Rubygame_Init_GL();
 
