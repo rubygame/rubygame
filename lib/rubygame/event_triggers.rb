@@ -22,11 +22,40 @@ require 'rubygame'
 module Rubygame
 
 
+
+# 
+# AllTrigger is an event trigger which contains one or
+# more other triggers, and fires when an event matches
+# all of its triggers. You can use this to create more
+# complex logic than is possible with a single trigger.
+#
+# Contrast with AnyTrigger.
+# 
 class AllTrigger
+
+	# Initialize a new instance of AllTrigger, containing
+	# the given triggers.
+	# 
+	# * \*triggers:: The triggers to contain.
+	#                (Array of triggers, required)
+	# 
+	# Example:
+	#   
+	#   gameover_trigger = InstanceOfTrigger.new( GameOver )
+	#   won_trigger = AttrTrigger.new( :won_game => true )
+	# 
+	#   # Matches only an event which is BOTH:
+	#   #  1. an instance of class GameOver, AND
+	#   #  2. returns true when #won_game is called
+	#   AllTrigger.new( gameover_trigger, won_trigger )
+	# 
 	def initialize( *triggers )
 		@triggers = triggers
 	end
 	
+	# Returns true if the event matches all the triggers
+	# that the AllTrigger contains.
+	# 
 	def match?( event )
 		@triggers.all? { |trigger| trigger.match? event }
 	end
