@@ -63,11 +63,46 @@ end
 
 
 
+# 
+# AnyTrigger is an event trigger which contains one or
+# more other triggers, and fires when an event matches
+# one or more of its triggers.
+# 
+# Contrast with AllTrigger.
+# 
 class AnyTrigger
+
+	# Initialize a new instance of AnyTrigger, containing
+	# the given triggers.
+	# 
+	# * \*triggers:: The triggers to contain.
+	#                (Array of triggers, required)
+	# 
+	# Example:
+	#   
+	#   is_red = AttrTrigger.new( :color => :red )
+	#   is_blue = AttrTrigger.new( :color => :blue )
+	# 
+	#   # Matches only an event which has EITHER:
+	#   #  1. #color == :red, OR
+	#   #  2. #color == :blue
+	#   is_red_or_blue = AnyTrigger.new( is_red, is_blue )
+	# 
+	# 
+	#   # More complex example with nested logic triggers:
+	#   
+	#   changed = InstanceOfTrigger.new( ColorChanged )
+	# 
+	#   changed_to_red_or_blue = 
+	#     AllTrigger.new( changed, is_red_or_blue )
+	# 
 	def initialize( *triggers )
 		@triggers = triggers
 	end
 	
+	# Returns true if the event matches one or more of 
+	# the triggers that the AnyTrigger contains.
+	# 
 	def match?( event )
 		@triggers.any? { |trigger| trigger.match? event }
 	end
