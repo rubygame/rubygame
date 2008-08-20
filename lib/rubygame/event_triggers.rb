@@ -281,7 +281,14 @@ end
 
 
 
+#
+# YesTrigger is an event trigger which will fire
+# when any event occurs, regardless of the event
+# type or details.
+# 
 class YesTrigger
+
+	# Returns true every time.
 	def match?( event )
 		true
 	end
