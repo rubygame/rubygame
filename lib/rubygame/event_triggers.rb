@@ -110,11 +110,37 @@ end
 
 
 
+# 
+# AttrTrigger is an event trigger which fires when an event
+# has the expected value(s) for one or more attributes.
+# 
+# AttrTrigger stores a Hash of :attr => value pairs, and
+# checks each event to see if event.attr returns value.
+# If all attributes have the expected value, the trigger fires.
+# 
 class AttrTrigger
+
+	# Initialize a new instance of AttrTrigger with a
+	# Hash of one or more :attr => value pairs.
+	# 
+	# * attributes:: The attributes / value pairs to check.
+	#                (Hash, required)
+	# 
+	# Example:
+	# 
+	#   # Matches if event.color returns :red and
+	#   # event.size returns :big
+	#   AttrTrigger.new( :color => :red, :size => :big )
+	# 
 	def initialize( attributes )
 		@attributes = attributes
 	end
-	
+
+	# Returns true if, for every :attr => value pair, the event
+	# responds to :attr and calling event.attr returns value.
+	# 
+	# Returns false if any of the attributes is not the expected value.
+	# 
 	def match?( event )
 		@attributes.all? { |key, value|
 			event.respond_to?(key) and (event.send(key) == value)
