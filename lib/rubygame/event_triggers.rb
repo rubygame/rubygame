@@ -277,13 +277,30 @@ end
 
 
 
+# 
+# KindOfTrigger is an event trigger which fires when
+# the event is kind of the given class or module. 
+# (In other words, when event.kind_of?( kind ) is
+# true.)
+# 
+# Contrast with InstanceOfTrigger.
+# 
 class KindOfTrigger
-	def initialize( klass )
-		@klass = klass
+
+	# Initialize a new instance of KindOfTrigger with the
+	# given class or module.
+	# 
+	# * kind:: The class/module to check for.
+	#          (Class or Module, required)
+	# 
+	def initialize( kind )
+		@kind = kind
 	end
 	
+	# Returns true if the event is kind of the class/module.
+	# 
 	def match?( event )
-		event.kind_of?( @klass )
+		event.kind_of?( @kind )
 	end
 end
 
