@@ -216,11 +216,26 @@ end
 
 
 
+# 
+# InstanceOfTrigger is an event trigger which fires when
+# the event is an instance of the given class. (In other
+# words, when event.instance_of?( klass ) is true.)
+# 
+# Contrast with KindOfTrigger.
+# 
 class InstanceOfTrigger
+
+	# Initialize a new instance of InstanceOfTrigger with the
+	# given class.
+	# 
+	# * klass:: The class to check for. (Class, required)
+	# 
 	def initialize( klass )
 		@klass = klass
 	end
 	
+	# Returns true if the event is an instance of the class.
+	# 
 	def match?( event )
 		event.instance_of?( @klass )
 	end
