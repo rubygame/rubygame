@@ -150,12 +150,27 @@ end
 
 
 
+# 
+# BlockTrigger is an event trigger which calls a block 
+# to check events. The trigger fires if the block returns
+# true when called with the event as the only parameter.
+# 
 class BlockTrigger
+
+	# Initialize a new instance of BlockTrigger with the given
+	# block. The block should take only 1 parameter, the event,
+	# and return true for matching events.
+	# 
+	# * &block:: The block to pass events to. (Proc, required)
+	# 
 	def initialize( &block )
 		raise ArgumentError, "BlockTrigger needs a block" unless block_given?
 		@block = block
 	end
 	
+	# Returns true if the block returns true when called 
+	# with the event as the only parameter.
+	# 
 	def match?( event )
 		@block.call( event ) == true
 	end
