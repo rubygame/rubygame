@@ -243,12 +243,66 @@ end
 
 
 
+# 
+# KeyPressTrigger is an event trigger which fires when
+# a key on the keyboard is pressed down (i.e. KeyPressed).
+# See also KeyReleaseTrigger.
+# 
+# This trigger can be configured to fire for any key,
+# or a specific key. It can also fire depending on which
+# modifier keys are held (ctrl, shift, alt, etc.).
+# 
+# NOTE: This trigger only works with the new-style KeyPressed
+# event class, not with the older KeyDownEvent.
+# See EventQueue#enable_new_style_events
+# 
 class KeyPressTrigger
+
+	# Initialize a new instance of KeyPressTrigger with the
+	# given key and modifier keys.
+	# 
+	# * key::   the key symbol to detect, or :any (default)
+	#           to detect any key. (Symbol, optional)
+	# 
+	# * mods::  an Array of one or more modifier key symbols, or
+	#           :none to detect key presses with exactly no modifiers,
+	#           or :any (default) to detect any key modifiers.
+	# 
+	#           Valid modifiers are: :left_shift, :right_shift,
+	#           :left_ctrl, :right_ctrl, :left_alt, :right_alt,
+	#           :left_meta, :right_meta, :numlock, :capslock, and
+	#           :mode.
+	# 
+	# Example:
+	# 
+	#   # Matches any key press, regardless of the key or modifiers.
+	#   KeyPressTrigger.new
+	# 
+	#   # Matches the 'A' key with any (or no) modifiers.
+	#   KeyPressTrigger.new( :a )
+	# 
+	#   # Matches the 'A' with BOTH Left Ctrl and Left Shift modifiers.
+	#   KeyPressTrigger.new( :a, [:left_ctrl, :left_shift] )
+	# 
+	# 
 	def initialize( key=:any, mods=:any )
 		@key = key
 		@mods = mods
 	end
 	
+	# Returns true if the event is a KeyPressed event and the event's
+	# key and mods BOTH match the trigger's expectations.
+	# 
+	# Key matches if either of these is true:
+	#  * the event's key is the same as the trigger's key
+	#  * the trigger's key is the symbol :any
+	#
+	# Modifiers matches if any of these is true: 
+	#  * the event's mods are the same as the trigger's mods
+	#  * the event's mods is empty and the trigger's mods is
+	#    the symbol :none
+	#  * the trigger's mods is the symbol :any
+	#
 	def match?( event )
 		if event.kind_of?( Events::KeyPressed )
 			((@key == :any) or (event.key == @key)) and \
