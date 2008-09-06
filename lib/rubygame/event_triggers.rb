@@ -314,12 +314,36 @@ end
 
 
 
+# 
+# KeyReleaseTrigger is an event trigger which fires when
+# a key on the keyboard is released (i.e. KeyReleased).
+# 
+# NOTE: This trigger is identical to KeyPressTrigger, except that
+# it fires for KeyReleased instead of KeyPressed. Please
+# see the documentation for KeyPressTrigger for info about
+# the parameters and behavior of the trigger.
+# 
+# NOTE: This trigger only works with the new-style KeyReleased
+# event class, not with the older KeyUpEvent.
+# See EventQueue#enable_new_style_events
+# 
 class KeyReleaseTrigger
+
+	# Initialize a new instance of KeyReleaseTrigger with the
+	# given key and modifier keys.
+	# 
+	# See KeyPressTrigger#new for more information and examples.
+	# 
 	def initialize( key=:any, mods=:any )
 		@key = key
 		@mods = mods
 	end
 	
+	# Returns true if the event is a KeyReleased event and the event's
+	# key and mods BOTH match the trigger's expectations.
+	# 
+	# See KeyPressTrigger#match? for more information.
+	# 
 	def match?( event )
 		if event.kind_of?( Events::KeyReleased )
 			((@key == :any) or (event.key == @key)) and \
