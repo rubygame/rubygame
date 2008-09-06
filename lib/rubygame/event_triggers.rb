@@ -498,11 +498,36 @@ end
 
 
 
+# 
+# MouseReleaseTrigger is an event trigger which fires when
+# a mouse button is released (i.e. MouseReleased).
+# 
+# By default, this trigger fires for any mouse release, but
+# it can be configured to fire for only a specific mouse 
+# button by passing a button symbol to #new.
+# 
+# See also MousePressTrigger.
+# 
 class MouseReleaseTrigger
+
+	# Initialize a new instance of MouseReleaseTrigger with
+	# the given mouse button.
+	# 
+	# * button:: The mouse button symbol to detect, or :any
+	#            to detect any button press.
+	# 
+	#            Valid mouse button symbols are: :mouse_left,
+	#            :mouse_middle, :mouse_right, :mouse_wheel_up,
+	#            and :mouse_wheel_down.
+	# 
 	def initialize( button=:any )
 		@button = button
 	end
 	
+	# Returns true if the event is a MouseReleased event and
+	# the event's button is the same as the trigger's button
+	# (or the trigger's button is :any).
+	# 
 	def match?( event )
 		if event.kind_of?( Events::MouseReleased )
 			((@button == :any) or (event.button == @button))
