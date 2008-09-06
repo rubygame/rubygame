@@ -427,14 +427,14 @@ end
 
 
 # 
-# MouseHoverTrigger is an event trigger which fires when the
+# MouseMoveTrigger is an event trigger which fires when the
 # mouse cursor is moved (MouseMoved). If buttons are given,
 # it only matches events with those buttons. See #new for details.
 # 
-class MouseHoverTrigger
+class MouseMoveTrigger
 
 	# 
-	# Create a new instance of MouseHoverTrigger.
+	# Create a new instance of MouseMoveTrigger.
 	# 
 	# The buttons parameter determines which mouse buttons can
 	# be held down and still match this trigger. It can be one of:
@@ -450,30 +450,30 @@ class MouseHoverTrigger
 	# Example:
 	# 
 	#    # Matches all MouseMoved events, regardless of buttons:
-	#    MouseHoverTrigger.new()
-	#    MouseHoverTrigger.new( :any )
+	#    MouseMoveTrigger.new()
+	#    MouseMoveTrigger.new( :any )
 	#    
 	#    
 	#    # Matches only if no buttons pressed:
-	#    MouseHoverTrigger.new( :none )
-	#    MouseHoverTrigger.new( [] )
+	#    MouseMoveTrigger.new( :none )
+	#    MouseMoveTrigger.new( [] )
 	#    
 	#    
 	#    # Matches if left mouse is held down, maybe with others:
-	#    MouseHoverTrigger.new( :mouse_left )
+	#    MouseMoveTrigger.new( :mouse_left )
 	#    
 	#    
 	#    # Matches if ONLY left mouse held down, nothing else:
-	#    MouseHoverTrigger.new( [:mouse_left] )
+	#    MouseMoveTrigger.new( [:mouse_left] )
 	#    
 	#    
 	#    # Matches if BOTH left AND right mouse are held down, nothing else:
-	#    MouseHoverTrigger.new( [:mouse_left, :mouse_right] )
+	#    MouseMoveTrigger.new( [:mouse_left, :mouse_right] )
 	#    
 	#    
 	#    # Matches if EITHER left OR right mouse are held down:
-	#    AnyTrigger.new( MouseHoverTrigger.new(:mouse_left),
-	#                    MouseHoverTrigger.new(:mouse_right) )
+	#    AnyTrigger.new( MouseMoveTrigger.new(:mouse_left),
+	#                    MouseMoveTrigger.new(:mouse_right) )
 	# 
 	# 
 	def initialize( buttons=:any )
