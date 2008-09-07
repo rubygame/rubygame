@@ -294,14 +294,17 @@ class KeyPressTrigger
 	# key and mods BOTH match the trigger's expectations.
 	# 
 	# Key matches if either of these is true:
-	#  * the event's key is the same as the trigger's key
 	#  * the trigger's key is the symbol :any
+	#  * the event's key is the same as the trigger's key
 	#
 	# Modifiers matches if any of these is true: 
-	#  * the event's mods are the same as the trigger's mods
-	#  * the event's mods is empty and the trigger's mods is
+	#  * the trigger's @mods is the symbol :any
+	#  * the event has no modifiers and the trigger's @mods is
 	#    the symbol :none
-	#  * the trigger's mods is the symbol :any
+	#  * every one of the trigger's @mods matches one of the event's
+	#    modifiers. "Matches" means either it is the same symbol,
+	#    or it is a more general version. For example, :alt will 
+	#    match either :left_alt or :right_alt.
 	#
 	def match?( event )
 		if event.kind_of?( Events::KeyPressed )
