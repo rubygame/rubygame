@@ -216,6 +216,21 @@ describe "a keyboard event trigger", :shared => true do
     @trigger.match?( @event_class.new(:a, []) ).should be_true
   end
 
+
+  ["alt", "ctrl", "meta", "shift"].each do |m|
+
+    it "should match if event mods is [:left_#{m}] and mods is [:#{m}]" do
+      @trigger = @trigger_class.new( :a, [m.intern] )
+      @trigger.match?( @event_class.new(:a, ["left_#{m}".intern]) ).should be_true
+    end
+    
+    it "should match if event mods is [:right_#{m}] and mods is [:#{m}]" do
+      @trigger = @trigger_class.new( :a, [m.intern] )
+      @trigger.match?( @event_class.new(:a, ["right_#{m}".intern]) ).should be_true
+    end
+
+  end	
+
 end
 
 
