@@ -268,10 +268,18 @@ class KeyPressTrigger
 	#           :none to detect key presses with exactly no modifiers,
 	#           or :any (default) to detect any key modifiers.
 	# 
-	#           Valid modifiers are: :left_shift, :right_shift,
-	#           :left_ctrl, :right_ctrl, :left_alt, :right_alt,
-	#           :left_meta, :right_meta, :numlock, :capslock, and
-	#           :mode.
+	#           Valid modifiers are: 
+	#             * :alt,   :left_alt,   :right_alt,
+	#             * :ctrl,  :left_ctrl,  :right_ctrl,
+	#             * :shift, :left_shift, :right_shift,
+	#             * :meta,  :left_meta,  :right_meta,
+	#             * :numlock
+	#             * :capslock
+	#             * :mode
+	# 
+	#           :alt, :ctrl, :shift, and :meta will match either the
+	#           left version or right version (e.g. :left_alt or
+	#           :right_alt).
 	# 
 	# Example:
 	# 
@@ -281,7 +289,10 @@ class KeyPressTrigger
 	#   # Matches the 'A' key with any (or no) modifiers.
 	#   KeyPressTrigger.new( :a )
 	# 
-	#   # Matches the 'A' with BOTH Left Ctrl and Left Shift modifiers.
+	#   # Matches the 'A' with both Ctrl and Shift modifiers.
+	#   KeyPressTrigger.new( :a, [:ctrl, :shift] )
+	# 
+	#   # Matches the 'A' with both Left Ctrl and Left Shift modifiers.
 	#   KeyPressTrigger.new( :a, [:left_ctrl, :left_shift] )
 	# 
 	# 
