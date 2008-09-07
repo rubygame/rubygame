@@ -307,9 +307,30 @@ class KeyPressTrigger
 		if event.kind_of?( Events::KeyPressed )
 			((@key == :any) or (event.key == @key)) and \
 			((@mods == :any) or (@mods == :none and event.modifiers == [])\
-			                 or (event.modifiers == @mods))
+			                 or (_mods_match?(event.modifiers)))
 		end
 	end
+
+
+	private
+
+	# True if every modifier in @mods matches a modifier in
+	# evmods. :alt, :ctrl, :meta, and :shift match either
+	# the left or right versions (e.g. :left_alt, :right_alt).
+	# All other symbols match themselves.
+	# 
+	def _mods_match?( evmods )    # :nodoc:
+		@mods.all? { |mod|
+			case mod
+			when :alt, :ctrl, :meta, :shift
+				evmods.include?("left_#{mod}".intern) or
+					evmods.include?("right_#{mod}".intern)
+			else
+				evmods.include?(mod)
+			end
+		}
+	end
+
 end
 
 
