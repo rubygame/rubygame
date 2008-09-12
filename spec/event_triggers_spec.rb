@@ -231,6 +231,11 @@ describe "a keyboard event trigger", :shared => true do
 
   end	
 
+	it "should not care about mods order" do
+		@trigger = @trigger_class.new( :a, [:left_shift, :left_ctrl] )
+		@trigger.match?( @event_class.new(:a, [:left_ctrl, :left_shift]) ).should be_true
+	end
+
 end
 
 
