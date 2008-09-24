@@ -21,7 +21,35 @@ require 'rubygame/event_triggers'
 require 'rubygame/event_actions'
 
 module Rubygame 
-	
+
+# The EventHook class provides the bare framework for event hooks
+# used by EventHandler. Each hook has a trigger, which controls what
+# types of events cause the hook to engage, and an action, which
+# controls what should happen when the hook engages.
+# 
+# An instance of EventHook has these attributes:
+# 
+#  owner::    the object that this hook applies to. This value will
+#             be provided to the action when the hook engages.
+# 
+#  trigger::  an instance of a trigger class, used to test every
+#             event to check whether the hook should engage.
+#             A valid trigger must have a #match? method which
+#             accepts an event and returns either true or false.
+# 
+#  action::   an instance of an action class, which is performed
+#             when the trigger matches an event. A valid action
+#             must have a #perform method which accepts two values:
+#             the hook's owner and the matching event.
+# 
+#  consumes:: if true, the event hook "eats" every event that it
+#             matches, so that hooks that come after it will not
+#             see the event. Has no effect on non-matching events.
+# 
+#  active::   if false, the event hook is disabled, and will not
+#             match any event until it is set to true again. You can
+#             use this to temporarily disable the hook.
+# 
 class EventHook
 	attr_accessor :owner, :trigger, :action, :consumes, :active
 	
