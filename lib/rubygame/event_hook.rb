@@ -91,14 +91,18 @@ class EventHook
     @consumes = (description[:consumes] or false)
     @active   = (description[:active].nil? ? true : description[:active])
   end
-	
-	def match?( event )
-		@trigger.match?( event ) if (@trigger and @active)
-	end
-	
-	def perform( event )
-		@action.perform( owner, event ) if @action
-	end
+
+  # Passes the event to @trigger's #match? method, and returns the
+  # result. If there is no @trigger or if @active is false, returns
+  # nil immediately.
+  def match?( event )
+    @trigger.match?( event ) if (@trigger and @active)
+  end
+
+  # Passes @owner and event to the @action's #perform method.
+  def perform( event )
+    @action.perform( owner, event ) if @action
+  end
 end
 
 end
