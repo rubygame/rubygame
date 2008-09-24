@@ -51,15 +51,46 @@ module Rubygame
 #             use this to temporarily disable the hook.
 # 
 class EventHook
-	attr_accessor :owner, :trigger, :action, :consumes, :active
-	
-	def initialize( description )
-		@owner    = description[:owner]
-		@trigger  = description[:trigger]
-		@action   = description[:action]
-		@consumes = (description[:consumes] or false)
-		@active   = (description[:active].nil? ? true : description[:active])
-	end
+  attr_accessor :owner, :trigger, :action, :consumes, :active
+
+  # Create a new instance of EventHook. Description is a Hash with
+  # the following keys. See the class documentation for EventHook for
+  # more information about what these mean.
+  # 
+  #  :owner::    the hook's owner. (any object, required)
+  #  :trigger::  an event trigger which matches certain events.
+  #              (Object with +#match?(event)+, required)
+  #  :action::   an event action to do when an event matches.
+  #              (Object with +#perform(owner,event)+, required)
+  #  :consumes:: if true, the hook will "eat" matching so
+  #              later hooks won't see them. Default: false.
+  #              (true or false, optional)
+  #  :active::   if false, the hook will ignore all events.
+  #              Default: true. (true or false, optional)
+  # 
+  # NOTE: None of the attributes are truly required to create a hook.
+  # But, the hook will do nothing unless both @trigger and @action are
+  # set. Setting @owner is also highly recommended, because some types
+  # of actions use the owner, and may raise an error if it is nil.
+  # 
+  # TIP: It's possible to set these attributes at any time using the
+  # accessors. For example, You could change keyboard controls on the
+  # fly, or temporarily deactivate a hook to stop it from engaging.
+  # 
+  # Example:
+  # 
+  #   # Call player1.jump() when the space bar is pressed.
+  #   EventHook.new( :owner   => player1,
+  #                  :trigger => KeyPressTrigger.new(:space)
+  #                  :action  => MethodAction.new(:jump) )
+  # 
+  def initialize( description )
+    @owner    = description[:owner]
+    @trigger  = description[:trigger]
+    @action   = description[:action]
+    @consumes = (description[:consumes] or false)
+    @active   = (description[:active].nil? ? true : description[:active])
+  end
 	
 	def match?( event )
 		@trigger.match?( event ) if (@trigger and @active)
