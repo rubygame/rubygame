@@ -96,7 +96,11 @@ class EventHook
   # result. If there is no @trigger or if @active is false, returns
   # nil immediately.
   def match?( event )
-    @trigger.match?( event ) if (@trigger and @active)
+    if (@trigger and @active)
+      @trigger.match?( event ) 
+    else
+      false
+    end
   end
 
   # Passes @owner and event to the @action's #perform method.
