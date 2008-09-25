@@ -84,7 +84,7 @@ class EventHook
   #                  :trigger => KeyPressTrigger.new(:space)
   #                  :action  => MethodAction.new(:jump) )
   # 
-  def initialize( description )
+  def initialize( description={} )
     @owner    = description[:owner]
     @trigger  = description[:trigger]
     @action   = description[:action]
