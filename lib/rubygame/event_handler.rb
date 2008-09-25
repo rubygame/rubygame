@@ -19,9 +19,7 @@
 
 require 'rubygame/event_hook'
 
-module Rubygame
-
-class EventHandler
+class Rubygame::EventHandler
 
 	#  call-seq:
 	#    EventHandler.new { |handler| ... }  ->  new_handler
@@ -105,7 +103,7 @@ class EventHandler
 	end	
 end
 
-module HasEventHandler
+module Rubygame::EventHandler::HasEventHandler
 
 	def initialize( *args )
 		# Try super with the given arguments, but rescue if it fails.
@@ -174,6 +172,4 @@ module HasEventHandler
 		
 		return hook
 	end
-end
-
 end
