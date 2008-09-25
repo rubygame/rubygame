@@ -103,6 +103,40 @@ class Rubygame::EventHandler
 	end	
 end
 
+
+
+# HasEventHandler is a mixin module to conveniently integrate
+# EventHandler into any class, allowing instances of the class
+# to hold event hooks and handle incoming events.
+# 
+# To use HasEventHandler, you simply 'include' it in your class,
+# and call 'super' from initialize. Example:
+# 
+#    class Player
+#      include Rubygame::EventHandler::HasEventHandler
+#      
+#      def initialize()
+#        # creates @event_handler if it doesn't exist already
+#        super
+#
+#        # The rest of your initialization code...
+#      end
+#      
+#      # The rest of your class definition...
+#      
+#    end
+# 
+# You can then use all of the functionality of HasEventHandler.
+# 
+# HasEventHandler provides several methods for adding new
+# event hooks to the object. The two basic methods for that are 
+# #append_hook and #prepend_hook. The #magic_hooks method can
+# create multiple hooks very simply and conveniently.
+# 
+# HasEventHandler also defines the #handle method, which accepts
+# an event and gives it to the object's event handler. This is
+# the recommended way to make the object process an event.
+# 
 module Rubygame::EventHandler::HasEventHandler
 
 	def initialize( *args )
