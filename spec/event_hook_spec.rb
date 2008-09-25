@@ -82,4 +82,25 @@ describe "EventHook" do
     e.match?(:event).should be_false
   end
 
+
+  ##############
+  # PERFORMING #
+  ##############
+
+  it "should have a #perform method" do
+    EventHook.new.should respond_to(:perform)
+  end
+
+  it "#perform should take one event" do
+    lambda { EventHook.new.perform(      ) }.should raise_error
+    lambda { EventHook.new.perform( 1    ) }.should_not raise_error
+    lambda { EventHook.new.perform( 1, 2 ) }.should raise_error
+  end
+
+  it "should call the action's #perform with the owner and event" do
+    action = mock("action")
+    action.should_receive(:perform).with(:owner, :event)
+    EventHook.new(:action => action, :owner => :owner).perform(:event)
+  end
+
 end
