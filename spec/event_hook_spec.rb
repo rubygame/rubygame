@@ -73,13 +73,13 @@ describe "EventHook" do
   end
 
   it "should not match if there is no trigger" do
-    EventHook.new.match?(:event).should_not be_true
+    EventHook.new.match?(:event).should be_false
   end
 
   it "should not match if the hook is not active" do
     trigger = mock("trigger", :match? => true)
     e = EventHook.new(:trigger => trigger, :active => false)
-    e.match?(:event).should_not be_true
+    e.match?(:event).should be_false
   end
 
 end
