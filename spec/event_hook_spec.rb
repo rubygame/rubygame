@@ -41,4 +41,45 @@ describe "EventHook" do
 
   end
 
+
+  ############
+  # MATCHING #
+  ############
+
+  it "should have a #match? method" do
+    EventHook.new.should respond_to(:match?)
+  end
+
+  it "#match? should take one event" do
+    lambda { EventHook.new.match?(      ) }.should raise_error
+    lambda { EventHook.new.match?( 1    ) }.should_not raise_error
+    lambda { EventHook.new.match?( 1, 2 ) }.should raise_error
+  end
+
+  it "should ask the trigger to see if an event matches" do
+    trigger = mock("trigger")
+    trigger.should_receive(:match?).with(:event)
+    EventHook.new(:trigger => trigger).match?(:event)
+  end
+
+  it "should match if the event matches the trigger" do
+    trigger = mock("trigger", :match? => true)
+    EventHook.new(:trigger => trigger).match?(:event).should be_true
+  end
+
+  it "should not match if the event does not match the trigger" do
+    trigger = mock("trigger", :match? => false)
+    EventHook.new(:trigger => trigger).match?(:event).should be_false
+  end
+
+  it "should not match if there is no trigger" do
+    EventHook.new.match?(:event).should_not be_true
+  end
+
+  it "should not match if the hook is not active" do
+    trigger = mock("trigger", :match? => true)
+    e = EventHook.new(:trigger => trigger, :active => false)
+    e.match?(:event).should_not be_true
+  end
+
 end
