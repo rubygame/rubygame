@@ -207,7 +207,12 @@ module Rubygame::EventHandler::HasEventHandler
 		end
 		nil
 	end
-	
+
+	# Exactly like #append_hook, except that the hook is put at the
+	# top of the stack (it will be handled first).
+	# 
+	# See also EventHandler#prepend_hook.
+	# 
 	def prepend_hook( hook )
 		hook = _prepare_hook( hook )
 		@event_handler.prepend_hook( hook )
