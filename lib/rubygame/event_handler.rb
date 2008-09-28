@@ -179,6 +179,41 @@ module Rubygame::EventHandler::HasEventHandler
 		@event_handler.handle( event )
 	end
 	
+
+	# Convenience method for creating and appending hooks easily.
+	# It takes a Hash of {trigger_seed => action_seed} pairs, and
+	# creates and appends a new EventHook for each pair.
+	# 
+	# Trigger and action can be symbols, classes, or other types of
+	# object. The method uses simple rules to convert the "seed"
+	# objects into appropriate event triggers or event actions.
+	# 
+	# Triggers are created according to these rules:
+	# 
+	#   * Symbols starting with "mouse" become a MouseClickTrigger.
+	#   * Keyboard symbols become a KeyPressTrigger.
+	#   * Classes become an InstanceOfTrigger.
+	# 
+	# Actions are created according to these rules:
+	# 
+	#   * Symbols become a MethodAction.
+	#   * Proc and Method instances become a BlockAction.
+	# 
+	# NOTE: Additional rules may be added in the future, but
+	# the existing rules will continue to apply.
+	# 
+	# Example:
+	# 
+	#   died_action = proc { |owner, event| 
+	#     owner.say "Blargh, I'm dead!" if event.who_died == owner
+	#   }
+	# 
+	#   player.magic_hooks( :space      => :jump,
+	#                       :left       => :move_left,
+	#                       :right      => :move_right,
+	#                       :mouse_left => :shoot,
+	#                       DiedEvent   => died_action )
+	# 
 	def magic_hooks( hash )
 		hash.each_pair do |trigger, action|
 			
