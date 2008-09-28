@@ -174,6 +174,7 @@ module Rubygame::EventHandler::HasEventHandler
 		@event_handler.append_hook( hook )
 	end
 	
+	# Passes the given event to the object's event handler.
 	def handle( event )
 		@event_handler.handle( event )
 	end
