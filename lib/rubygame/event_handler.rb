@@ -148,6 +148,27 @@ module Rubygame::EventHandler::HasEventHandler
 		@event_handler = EventHandler.new() unless defined?( @event_handler )
 	end
 	
+
+	# Appends a new hook to the end of the list. If the hook does
+	# not have an owner, the owner is set to this object before
+	# appending.
+	# 
+	# hook:: the hook to append. 
+	#        (EventHook or Hash description, required)
+	# 
+	# See also EventHandler#append_hook.
+	# 
+	# Example:
+	# 
+	#   # Create and append new hook from a description:
+	#   trigger = KeyPressedTrigger.new(:space)
+	#   action  = MethodAction.new(:jump)
+	#   player.append_hook( :trigger => trigger, :action  => action )
+	# 
+	#   # You can also give it an EventHook instance, if you want.
+	#   hook = EventHook.new( :trigger => trigger, :action => action )
+	#   player.append_hook( hook )
+	# 
 	def append_hook( hook )
 		hook = _prepare_hook( hook )
 		@event_handler.append_hook( hook )
