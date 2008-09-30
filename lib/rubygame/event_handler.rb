@@ -19,6 +19,39 @@
 
 require 'rubygame/event_hook'
 
+
+# EventHandler provides a simple, extensible system for
+# hook-based event handling.
+# 
+# An EventHandler holds a list of EventHook objects. When
+# the EventHandler receives a new event (passed to #handle),
+# it tests the event against each EventHook. If the event
+# matches the EventHook, the EventHandler passes the event to
+# the EventHook to perform an action (such as calling a
+# method or executing a block).
+# 
+# Although the EventHandler and EventHook classes are very
+# simple in themselves, they can be used as building blocks
+# to create flexible and complex systems, whatever is needed
+# by your application.
+# 
+# Here are a few ways you could use EventHandler:
+# 
+#  * One central EventHandler with EventHooks to perform
+#    all types of actions. This is good for simple apps.
+# 
+#  * Multiple EventHandlers, one for each category of
+#    event. For example, one for keyboard input, one for
+#    mouse input, one for game logic events, etc.
+# 
+#  * An EventHandler in every game object (using the 
+#    HasEventHandler mixin module), being fed events from
+#    a central EventHandler.
+# 
+# You can also extend the possibilities of EventHandler and
+# EventHook by creating your own event trigger and action
+# classes. See EventHook for more information.
+# 
 class Rubygame::EventHandler
 
 	#  call-seq:
