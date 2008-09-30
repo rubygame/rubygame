@@ -134,6 +134,22 @@ class Rubygame::EventHandler
 			
 		return nil
 	end	
+
+	#  Removes the given EventHook instance from the stack, if it exists
+	#  on the stack.
+	# 
+	#  Returns:: the hook that was removed, or nil if the hook did not
+	#            exist on the stack.
+	#  
+	#  NOTE: You must pass the exact EventHook instance to remove it!
+	#  Passing another EventHook that is "similar" will not work.
+	#  So, you should store a reference to the hook when it is returned
+	#  by #append_hook or #prepend_hook.
+	# 
+	def remove_hook( hook )
+		@hooks.delete( hook )
+	end
+
 end
 
 
