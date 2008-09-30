@@ -303,6 +303,17 @@ module Rubygame::EventHandler::HasEventHandler
 		@event_handler.prepend_hook( hook )
 	end
 	
+	# Remove the given EventHook instance from the stack, if it
+	# exists on the stack.
+	# See EventHandler#remove_hook for details and restrictions.
+	# 
+	# Returns:: the hook that was removed, or nil if the hook did not
+	#           exist on the stack.
+	# 
+	def remove_hook( hook )
+		@event_handler.remove_hook( hook )
+	end
+
 	private
 	
 	def _prepare_hook( hook )
