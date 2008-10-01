@@ -37,6 +37,13 @@ describe EventHandler do
       handler.hooks.should == [@hook1]
     end
 
+    it "should put appended EventHook instances at the end" do
+      handler = EventHandler.new
+      handler.append_hook( @hook1 )
+      handler.append_hook( @hook2 )      
+      handler.hooks.should == [@hook1, @hook2]
+    end
+
   end
 
 
