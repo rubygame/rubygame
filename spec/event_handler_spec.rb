@@ -29,6 +29,11 @@ describe EventHandler do
     before :each do
       @hook1 = EventHook.new(:trigger => :foo)
       @hook2 = EventHook.new(:trigger => :bar)
+      @hash = {
+        :owner => "owner", :trigger => "trigger",
+        :action => "action", :active => "active",
+        :consumes => "consumes" 
+      }
     end
 
     it "should be able to append an EventHook instance" do
@@ -50,6 +55,13 @@ describe EventHandler do
       handler.append_hook( @hook2 )      
       handler.append_hook( @hook1 )
       handler.hooks.should == [@hook2, @hook1]
+    end
+
+
+    it "should be able to append a description Hash" do
+      handler = EventHandler.new
+      handler.append_hook( @hash )
+      handler.should have(1).hooks
     end
 
   end
