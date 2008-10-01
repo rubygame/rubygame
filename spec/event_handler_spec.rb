@@ -44,6 +44,14 @@ describe EventHandler do
       handler.hooks.should == [@hook1, @hook2]
     end
 
+    it "should move hooks to the end when re-appended" do
+      handler = EventHandler.new
+      handler.append_hook( @hook1 )
+      handler.append_hook( @hook2 )      
+      handler.append_hook( @hook1 )
+      handler.hooks.should == [@hook2, @hook1]
+    end
+
   end
 
 
