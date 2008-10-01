@@ -72,6 +72,14 @@ describe EventHandler do
       new_hook.should be_instance_of( EventHook )
     end
 
+    it "the converted hook should match the description" do
+      handler = EventHandler.new
+      handler.append_hook( @hash )
+      new_hook = handler.hooks[0]
+
+      @hash.each_pair { |k,v| new_hook.send(k).should == v }
+    end
+
   end
 
 
