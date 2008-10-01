@@ -64,6 +64,14 @@ describe EventHandler do
       handler.should have(1).hooks
     end
 
+    it "should convert a description Hash to an EventHook" do
+      handler = EventHandler.new
+      handler.append_hook( @hash )
+      new_hook = handler.hooks[0]
+
+      new_hook.should be_instance_of( EventHook )
+    end
+
   end
 
 
