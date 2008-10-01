@@ -90,7 +90,7 @@ class Rubygame::EventHandler
 	# 
 	def append_hook( hook )
 		hook = EventHook.new( hook ) if hook.kind_of?( Hash )
-		@hooks = @hooks | [hook]
+		@hooks = (@hooks - [hook]) | [hook]
 		return hook
 	end
 
