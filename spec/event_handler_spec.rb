@@ -19,4 +19,25 @@ describe EventHandler do
     EventHandler.new.hooks.should be_empty
   end
 
+
+  #############
+  # APPENDING #
+  #############
+
+  describe "(appending)" do
+
+    before :each do
+      @hook1 = EventHook.new(:trigger => :foo)
+      @hook2 = EventHook.new(:trigger => :bar)
+    end
+
+    it "should be able to append an EventHook instance" do
+      handler = EventHandler.new
+      handler.append_hook( @hook1 )
+      handler.hooks.should == [@hook1]
+    end
+
+  end
+
+
 end
