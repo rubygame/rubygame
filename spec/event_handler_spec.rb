@@ -36,8 +36,10 @@ describe EventHandler do
     }
   end
 
+
   it "should have no hooks after creation" do
-    EventHandler.new.hooks.should be_empty
+    @handler.handle(:event)
+    @results.should == []
   end
 
 
