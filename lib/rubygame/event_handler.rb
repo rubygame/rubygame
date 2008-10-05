@@ -135,6 +135,11 @@ class Rubygame::EventHandler
 		return nil
 	end	
 
+	#  Returns true if the given EventHook instance is on the stack.
+	def has_hook?( hook )
+		@hooks.include?( hook )
+	end
+
 	#  Removes the given EventHook instance from the stack, if it exists
 	#  on the stack.
 	# 
@@ -228,6 +233,12 @@ module Rubygame::EventHandler::HasEventHandler
 		@event_handler.handle( event )
 	end
 	
+	# Returns true if the object's event handler includes the given
+	# EventHook instance. 
+	def has_hook?( hook )
+		@event_handler.has_hook?( hook )
+	end
+
 
 	# Convenience method for creating and appending hooks easily.
 	# It takes a Hash of {trigger_seed => action_seed} pairs, and
