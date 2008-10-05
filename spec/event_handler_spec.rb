@@ -206,6 +206,15 @@ describe EventHandler do
       @handler.handle(@event)
     end
 
+    it "should not perform actions of non-matching hooks" do
+      @event = TestEvent.new("hook1")
+      @hook1.action.should_receive(:perform).with(@results, @event)
+      @hook2.action.should_not_receive(:perform)
+      @handler.append_hook( @hook1 )
+      @handler.append_hook( @hook2 )
+      @handler.handle( @event )
+    end
+
   end
 
 end
