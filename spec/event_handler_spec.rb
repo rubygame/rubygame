@@ -37,8 +37,9 @@ describe EventHandler do
 
     before :each do
       @handler = EventHandler.new
-      @hook1 = EventHook.new(:trigger => :foo)
-      @hook2 = EventHook.new(:trigger => :bar)
+      @results = []
+      @hook1 = hook_factory( @results, "hook1" )
+      @hook2 = hook_factory( @results, "hook2" )
       @hash = {
         :owner => "owner", :trigger => "trigger",
         :action => "action", :active => "active",
@@ -48,20 +49,23 @@ describe EventHandler do
 
     it "should be able to append an EventHook instance" do
       @handler.append_hook( @hook1 )
-      @handler.hooks.should == [@hook1]
+      @handler.handle(:event)
+      @results.should == ["hook1"]
     end
 
     it "should put appended EventHook instances at the end" do
       @handler.append_hook( @hook1 )
       @handler.append_hook( @hook2 )      
-      @handler.hooks.should == [@hook1, @hook2]
+      @handler.handle(:event)
+      @results.should == ["hook1", "hook2"]
     end
 
     it "should move hooks to the end when re-appended" do
       @handler.append_hook( @hook1 )
       @handler.append_hook( @hook2 )      
       @handler.append_hook( @hook1 )
-      @handler.hooks.should == [@hook2, @hook1]
+      @handler.handle(:event)
+      @results.should == ["hook2", "hook1"]
     end
 
 
