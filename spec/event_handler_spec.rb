@@ -191,4 +191,21 @@ describe EventHandler do
   end
 
 
+
+  ############
+  # HANDLING #
+  ############
+
+  describe "(handling)" do
+    
+    it "should perform actions of matching hooks" do
+      @hook1.action.should_receive(:perform).with(@results, @event)
+      @hook2.action.should_receive(:perform).with(@results, @event)
+      @handler.append_hook( @hook1 )
+      @handler.append_hook( @hook2 )
+      @handler.handle(@event)
+    end
+
+  end
+
 end
