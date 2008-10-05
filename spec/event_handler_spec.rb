@@ -39,11 +39,8 @@ describe EventHandler do
     @results = []
     @hook1 = hook_factory( @results, "hook1" )
     @hook2 = hook_factory( @results, "hook2" )
-    @hash = {
-      :owner => "owner", :trigger => "trigger",
-      :action => "action", :active => "active",
-      :consumes => "consumes" 
-    }
+    @hash1 = hash_factory( @results, "hash1" )
+    @hash2 = hash_factory( @results, "hash2" )
   end
 
 
@@ -82,22 +79,23 @@ describe EventHandler do
 
 
     it "should be able to append a description Hash" do
-      @handler.append_hook( @hash )
-      @handler.should have(1).hooks
+      @handler.append_hook( @hash1 )
+      @handler.handle(:event)
+      @results.should == ["hash1"]
     end
 
     it "should convert a description Hash to an EventHook" do
-      @handler.append_hook( @hash )
+      @handler.append_hook( @hash1 )
       new_hook = @handler.hooks[0]
 
       new_hook.should be_instance_of( EventHook )
     end
 
     it "the converted hook should match the description" do
-      @handler.append_hook( @hash )
+      @handler.append_hook( @hash1 )
       new_hook = @handler.hooks[0]
 
-      @hash.each_pair { |k,v| new_hook.send(k).should == v }
+      @hash1.each_pair { |k,v| new_hook.send(k).should == v }
     end
 
   end
