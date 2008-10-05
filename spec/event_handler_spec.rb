@@ -13,12 +13,22 @@ class EventHandler
 end
 
 
+# Creates the DESCRIPTION HASH for an EventHook which matches
+# any event and appends a string to the owner when performed.
+def hash_factory( owner, output )
+  return {
+    :owner    => owner,
+    :trigger  => YesTrigger.new,
+    :action   => BlockAction.new{|o,e| o << output},
+    :active   => true,
+    :consumes => false
+  }
+end
+
 # Creates an EventHook which matches any event and appends
 # a string to the owner when performed.
 def hook_factory( owner, output )
-  return EventHook.new( :owner => owner,
-                        :trigger => YesTrigger.new,
-                        :action => BlockAction.new{|o,e| o << output} ) 
+  return EventHook.new( hash_factory(owner, output) ) 
 end
 
 
