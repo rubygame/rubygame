@@ -77,6 +77,10 @@ describe EventHandler do
       @results.should == ["hook2", "hook1"]
     end
 
+    it "should return the appended EventHook instance" do
+      @handler.append_hook( @hook1 ).should == @hook1      
+    end
+
 
     it "should be able to append a description Hash" do
       @handler.append_hook( @hash1 )
