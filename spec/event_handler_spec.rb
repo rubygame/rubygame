@@ -12,6 +12,25 @@ include Rubygame
 # SPEC HELPERS #
 ################
 
+class TestEvent
+  def initialize( foo=true ); @foo = foo; end
+  attr_reader :foo
+end
+
+class TestTrigger
+  def initialize( match=true )
+    @match = match
+  end
+
+  def match?(e)
+    return (@match and e.foo and
+            ((@match == true) or
+             (e.foo == true) or
+             (e.foo == @match)))
+  end
+end
+
+
 # Creates the DESCRIPTION HASH for an EventHook which matches
 # any event and appends a string to the owner when performed.
 def hash_factory( owner, output )
