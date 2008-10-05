@@ -7,11 +7,10 @@ require 'rubygame'
 include Rubygame
 
 
-class EventHandler
-  # Peeking inside. Cheating!
-  attr_reader :hooks
-end
 
+################
+# SPEC HELPERS #
+################
 
 # Creates the DESCRIPTION HASH for an EventHook which matches
 # any event and appends a string to the owner when performed.
@@ -31,6 +30,11 @@ def hook_factory( owner, output )
   return EventHook.new( hash_factory(owner, output) ) 
 end
 
+
+
+#########
+# SPECS #
+#########
 
 describe EventHandler do
 
@@ -55,6 +59,10 @@ describe EventHandler do
   #############
 
   describe "(appending)" do
+
+    ###############
+    # EVENT HOOK  #
+    ###############
 
     it "should be able to append an EventHook instance" do
       @handler.append_hook( @hook1 )
@@ -81,6 +89,9 @@ describe EventHandler do
       @handler.append_hook( @hook1 ).should == @hook1      
     end
 
+    ####################
+    # HASH DESCRIPTION #
+    ####################
 
     it "should be able to append a description Hash" do
       @handler.append_hook( @hash1 )
