@@ -84,17 +84,13 @@ describe EventHandler do
       @results.should == ["hash1"]
     end
 
-    it "should convert a description Hash to an EventHook" do
-      @handler.append_hook( @hash1 )
-      new_hook = @handler.hooks[0]
-
+    it "should return an EventHook when appending a description Hash" do
+      new_hook = @handler.append_hook( @hash1 )
       new_hook.should be_instance_of( EventHook )
     end
 
-    it "the converted hook should match the description" do
-      @handler.append_hook( @hash1 )
-      new_hook = @handler.hooks[0]
-
+    it "the returned EventHook should match the description Hash" do
+      new_hook = @handler.append_hook( @hash1 )
       @hash1.each_pair { |k,v| new_hook.send(k).should == v }
     end
 
