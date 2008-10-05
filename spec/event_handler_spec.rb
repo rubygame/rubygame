@@ -36,7 +36,7 @@ end
 def hash_factory( owner, output )
   return {
     :owner    => owner,
-    :trigger  => YesTrigger.new,
+    :trigger  => TestTrigger.new(output),
     :action   => BlockAction.new{|o,e| o << output},
     :active   => true,
     :consumes => false
@@ -64,11 +64,12 @@ describe EventHandler do
     @hook2 = hook_factory( @results, "hook2" )
     @hash1 = hash_factory( @results, "hash1" )
     @hash2 = hash_factory( @results, "hash2" )
+    @event = TestEvent.new(true)
   end
 
 
   it "should have no hooks after creation" do
-    @handler.handle(:event)
+    @handler.handle(@event)
     @results.should == []
   end
 
@@ -85,14 +86,14 @@ describe EventHandler do
 
     it "should be able to append an EventHook instance" do
       @handler.append_hook( @hook1 )
-      @handler.handle(:event)
+      @handler.handle(@event)
       @results.should == ["hook1"]
     end
 
     it "should put appended EventHook instances at the end" do
       @handler.append_hook( @hook1 )
       @handler.append_hook( @hook2 )      
-      @handler.handle(:event)
+      @handler.handle(@event)
       @results.should == ["hook1", "hook2"]
     end
 
@@ -100,7 +101,7 @@ describe EventHandler do
       @handler.append_hook( @hook1 )
       @handler.append_hook( @hook2 )      
       @handler.append_hook( @hook1 )
-      @handler.handle(:event)
+      @handler.handle(@event)
       @results.should == ["hook2", "hook1"]
     end
 
@@ -114,7 +115,7 @@ describe EventHandler do
 
     it "should be able to append a description Hash" do
       @handler.append_hook( @hash1 )
-      @handler.handle(:event)
+      @handler.handle(@event)
       @results.should == ["hash1"]
     end
 
@@ -144,14 +145,14 @@ describe EventHandler do
 
     it "should be able to prepend an EventHook instance" do
       @handler.prepend_hook( @hook1 )
-      @handler.handle(:event)
+      @handler.handle(@event)
       @results.should == ["hook1"]
     end
 
     it "should put prepended EventHook instances at the front" do
       @handler.append_hook( @hook1 )
       @handler.prepend_hook( @hook2 )      
-      @handler.handle(:event)
+      @handler.handle(@event)
       @results.should == ["hook2", "hook1"]
     end
 
@@ -159,7 +160,7 @@ describe EventHandler do
       @handler.append_hook( @hook1 )
       @handler.append_hook( @hook2 )      
       @handler.prepend_hook( @hook2 )
-      @handler.handle(:event)
+      @handler.handle(@event)
       @results.should == ["hook2", "hook1"]
     end
 
@@ -173,7 +174,7 @@ describe EventHandler do
 
     it "should be able to prepend a description Hash" do
       @handler.prepend_hook( @hash1 )
-      @handler.handle(:event)
+      @handler.handle(@event)
       @results.should == ["hash1"]
     end
 
