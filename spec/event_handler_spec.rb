@@ -223,6 +223,14 @@ describe EventHandler do
       @handler.handle( @event )
     end
 
+    it "should not perform actions of inactive hooks" do
+      @hook2.active = false
+      @hook2.action.should_not_receive(:perform)
+      @handler.append_hook( @hook1 )
+      @handler.append_hook( @hook2 )
+      @handler.handle( @event )
+    end
+
   end
 
 end
