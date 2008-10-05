@@ -13,6 +13,15 @@ class EventHandler
 end
 
 
+# Creates an EventHook which matches any event and appends
+# a string to the owner when performed.
+def hook_factory( owner, output )
+  return EventHook.new( :owner => owner,
+                        :trigger => YesTrigger.new,
+                        :action => BlockAction.new{|o,e| o << output} ) 
+end
+
+
 describe EventHandler do
 
   it "should have no hooks after creation" do
