@@ -112,4 +112,63 @@ describe EventHandler do
   end
 
 
+
+  ##############
+  # PREPENDING #
+  ##############
+
+  describe "(prepending)" do
+
+    ###############
+    # EVENT HOOK  #
+    ###############
+
+    it "should be able to prepend an EventHook instance" do
+      @handler.prepend_hook( @hook1 )
+      @handler.handle(:event)
+      @results.should == ["hook1"]
+    end
+
+    it "should put prepended EventHook instances at the front" do
+      @handler.append_hook( @hook1 )
+      @handler.prepend_hook( @hook2 )      
+      @handler.handle(:event)
+      @results.should == ["hook2", "hook1"]
+    end
+
+    it "should move hooks to the front when re-prepended" do
+      @handler.append_hook( @hook1 )
+      @handler.append_hook( @hook2 )      
+      @handler.prepend_hook( @hook2 )
+      @handler.handle(:event)
+      @results.should == ["hook2", "hook1"]
+    end
+
+    it "should return the prepended EventHook instance" do
+      @handler.prepend_hook( @hook1 ).should == @hook1      
+    end
+
+    ####################
+    # HASH DESCRIPTION #
+    ####################
+
+    it "should be able to prepend a description Hash" do
+      @handler.prepend_hook( @hash1 )
+      @handler.handle(:event)
+      @results.should == ["hash1"]
+    end
+
+    it "should return an EventHook when prepending a description Hash" do
+      new_hook = @handler.prepend_hook( @hash1 )
+      new_hook.should be_instance_of( EventHook )
+    end
+
+    it "the returned EventHook should match the description Hash" do
+      new_hook = @handler.prepend_hook( @hash1 )
+      @hash1.each_pair { |k,v| new_hook.send(k).should == v }
+    end
+
+  end
+
+
 end
