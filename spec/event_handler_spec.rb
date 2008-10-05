@@ -24,6 +24,18 @@ end
 
 describe EventHandler do
 
+  before :each do
+    @handler = EventHandler.new
+    @results = []
+    @hook1 = hook_factory( @results, "hook1" )
+    @hook2 = hook_factory( @results, "hook2" )
+    @hash = {
+      :owner => "owner", :trigger => "trigger",
+      :action => "action", :active => "active",
+      :consumes => "consumes" 
+    }
+  end
+
   it "should have no hooks after creation" do
     EventHandler.new.hooks.should be_empty
   end
@@ -34,18 +46,6 @@ describe EventHandler do
   #############
 
   describe "(appending)" do
-
-    before :each do
-      @handler = EventHandler.new
-      @results = []
-      @hook1 = hook_factory( @results, "hook1" )
-      @hook2 = hook_factory( @results, "hook2" )
-      @hash = {
-        :owner => "owner", :trigger => "trigger",
-        :action => "action", :active => "active",
-        :consumes => "consumes" 
-      }
-    end
 
     it "should be able to append an EventHook instance" do
       @handler.append_hook( @hook1 )
