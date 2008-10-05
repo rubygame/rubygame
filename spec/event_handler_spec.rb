@@ -240,6 +240,16 @@ describe EventHandler do
       @handler.handle(@event)
     end
 
+    it "non-matching triggers should not consume events" do
+      @hook1.consumes = true
+      @hook1.active = false
+      @hook1.action.should_not_receive(:perform)
+      @hook2.action.should_receive(:perform).with(@results, @event)
+      @handler.append_hook( @hook1 )
+      @handler.append_hook( @hook2 )
+      @handler.handle(@event)
+    end
+
   end
 
 end
