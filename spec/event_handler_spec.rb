@@ -265,6 +265,13 @@ describe EventHandler do
       @handler.has_hook?(@hook2).should be_false
     end
 
+    it "should have hooks that have been added" do
+      @handler.append_hook(@hook1)
+      @handler.prepend_hook(@hook2)
+      @handler.has_hook?(@hook1).should be_true
+      @handler.has_hook?(@hook2).should be_true
+    end
+
   end
 
 
