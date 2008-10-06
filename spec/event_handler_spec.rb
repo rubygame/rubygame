@@ -266,6 +266,12 @@ describe EventHandler do
       @handler.should_not have_hook(@hook2)
     end
 
+    it "should have no effect if the hook is not on the stack" do
+      @handler.append_hook( @hook1 )
+      @handler.remove_hook( @hook2 )
+      @handler.should_not have_hook(@hook2)
+    end
+
   end
 
 end
