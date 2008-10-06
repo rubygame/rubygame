@@ -252,4 +252,20 @@ describe EventHandler do
 
   end
 
+
+  ############
+  # REMOVING #
+  ############
+
+  describe "(removing)" do
+    
+    it "should remove the hook if it is on the stack" do
+      @handler.append_hook( @hook1 )
+      @handler.append_hook( @hook2 )
+      @handler.remove_hook( @hook2 )
+      @handler.should_not have_hook(@hook2)
+    end
+
+  end
+
 end
