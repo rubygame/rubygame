@@ -253,6 +253,22 @@ describe EventHandler do
   end
 
 
+
+  #############
+  # HAS_HOOK? #
+  #############
+
+  describe "(has_hook?)" do
+    
+    it "should not have hooks that haven't been added" do
+      @handler.has_hook?(@hook1).should be_false
+      @handler.has_hook?(@hook2).should be_false
+    end
+
+  end
+
+
+
   ############
   # REMOVING #
   ############
