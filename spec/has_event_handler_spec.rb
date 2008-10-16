@@ -73,6 +73,14 @@ describe HasEventHandler do
       }.should_not raise_error
     end
 
+    it "should accept classes as triggers" do
+      lambda {
+        @object.magic_hooks( { Object => :foo } )
+        @object.magic_hooks( { Events::MousePressed => :foo } )
+        @object.magic_hooks( { Events::WindowResized => :foo } )
+      }.should_not raise_error
+    end
+
   end
 
 
