@@ -80,6 +80,11 @@ describe HasEventHandler do
       }.should_not raise_error
     end
 
+    it "should turn :mouse_* symbols into MousePressTriggers" do
+      hooks = @object.magic_hooks( {:mouse_left => :foo })
+      hooks[0].trigger.should be_instance_of(MousePressTrigger)
+    end
+
     it "should accept keyboard symbol triggers" do
       lambda {
         @object.magic_hooks( { :a       => :foo } )
