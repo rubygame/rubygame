@@ -260,6 +260,8 @@ module Rubygame::EventHandler::HasEventHandler
 	# 
 	#   * Symbols become a MethodAction.
 	#   * Proc and Method instances become a BlockAction.
+	#   * Objects with a #perform method are duplicated and used
+	#     as the action without being changed.
 	# 
 	# NOTE: Additional rules may be added in the future, but
 	# the existing rules will continue to apply.
@@ -306,6 +308,14 @@ module Rubygame::EventHandler::HasEventHandler
 				hook[:action] = MethodAction.new(action,true)
 			when Proc, Method
 				hook[:action] = BlockAction.new(&action)
+      else
+        if action.respond_to? :perform
+          hook[:action] = action.dup
+				else
+					raise( ArgumentError, 
+					       "invalid action '#{action.inspect}'. " +\
+					       "See docs for allowed action types." )
+        end
 			end
 			
 			append_hook( hook )
