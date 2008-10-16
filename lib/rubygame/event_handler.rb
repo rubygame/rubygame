@@ -243,6 +243,10 @@ module Rubygame::EventHandler::HasEventHandler
 	# Convenience method for creating and appending hooks easily.
 	# It takes a Hash of {trigger_seed => action_seed} pairs, and
 	# creates and appends a new EventHook for each pair.
+  # 
+  # Returns:: an Array of the EventHook instances that were
+  #           created and appended.
+  # 
 	# 
 	# Trigger and action can be symbols, classes, or other types of
 	# object. The method uses simple rules to convert the "seed"
@@ -287,7 +291,7 @@ module Rubygame::EventHandler::HasEventHandler
 	#                       DiedEvent   => died_action )
 	# 
 	def magic_hooks( hash )
-		hash.each_pair do |trigger, action|
+		hash.collect do |trigger, action|
 			
 			hook = {}
 			
@@ -329,7 +333,6 @@ module Rubygame::EventHandler::HasEventHandler
 			append_hook( hook )
 			
 		end
-		nil
 	end
 
 	# Exactly like #append_hook, except that the hook is put at the
