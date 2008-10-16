@@ -263,8 +263,16 @@ module Rubygame::EventHandler::HasEventHandler
 	#   * Objects with a #perform method are duplicated and used
 	#     as the action without being changed.
 	# 
-	# NOTE: Additional rules may be added in the future, but
-	# the existing rules will continue to apply.
+	# Objects which don't match the rules for triggers or actions
+	# (whichever way they are being used) are invalid, and TypeError
+	# will be raised.
+	# 
+	# NOTE: Additional rules may be added in the future, but objects
+	# which match the existing rules will continue to match them.
+	# However, objects which are invalid in one version might become
+	# valid in future versions, if a new rule is added. Therefore, you
+	# should never depend on TypeError being raised from a specific
+	# object!
 	# 
 	# Example:
 	# 
