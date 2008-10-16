@@ -167,6 +167,11 @@ describe HasEventHandler do
       }.should_not raise_error
     end
 
+    it "should turn Procs into BlockActions" do
+      hooks = @object.magic_hooks( { :up => Proc.new { |o,e| :foo } } )
+      hooks[0].action.should be_instance_of(BlockAction)
+    end
+
     it "should accept detached method actions" do
       lambda {
         @object.magic_hooks( { :up => Object.new.method(:to_s) } )
