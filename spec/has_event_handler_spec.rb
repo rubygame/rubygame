@@ -156,6 +156,11 @@ describe HasEventHandler do
       }.should_not raise_error
     end
 
+    it "should turn method names into MethodActions" do
+      hooks = @object.magic_hooks( { :up => :foo } )
+      hooks[0].action.should be_instance_of(MethodAction)
+    end
+
     it "should accept Proc actions" do
       lambda {
         @object.magic_hooks( { :up => Proc.new { |o,e| :foo } } )
