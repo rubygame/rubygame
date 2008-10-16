@@ -58,6 +58,15 @@ describe HasEventHandler do
       }.should_not raise_error
     end
 
+    it "should return an Array of EventHook instances" do
+      hooks = @object.magic_hooks( { :up => :foo,
+                             :down => :bar,
+                             :mouse_left => :shoot } )
+
+      hooks.should be_instance_of(Array)
+      hooks.each { |hook| hook.should be_instance_of(EventHook) }
+    end
+
     ############
     # TRIGGERS #
     ############
