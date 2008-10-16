@@ -81,6 +81,29 @@ describe HasEventHandler do
       }.should_not raise_error
     end
 
+    it "should accept objects with #match? as triggers" do
+      fake_trigger = Object.new
+      class << fake_trigger; def match?; end; end
+
+      lambda {
+        @object.magic_hooks( { fake_trigger => :foo } )
+      }.should_not raise_error
+    end
+
+    it "should not accept other objects as triggers" do
+      lambda {
+        @object.magic_hooks( { Object.new => :foo } )
+      }.should raise_error
+
+      lambda {
+        @object.magic_hooks( { "string" => :foo } )
+      }.should raise_error
+
+      lambda {
+        @object.magic_hooks( { 1 => :foo } )
+      }.should raise_error
+    end
+
   end
 
 
