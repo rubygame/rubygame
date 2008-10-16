@@ -32,4 +32,14 @@ describe HasEventHandler do
     @object.should respond_to(:magic_hooks)
   end
 
+  describe "#magic_hooks" do
+
+    it "should accept a hash" do
+      lambda { @object.magic_hooks({}) }.should_not raise_error
+    end
+
+  end
+
+
+
 end
