@@ -253,6 +253,8 @@ module Rubygame::EventHandler::HasEventHandler
 	#   * Symbols starting with "mouse" become a MouseClickTrigger.
 	#   * Keyboard symbols become a KeyPressTrigger.
 	#   * Classes become an InstanceOfTrigger.
+	#   * Objects with a #match? method are duplicated and used
+	#     as the trigger without being changed.
 	# 
 	# Actions are created according to these rules:
 	# 
@@ -289,6 +291,14 @@ module Rubygame::EventHandler::HasEventHandler
 				end
 			when Class
 				hook[:trigger] = InstanceOfTrigger.new(trigger)
+      else
+        if trigger.respond_to? :match?
+          hook[:trigger] = trigger.dup
+				else
+					raise( ArgumentError, 
+					       "invalid trigger '#{trigger.inspect}'. " +\
+					       "See docs for allowed trigger types." )
+        end
 			end
 			
 			case action
