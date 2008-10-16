@@ -104,6 +104,17 @@ describe HasEventHandler do
       }.should raise_error(ArgumentError)
     end
 
+
+    ###########
+    # ACTIONS #
+    ###########
+
+    it "should accept method name symbol actions" do
+      lambda {
+        @object.magic_hooks( { :up => :foo } )
+      }.should_not raise_error
+    end
+
   end
 
 
