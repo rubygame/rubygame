@@ -38,6 +38,12 @@ describe HasEventHandler do
       lambda { @object.magic_hooks({}) }.should_not raise_error
     end
 
+    it "should reject non-hashes" do
+      lambda { @object.magic_hooks([])            }.should raise_error
+      lambda { @object.magic_hooks(EventHook.new) }.should raise_error
+      lambda { @object.magic_hooks("string")      }.should raise_error
+    end
+
   end
 
 
