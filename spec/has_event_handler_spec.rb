@@ -136,6 +136,20 @@ describe HasEventHandler do
       }.should_not raise_error
     end
 
+    it "should not accept invalid actions" do
+      lambda {
+        @object.magic_hooks( { :up => Object.new } )
+      }.should raise_error(ArgumentError)
+
+      lambda {
+        @object.magic_hooks( { :up => "string" } )
+      }.should raise_error(ArgumentError)
+
+      lambda {
+        @object.magic_hooks( { :up => 1 } )
+      }.should raise_error(ArgumentError)
+    end
+
   end
 
 
