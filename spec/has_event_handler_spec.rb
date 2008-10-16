@@ -50,6 +50,20 @@ describe HasEventHandler do
       }.should_not raise_error
     end
 
+    ############
+    # TRIGGERS #
+    ############
+
+    it "should accept :mouse_* symbol triggers" do
+      lambda {
+        @object.magic_hooks( { :mouse_left       => :foo } )
+        @object.magic_hooks( { :mouse_right      => :foo } )
+        @object.magic_hooks( { :mouse_middle     => :foo } )
+        @object.magic_hooks( { :mouse_wheel_up   => :foo } )
+        @object.magic_hooks( { :mouse_wheel_down => :foo } )
+      }.should_not raise_error
+    end
+
   end
 
 
