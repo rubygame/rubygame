@@ -50,6 +50,14 @@ describe HasEventHandler do
       }.should_not raise_error
     end
 
+    it "should accept a hook hash with multiple pairs" do
+      lambda {
+        @object.magic_hooks( { :up => :foo,
+                               :down => :bar,
+                               :mouse_left => :shoot } )
+      }.should_not raise_error
+    end
+
     ############
     # TRIGGERS #
     ############
