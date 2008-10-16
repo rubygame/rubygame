@@ -127,6 +127,15 @@ describe HasEventHandler do
       }.should_not raise_error
     end
 
+    it "should accept objects with #perform as actions" do
+      fake_action = Object.new
+      class << fake_action; def perform; end; end
+
+      lambda {
+        @object.magic_hooks( { :up => fake_action } )
+      }.should_not raise_error
+    end
+
   end
 
 
