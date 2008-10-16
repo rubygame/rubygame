@@ -44,6 +44,12 @@ describe HasEventHandler do
       lambda { @object.magic_hooks("string")      }.should raise_error
     end
 
+    it "should accept a valid hook hash" do
+      lambda {
+        @object.magic_hooks( { :up => :foo } )
+      }.should_not raise_error
+    end
+
   end
 
 
