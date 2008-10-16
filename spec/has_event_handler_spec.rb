@@ -64,6 +64,15 @@ describe HasEventHandler do
       }.should_not raise_error
     end
 
+    it "should accept keyboard symbol triggers" do
+      lambda {
+        @object.magic_hooks( { :a       => :foo } )
+        @object.magic_hooks( { :up      => :foo } )
+        @object.magic_hooks( { :space   => :foo } )
+        @object.magic_hooks( { :number1 => :foo } )
+      }.should_not raise_error
+    end
+
   end
 
 
