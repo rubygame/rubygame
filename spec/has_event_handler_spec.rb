@@ -121,6 +121,16 @@ describe HasEventHandler do
       }.should_not raise_error
     end
 
+    it "should use a dup of #match? triggers" do
+      class FakeTrigger; def match?; end; end
+      fake_trigger = FakeTrigger.new
+
+      hooks = @object.magic_hooks( { fake_trigger => :foo } )
+
+      hooks[0].trigger.should be_instance_of(FakeTrigger)
+      hooks[0].trigger.should_not eql(fake_trigger)
+    end
+
     it "should not accept invalid triggers" do
       lambda {
         @object.magic_hooks( { Object.new => :foo } )
