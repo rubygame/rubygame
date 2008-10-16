@@ -107,6 +107,11 @@ describe HasEventHandler do
       }.should_not raise_error
     end
 
+    it "should turn classes into InstanceOfTriggers" do
+      hooks = @object.magic_hooks( {Object => :foo })
+      hooks[0].trigger.should be_instance_of(InstanceOfTrigger)
+    end
+
     it "should accept objects with #match? as triggers" do
       fake_trigger = Object.new
       class << fake_trigger; def match?; end; end
