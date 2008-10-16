@@ -94,6 +94,11 @@ describe HasEventHandler do
       }.should_not raise_error
     end
 
+    it "should turn keyboard symbols into KeyPressTriggers" do
+      hooks = @object.magic_hooks( {:a => :foo })
+      hooks[0].trigger.should be_instance_of(KeyPressTrigger)
+    end
+
     it "should accept classes as triggers" do
       lambda {
         @object.magic_hooks( { Object => :foo } )
