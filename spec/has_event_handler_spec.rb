@@ -115,6 +115,12 @@ describe HasEventHandler do
       }.should_not raise_error
     end
 
+    it "should accept Proc actions" do
+      lambda {
+        @object.magic_hooks( { :up => Proc.new { |o,e| :foo } } )
+      }.should_not raise_error
+    end
+
   end
 
 
