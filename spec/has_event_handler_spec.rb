@@ -178,6 +178,11 @@ describe HasEventHandler do
       }.should_not raise_error
     end
 
+    it "should turn detached ethods into BlockActions" do
+      hooks = @object.magic_hooks( { :up => Object.new.method(:to_s) } )
+      hooks[0].action.should be_instance_of(BlockAction)
+    end
+
     it "should accept objects with #perform as actions" do
       fake_action = Object.new
       class << fake_action; def perform; end; end
