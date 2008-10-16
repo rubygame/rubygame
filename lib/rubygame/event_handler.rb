@@ -295,7 +295,7 @@ module Rubygame::EventHandler::HasEventHandler
 			when Symbol
 				case(trigger.to_s)
 				when /mouse/
-					hook[:trigger] = MouseClickTrigger.new(trigger)
+					hook[:trigger] = MousePressTrigger.new(trigger)
 				else
 					hook[:trigger] = KeyPressTrigger.new(trigger)
 				end
