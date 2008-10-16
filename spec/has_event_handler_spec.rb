@@ -192,6 +192,16 @@ describe HasEventHandler do
       }.should_not raise_error
     end
 
+    it "should use a dup of #perform actions" do
+      class FakeAction; def perform; end; end
+      fake_action = FakeAction.new
+
+      hooks = @object.magic_hooks( { :up => fake_action } )
+
+      hooks[0].action.should be_instance_of(FakeAction)
+      hooks[0].action.should_not eql(fake_action)
+    end
+
     it "should not accept invalid actions" do
       lambda {
         @object.magic_hooks( { :up => Object.new } )
