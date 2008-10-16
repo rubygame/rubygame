@@ -121,6 +121,12 @@ describe HasEventHandler do
       }.should_not raise_error
     end
 
+    it "should accept detached method actions" do
+      lambda {
+        @object.magic_hooks( { :up => Object.new.method(:to_s) } )
+      }.should_not raise_error
+    end
+
   end
 
 
