@@ -90,18 +90,18 @@ describe HasEventHandler do
       }.should_not raise_error
     end
 
-    it "should not accept other objects as triggers" do
+    it "should not accept invalid triggers" do
       lambda {
         @object.magic_hooks( { Object.new => :foo } )
-      }.should raise_error
+      }.should raise_error(ArgumentError)
 
       lambda {
         @object.magic_hooks( { "string" => :foo } )
-      }.should raise_error
+      }.should raise_error(ArgumentError)
 
       lambda {
         @object.magic_hooks( { 1 => :foo } )
-      }.should raise_error
+      }.should raise_error(ArgumentError)
     end
 
   end
