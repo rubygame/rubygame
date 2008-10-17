@@ -21,6 +21,12 @@ describe Ftor do
         Ftor.new_from_to( [0,0], [2,0] )
       }.should_not raise_error
     end
+
+    it "should create an Ftor connecting the points" do
+      f = Ftor.new_from_to([2,-4],[10,3])
+      f.x.should == 8
+      f.y.should == 7
+    end
   end
 
 end
