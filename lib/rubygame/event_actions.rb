@@ -87,12 +87,52 @@ class BlockAction
 	end
 end
 
+
+# MethodAction is an event action used with EventHook.
+# MethodAction takes a symbol giving the name of a method. When
+# it is performed, it calls that method on the owner, optionally
+# passing it the event that triggered the hook.
+# 
+# Example:
+# 
+#   class Player
+#     def aim_at( event )
+#       self.crosshair_pos = event.pos
+#     end
+#   end
+# 
+#   player1 = Player.new
+# 
+#   EventHook.new( :owner   => player1,
+#                  :trigger => MouseMoveTrigger.new(),
+#                  :action  => MethodAction.new( :aim_at ) )
+# 
 class MethodAction
+
+	# Create a new MethodAction using the given method name.
+	# 
+	# method_name::  the method to call when performing.
+	#                (Symbol, required)
+	# pass_event::   whether to pass the event as an argument to
+	#                the method. If false, the method is called
+	#                with no arguments. (true or false, optional.
+	#                Default: true)
+	# 
 	def initialize( method_name, pass_event=true )
 		@method_name = method_name
 		@pass_event = pass_event
 	end
-	
+
+
+	# Call the method of the owner represented by @method_name.
+	# 
+	# If @pass_event is true, the method is called with the event as the
+	# only argument. If @pass_event is false, the method is called with
+	# no arguments.
+	# 
+	# If @pass_event is true, but the method does not accept the
+	# argument, the method is tried again with no argument.
+	# 
 	def perform( owner, event )
 		method = owner.method(@method_name)
 		@pass_event ? method.call( event ) : method.call()
