@@ -19,12 +19,69 @@
 
 module Rubygame
 
+
+# BlockAction is an event action used with EventHook. BlockAction
+# takes a code block at initialization. When the action is performed,
+# it executes the block, passing in the EventHook#owner and the event
+# that is being handled as the two parameters to the block.
+# 
+# Example:
+# 
+#   hit_by_missile = KindOfTrigger.new( MissileCollisionEvent )
+# 
+#   take_damage = BlockAction.new { |owner, event|
+#     owner.health -= event.damage_amount
+#   }
+# 
+#   hook = EventHook.new( :owner   => player_ship,
+#                         :trigger => hit_by_missile,
+#                         :action  => take_damage )
+# 
+# 
+# NOTE: It is also possible to pass a Proc or detached Method
+# as the block, using the standard Ruby syntax for that:
+# 
+#   # Using a pre-built Proc.
+# 
+#   my_proc = Proc.new { |owner, event| do_something() }
+# 
+#   BlockAction.new( &my_proc )
+# 
+# 
+#   # Using a detached method.
+# 
+#   def a_method( owner, event )
+#     do_something
+#   end
+# 
+#   detached_method = method(:a_method)
+# 
+#   BlockAction.new( &detached_method )
+# 
+# 
 class BlockAction
+
+	# Create a new BlockAction using the given code block.
+	# 
+	# &block::     the code block to execute. Should take two parameters,
+	#              owner and event. (Proc, required)
+	# 
+	# May raise::  ArgumentError, if no block is provided.
+	# 
 	def initialize( &block )
 		raise ArgumentError, "BlockAction needs a block" unless block_given?
 		@block = block
 	end
 	
+	# Execute the code block, passing in owner and event as the two
+	# parameters to the block. This is automatically called by EventHook
+	# when an event matches the trigger. You should usually not call it
+	# in your own code.
+	# 
+	# owner::  the owner of the EventHook, or nil if there is none.
+	#          (Object, required)
+	# event::  the event that matched the trigger. (Object, required)
+	# 
 	def perform( owner, event )
 		@block.call( owner, event )
 	end
