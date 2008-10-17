@@ -80,7 +80,7 @@ class Ftor
 	# Create a new Ftor by specifying its #angle (in radians) and #magnitude.
   # See also #new.
 	def self.new_am(a,m)
-		v = Ftor.new(1,0)
+		v = self.new(1,0)
     v.a, v.m = a, m
 		return v
 	end
@@ -92,7 +92,7 @@ class Ftor
   # In other words, assuming +v+ is the Ftor returned by this function:
   #   p1 + v = p2
   def self.new_from_to(p1,p2)
-    return self.class.new(p2[0]-p1[0],p2[1]-p1[1])
+    return self.new(p2[0]-p1[0],p2[1]-p1[1])
   end
 
 	attr_reader :x                # The x component of the Ftor.
