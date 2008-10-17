@@ -147,11 +147,32 @@ class MethodAction
 	end
 end
 
+
+
+# MultiAction is an event action used with EventHook.
+# It takes zero or more actions (e.g. BlockAction or MethodAction
+# instances) at initialization.
+# 
+# When MultiAction is performed, it performs all the given
+# actions, in the order they were given, passing in the owner
+# and event.
+# 
+# As the name suggests, you can use MultiAction to cause
+# multiple actions to occur when an EventHook is triggered.
+# 
 class MultiAction
+
+	# Create a new MultiAction instance with the given sub-actions.
+	# 
+	# *actions:: the actions to perform. (Action instances)
+	# 
 	def initialize( *actions )
 		@actions = actions
 	end
 	
+	# Performs all the sub-actions, in the order they were given,
+	# passing in the owner and event to each one.
+	# 
 	def perform( owner, event )
 		@actions.each { |action| action.perform( owner, event ) }
 	end
