@@ -15,6 +15,12 @@ describe Ftor do
         Ftor.new_from_to( Ftor.new(0,0), Ftor.new(2,0) )
       }.should_not raise_error
     end
+
+    it "should accept two Arrays" do
+      lambda {
+        Ftor.new_from_to( [0,0], [2,0] )
+      }.should_not raise_error
+    end
   end
 
 end
