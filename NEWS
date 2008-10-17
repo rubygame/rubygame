@@ -1,5 +1,16 @@
 = NEWS
 
+== Rubygame 2.4.0
+
+Release focus: Events.
+
+- Fixed: Ftor.new_from_to would always complain about "wrong number
+  of arguments". Thanks to atiaxi for this fix!
+
+
+
+
+
 == Rubygame 2.3.0
 
 Release focus: Media resources.
