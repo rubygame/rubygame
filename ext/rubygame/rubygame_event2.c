@@ -43,34 +43,53 @@ VALUE rg_make_rbevent( char *klassname, int argc, VALUE *argv )
 
 
 /*
- * Convert SDL's ACTIVEEVENT into one of:
+ * Convert SDL's ACTIVEEVENT into zero or more of:
  *
- *   InputFocusGained / InputFocusLost
- *   MouseFocusGained / MouseFocusLost
- *   WindowMinimized  / WindowUnMinimized
+ *   InputFocusGained  or  InputFocusLost
+ *   MouseFocusGained  or  MouseFocusLost
+ *   WindowMinimized   or  WindowUnminimized
  *
- * Which class we use depends on the details of the ACTIVEEVENT.
- * If more than one happens at once, WindowMinimized/UnMinimized has first
- * priority, then InputFocusGained/Lost then MouseFocusGained/Lost
+ * Returns a ruby Array of the events it generated.
  *
  */
 VALUE rg_convert_activeevent( SDL_Event ev )
 {
   char *klassname;
 
-  if(ev.active.state | SDL_APPACTIVE){
+  /*
+  Uint8 any_state = SDL_APPACTIVE | SDL_APPINPUTFOCUS | SDL_APPMOUSEFOCUS;
+
+  if( (ev.active.state & any_state) == 0 )
+  {
+    rb_raise(eSDLError, 
+             "unknown ACTIVEEVENT state %d. This is a bug in Rubygame.",
+             ev.active.state);
+  }
+  */
+
+  VALUE events = rb_ary_new();
+
+  if( SDL_APPACTIVE & ev.active.state )
+  {
   	klassname = ev.active.gain ? "WindowUnminimized" : "WindowMinimized";
-  } else if(ev.active.state | SDL_APPINPUTFOCUS) {
-    klassname = ev.active.gain ? "InputFocusGained" : "InputFocusLost";
-  } else if(ev.active.state | SDL_APPMOUSEFOCUS) {
-      klassname = ev.active.gain ? "MouseFocusGained" : "MouseFocusLost";
-  } else {
-      rb_raise(eSDLError, 
-               "unknown ACTIVEEVENT state %d. This is a bug in Rubygame.",
-               ev.active.state);
+    rb_ary_push(events, rg_make_rbevent( klassname, 0, (VALUE *)NULL ));
   }
 
-  return rg_make_rbevent( klassname, 0, (VALUE *)NULL );
+  if( SDL_APPINPUTFOCUS & ev.active.state )
+  {
+    klassname = ev.active.gain ? "InputFocusGained" : "InputFocusLost";
+    rb_ary_push(events, rg_make_rbevent( klassname, 0, (VALUE *)NULL ));
+
+  }
+
+  if( SDL_APPMOUSEFOCUS & ev.active.state )
+  {
+    klassname = ev.active.gain ? "MouseFocusGained" : "MouseFocusLost";
+    rb_ary_push(events, rg_make_rbevent( klassname, 0, (VALUE *)NULL ));
+  }
+
+
+  return events;
 }
 
 
@@ -604,14 +623,25 @@ VALUE rg_convert_sdlevent2( SDL_Event ev )
 VALUE rg_fetch_sdl_events2( VALUE module )
 {
   SDL_Event event;
-  VALUE event_array = rb_ary_new();
+  VALUE events = rb_ary_new();
+  VALUE thing;
 
   while(SDL_PollEvent(&event)==1) 
   {
-    rb_ary_push( event_array, rg_convert_sdlevent2(event) );
+    /* Either an event or array of zero or more events. */
+    thing = rg_convert_sdlevent2( event );
+
+    if( TYPE(thing) == T_ARRAY )
+    {
+      rb_ary_concat( events, thing );
+    }
+    else
+    {
+      rb_ary_push( events, thing );
+    }
   }
 
-  return event_array;
+  return events;
 }
 
 
