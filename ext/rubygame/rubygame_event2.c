@@ -50,27 +50,21 @@ VALUE rg_make_rbevent( char *klassname, int argc, VALUE *argv )
  *   WindowMinimized  / WindowUnMinimized
  *
  * Which class we use depends on the details of the ACTIVEEVENT.
+ * If more than one happens at once, WindowMinimized/UnMinimized has first
+ * priority, then InputFocusGained/Lost then MouseFocusGained/Lost
  *
  */
 VALUE rg_convert_activeevent( SDL_Event ev )
 {
   char *klassname;
 
-  switch( ev.active.state )
-  {
-    case SDL_APPINPUTFOCUS:
-      klassname = ev.active.gain ? "InputFocusGained" : "InputFocusLost";
-      break;
-
-    case SDL_APPMOUSEFOCUS:
+  if(ev.active.state | SDL_APPACTIVE){
+  	klassname = ev.active.gain ? "WindowUnminimized" : "WindowMinimized";
+  } else if(ev.active.state | SDL_APPINPUTFOCUS) {
+    klassname = ev.active.gain ? "InputFocusGained" : "InputFocusLost";
+  } else if(ev.active.state | SDL_APPMOUSEFOCUS) {
       klassname = ev.active.gain ? "MouseFocusGained" : "MouseFocusLost";
-      break;
-
-    case SDL_APPACTIVE:
-      klassname = ev.active.gain ? "WindowUnminimized" : "WindowMinimized";
-      break;
-
-    default:
+  } else {
       rb_raise(eSDLError, 
                "unknown ACTIVEEVENT state %d. This is a bug in Rubygame.",
                ev.active.state);
