@@ -290,6 +290,39 @@ end
 
 
 
+describe "a mouse button event trigger", :shared => true do
+
+	it_should_behave_like "an event trigger"
+
+end
+
+
+describe MousePressTrigger do
+
+	before :each do 
+		@event_class   = MousePressed
+		@trigger_class = MousePressTrigger
+		@trigger       = @trigger_class.new
+	end
+
+	it_should_behave_like "a mouse button event trigger"
+
+end
+
+describe MouseReleaseTrigger do
+
+	before :each do 
+		@event_class   = MouseReleased
+		@trigger_class = MouseReleaseTrigger
+		@trigger       = @trigger_class.new
+	end
+
+	it_should_behave_like "a mouse button event trigger"
+
+end
+
+
+
 # describe TickTrigger do 
 #
 # 	before :each do 
