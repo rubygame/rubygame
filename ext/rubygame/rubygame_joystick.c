@@ -77,6 +77,46 @@ static void RBGM_JoystickClose(SDL_Joystick *joy)
 }
 
 
+
+/* 
+ *  call-seq:
+ *    Joystick.activate_all()  ->  [joystick1, joystick2, ...]
+ *
+ *  Activate all joysticks on the system, equivalent to calling
+ *  Joystick.new for every joystick available. This will allow
+ *  joystick-related events to be sent to the EventQueue for
+ *  all joysticks.
+ *  
+ *  Returns::  Array of zero or more Joysticks.
+ *
+ */
+VALUE rbgm_joystick_activateall(VALUE module)
+{
+	/* Initialize if it isn't already. */
+	if( !SDL_WasInit(SDL_INIT_JOYSTICK) )
+	{
+		if( SDL_Init(SDL_INIT_JOYSTICK) != 0 )
+		{
+			rb_raise( eSDLError, "Could not initialize SDL joystick." );
+		}
+	}
+
+	int num_joysticks = SDL_NumJoysticks();
+	int i = 0;
+
+	/* Collect Joystick instances in an Array. */
+	VALUE joysticks = rb_ary_new();
+
+	for(; i < num_joysticks; ++i )
+	{
+		rb_ary_push( joysticks, rbgm_joystick_new(module, INT2NUM(i)) );
+	}
+
+	return joysticks;
+}
+
+
+
 /* 
  *  call-seq:
  *    new( n )  ->  Joystick
@@ -236,6 +276,8 @@ void Rubygame_Init_Joystick()
 	cJoy = rb_define_class_under(mRubygame,"Joystick",rb_cObject);
 	rb_define_singleton_method(cJoy,"num_joysticks",rbgm_joy_numjoysticks,0);
 	rb_define_singleton_method(cJoy,"get_name",rbgm_joy_getname,1);
+
+	rb_define_singleton_method(cJoy,"activate_all",rbgm_joystick_activateall,0);
 
 	rb_define_singleton_method(cJoy,"new",rbgm_joystick_new,1);
 	rb_define_method(cJoy,"index",rbgm_joystick_index,0);
