@@ -116,6 +116,39 @@ VALUE rbgm_joystick_activateall(VALUE module)
 }
 
 
+/* 
+ *  call-seq:
+ *    Joystick.deactivate_all()
+ *
+ *  Deactivate all joysticks on the system. This will stop all
+ *  joystick-related events from being sent to the EventQueue.
+ *
+ */
+VALUE rbgm_joystick_deactivateall(VALUE module)
+{
+	/* Return right away if it wasn't active. */
+	if( !SDL_WasInit(SDL_INIT_JOYSTICK) )
+	{
+		return Qnil;
+	}
+
+	int num_joysticks = SDL_NumJoysticks();
+	int i = 0;
+	SDL_Joystick *joy;
+
+	for(; i < num_joysticks; ++i )
+	{
+		joy = SDL_JoystickOpen(i);
+		if(joy != NULL)
+		{
+			SDL_JoystickClose( joy );
+		}
+	}
+
+	return Qnil;
+}
+
+
 
 /* 
  *  call-seq:
@@ -278,6 +311,7 @@ void Rubygame_Init_Joystick()
 	rb_define_singleton_method(cJoy,"get_name",rbgm_joy_getname,1);
 
 	rb_define_singleton_method(cJoy,"activate_all",rbgm_joystick_activateall,0);
+	rb_define_singleton_method(cJoy,"deactivate_all",rbgm_joystick_deactivateall,0);
 
 	rb_define_singleton_method(cJoy,"new",rbgm_joystick_new,1);
 	rb_define_method(cJoy,"index",rbgm_joystick_index,0);
