@@ -348,6 +348,12 @@ describe MouseMoveTrigger do
 
 	it_should_behave_like "an event trigger"
 
+	it "should match if the trigger buttons is :any" do
+		@trigger = @trigger_class.new()
+		event = @event_class.new([0,0], [0,0], [:mouse_left])
+		@trigger.match?( event ).should be_true
+	end
+
 end
 
 
