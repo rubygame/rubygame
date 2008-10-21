@@ -545,12 +545,28 @@ class MouseMoveTrigger
 		if event.kind_of?( Events::MouseMoved )
 			((@buttons == :any) or 
 			 (@buttons == :none and event.buttons == []) or 
-			 (@buttons == event.buttons) or
+			 (_buttons_match?(event.buttons)) or
 			 (event.buttons.include?(@buttons)))
 		else
 			false
 		end
 	end
+
+  private
+
+  # Returns true if evbuttons is the same as @buttons,
+  # ignoring the order of the symbols.
+  # 
+  def _buttons_match?( evbuttons )
+    if( @buttons.kind_of? Symbol )
+      return false
+    end
+
+    e = evbuttons.sort_by { |button|  button.to_s }
+    t = @buttons.sort_by  { |button|  button.to_s }
+    return (e == t)
+  end
+
 end
 
 
