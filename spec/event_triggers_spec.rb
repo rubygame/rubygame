@@ -360,6 +360,12 @@ describe MouseMoveTrigger do
 		@trigger.match?( event ).should be_true
 	end
 
+	it "should not match if t. buttons is :none and e. buttons is not []" do
+		@trigger = @trigger_class.new( :none )
+		event = @event_class.new([0,0], [0,0], [:mouse_left])
+		@trigger.match?( event ).should be_false
+	end
+
 	it "should match if e. buttons includes t. button" do
 		@trigger = @trigger_class.new( :mouse_left )
 		event = @event_class.new([0,0], [0,0], [:mouse_left, :mouse_right])
