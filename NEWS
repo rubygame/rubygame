@@ -4,9 +4,68 @@
 
 Release focus: Events.
 
+=== Features
+
+- New Events module, with a suite of new and revised event classes.
+  The new classes offer full functionality as the older classes.
+
+  - Use Rubygame::EventQueue#enable_new_style_events to enable the new
+    event classes. This will become the default in Rubygame 3.0.
+
+  - Uses symbols instead of integer constants for keyboard keys and
+    mouse buttons (e.g. :a, :space, :mouse_left, :mouse_right).
+
+  - Better unicode / international keyboard text input support.
+    (See Rubygame::Events::KeyPressed#string)
+
+  - More natural and memorable class naming scheme.
+
+- New hook-based event handling system.
+  (NOTE: Requires use of the new event classes.)
+
+  - Rubygame::EventHandler class.
+    EventHandler holds many EventHook instances. It handles each event
+    by passing it to matching hooks.
+
+  - Rubygame::EventHandler::HasEventHandler mixin module.
+    Include this in your custom classes to add easy event handling
+    and event hook creation abilities.
+
+  - Rubygame::EventHook class.
+    
+  - Rubygame::EventActions module.
+    Has several pre-made event action classes to use with EventHook.
+
+  - Rubygame::EventTriggers module.
+    Has several pre-made event trigger classes to use with EventHook.
+
+=== Fixes
+
 - Fixed: Ftor.new_from_to would always complain about "wrong number
   of arguments". Thanks to atiaxi for this fix!
 
+=== Other Stuff
+
+- Old event classes are deprecated and will be removed in 3.0.
+  - ActiveEvent      (use Events::InputFocusGained,
+                          Events::InputFocusLost,
+                          Events::MouseFocusGained,
+                          Events::MouseFocusLost,
+                          Events::WindowMinimized, and
+                          Events::WindowUnminimized)
+  - ExposeEvent      (use Events::WindowExposed)
+  - JoyAxisEvent     (use Events::JoystickAxisMoved)
+  - JoyBallEvent     (use Events::JoystickBallMoved)
+  - JoyDownEvent     (use Events::JoystickButtonPressed)
+  - JoyHatEvent      (use Events::JoystickHatMoved)
+  - JoyUpEvent       (use Events::JoystickButtonReleased)
+  - KeyDownEvent     (use Events::KeyPressed)
+  - KeyUpEvent       (use Events::KeyReleased)
+  - MouseDownEvent   (use Events::MousePressed)
+  - MouseMotionEvent (use Events::MouseMoved)
+  - MouseUpEvent     (use Events::MouseReleased)
+  - QuitEvent        (use Events::QuitRequested)
+  - ResizeEvent      (use Events::WindowResized)
 
 
 
