@@ -354,6 +354,12 @@ describe MouseMoveTrigger do
 		@trigger.match?( event ).should be_true
 	end
 
+	it "should match if t. buttons is :none and e. buttons is []" do
+		@trigger = @trigger_class.new( :none )
+		event = @event_class.new([0,0], [0,0], [])
+		@trigger.match?( event ).should be_true
+	end
+
 end
 
 
