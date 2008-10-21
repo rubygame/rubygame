@@ -372,6 +372,12 @@ describe MouseMoveTrigger do
 		@trigger.match?( event ).should be_true
 	end
 
+	it "should not match if e. buttons does not include t. button" do
+		@trigger = @trigger_class.new( :mouse_wheel_up )
+		event = @event_class.new([0,0], [0,0], [:mouse_left, :mouse_right])
+		@trigger.match?( event ).should be_false
+	end
+
 	it "should match if t. buttons is same as e. buttons" do
 		@trigger = @trigger_class.new( [:mouse_left, :mouse_right] )
 		event = @event_class.new([0,0], [0,0], [:mouse_left, :mouse_right])
