@@ -243,39 +243,44 @@ module Rubygame::EventHandler::HasEventHandler
 	# Convenience method for creating and appending hooks easily.
 	# It takes a Hash of {trigger_seed => action_seed} pairs, and
 	# creates and appends a new EventHook for each pair.
-  # 
-  # Returns:: an Array of the EventHook instances that were
-  #           created and appended.
-  # 
+	# 
+	# Returns:: an Array of the EventHook instances that were
+	#           created and appended.
+	# 
+	# May raise::  ArgumentError, if an object doesn't match any
+	#              conversion rules.
 	# 
 	# Trigger and action can be symbols, classes, or other types of
 	# object. The method uses simple rules to convert the "seed"
 	# objects into appropriate event triggers or event actions.
 	# 
-	# Triggers are created according to these rules:
+	# By default, triggers are converted according to these rules:
 	# 
 	#   * Symbols starting with "mouse" become a MouseClickTrigger.
 	#   * Keyboard symbols become a KeyPressTrigger.
 	#   * Classes become an InstanceOfTrigger.
 	#   * Objects with a #match? method are duplicated and used
-	#     as the trigger without being changed.
+	#     as the trigger without being converted.
 	# 
-	# Actions are created according to these rules:
+	# By default, actions are converted according to these rules:
 	# 
 	#   * Symbols become a MethodAction.
 	#   * Proc and Method instances become a BlockAction.
 	#   * Objects with a #perform method are duplicated and used
-	#     as the action without being changed.
+	#     as the action without being converted.
 	# 
-	# Objects which don't match the rules for triggers or actions
-	# (whichever way they are being used) are invalid, and TypeError
-	# will be raised.
+	# This method raises ArgumentError if an object doesn't match
+	# any of the conversion rules.
 	# 
-	# NOTE: Additional rules may be added in the future, but objects
-	# which match the existing rules will continue to match them.
-	# However, objects which are invalid in one version might become
-	# valid in future versions, if a new rule is added. Therefore, you
-	# should never depend on TypeError being raised from a specific
+	# You can define your own custom conversion rules by overriding
+	# the private methods #_make_magic_trigger and #make_magic_action
+	# in your class.
+	# 
+	# NOTE: Additional default rules may be added in the future, but
+	# objects which match the existing rules will continue to match
+	# them. However, objects which are invalid in one version might
+	# become valid in future versions, if a new rule is added. So, you
+	# should never depend on ArgumentError being raised for a paricular
 	# object!
 	# 
 	# Example:
