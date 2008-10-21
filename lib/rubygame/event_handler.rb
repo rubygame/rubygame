@@ -375,6 +375,37 @@ module Rubygame::EventHandler::HasEventHandler
 	end
 
 
+	# This method is called by #magic_hooks to convert an
+	# object into an event trigger instance. For example, when
+	# this method is given the symbol :mouse_left, it creates
+	# and returns a MousePressTrigger that matches :mouse_left.
+	# See #magic_hooks for information about how other objects
+	# are converted.
+	# 
+	# You can override this method in your own classes to
+	# define your own custom conversion rules. Example:
+	# 
+	#   class Player
+	#     include Rubygame::EventHandler::HasEventHandler
+	# 
+	#     private
+	# 
+	#     def _make_magic_trigger( trigger )
+	#       if( trigger == :game_over )
+	#         return GameOverTrigger.new()
+	#       else
+	#         super
+	#       end
+	#     end
+	# 
+	#   end
+	# 
+	# 
+	# Returns::    an event trigger instance
+	# 
+	# May raise::  ArgumentError, if the given object does not
+	#              match any of the conversion rules.
+	# 
 	def _make_magic_trigger( trigger )
 		case trigger
 
