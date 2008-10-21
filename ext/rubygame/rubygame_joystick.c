@@ -279,25 +279,38 @@ VALUE rbgm_joystick_numbuttons( VALUE self )
 /*  Document-class: Rubygame::Joystick
  *
  *  The Joystick class interfaces with joysticks, gamepads, and other
- *  similar hardware devices, commonly used to play games. Each joystick can
- *  offer 0 or more #axes, #balls, #hats, and/or #buttons.
+ *  similar hardware devices used to play games. Each joystick may
+ *  have zero or more #axes, #balls, #hats, and/or #buttons.
  *
  *  After a Joystick object is successfully created, events for that
- *  Joystick will begin appearing on the Queue, reporting any state change
- *  that occurs. Some examples of state changes are a button being pressed
- *  or released, or a control stick being moved (resulting in one or more axes
- *  being changed).
+ *  Joystick will begin appearing on the EventQueue when a button is
+ *  pressed or released, a control stick is moved, etc.
  *
- *  The full list of Joystick-related events is as follows:
- *  - JoyAxisEvent
- *  - JoyBallEvent
- *  - JoyHatEvent
- *  - JoyDownEvent
- *  - JoyUpEvent
+ *  You can use Joystick.activate_all to start receiving events for
+ *  all joysticks (equivalent to creating them all individually with
+ *  Joystick.new). You can use Joystick.deactivate_all to stop
+ *  receiving events for all joysticks.
  *
- *  In future versions of Rubygame, it will be possible to directly query
- *  the state each joystick. However, it is recommended that you use the
- *  event system for most cases, so you might as well get used to it!
+ *  As of Rubygame 2.4, these are the current, "new-style" Joystick
+ *  event classes:
+ *
+ *  * Events::JoystickAxisMoved
+ *  * Events::JoystickButtonPressed
+ *  * Events::JoystickButtonReleased
+ *  * Events::JoystickBallMoved
+ *  * Events::JoystickHatMoved
+ *
+ *  These old Joystick-related events are deprecated and will be
+ *  removed in Rubygame 3.0:
+ *
+ *  * JoyAxisEvent
+ *  * JoyBallEvent
+ *  * JoyHatEvent
+ *  * JoyDownEvent
+ *  * JoyUpEvent
+ *
+ *  For more information about "new-style" events, see
+ *  EventQueue.enable_new_style_events.
  *
  */
 void Rubygame_Init_Joystick()
