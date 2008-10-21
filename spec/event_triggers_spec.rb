@@ -294,6 +294,11 @@ describe "a mouse button event trigger", :shared => true do
 
 	it_should_behave_like "an event trigger"
 
+	it "should match if the event button is :any" do
+		@trigger = @trigger_class.new()
+		@trigger.match?( @event_class.new([0,0], :mouse_left) ).should be_true
+	end
+
 end
 
 
