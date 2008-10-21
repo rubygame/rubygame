@@ -184,7 +184,7 @@ end
 # 
 # HasEventHandler provides several methods for adding new
 # event hooks to the object. The two basic methods for that are 
-# #append_hook and #prepend_hook. The #magic_hooks method can
+# #append_hook and #prepend_hook. The #make_magic_hooks method can
 # create multiple hooks very simply and conveniently.
 # 
 # HasEventHandler also defines the #handle method, which accepts
@@ -289,13 +289,13 @@ module Rubygame::EventHandler::HasEventHandler
 	#     owner.say "Blargh, I'm dead!" if event.who_died == owner
 	#   }
 	# 
-	#   player.magic_hooks( :space      => :jump,
-	#                       :left       => :move_left,
-	#                       :right      => :move_right,
-	#                       :mouse_left => :shoot,
-	#                       DiedEvent   => died_action )
+	#   player.make_magic_hooks( :space      => :jump,
+	#                            :left       => :move_left,
+	#                            :right      => :move_right,
+	#                            :mouse_left => :shoot,
+	#                            DiedEvent   => died_action )
 	# 
-	def magic_hooks( hash )
+	def make_magic_hooks( hash )
 		hash.collect do |trigger, action|
 			append_hook( :trigger => _make_magic_trigger( trigger ),
 									 :action  => _make_magic_action(  action  ))
@@ -326,10 +326,10 @@ module Rubygame::EventHandler::HasEventHandler
 	private
 
 
-	# This method is called by #magic_hooks to convert an
+	# This method is called by #make_magic_hooks to convert an
 	# object into an event action instance. For example, when
 	# this method is given a Proc, it creates and returns a
-	# BlockAction using that Proc. See #magic_hooks for
+	# BlockAction using that Proc. See #make_magic_hooks for
 	# information about how other objects are converted.
 	# 
 	# You can override this method in your own classes to
@@ -373,18 +373,18 @@ module Rubygame::EventHandler::HasEventHandler
 			else
 				raise( ArgumentError, 
 				       "invalid action '#{action.inspect}'. " +\
-				       "See HasEventHandler#magic_hooks docs for " +\
+				       "See HasEventHandler#make_magic_hooks docs for " +\
 				       "allowed action types." )
 			end
 		end
 	end
 
 
-	# This method is called by #magic_hooks to convert an
+	# This method is called by #make_magic_hooks to convert an
 	# object into an event trigger instance. For example, when
 	# this method is given the symbol :mouse_left, it creates
 	# and returns a MousePressTrigger that matches :mouse_left.
-	# See #magic_hooks for information about how other objects
+	# See #make_magic_hooks for information about how other objects
 	# are converted.
 	# 
 	# You can override this method in your own classes to
@@ -431,7 +431,7 @@ module Rubygame::EventHandler::HasEventHandler
 			else
 				raise( ArgumentError, 
 				       "invalid trigger '#{trigger.inspect}'. " +\
-				       "See HasEventHandler#magic_hooks docs for " +\
+				       "See HasEventHandler#make_magic_hooks docs for " +\
 				       "allowed trigger types." )
 			end
 		end
