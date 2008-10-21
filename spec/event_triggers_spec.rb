@@ -299,6 +299,11 @@ describe "a mouse button event trigger", :shared => true do
 		@trigger.match?( @event_class.new([0,0], :mouse_left) ).should be_true
 	end
 
+	it "should match if the event button is the same" do
+		@trigger = @trigger_class.new( :mouse_left )
+		@trigger.match?( @event_class.new([0,0], :mouse_left) ).should be_true
+	end
+
 end
 
 
