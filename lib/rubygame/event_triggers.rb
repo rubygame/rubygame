@@ -19,9 +19,65 @@
 
 require 'rubygame'
 
-module Rubygame
-
-
+# This module contains all the event trigger classes that
+# come with Rubygame. 
+# 
+# An event trigger class is simply a class which can be
+# used as a trigger an EventHook. The trigger is used to
+# determine whether the EventHook matches a particular
+# event that occurs.
+#
+# The only requirement for an event trigger is this:
+# 
+# * It must have a #match? method which takes exactly one
+#   argument (an event) and always returns either true or
+#   false.
+# 
+# You can make your own custom event trigger classes and
+# use them in an EventHook if they meet that requirement.
+#
+# NOTE: The #match? method may be called many times every
+# second, even if there is no matching event. So, you should
+# try to keep the method simple and fast, to have the least
+# impact on your game's framerate.
+# 
+# Here is an overview of the event trigger classes that
+# come with Rubygame as of version 2.4:
+# 
+# 
+# AllTrigger::          Holds multiple other triggers, and
+#                       matches if ALL of the triggers
+#                       match the event.
+# 
+# AnyTrigger::          Holds multiple other triggers, and
+#                       matches if ANY of the triggers
+#                       match the event.
+# 
+# AttrTrigger::         Matches if the event's attributes
+#                       have the expected values.
+# 
+# BlockTrigger::        Passes the event to a custom code
+#                       block to check whether it matches.
+# 
+# InstanceOfTrigger::   Matches if the event is an
+#                       instance of a particular class.
+# 
+# KeyPressTrigger::     Matches certain KeyPressed events.
+# 
+# KeyReleaseTrigger::   Matches certain KeyReleased events.
+# 
+# KindOfTrigger::       Matches if the event is #kind_of? a
+#                       particular class or module.
+# 
+# MousePressTrigger::   Matches certain MousePressed events.
+# 
+# MouseMoveTrigger::    Matches certain MouseMoved events.
+# 
+# MouseReleaseTrigger:: Matches certain MouseReleased events.
+# 
+# YesTrigger::          Matches every event, no matter what.
+# 
+module Rubygame::EventTriggers
 
 # 
 # AllTrigger is an event trigger which contains one or

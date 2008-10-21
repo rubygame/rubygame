@@ -5,6 +5,7 @@ $:.unshift( File.join( File.dirname(__FILE__), "..", "ext", "rubygame" ) )
 
 require 'rubygame'
 include Rubygame
+include Rubygame::EventTriggers
 include Rubygame::Events
 
 FakeEvent = Struct.new(:a)
