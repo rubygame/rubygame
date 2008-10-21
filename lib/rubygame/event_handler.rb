@@ -19,9 +19,40 @@
 
 require 'rubygame/event_hook'
 
-module Rubygame
 
-class EventHandler
+# EventHandler provides a simple, extensible system for
+# hook-based event handling.
+# 
+# An EventHandler holds a list of EventHook objects. When
+# the EventHandler receives a new event (passed to #handle),
+# it tests the event against each EventHook. If the event
+# matches the EventHook, the EventHandler passes the event to
+# the EventHook to perform an action (such as calling a
+# method or executing a block).
+# 
+# Although the EventHandler and EventHook classes are very
+# simple in themselves, they can be used as building blocks
+# to create flexible and complex systems, whatever is needed
+# by your application.
+# 
+# Here are a few ways you could use EventHandler:
+# 
+#  * One central EventHandler with EventHooks to perform
+#    all types of actions. This is good for simple apps.
+# 
+#  * Multiple EventHandlers, one for each category of
+#    event. For example, one for keyboard input, one for
+#    mouse input, one for game logic events, etc.
+# 
+#  * An EventHandler in every game object (using the 
+#    HasEventHandler mixin module), being fed events from
+#    a central EventHandler.
+# 
+# You can also extend the possibilities of EventHandler and
+# EventHook by creating your own event trigger and action
+# classes. See EventHook for more information.
+# 
+class Rubygame::EventHandler
 
 	#  call-seq:
 	#    EventHandler.new { |handler| ... }  ->  new_handler
@@ -59,7 +90,7 @@ class EventHandler
 	# 
 	def append_hook( hook )
 		hook = EventHook.new( hook ) if hook.kind_of?( Hash )
-		@hooks = @hooks | [hook]
+		@hooks = (@hooks - [hook]) | [hook]
 		return hook
 	end
 
@@ -103,9 +134,64 @@ class EventHandler
 			
 		return nil
 	end	
+
+	#  Returns true if the given EventHook instance is on the stack.
+	def has_hook?( hook )
+		@hooks.include?( hook )
+	end
+
+	#  Removes the given EventHook instance from the stack, if it exists
+	#  on the stack.
+	# 
+	#  Returns:: the hook that was removed, or nil if the hook did not
+	#            exist on the stack.
+	#  
+	#  NOTE: You must pass the exact EventHook instance to remove it!
+	#  Passing another EventHook that is "similar" will not work.
+	#  So, you should store a reference to the hook when it is returned
+	#  by #append_hook or #prepend_hook.
+	# 
+	def remove_hook( hook )
+		@hooks.delete( hook )
+	end
+
 end
 
-module HasEventHandler
+
+
+# HasEventHandler is a mixin module to conveniently integrate
+# EventHandler into any class, allowing instances of the class
+# to hold event hooks and handle incoming events.
+# 
+# To use HasEventHandler, you simply 'include' it in your class,
+# and call 'super' from initialize. Example:
+# 
+#    class Player
+#      include Rubygame::EventHandler::HasEventHandler
+#      
+#      def initialize()
+#        # creates @event_handler if it doesn't exist already
+#        super
+#
+#        # The rest of your initialization code...
+#      end
+#      
+#      # The rest of your class definition...
+#      
+#    end
+# 
+# You can then use all of the functionality of HasEventHandler.
+# 
+# HasEventHandler provides several methods for adding new
+# event hooks to the object. The two basic methods for that are 
+# #append_hook and #prepend_hook. The #make_magic_hooks method can
+# create multiple hooks very simply and conveniently.
+# 
+# HasEventHandler also defines the #handle method, which accepts
+# an event and gives it to the object's event handler. This is
+# the recommended way to make the object process an event.
+# 
+module Rubygame::EventHandler::HasEventHandler
 
 	def initialize( *args )
 		# Try super with the given arguments, but rescue if it fails.
@@ -116,52 +202,242 @@ module HasEventHandler
 		@event_handler = EventHandler.new() unless defined?( @event_handler )
 	end
 	
+
+	# Appends a new hook to the end of the list. If the hook does
+	# not have an owner, the owner is set to this object before
+	# appending.
+	# 
+	# hook:: the hook to append. 
+	#        (EventHook or Hash description, required)
+	# 
+	# See also EventHandler#append_hook.
+	# 
+	# Example:
+	# 
+	#   # Create and append new hook from a description:
+	#   trigger = KeyPressedTrigger.new(:space)
+	#   action  = MethodAction.new(:jump)
+	#   player.append_hook( :trigger => trigger, :action  => action )
+	# 
+	#   # You can also give it an EventHook instance, if you want.
+	#   hook = EventHook.new( :trigger => trigger, :action => action )
+	#   player.append_hook( hook )
+	# 
 	def append_hook( hook )
 		hook = _prepare_hook( hook )
 		@event_handler.append_hook( hook )
 	end
 	
+	# Passes the given event to the object's event handler.
 	def handle( event )
 		@event_handler.handle( event )
 	end
 	
-	def magic_hooks( hash )
-		hash.each_pair do |trigger, action|
-			
-			hook = {}
-			
-			case trigger
-			when Symbol
-				case(trigger.to_s)
-				when /mouse/
-					hook[:trigger] = MouseClickTrigger.new(trigger)
-				else
-					hook[:trigger] = KeyPressTrigger.new(trigger)
-				end
-			when Class
-				hook[:trigger] = InstanceOfTrigger.new(trigger)
-			end
-			
-			case action
-			when Symbol
-				hook[:action] = MethodAction.new(action,true)
-			when Proc, Method
-				hook[:action] = BlockAction.new(&action)
-			end
-			
-			append_hook( hook )
-			
-		end
-		nil
+	# Returns true if the object's event handler includes the given
+	# EventHook instance. 
+	def has_hook?( hook )
+		@event_handler.has_hook?( hook )
 	end
-	
+
+
+	# Convenience method for creating and appending hooks easily.
+	# It takes a Hash of {trigger_seed => action_seed} pairs, and
+	# creates and appends a new EventHook for each pair.
+	# 
+	# Returns:: an Array of the EventHook instances that were
+	#           created and appended.
+	# 
+	# May raise::  ArgumentError, if an object doesn't match any
+	#              conversion rules.
+	# 
+	# Trigger and action can be symbols, classes, or other types of
+	# object. The method uses simple rules to convert the "seed"
+	# objects into appropriate event triggers or event actions.
+	# 
+	# By default, triggers are converted according to these rules:
+	# 
+	#   * Symbols starting with "mouse" become a MouseClickTrigger.
+	#   * Keyboard symbols become a KeyPressTrigger.
+	#   * Classes become an InstanceOfTrigger.
+	#   * Objects with a #match? method are duplicated and used
+	#     as the trigger without being converted.
+	# 
+	# By default, actions are converted according to these rules:
+	# 
+	#   * Symbols become a MethodAction.
+	#   * Proc and Method instances become a BlockAction.
+	#   * Objects with a #perform method are duplicated and used
+	#     as the action without being converted.
+	# 
+	# This method raises ArgumentError if an object doesn't match
+	# any of the conversion rules.
+	# 
+	# You can define your own custom conversion rules by overriding
+	# the private methods #_make_magic_trigger and #make_magic_action
+	# in your class.
+	# 
+	# NOTE: Additional default rules may be added in the future, but
+	# objects which match the existing rules will continue to match
+	# them. However, objects which are invalid in one version might
+	# become valid in future versions, if a new rule is added. So, you
+	# should never depend on ArgumentError being raised for a paricular
+	# object!
+	# 
+	# Example:
+	# 
+	#   died_action = proc { |owner, event| 
+	#     owner.say "Blargh, I'm dead!" if event.who_died == owner
+	#   }
+	# 
+	#   player.make_magic_hooks( :space      => :jump,
+	#                            :left       => :move_left,
+	#                            :right      => :move_right,
+	#                            :mouse_left => :shoot,
+	#                            DiedEvent   => died_action )
+	# 
+	def make_magic_hooks( hash )
+		hash.collect do |trigger, action|
+			append_hook( :trigger => _make_magic_trigger( trigger ),
+									 :action  => _make_magic_action(  action  ))
+		end
+	end
+
+	# Exactly like #append_hook, except that the hook is put at the
+	# top of the stack (it will be handled first).
+	# 
+	# See also EventHandler#prepend_hook.
+	# 
 	def prepend_hook( hook )
 		hook = _prepare_hook( hook )
 		@event_handler.prepend_hook( hook )
 	end
 	
+	# Remove the given EventHook instance from the stack, if it
+	# exists on the stack.
+	# See EventHandler#remove_hook for details and restrictions.
+	# 
+	# Returns:: the hook that was removed, or nil if the hook did not
+	#           exist on the stack.
+	# 
+	def remove_hook( hook )
+		@event_handler.remove_hook( hook )
+	end
+
 	private
+
+
+	# This method is called by #make_magic_hooks to convert an
+	# object into an event action instance. For example, when
+	# this method is given a Proc, it creates and returns a
+	# BlockAction using that Proc. See #make_magic_hooks for
+	# information about how other objects are converted.
+	# 
+	# You can override this method in your own classes to
+	# define your own custom conversion rules. Example:
+	# 
+	#   class Player
+	#     include Rubygame::EventHandler::HasEventHandler
+	# 
+	#     private
+	# 
+	#     def _make_magic_action( action )
+	#       if( action == :move_left )
+	#         return BlockAction.new { |owner, event|
+	#           owner.move_by( [-1, 0] )
+	#         }
+	#       else
+	#         super
+	#       end
+	#     end
+	# 
+	#   end
+	# 
+	# 
+	# Returns::    an event action instance
+	# 
+	# May raise::  ArgumentError, if the given object does not
+	#              match any of the conversion rules.
+	# 
+	def _make_magic_action( action )
+		case action
+
+		when Symbol
+			MethodAction.new(action,true)
+
+		when Proc, Method
+			BlockAction.new(&action)
+
+		else
+			if action.respond_to? :perform
+				action.dup
+			else
+				raise( ArgumentError, 
+				       "invalid action '#{action.inspect}'. " +\
+				       "See HasEventHandler#make_magic_hooks docs for " +\
+				       "allowed action types." )
+			end
+		end
+	end
+
+
+	# This method is called by #make_magic_hooks to convert an
+	# object into an event trigger instance. For example, when
+	# this method is given the symbol :mouse_left, it creates
+	# and returns a MousePressTrigger that matches :mouse_left.
+	# See #make_magic_hooks for information about how other objects
+	# are converted.
+	# 
+	# You can override this method in your own classes to
+	# define your own custom conversion rules. Example:
+	# 
+	#   class Player
+	#     include Rubygame::EventHandler::HasEventHandler
+	# 
+	#     private
+	# 
+	#     def _make_magic_trigger( trigger )
+	#       if( trigger == :game_over )
+	#         return GameOverTrigger.new()
+	#       else
+	#         super
+	#       end
+	#     end
+	# 
+	#   end
+	# 
+	# 
+	# Returns::    an event trigger instance
+	# 
+	# May raise::  ArgumentError, if the given object does not
+	#              match any of the conversion rules.
+	# 
+	def _make_magic_trigger( trigger )
+		case trigger
+
+		when Symbol
+			case(trigger.to_s)
+			when /mouse/
+				MousePressTrigger.new(trigger)
+			else
+				KeyPressTrigger.new(trigger)
+			end
+
+		when Class
+			InstanceOfTrigger.new(trigger)
+
+		else
+			if trigger.respond_to? :match?
+				trigger.dup
+			else
+				raise( ArgumentError, 
+				       "invalid trigger '#{trigger.inspect}'. " +\
+				       "See HasEventHandler#make_magic_hooks docs for " +\
+				       "allowed trigger types." )
+			end
+		end
+	end
 	
+
 	def _prepare_hook( hook )
 		if( hook.kind_of? Hash )
 			hook = EventHook.new( {:owner => self}.merge(hook) )
@@ -174,6 +450,4 @@ module HasEventHandler
 		
 		return hook
 	end
-end
-
 end

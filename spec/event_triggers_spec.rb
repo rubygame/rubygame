@@ -5,7 +5,8 @@ $:.unshift( File.join( File.dirname(__FILE__), "..", "ext", "rubygame" ) )
 
 require 'rubygame'
 include Rubygame
-
+include Rubygame::EventTriggers
+include Rubygame::Events
 
 FakeEvent = Struct.new(:a)
 
@@ -181,6 +182,91 @@ end
 
 
 
+
+describe "a keyboard event trigger", :shared => true do
+
+	it_should_behave_like "an event trigger"
+
+  it "should match if the event key is :any and mods is :any" do
+		@trigger = @trigger_class.new()
+    @trigger.match?( @event_class.new(:z, [:left_shift]) ).should be_true
+  end
+
+  it "should match if the event key is the same and mods is :any" do
+		@trigger = @trigger_class.new( :a )
+    @trigger.match?( @event_class.new(:a, []) ).should be_true
+  end
+	
+  it "should match if the event key is :any and mods are the same" do
+		@trigger = @trigger_class.new( :any, [:left_shift] )
+    @trigger.match?( @event_class.new(:z, [:left_shift]) ).should be_true
+  end
+
+  it "should match if the event key is the same and mods are the same" do
+		@trigger = @trigger_class.new( :a, [:left_shift] )
+    @trigger.match?( @event_class.new(:a, [:left_shift]) ).should be_true
+  end
+
+  it "should match if the event key is :any and mods match :none" do
+		@trigger = @trigger_class.new( :any, :none )
+    @trigger.match?( @event_class.new(:a, []) ).should be_true
+  end
+	
+  it "should match if the event key is the same and mods match :none" do
+		@trigger = @trigger_class.new( :a, :none )
+    @trigger.match?( @event_class.new(:a, []) ).should be_true
+  end
+
+
+  ["alt", "ctrl", "meta", "shift"].each do |m|
+
+    it "should match if event mods is [:left_#{m}] and mods is [:#{m}]" do
+      @trigger = @trigger_class.new( :a, [m.intern] )
+      @trigger.match?( @event_class.new(:a, ["left_#{m}".intern]) ).should be_true
+    end
+    
+    it "should match if event mods is [:right_#{m}] and mods is [:#{m}]" do
+      @trigger = @trigger_class.new( :a, [m.intern] )
+      @trigger.match?( @event_class.new(:a, ["right_#{m}".intern]) ).should be_true
+    end
+
+  end	
+
+	it "should not care about mods order" do
+		@trigger = @trigger_class.new( :a, [:left_shift, :left_ctrl] )
+		@trigger.match?( @event_class.new(:a, [:left_ctrl, :left_shift]) ).should be_true
+	end
+
+end
+
+
+
+describe KeyPressTrigger do
+  
+	before :each do 
+    @event_class   = KeyPressed
+    @trigger_class = KeyPressTrigger
+		@trigger       = @trigger_class.new
+	end
+
+  it_should_behave_like "a keyboard event trigger"
+
+end
+
+describe KeyReleaseTrigger do
+  
+	before :each do 
+    @event_class   = KeyReleased
+    @trigger_class = KeyReleaseTrigger
+		@trigger       = @trigger_class.new
+	end
+
+  it_should_behave_like "a keyboard event trigger"
+
+end
+
+
+
 describe KindOfTrigger do 
 	
 	before :each do 
@@ -199,6 +285,116 @@ describe KindOfTrigger do
 
 	it "should not match if the event is not kind of the correct class" do 
 		@trigger.match?( :foo ).should be_false
+	end
+
+end
+
+
+
+describe "a mouse button event trigger", :shared => true do
+
+	it_should_behave_like "an event trigger"
+
+	it "should match if the event button is :any" do
+		@trigger = @trigger_class.new()
+		@trigger.match?( @event_class.new([0,0], :mouse_left) ).should be_true
+	end
+
+	it "should match if the event button is the same" do
+		@trigger = @trigger_class.new( :mouse_left )
+		@trigger.match?( @event_class.new([0,0], :mouse_left) ).should be_true
+	end
+
+	it "should not match if the event button is not the same" do
+		@trigger = @trigger_class.new( :mouse_left )
+		@trigger.match?( @event_class.new([0,0], :mouse_right) ).should be_false
+	end
+
+end
+
+
+describe MousePressTrigger do
+
+	before :each do 
+		@event_class   = MousePressed
+		@trigger_class = MousePressTrigger
+		@trigger       = @trigger_class.new
+	end
+
+	it_should_behave_like "a mouse button event trigger"
+
+end
+
+describe MouseReleaseTrigger do
+
+	before :each do 
+		@event_class   = MouseReleased
+		@trigger_class = MouseReleaseTrigger
+		@trigger       = @trigger_class.new
+	end
+
+	it_should_behave_like "a mouse button event trigger"
+
+end
+
+
+
+describe MouseMoveTrigger do
+
+	before :each do 
+		@event_class   = MouseMoved
+		@trigger_class = MouseMoveTrigger
+		@trigger       = @trigger_class.new
+	end
+
+	it_should_behave_like "an event trigger"
+
+	it "should match if the trigger buttons is :any" do
+		@trigger = @trigger_class.new()
+		event = @event_class.new([0,0], [0,0], [:mouse_left])
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should match if t. buttons is :none and e. buttons is []" do
+		@trigger = @trigger_class.new( :none )
+		event = @event_class.new([0,0], [0,0], [])
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should not match if t. buttons is :none and e. buttons is not []" do
+		@trigger = @trigger_class.new( :none )
+		event = @event_class.new([0,0], [0,0], [:mouse_left])
+		@trigger.match?( event ).should be_false
+	end
+
+	it "should match if e. buttons includes t. button" do
+		@trigger = @trigger_class.new( :mouse_left )
+		event = @event_class.new([0,0], [0,0], [:mouse_left, :mouse_right])
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should not match if e. buttons does not include t. button" do
+		@trigger = @trigger_class.new( :mouse_wheel_up )
+		event = @event_class.new([0,0], [0,0], [:mouse_left, :mouse_right])
+		@trigger.match?( event ).should be_false
+	end
+
+	it "should match if t. buttons is same as e. buttons" do
+		@trigger = @trigger_class.new( [:mouse_left, :mouse_right] )
+		event = @event_class.new([0,0], [0,0], [:mouse_left, :mouse_right])
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should not match if t. buttons is not same as e. buttons" do
+		@trigger = @trigger_class.new( [:mouse_wheel_up, :mouse_right] )
+		event = @event_class.new([0,0], [0,0], [:mouse_left, :mouse_right])
+		@trigger.match?( event ).should be_false
+	end
+
+	it "should not care about buttons order" do
+		@trigger = @trigger_class.new( [:mouse_right, :mouse_left] )
+		event = @event_class.new([0,0], [0,0], [:mouse_left, :mouse_right])
+		@trigger.match?( event ).should be_true
 	end
 
 end
