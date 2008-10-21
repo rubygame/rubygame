@@ -338,6 +338,20 @@ end
 
 
 
+describe MouseMoveTrigger do
+
+	before :each do 
+		@event_class   = MouseMoved
+		@trigger_class = MouseMoveTrigger
+		@trigger       = @trigger_class.new
+	end
+
+	it_should_behave_like "an event trigger"
+
+end
+
+
+
 # describe TickTrigger do 
 #
 # 	before :each do 
