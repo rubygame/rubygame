@@ -17,7 +17,36 @@
 #	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #++
 
-module Rubygame
+
+# This module contains all the event action classes that
+# come with Rubygame. 
+# 
+# An event action class is simply a class which can be
+# used as an action an EventHook. The action is used to
+# cause some effect when the EventHook matches an event.
+#
+# The only requirement for an event action is this:
+# 
+# * It must have a #perform method which takes exactly two
+#   arguments (the hook owner and an event). Return values
+#   are ignored.
+# 
+# You can make your own custom event action classes and
+# use them in an EventHook if they meet that requirement.
+#
+# Here is an overview of the event action classes that
+# come with Rubygame as of version 2.4:
+# 
+# BlockAction::  Calls a custom code block, passing it the
+#                hook owner and the event.
+# 
+# MethodAction:: Calls one of the owner's methods, passing
+#                it the event.
+# 
+# MultiAction::  Holds multiple other actions and performs
+#                each of them, in order.
+# 
+module Rubygame::EventActions
 
 
 # BlockAction is an event action used with EventHook. BlockAction
