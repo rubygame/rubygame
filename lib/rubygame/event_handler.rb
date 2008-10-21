@@ -321,6 +321,38 @@ module Rubygame::EventHandler::HasEventHandler
 	private
 
 
+	# This method is called by #magic_hooks to convert an
+	# object into an event action instance. For example, when
+	# this method is given a Proc, it creates and returns a
+	# BlockAction using that Proc. See #magic_hooks for
+	# information about how other objects are converted.
+	# 
+	# You can override this method in your own classes to
+	# define your own custom conversion rules. Example:
+	# 
+	#   class Player
+	#     include Rubygame::EventHandler::HasEventHandler
+	# 
+	#     private
+	# 
+	#     def _make_magic_action( action )
+	#       if( action == :move_left )
+	#         return BlockAction.new { |owner, event|
+	#           owner.move_by( [-1, 0] )
+	#         }
+	#       else
+	#         super
+	#       end
+	#     end
+	# 
+	#   end
+	# 
+	# 
+	# Returns::    an event action instance
+	# 
+	# May raise::  ArgumentError, if the given object does not
+	#              match any of the conversion rules.
+	# 
 	def _make_magic_action( action )
 		case action
 
