@@ -366,6 +366,12 @@ describe MouseMoveTrigger do
 		@trigger.match?( event ).should be_true
 	end
 
+	it "should match if t. buttons is same as e. buttons" do
+		@trigger = @trigger_class.new( [:mouse_left, :mouse_right] )
+		event = @event_class.new([0,0], [0,0], [:mouse_left, :mouse_right])
+		@trigger.match?( event ).should be_true
+	end
+
 end
 
 
