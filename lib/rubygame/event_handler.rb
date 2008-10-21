@@ -292,46 +292,8 @@ module Rubygame::EventHandler::HasEventHandler
 	# 
 	def magic_hooks( hash )
 		hash.collect do |trigger, action|
-			
-			hook = {}
-			
-			case trigger
-			when Symbol
-				case(trigger.to_s)
-				when /mouse/
-					hook[:trigger] = MousePressTrigger.new(trigger)
-				else
-					hook[:trigger] = KeyPressTrigger.new(trigger)
-				end
-			when Class
-				hook[:trigger] = InstanceOfTrigger.new(trigger)
-      else
-        if trigger.respond_to? :match?
-          hook[:trigger] = trigger.dup
-				else
-					raise( ArgumentError, 
-					       "invalid trigger '#{trigger.inspect}'. " +\
-					       "See docs for allowed trigger types." )
-        end
-			end
-			
-			case action
-			when Symbol
-				hook[:action] = MethodAction.new(action,true)
-			when Proc, Method
-				hook[:action] = BlockAction.new(&action)
-      else
-        if action.respond_to? :perform
-          hook[:action] = action.dup
-				else
-					raise( ArgumentError, 
-					       "invalid action '#{action.inspect}'. " +\
-					       "See docs for allowed action types." )
-        end
-			end
-			
-			append_hook( hook )
-			
+			append_hook( :trigger => _make_magic_trigger( trigger ),
+									 :action  => _make_magic_action(  action  ))
 		end
 	end
 
@@ -357,7 +319,57 @@ module Rubygame::EventHandler::HasEventHandler
 	end
 
 	private
+
+
+	def _make_magic_action( action )
+		case action
+
+		when Symbol
+			MethodAction.new(action,true)
+
+		when Proc, Method
+			BlockAction.new(&action)
+
+		else
+			if action.respond_to? :perform
+				action.dup
+			else
+				raise( ArgumentError, 
+				       "invalid action '#{action.inspect}'. " +\
+				       "See HasEventHandler#magic_hooks docs for " +\
+				       "allowed action types." )
+			end
+		end
+	end
+
+
+	def _make_magic_trigger( trigger )
+		case trigger
+
+		when Symbol
+			case(trigger.to_s)
+			when /mouse/
+				MousePressTrigger.new(trigger)
+			else
+				KeyPressTrigger.new(trigger)
+			end
+
+		when Class
+			InstanceOfTrigger.new(trigger)
+
+		else
+			if trigger.respond_to? :match?
+				trigger.dup
+			else
+				raise( ArgumentError, 
+				       "invalid trigger '#{trigger.inspect}'. " +\
+				       "See HasEventHandler#magic_hooks docs for " +\
+				       "allowed trigger types." )
+			end
+		end
+	end
 	
+
 	def _prepare_hook( hook )
 		if( hook.kind_of? Hash )
 			hook = EventHook.new( {:owner => self}.merge(hook) )
