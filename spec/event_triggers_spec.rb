@@ -372,6 +372,12 @@ describe MouseMoveTrigger do
 		@trigger.match?( event ).should be_true
 	end
 
+	it "should not care about buttons order" do
+		@trigger = @trigger_class.new( [:mouse_right, :mouse_left] )
+		event = @event_class.new([0,0], [0,0], [:mouse_left, :mouse_right])
+		@trigger.match?( event ).should be_true
+	end
+
 end
 
 
