@@ -187,7 +187,7 @@ VALUE rg_convert_joybuttonevent( SDL_Event ev )
       return rg_make_rbevent( "JoystickButtonPressed", 2, args);
 
     case SDL_RELEASED:
-      return rg_make_rbevent( "JoystickButtonPressed", 2, args);
+      return rg_make_rbevent( "JoystickButtonReleased", 2, args);
 
     default:
       rb_raise(eSDLError, 
@@ -565,7 +565,7 @@ VALUE rg_convert_sdlevent2( SDL_Event ev )
 
     case SDL_JOYBUTTONDOWN:
     case SDL_JOYBUTTONUP:
-      return rg_convert_joystickbuttonevent(ev);
+      return rg_convert_joybuttonevent(ev);
 
     case SDL_JOYHATMOTION:
       return rg_convert_joyhatevent(ev);
