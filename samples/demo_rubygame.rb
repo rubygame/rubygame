@@ -22,15 +22,32 @@ $smooth = false
 
 Rubygame.init()
 
-queue = EventQueue.new() # new EventQueue with autofetch
+
+# SDL_gfx is required for drawing shapes and rotating/zooming Surfaces.
+$gfx_ok = (VERSIONS[:sdl_gfx] != nil)
+unless ( $gfx_ok )
+  raise "You must have SDL_gfx support to run this demo!" 
+end
+
+
+# Create EventQueue with autofetch (default) and new-style
+# events (added in Rubygame 2.4)
+queue = EventQueue.new()
 queue.enable_new_style_events
+
+# Don't care about mouse movement, so let's ignore it.
 queue.ignore = [MouseMoved]
+
+
+# Activate all joysticks so that their button press
+# events, etc. appear in the event queue.
+Joystick.activate_all
+
+
+# Create a new Clock to manage the game framerate
+# so it doesn't use 100% of the CPU
 clock = Clock.new()
 clock.target_framerate = 50
-
-unless ($gfx_ok = (VERSIONS[:sdl_gfx] != nil))
-  raise "SDL_gfx is not available. Bailing out." 
-end
 
 
 # Custom event class to hold information about the
@@ -225,14 +242,6 @@ background.blit(screen,[0,0])
 # to refresh only the parts of the screen that have changed.
 screen.update()
 
-
-# Activate all joysticks so that their button press
-# events, etc. appear in the event queue.
-Joystick.activate_all
-
-
-update_time = 0
-framerate = 0
 
 
 # Factory methods for creating event triggers
