@@ -39,12 +39,12 @@ Joystick.activate_all
 
 
 
-##########
-# CLOCK  #
-##########
+########################
+# CUSTOM EVENT CLASSES #
+########################
 
-# Custom event class to hold information about the
-# clock, created each frame.
+
+# Holds information about the clock, created each frame.
 class ClockTicked
 	attr_reader :time, :framerate
 
@@ -52,6 +52,22 @@ class ClockTicked
 		@time = ms / 1000.0
 		@framerate = framerate
 	end
+end
+
+# Signals sprites to draw themselves on the screen
+class DrawSprites
+  attr_accessor :screen
+  def initialize( screen )
+    @screen = screen
+  end
+end
+
+# Signals sprites to erase themselves from the screen
+class UndrawSprites
+  attr_accessor :screen, :background
+  def initialize( screen, background )
+    @screen, @background = screen, background
+  end
 end
 
 
@@ -90,8 +106,6 @@ class Panda
 		@speed = 40
 		@image = @@pandapic
 		@rect = Rect.new(x,y,*@@pandapic.size)
-
-		make_magic_hooks( ClockTicked => :update )
 
 	end
 
@@ -169,12 +183,35 @@ panda1.depth = 0        # in between the others
 panda2.depth = 10       # behind both of the others
 panda3.depth = -10      # in front of both of the others
 
-# Put the pandas in a sprite group
+
+
+
+###############
+# PANDA GROUP #
+###############
+
+
 pandas = Sprites::Group.new
 pandas.extend(Sprites::UpdateGroup)
 pandas.extend(Sprites::DepthSortGroup)
 pandas.push(panda1,panda2,panda3)
 
+class << pandas
+	include EventHandler::HasEventHandler
+
+  def do_draw( event )
+		dirty_rects = draw( event.screen )
+		event.screen.update_rects(dirty_rects)
+  end
+
+  def do_undraw( event )
+    undraw( event.screen, event.background )
+  end
+end
+
+pandas.make_magic_hooks( ClockTicked   => :update,
+                         DrawSprites   => :do_draw,
+                         UndrawSprites => :do_undraw )
 
 
 
@@ -538,14 +575,14 @@ $game.register( panda1, panda2, panda3 )
 catch(:rubygame_quit) do
 	loop do
 
-		pandas.undraw(screen,background)
+		pandas.handle( UndrawSprites.new(screen,background) )
 
     $game.check_events
 
-		dirty_rects = pandas.draw(screen)
-		screen.update_rects(dirty_rects)
+    pandas.handle( DrawSprites.new(screen) )
 
-		$game.queue << ClockTicked.new( $game.clock.tick, $game.clock.framerate )
+		pandas.handle( ClockTicked.new( $game.clock.tick,
+		                                $game.clock.framerate ) )
 
 	end
 end
