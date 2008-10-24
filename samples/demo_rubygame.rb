@@ -25,10 +25,17 @@ Rubygame.init()
 
 # SDL_gfx is required for drawing shapes and rotating/zooming Surfaces.
 $gfx_ok = (VERSIONS[:sdl_gfx] != nil)
+
 unless ( $gfx_ok )
   raise "You must have SDL_gfx support to run this demo!" 
 end
 
+
+
+
+###############
+# EVENT QUEUE #
+###############
 
 # Create EventQueue with autofetch (default) and new-style
 # events (added in Rubygame 2.4)
@@ -43,6 +50,12 @@ queue.ignore = [MouseMoved]
 # events, etc. appear in the event queue.
 Joystick.activate_all
 
+
+
+
+##########
+# CLOCK  #
+##########
 
 # Create a new Clock to manage the game framerate
 # so it doesn't use 100% of the CPU
@@ -62,12 +75,25 @@ class ClockTicked
 end
 
 
+
+
+######################
+# AUTOLOADING IMAGES #
+######################
+
+
 # Set up autoloading for Surfaces. Surfaces will be loaded automatically
 # the first time you use Surface["filename"]. Check out the docs for
 # Rubygame::NamedResource for more info about that.
 #
 Surface.autoload_dirs = [ File.dirname(__FILE__) ]
 
+
+
+
+#################
+# PANDA CLASSES #
+#################
 
 class Panda
 	include Sprites::Sprite
@@ -105,6 +131,7 @@ class Panda
 
 end
 
+
 class SpinnyPanda < Panda
 	attr_accessor :rate
 	def initialize(x,y,rate=0.1)
@@ -118,6 +145,7 @@ class SpinnyPanda < Panda
 		@image = @@pandapic.rotozoom(@angle,1,$smooth)
 	end
 end
+
 
 class ExpandaPanda < Panda
 	attr_accessor :rate
@@ -133,6 +161,7 @@ class ExpandaPanda < Panda
 		@image = @@pandapic.zoom(zoom,$smooth)
 	end
 end
+
 
 class WobblyPanda < Panda
 	attr_accessor :rate
@@ -150,9 +179,6 @@ class WobblyPanda < Panda
 	end
 end
 
-pandas = Sprites::Group.new
-pandas.extend(Sprites::UpdateGroup)
-pandas.extend(Sprites::DepthSortGroup)
 
 # Create the very cute panda objects!
 panda1 = SpinnyPanda.new(100,50)
@@ -164,6 +190,9 @@ panda2.depth = 10       # behind both of the others
 panda3.depth = -10      # in front of both of the others
 
 # Put the pandas in a sprite group
+pandas = Sprites::Group.new
+pandas.extend(Sprites::UpdateGroup)
+pandas.extend(Sprites::DepthSortGroup)
 pandas.push(panda1,panda2,panda3)
 
 
@@ -322,6 +351,11 @@ screen.update()
 
 
 
+############################
+# EVENT HOOKS AND HANDLING #
+############################
+
+
 # Factory methods for creating event triggers
 
 # Returns a trigger that matches the released key event
@@ -403,6 +437,17 @@ panda2.make_magic_hooks( hooks )
 
 
 
+
+##############
+# GAME CLASS #
+##############
+
+
+# The Game class helps organize thing. It takes events
+# from the queue and handles them, sometimes performing
+# its own action (e.g. Escape key = quit), but also
+# passing the events to the pandas to handle.
+# 
 class Game
 	include EventHandler::HasEventHandler
 
