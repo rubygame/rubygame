@@ -13,9 +13,6 @@ HasEventHandler = Rubygame::EventHandler::HasEventHandler
 
 class HandledObject
   include HasEventHandler
-  def initialize
-    super
-  end
 end
 
 

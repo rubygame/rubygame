@@ -163,21 +163,13 @@ end
 # EventHandler into any class, allowing instances of the class
 # to hold event hooks and handle incoming events.
 # 
-# To use HasEventHandler, you simply 'include' it in your class,
-# and call 'super' from initialize. Example:
+# To use HasEventHandler, you simply 'include' it in your class:
 # 
 #    class Player
 #      include Rubygame::EventHandler::HasEventHandler
-#      
-#      def initialize()
-#        # creates @event_handler if it doesn't exist already
-#        super
-#
-#        # The rest of your initialization code...
-#      end
-#      
-#      # The rest of your class definition...
-#      
+# 
+#      # ... the rest of your class ...
+# 
 #    end
 # 
 # You can then use all of the functionality of HasEventHandler.
@@ -192,16 +184,6 @@ end
 # the recommended way to make the object process an event.
 # 
 module Rubygame::EventHandler::HasEventHandler
-
-	def initialize( *args )
-		# Try super with the given arguments, but rescue if it fails.
-		super
-	rescue ArgumentError
-		# do nothing
-	ensure
-		@event_handler = EventHandler.new() unless defined?( @event_handler )
-	end
-	
 
 	# Appends a new hook to the end of the list. If the hook does
 	# not have an owner, the owner is set to this object before
@@ -226,17 +208,26 @@ module Rubygame::EventHandler::HasEventHandler
 	def append_hook( hook )
 		hook = _prepare_hook( hook )
 		@event_handler.append_hook( hook )
+	rescue NoMethodError
+		_make_event_handler
+		retry
 	end
 	
 	# Passes the given event to the object's event handler.
 	def handle( event )
 		@event_handler.handle( event )
+	rescue NoMethodError
+		_make_event_handler
+		retry
 	end
 	
 	# Returns true if the object's event handler includes the given
 	# EventHook instance. 
 	def has_hook?( hook )
 		@event_handler.has_hook?( hook )
+	rescue NoMethodError
+		_make_event_handler
+		retry
 	end
 
 
@@ -310,6 +301,9 @@ module Rubygame::EventHandler::HasEventHandler
 	def prepend_hook( hook )
 		hook = _prepare_hook( hook )
 		@event_handler.prepend_hook( hook )
+	rescue NoMethodError
+		_make_event_handler
+		retry
 	end
 	
 	# Remove the given EventHook instance from the stack, if it
@@ -321,10 +315,17 @@ module Rubygame::EventHandler::HasEventHandler
 	# 
 	def remove_hook( hook )
 		@event_handler.remove_hook( hook )
+	rescue NoMethodError
+		_make_event_handler
+		retry
 	end
 
 	private
 
+	# Sets @event_handler to a new EventHandler if needed.
+	def _make_event_handler
+		@event_handler = EventHandler.new() if @event_handler.nil?
+	end
 
 	# This method is called by #make_magic_hooks to convert an
 	# object into an event action instance. For example, when
