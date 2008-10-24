@@ -43,12 +43,6 @@ Joystick.activate_all
 # CLOCK  #
 ##########
 
-# Create a new Clock to manage the game framerate
-# so it doesn't use 100% of the CPU
-clock = Clock.new()
-clock.target_framerate = 50
-
-
 # Custom event class to hold information about the
 # clock, created each frame.
 class ClockTicked
@@ -437,12 +431,13 @@ panda2.make_magic_hooks( hooks )
 class Game
 	include EventHandler::HasEventHandler
 
-  attr_reader :queue
+  attr_reader :clock, :queue
 
 	def initialize( screen )
 
 		@screen = screen
 
+    _setup_clock
     _setup_queue
 
 		hooks = {
@@ -515,6 +510,13 @@ class Game
 
   private
 
+  def _setup_clock
+    # Create a new Clock to manage the game framerate
+    # so it doesn't use 100% of the CPU
+    @clock = Clock.new()
+    @clock.target_framerate = 50
+  end
+
 
   def _setup_queue
     # Create EventQueue with autofetch (default) and new-style
@@ -543,7 +545,7 @@ catch(:rubygame_quit) do
 		dirty_rects = pandas.draw(screen)
 		screen.update_rects(dirty_rects)
 
-		$game.queue << ClockTicked.new( clock.tick, clock.framerate )
+		$game.queue << ClockTicked.new( $game.clock.tick, $game.clock.framerate )
 
 	end
 end
