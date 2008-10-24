@@ -5,21 +5,44 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-# This script is messy, but it demonstrates almost all of
-# Rubygame's features, so it acts as a test program to see
-# whether your installation of Rubygame is working.
+
+# 
+# This demo shows a simple example of game structure.
+# It demonstrates how to use (or, one of many ways to use):
+# 
+# * Clock to limit the maximum framerate (to keep CPU usage low)
+# 
+# * Sprites to display player characters on the screen
+# 
+# * EventQueue, EventHandler, and the HasEventHandler mixin to
+#   receive events from the keyboard, joystick, etc.
+# 
+# * A custom Game class to integrate it all and provide the game
+#   structure and main loop.
+# 
+
 
 require "rubygame"
+
+
+# Include these modules so we can type "Surface" instead of
+# "Rubygame::Surface", etc. Purely for convenience/readability.
+
 include Rubygame
 include Rubygame::Events
 include Rubygame::EventActions
 include Rubygame::EventTriggers
 
+
+# Make text we output appear on the console right away.
 $stdout.sync = true
+
 
 # Use smooth scaling/rotating? You can toggle this with S key
 $smooth = false
 
+
+# Make sure everything is set up properly.
 Rubygame.init()
 
 
@@ -29,7 +52,6 @@ $gfx_ok = (VERSIONS[:sdl_gfx] != nil)
 unless ( $gfx_ok )
 	raise "You must have SDL_gfx support to run this demo!"
 end
-
 
 
 # Activate all joysticks so that their button press
@@ -526,4 +548,5 @@ $game.register( pandas, panda1, panda2 )
 # until the user quits the game!
 $game.go
 
+# Make sure everything is cleaned up properly.
 Rubygame.quit()
