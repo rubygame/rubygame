@@ -362,10 +362,10 @@ module Rubygame::EventHandler::HasEventHandler
 		case action
 
 		when Symbol
-			MethodAction.new(action,true)
+			EventActions::MethodAction.new(action,true)
 
 		when Proc, Method
-			BlockAction.new(&action)
+			EventActions::BlockAction.new(&action)
 
 		else
 			if action.respond_to? :perform
@@ -417,13 +417,13 @@ module Rubygame::EventHandler::HasEventHandler
 		when Symbol
 			case(trigger.to_s)
 			when /mouse/
-				MousePressTrigger.new(trigger)
+				EventTriggers::MousePressTrigger.new(trigger)
 			else
-				KeyPressTrigger.new(trigger)
+				EventTriggers::KeyPressTrigger.new(trigger)
 			end
 
 		when Class
-			InstanceOfTrigger.new(trigger)
+			EventTriggers::InstanceOfTrigger.new(trigger)
 
 		else
 			if trigger.respond_to? :match?
