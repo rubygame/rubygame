@@ -514,16 +514,10 @@ class Game
 	end
 
 
-	# Do everything needed for one frame.
-	def step
-		@queue << UndrawSprites.new( @screen, @background )
-		@queue.fetch_sdl_events
-		@queue << DrawSprites.new( @screen )
-		@queue << ClockTicked.new( $game.clock.tick,
-		                           $game.clock.framerate )
-		@queue.each do |event|
-			handle( event )
-		end
+	# Quit the game
+	def quit( event )
+		puts "Quitting!"
+		throw :quit
 	end
 
 
@@ -538,18 +532,25 @@ class Game
 	end
 
 
-
-	# Quit the game
-	def quit( event )
-		puts "Quitting!"
-		throw :quit
+	# Do everything needed for one frame.
+	def step
+		@queue << UndrawSprites.new( @screen, @background )
+		@queue.fetch_sdl_events
+		@queue << DrawSprites.new( @screen )
+		@queue << ClockTicked.new( $game.clock.tick,
+		                           $game.clock.framerate )
+		@queue.each do |event|
+			handle( event )
+		end
 	end
+
 
 	# Toggle smooth effects
 	def toggle_smooth( event )
 		$smooth = !$smooth
 		puts "#{$smooth?'En':'Dis'}abling smooth scale/rotate."
 	end
+
 
 	def update_framerate( event )
 		unless @old_framerate == event.framerate
@@ -558,12 +559,14 @@ class Game
 		end
 	end
 
+
 	def update_screen( event )
 		@screen.update()
 	end
 
 
 	private
+
 
 	def _setup_clock
 		# Create a new Clock to manage the game framerate
