@@ -45,7 +45,7 @@ require 'rubygame'
 # come with Rubygame as of version 2.4:
 # 
 # 
-# AllTrigger::          Holds multiple other triggers, and
+# AndTrigger::          Holds multiple other triggers, and
 #                       matches if ALL of the triggers
 #                       match the event.
 # 
@@ -80,16 +80,16 @@ require 'rubygame'
 module Rubygame::EventTriggers
 
 # 
-# AllTrigger is an event trigger which contains one or
+# AndTrigger is an event trigger which contains one or
 # more other triggers, and fires when an event matches
 # all of its triggers. You can use this to create more
 # complex logic than is possible with a single trigger.
 #
 # Contrast with AnyTrigger.
 # 
-class AllTrigger
+class AndTrigger
 
-	# Initialize a new instance of AllTrigger, containing
+	# Initialize a new instance of AndTrigger, containing
 	# the given triggers.
 	# 
 	# * \*triggers:: The triggers to contain.
@@ -103,14 +103,14 @@ class AllTrigger
 	#   # Matches only an event which is BOTH:
 	#   #  1. an instance of class GameOver, AND
 	#   #  2. returns true when #won_game is called
-	#   AllTrigger.new( gameover_trigger, won_trigger )
+	#   AndTrigger.new( gameover_trigger, won_trigger )
 	# 
 	def initialize( *triggers )
 		@triggers = triggers
 	end
 	
 	# Returns true if the event matches all the triggers
-	# that the AllTrigger contains.
+	# that the AndTrigger contains.
 	# 
 	def match?( event )
 		@triggers.all? { |trigger| trigger.match? event }
@@ -124,7 +124,7 @@ end
 # more other triggers, and fires when an event matches
 # one or more of its triggers.
 # 
-# Contrast with AllTrigger.
+# Contrast with AndTrigger.
 # 
 class AnyTrigger
 
@@ -150,7 +150,7 @@ class AnyTrigger
 	#   changed = InstanceOfTrigger.new( ColorChanged )
 	# 
 	#   changed_to_red_or_blue = 
-	#     AllTrigger.new( changed, is_red_or_blue )
+	#     AndTrigger.new( changed, is_red_or_blue )
 	# 
 	def initialize( *triggers )
 		@triggers = triggers
