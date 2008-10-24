@@ -503,6 +503,17 @@ class Game
 	end
 
   
+	# The "main loop". Repeat the #step method
+	# over and over and over until the user quits.
+	def go
+		catch(:quit) do
+			loop do
+				step
+			end
+		end
+	end
+
+
 	# Do everything needed for one frame.
 	def step
 		@queue << UndrawSprites.new( @screen, @background )
@@ -530,7 +541,8 @@ class Game
 
 	# Quit the game
 	def quit( event )
-		throw :rubygame_quit
+		puts "Quitting!"
+		throw :quit
 	end
 
 	# Toggle smooth effects
@@ -576,12 +588,6 @@ end
 $game = Game.new( screen, background )
 $game.register( pandas, panda1, panda2 )
 
+$game.go
 
-catch(:rubygame_quit) do
-	loop do
-		$game.step
-	end
-end
-
-puts "Quitting!"
 Rubygame.quit()
