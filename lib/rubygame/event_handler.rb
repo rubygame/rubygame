@@ -363,7 +363,7 @@ module Rubygame::EventHandler::HasEventHandler
 		case action
 
 		when Symbol
-			EventActions::MethodAction.new(action)
+			EventActions::MethodAction.new(action,true)
 
 		when Proc, Method
 			EventActions::BlockAction.new(&action)
