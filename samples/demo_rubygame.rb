@@ -18,7 +18,7 @@ include Rubygame::EventTriggers
 $stdout.sync = true
 
 # Use smooth scaling/rotating? You can toggle this with S key
-$smooth = false                 
+$smooth = false
 
 Rubygame.init()
 
@@ -27,7 +27,7 @@ Rubygame.init()
 $gfx_ok = (VERSIONS[:sdl_gfx] != nil)
 
 unless ( $gfx_ok )
-  raise "You must have SDL_gfx support to run this demo!" 
+	raise "You must have SDL_gfx support to run this demo!"
 end
 
 
@@ -56,18 +56,18 @@ end
 
 # Signals sprites to draw themselves on the screen
 class DrawSprites
-  attr_accessor :screen
-  def initialize( screen )
-    @screen = screen
-  end
+	attr_accessor :screen
+	def initialize( screen )
+		@screen = screen
+	end
 end
 
 # Signals sprites to erase themselves from the screen
 class UndrawSprites
-  attr_accessor :screen, :background
-  def initialize( screen, background )
-    @screen, @background = screen, background
-  end
+	attr_accessor :screen, :background
+	def initialize( screen, background )
+		@screen, @background = screen, background
+	end
 end
 
 
@@ -117,7 +117,7 @@ class Panda
 		x,y = @rect.center
 		self.update_image( event.time * 1000.0 )
 		@rect.size = @image.size
-		
+
 		base = @speed * event.time
 		@rect.centerx = x + @vx * base
 		@rect.centery = y + @vy * base
@@ -199,14 +199,14 @@ pandas.push(panda1,panda2,panda3)
 class << pandas
 	include EventHandler::HasEventHandler
 
-  def do_draw( event )
+	def do_draw( event )
 		dirty_rects = draw( event.screen )
 		event.screen.update_rects(dirty_rects)
-  end
+	end
 
-  def do_undraw( event )
-    undraw( event.screen, event.background )
-  end
+	def do_undraw( event )
+		undraw( event.screen, event.background )
+	end
 end
 
 pandas.make_magic_hooks( ClockTicked   => :update,
@@ -309,7 +309,7 @@ end
 # quite match.
 #
 # It sure would be nice if SDL_gfx had anti-aliased solid shapes...
-# 
+#
 def draw_antialiased_filled_ellipse( background )
 	background.draw_ellipse_s([200,150],[30,25], :beige )
 	background.draw_ellipse_a([200,150],[30,25], :beige )
@@ -464,19 +464,19 @@ panda2.make_magic_hooks( hooks )
 # from the queue and handles them, sometimes performing
 # its own action (e.g. Escape key = quit), but also
 # passing the events to the pandas to handle.
-# 
+#
 class Game
 	include EventHandler::HasEventHandler
 
-  attr_reader :clock, :queue
+	attr_reader :clock, :queue
 
 	def initialize( screen, background )
 
 		@screen = screen
 		@background = background
 
-    _setup_clock
-    _setup_queue
+		_setup_clock
+		_setup_queue
 
 		hooks = {
 			:escape  =>  :quit,
@@ -502,7 +502,7 @@ class Game
 
 	end
 
-  
+
 	# The "main loop". Repeat the #step method
 	# over and over and over until the user quits.
 	def go
@@ -563,24 +563,24 @@ class Game
 	end
 
 
-  private
+	private
 
-  def _setup_clock
-    # Create a new Clock to manage the game framerate
-    # so it doesn't use 100% of the CPU
-    @clock = Clock.new()
-    @clock.target_framerate = 50
-  end
+	def _setup_clock
+		# Create a new Clock to manage the game framerate
+		# so it doesn't use 100% of the CPU
+		@clock = Clock.new()
+		@clock.target_framerate = 50
+	end
 
 
-  def _setup_queue
-    # Create EventQueue with new-style events (added in Rubygame 2.4)
-    @queue = EventQueue.new()
-    @queue.enable_new_style_events
+	def _setup_queue
+		# Create EventQueue with new-style events (added in Rubygame 2.4)
+		@queue = EventQueue.new()
+		@queue.enable_new_style_events
 
-    # Don't care about mouse movement, so let's ignore it.
-    @queue.ignore = [MouseMoved]
-  end
+		# Don't care about mouse movement, so let's ignore it.
+		@queue.ignore = [MouseMoved]
+	end
 
 end
 
