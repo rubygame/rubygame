@@ -12,6 +12,7 @@
 require "rubygame"
 include Rubygame
 include Rubygame::Events
+include Rubygame::EventActions
 include Rubygame::EventTriggers
 
 $stdout.sync = true
@@ -300,6 +301,25 @@ panda2.make_magic_hooks( hooks )
 
 
 
+class Game
+	include EventHandler::HasEventHandler
+
+	# Register the object to receive all events.
+	# Events will be passed to the object's #handle method.
+	def register( *objects )
+		objects.each do |object|
+			append_hook( :owner   => object,
+									 :trigger => YesTrigger.new,
+									 :action  => MethodAction.new(:handle) )
+		end
+	end
+
+end
+
+
+$game = Game.new
+$game.register( panda1, panda2 )
+
 
 catch(:rubygame_quit) do
 	loop do
@@ -333,8 +353,7 @@ catch(:rubygame_quit) do
 				puts "click: [%d,%d]"%event.pos
 			end
 
-			panda1.handle( event )
-			panda2.handle( event )
+			$game.handle( event )
 
 		end
 
