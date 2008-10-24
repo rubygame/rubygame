@@ -11,6 +11,7 @@
 
 require "rubygame"
 include Rubygame
+include Rubygame::Events
 
 $stdout.sync = true
 
@@ -20,7 +21,8 @@ $smooth = false
 Rubygame.init()
 
 queue = EventQueue.new() # new EventQueue with autofetch
-queue.ignore = [MouseMotionEvent]
+queue.enable_new_style_events
+queue.ignore = [MouseMoved]
 clock = Clock.new()
 clock.target_framerate = 50
 
@@ -200,13 +202,16 @@ b.set_alpha(123)# approx. half transparent
 b.blit(background,[20,40])
 background.blit(screen,[0,0])
 
+
 # Refresh the screen once. During the loop, we'll use 'dirty rect' updating
 # to refresh only the parts of the screen that have changed.
 screen.update()
 
-if Joystick.num_joysticks > 0
-	Joystick.new(0)  # So that joystick events will appear on the queue
-end
+
+# Activate all joysticks so that their button press
+# events, etc. appear in the event queue.
+Joystick.activate_all
+
 
 update_time = 0
 framerate = 0
@@ -215,68 +220,80 @@ catch(:rubygame_quit) do
 	loop do
 		queue.each do |event|
 			case event
-			when KeyDownEvent
+
+			when KeyPressed
 				case event.key
-				when K_ESCAPE
+				when :escape
 					throw :rubygame_quit 
-				when K_Q
+				when :q
 					throw :rubygame_quit 
-				when K_UP
+				when :up
 					panda1.vy = -1
-				when K_DOWN
+				when :down
 					panda1.vy = 1
-				when K_LEFT
+				when :left
 					panda1.vx = -1
-				when K_RIGHT
+				when :right
 					panda1.vx = 1
-				when K_S
+				when :s
 					$smooth = !$smooth
 					puts "#{$smooth?'En':'Dis'}abling smooth scale/rotate."
 				else
 					print "%s"%[event.string]
 				end
-			when KeyUpEvent
+
+			when KeyReleased
 				case event.key
-				when K_UP
+				when :up
 					panda1.vy = 0
-				when K_DOWN
+				when :down
 					panda1.vy = 0
-				when K_LEFT
+				when :left
 					panda1.vx = 0
-				when K_RIGHT
+				when :right
 					panda1.vx = 0
 				end
-			when ActiveEvent
+
+
+			when InputFocusGained, WindowUnminimized, WindowExposed
 				# ActiveEvent appears when the window gains or loses focus.
 				# This helps to ensure everything is refreshed after the Rubygame
 				# window has been covered up by a different window.
 				screen.update()
-			when QuitEvent
+
+			when QuitRequested
 				throw :rubygame_quit
-			when MouseDownEvent
+
+
+			when MousePressed
 				puts "click: [%d,%d]"%event.pos
-			when JoyDownEvent
+
+
+			when JoystickButtonPressed
 				case event.button
 				when 4; panda1.speed = 80
 				when 5; panda2.speed = 80
 				end
 				#puts "jdown: %d"%[event.button]
-			when JoyUpEvent
+
+			when JoystickButtonReleased
 				case event.button
 				when 4; panda1.speed = 40
 				when 5; panda2.speed = 40
 				end
 				#puts "jup: %d"%[event.button]
-			when JoyAxisEvent
-				# max = 32767
+
+
+			when JoystickAxisMoved
 				case(event.axis)
-				when 0; panda1.vx = event.value / 32767.0
-				when 1; panda1.vy = event.value / 32767.0
-				when 2; panda2.vx = event.value / 32767.0
-				when 3; panda2.vy = event.value / 32767.0
+				when 0; panda1.vx = event.value
+				when 1; panda1.vy = event.value
+				when 2; panda2.vx = event.value
+				when 3; panda2.vy = event.value
 				end
 				#puts "jaxis: %d %d"%[event.axis,event.value]
 			end
+
 		end
 
 		pandas.undraw(screen,background)
