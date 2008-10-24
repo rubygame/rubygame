@@ -391,9 +391,9 @@ class Game
 		@screen = screen
 		@background = background
 
-		_setup_clock
-		_setup_queue
-		_setup_event_hooks
+		setup_clock()
+		setup_queue()
+		setup_event_hooks()
 
 	end
 
@@ -409,13 +409,6 @@ class Game
 	end
 
 
-	# Quit the game
-	def quit( event )
-		puts "Quitting!"
-		throw :quit
-	end
-
-
 	# Register the object to receive all events.
 	# Events will be passed to the object's #handle method.
 	def register( *objects )
@@ -424,6 +417,66 @@ class Game
 									 :trigger => YesTrigger.new,
 									 :action  => MethodAction.new(:handle) )
 		end
+	end
+
+
+	private
+
+
+	# Quit the game
+	def quit( event )
+		puts "Quitting!"
+		throw :quit
+	end
+
+
+	# Create a new Clock to manage the game framerate
+	# so it doesn't use 100% of the CPU
+	def setup_clock
+		@clock = Clock.new()
+		@clock.target_framerate = 50
+	end
+
+
+	# Set up the event hooks to perform actions in
+	# response to certain events.
+	def setup_event_hooks
+		hooks = {
+			:escape  =>  :quit,
+			:q       =>  :quit,
+			:s       =>  :toggle_smooth,
+
+			QuitRequested     =>  :quit,
+
+			# Tell the user where they clicked.
+			MousePressed      => proc { |owner, event|
+			                       puts "click: [%d,%d]"%event.pos
+			                     },
+
+			# These help to ensure everything is refreshed after the
+			# Rubygame window has been covered up by a different window.
+			InputFocusGained  => :update_screen,
+			WindowUnminimized => :update_screen,
+			WindowExposed     => :update_screen,
+
+			# Refresh the window title.
+			ClockTicked       => :update_framerate
+		}
+
+		make_magic_hooks( hooks )
+	end
+
+
+	# Create an EventQueue to take events from the keyboard, etc.
+	# The events are taken from the queue and passed to objects
+	# as part of the main loop.
+	def setup_queue
+		# Create EventQueue with new-style events (added in Rubygame 2.4)
+		@queue = EventQueue.new()
+		@queue.enable_new_style_events
+
+		# Don't care about mouse movement, so let's ignore it.
+		@queue.ignore = [MouseMoved]
 	end
 
 
@@ -459,59 +512,6 @@ class Game
 	# Refresh the whole screen.
 	def update_screen( event )
 		@screen.update()
-	end
-
-
-	private
-
-
-	# Create a new Clock to manage the game framerate
-	# so it doesn't use 100% of the CPU
-	def _setup_clock
-		@clock = Clock.new()
-		@clock.target_framerate = 50
-	end
-
-
-	# Set up the event hooks to perform actions in
-	# response to certain events.
-	def _setup_event_hooks
-		hooks = {
-			:escape  =>  :quit,
-			:q       =>  :quit,
-			:s       =>  :toggle_smooth,
-
-			QuitRequested     =>  :quit,
-
-			# Tell the user where they clicked.
-			MousePressed      => proc { |owner, event|
-			                       puts "click: [%d,%d]"%event.pos
-			                     },
-
-			# These help to ensure everything is refreshed after the
-			# Rubygame window has been covered up by a different window.
-			InputFocusGained  => :update_screen,
-			WindowUnminimized => :update_screen,
-			WindowExposed     => :update_screen,
-
-			# Refresh the window title.
-			ClockTicked       => :update_framerate
-		}
-
-		make_magic_hooks( hooks )
-	end
-
-
-	# Create an EventQueue to take events from the keyboard, etc.
-	# The events are taken from the queue and passed to objects
-	# as part of the main loop.
-	def _setup_queue
-		# Create EventQueue with new-style events (added in Rubygame 2.4)
-		@queue = EventQueue.new()
-		@queue.enable_new_style_events
-
-		# Don't care about mouse movement, so let's ignore it.
-		@queue.ignore = [MouseMoved]
 	end
 
 end
