@@ -33,6 +33,18 @@ unless ($gfx_ok = (VERSIONS[:sdl_gfx] != nil))
 end
 
 
+# Custom event class to hold information about the
+# clock, created each frame.
+class ClockTicked
+	attr_reader :time, :framerate
+
+	def initialize( ms, framerate )
+		@time = ms / 1000.0
+		@framerate = framerate
+	end
+end
+
+
 # Set up autoloading for Surfaces. Surfaces will be loaded automatically
 # the first time you use Surface["filename"]. Check out the docs for
 # Rubygame::NamedResource for more info about that.
@@ -55,18 +67,21 @@ class Panda
 		@speed = 40
 		@image = @@pandapic
 		@rect = Rect.new(x,y,*@@pandapic.size)
+
+		make_magic_hooks( ClockTicked => :update )
+
 	end
 
 	def update_image(time)
 		# do nothing in base class, rotate/zoom image in subs
 	end
 
-	def update(time)
+	def update( event )
 		x,y = @rect.center
-		self.update_image(time)
+		self.update_image( event.time * 1000.0 )
 		@rect.size = @image.size
 		
-		base = @speed * time/1000.0
+		base = @speed * event.time
 		@rect.centerx = x + @vx * base
 		@rect.centery = y + @vy * base
 	end
@@ -301,17 +316,6 @@ panda2.make_magic_hooks( hooks )
 
 
 
-class ClockTicked
-	attr_reader :time, :framerate
-
-	def initialize( ms, framerate )
-		@time = ms / 1000.0
-		@framerate = framerate
-	end
-end
-
-
-
 class Game
 	include EventHandler::HasEventHandler
 
@@ -379,24 +383,24 @@ end
 
 
 $game = Game.new( screen )
-$game.register( panda1, panda2 )
+$game.register( panda1, panda2, panda3 )
 
 
 catch(:rubygame_quit) do
 	loop do
+
+		pandas.undraw(screen,background)
+
 		queue.each do |event|
 
 			$game.handle( event )
 
 		end
 
-		pandas.undraw(screen,background)
-		pandas.update(update_time)
 		dirty_rects = pandas.draw(screen)
 		screen.update_rects(dirty_rects)
 
-		update_time = clock.tick
-		queue << ClockTicked.new( update_time, clock.framerate )
+		queue << ClockTicked.new( clock.tick, clock.framerate )
 
 	end
 end
