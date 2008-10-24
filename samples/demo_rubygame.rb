@@ -470,9 +470,10 @@ class Game
 
   attr_reader :clock, :queue
 
-	def initialize( screen )
+	def initialize( screen, background )
 
 		@screen = screen
+		@background = background
 
     _setup_clock
     _setup_queue
@@ -502,12 +503,17 @@ class Game
 	end
 
   
-  # Check for new events and handle them.
-  def check_events
+	# Do everything needed for one frame.
+	def step
+		@queue << UndrawSprites.new( @screen, @background )
+		@queue.fetch_sdl_events
+		@queue << DrawSprites.new( @screen )
+		@queue << ClockTicked.new( $game.clock.tick,
+		                           $game.clock.framerate )
 		@queue.each do |event|
 			handle( event )
 		end
-  end
+	end
 
 
 	# Register the object to receive all events.
@@ -556,8 +562,7 @@ class Game
 
 
   def _setup_queue
-    # Create EventQueue with autofetch (default) and new-style
-    # events (added in Rubygame 2.4)
+    # Create EventQueue with new-style events (added in Rubygame 2.4)
     @queue = EventQueue.new()
     @queue.enable_new_style_events
 
@@ -568,22 +573,13 @@ class Game
 end
 
 
-$game = Game.new( screen )
-$game.register( panda1, panda2, panda3 )
+$game = Game.new( screen, background )
+$game.register( pandas, panda1, panda2 )
 
 
 catch(:rubygame_quit) do
 	loop do
-
-		pandas.handle( UndrawSprites.new(screen,background) )
-
-    $game.check_events
-
-    pandas.handle( DrawSprites.new(screen) )
-
-		pandas.handle( ClockTicked.new( $game.clock.tick,
-		                                $game.clock.framerate ) )
-
+		$game.step
 	end
 end
 
