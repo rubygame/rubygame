@@ -91,6 +91,9 @@ Surface.autoload_dirs = [ File.dirname(__FILE__) ]
 # PANDA CLASSES #
 #################
 
+
+# Base class for our panda sprites. This provides the core
+# logic for initialization and movement of the sprites.
 class Panda
 	include Sprites::Sprite
 	include EventHandler::HasEventHandler
@@ -126,6 +129,9 @@ class Panda
 end
 
 
+# A panda that spins around and around. The update_image
+# method is called once per frame to generate the new
+# image (in this case by rotating the original image).
 class SpinnyPanda < Panda
 	attr_accessor :rate
 	def initialize(x,y,rate=0.1)
@@ -141,6 +147,8 @@ class SpinnyPanda < Panda
 end
 
 
+# A panda that grows and shrinks in size. Like the other
+# panda classes, it updates its image every frame.
 class ExpandaPanda < Panda
 	attr_accessor :rate
 	def initialize(x,y,rate=0.1)
@@ -157,6 +165,8 @@ class ExpandaPanda < Panda
 end
 
 
+# A panda that wobbles and jiggles. Like the other
+# panda classes, it updates its image every frame.
 class WobblyPanda < Panda
 	attr_accessor :rate
 	def initialize(x,y,rate=0.1)
@@ -179,6 +189,8 @@ panda1 = SpinnyPanda.new(100,50)
 panda2 = ExpandaPanda.new(150,50)
 panda3 = WobblyPanda.new(200,50,0.5)
 
+# Set their depths. This affects which one appears in front
+# of the other in case they overlap.
 panda1.depth = 0        # in between the others
 panda2.depth = 10       # behind both of the others
 panda3.depth = -10      # in front of both of the others
@@ -191,19 +203,28 @@ panda3.depth = -10      # in front of both of the others
 ###############
 
 
+# Create a spritegroup to manage the pandas.
 pandas = Sprites::Group.new
 pandas.extend(Sprites::UpdateGroup)
 pandas.extend(Sprites::DepthSortGroup)
+
+# Add the pandas to the group.
 pandas.push(panda1,panda2,panda3)
 
+
+# Extend the pandas group with event hooks.
 class << pandas
 	include EventHandler::HasEventHandler
 
+	# Draw all the sprites and refresh
+	# those parts of the screen
 	def do_draw( event )
 		dirty_rects = draw( event.screen )
 		event.screen.update_rects(dirty_rects)
 	end
 
+	# Erase the sprites from the screen by
+	# drawing over them with the background.
 	def do_undraw( event )
 		undraw( event.screen, event.background )
 	end
@@ -447,6 +468,7 @@ class Game
 	end
 
 
+	# Update the window title to display the current framerate.
 	def update_framerate( event )
 		unless @old_framerate == event.framerate
 			@screen.title = "Rubygame test [%d fps]"%event.framerate
@@ -455,6 +477,7 @@ class Game
 	end
 
 
+	# Refresh the whole screen.
 	def update_screen( event )
 		@screen.update()
 	end
@@ -463,14 +486,17 @@ class Game
 	private
 
 
+	# Create a new Clock to manage the game framerate
+	# so it doesn't use 100% of the CPU
 	def _setup_clock
-		# Create a new Clock to manage the game framerate
-		# so it doesn't use 100% of the CPU
 		@clock = Clock.new()
 		@clock.target_framerate = 50
 	end
 
 
+	# Create an EventQueue to take events from the keyboard, etc.
+	# The events are taken from the queue and passed to objects
+	# as part of the main loop.
 	def _setup_queue
 		# Create EventQueue with new-style events (added in Rubygame 2.4)
 		@queue = EventQueue.new()
@@ -484,8 +510,12 @@ end
 
 
 $game = Game.new( screen, background )
+
+# Register the pandas to receive events.
 $game.register( pandas, panda1, panda2 )
 
+# Start the main game loop. It will repeat forever
+# until the user quits the game!
 $game.go
 
 Rubygame.quit()
