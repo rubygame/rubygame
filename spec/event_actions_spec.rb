@@ -62,55 +62,30 @@ end
 
 
 
-describe MethodAction, "without pass_event" do 
+describe MethodAction do 
 	
 	before :each do 
 		@owner = mock("owner")
-		@action = MethodAction.new( :foo, false )
+		@action = MethodAction.new( :foo )
 	end
 	
 	it_should_behave_like "an event action"
 	
-	it "#perform should call the owner's method with no args" do 
-		@owner.should_receive( :foo ).with( no_args )
-		@action.perform( @owner, :event )
-	end
-	
-end
-
-
-describe MethodAction, "with pass_event" do 
-	
-	before :each do 
-		@owner = mock("owner")
-		@action = MethodAction.new( :foo, true )
-	end
-	
-	it_should_behave_like "an event action"
-	
-	it "#perform should call the owner's method with 1 arg" do 
+	it "should call the owner's method with the event" do 
 		@owner.should_receive( :foo ).with( :event )
 		@action.perform( @owner, :event )
 	end
-	
-end
 
+	describe "with a method that takes no arg" do
 
-describe MethodAction, "with pass_event to method that takes no args" do 
-	
-	before :each do 
-		@owner = mock("owner")
-		@action = MethodAction.new( :foo, true )
+		it "should retry with no args" do 
+			@owner.should_receive( :foo ).with( :event ).ordered.and_raise( ArgumentError )
+			@owner.should_receive( :foo ).with( no_args ).ordered
+			@action.perform( @owner, :event )
+		end
+
 	end
-	
-	it_should_behave_like "an event action"
 
-	it "#perform should call the method with arg (fails), then with no arg" do 
-		@owner.should_receive( :foo ).with( :event ).ordered.and_raise( ArgumentError )
-		@owner.should_receive( :foo ).with( no_args ).ordered
-		@action.perform( @owner, :event )
-	end
-		
 end
 
 
@@ -121,7 +96,7 @@ describe MultiAction do
 	before :each do 
 		@owner = mock("owner")
 
-		action1 = MethodAction.new( :foo, true )
+		action1 = MethodAction.new( :foo )
 		action2 = BlockAction.new { |owner,event| owner.bar(event) }
 		@action = MultiAction.new( action1, action2 )
 	end

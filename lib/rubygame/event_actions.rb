@@ -119,8 +119,8 @@ end
 
 # MethodAction is an event action used with EventHook.
 # MethodAction takes a symbol giving the name of a method. When
-# it is performed, it calls that method on the owner, optionally
-# passing it the event that triggered the hook.
+# it is performed, it calls that method on the owner, passing
+# it the event that triggered the hook.
 # 
 # Example:
 # 
@@ -142,33 +142,26 @@ class MethodAction
 	# 
 	# method_name::  the method to call when performing.
 	#                (Symbol, required)
-	# pass_event::   whether to pass the event as an argument to
-	#                the method. If false, the method is called
-	#                with no arguments. (true or false, optional.
-	#                Default: true)
 	# 
-	def initialize( method_name, pass_event=true )
+	def initialize( method_name )
 		@method_name = method_name
-		@pass_event = pass_event
 	end
 
 
-	# Call the method of the owner represented by @method_name.
+	# Call the method of the owner represented by @method_name,
+	# passing in the event as the only argument.
 	# 
-	# If @pass_event is true, the method is called with the event as the
-	# only argument. If @pass_event is false, the method is called with
-	# no arguments.
+	# If that causes ArgumentError (e.g. because the method doesn't
+	# take an argument), calls again without any arguments.
 	# 
-	# If @pass_event is true, but the method does not accept the
-	# argument, the method is tried again with no argument.
+	# If that also fails, this method re-raises the original error.
 	# 
 	def perform( owner, event )
-		method = owner.method(@method_name)
-		@pass_event ? method.call( event ) : method.call()
+		owner.method(@method_name).call( event )
 	rescue ArgumentError => s
 		begin
 			# Oops! Try again, without any argument.
-			method.call()
+			owner.method(@method_name).call()
 		rescue ArgumentError
 			# That didn't work either. Raise the original error.
 			raise s
