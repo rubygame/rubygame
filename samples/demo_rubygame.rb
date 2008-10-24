@@ -32,20 +32,6 @@ end
 
 
 
-
-###############
-# EVENT QUEUE #
-###############
-
-# Create EventQueue with autofetch (default) and new-style
-# events (added in Rubygame 2.4)
-queue = EventQueue.new()
-queue.enable_new_style_events
-
-# Don't care about mouse movement, so let's ignore it.
-queue.ignore = [MouseMoved]
-
-
 # Activate all joysticks so that their button press
 # events, etc. appear in the event queue.
 Joystick.activate_all
@@ -451,9 +437,13 @@ panda2.make_magic_hooks( hooks )
 class Game
 	include EventHandler::HasEventHandler
 
+  attr_reader :queue
+
 	def initialize( screen )
 
 		@screen = screen
+
+    _setup_queue
 
 		hooks = {
 			:escape  =>  :quit,
@@ -479,6 +469,15 @@ class Game
 
 	end
 
+  
+  # Check for new events and handle them.
+  def check_events
+		@queue.each do |event|
+			handle( event )
+		end
+  end
+
+
 	# Register the object to receive all events.
 	# Events will be passed to the object's #handle method.
 	def register( *objects )
@@ -488,6 +487,8 @@ class Game
 									 :action  => MethodAction.new(:handle) )
 		end
 	end
+
+
 
 	# Quit the game
 	def quit( event )
@@ -511,6 +512,20 @@ class Game
 		@screen.update()
 	end
 
+
+  private
+
+
+  def _setup_queue
+    # Create EventQueue with autofetch (default) and new-style
+    # events (added in Rubygame 2.4)
+    @queue = EventQueue.new()
+    @queue.enable_new_style_events
+
+    # Don't care about mouse movement, so let's ignore it.
+    @queue.ignore = [MouseMoved]
+  end
+
 end
 
 
@@ -523,16 +538,12 @@ catch(:rubygame_quit) do
 
 		pandas.undraw(screen,background)
 
-		queue.each do |event|
-
-			$game.handle( event )
-
-		end
+    $game.check_events
 
 		dirty_rects = pandas.draw(screen)
 		screen.update_rects(dirty_rects)
 
-		queue << ClockTicked.new( clock.tick, clock.framerate )
+		$game.queue << ClockTicked.new( clock.tick, clock.framerate )
 
 	end
 end
