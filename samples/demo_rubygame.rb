@@ -446,7 +446,7 @@ class Game
 
 
 	# Quit the game
-	def quit( event )
+	def quit
 		puts "Quitting!"
 		throw :quit
 	end
@@ -516,7 +516,7 @@ class Game
 
 
 	# Toggle smooth effects
-	def toggle_smooth( event )
+	def toggle_smooth
 		$smooth = !$smooth
 		puts "#{$smooth?'En':'Dis'}abling smooth scale/rotate."
 	end
@@ -532,7 +532,7 @@ class Game
 
 
 	# Refresh the whole screen.
-	def update_screen( event )
+	def update_screen
 		@screen.update()
 	end
 
