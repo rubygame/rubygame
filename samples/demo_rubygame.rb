@@ -393,28 +393,7 @@ class Game
 
 		_setup_clock
 		_setup_queue
-
-		hooks = {
-			:escape  =>  :quit,
-			:q       =>  :quit,
-			:s       =>  :toggle_smooth,
-
-			QuitRequested     =>  :quit,
-
-			MousePressed      => proc { |owner, event|
-			                       puts "click: [%d,%d]"%event.pos
-			                     },
-
-			# These help to ensure everything is refreshed after the
-			# Rubygame window has been covered up by a different window.
-			InputFocusGained  => :update_screen,
-			WindowUnminimized => :update_screen,
-			WindowExposed     => :update_screen,
-
-			ClockTicked       => :update_framerate
-		}
-
-		make_magic_hooks( hooks )
+		_setup_event_hooks
 
 	end
 
@@ -491,6 +470,35 @@ class Game
 	def _setup_clock
 		@clock = Clock.new()
 		@clock.target_framerate = 50
+	end
+
+
+	# Set up the event hooks to perform actions in
+	# response to certain events.
+	def _setup_event_hooks
+		hooks = {
+			:escape  =>  :quit,
+			:q       =>  :quit,
+			:s       =>  :toggle_smooth,
+
+			QuitRequested     =>  :quit,
+
+			# Tell the user where they clicked.
+			MousePressed      => proc { |owner, event|
+			                       puts "click: [%d,%d]"%event.pos
+			                     },
+
+			# These help to ensure everything is refreshed after the
+			# Rubygame window has been covered up by a different window.
+			InputFocusGained  => :update_screen,
+			WindowUnminimized => :update_screen,
+			WindowExposed     => :update_screen,
+
+			# Refresh the window title.
+			ClockTicked       => :update_framerate
+		}
+
+		make_magic_hooks( hooks )
 	end
 
 
