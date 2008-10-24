@@ -49,9 +49,9 @@ require 'rubygame'
 #                       matches if ALL of the triggers
 #                       match the event.
 # 
-# AnyTrigger::          Holds multiple other triggers, and
-#                       matches if ANY of the triggers
-#                       match the event.
+# OrTrigger::           Holds multiple other triggers, and
+#                       matches if ONE OR MORE of the
+#                       triggers match the event.
 # 
 # AttrTrigger::         Matches if the event's attributes
 #                       have the expected values.
@@ -85,7 +85,7 @@ module Rubygame::EventTriggers
 # all of its triggers. You can use this to create more
 # complex logic than is possible with a single trigger.
 #
-# Contrast with AnyTrigger.
+# Contrast with OrTrigger.
 # 
 class AndTrigger
 
@@ -120,15 +120,15 @@ end
 
 
 # 
-# AnyTrigger is an event trigger which contains one or
+# OrTrigger is an event trigger which contains one or
 # more other triggers, and fires when an event matches
 # one or more of its triggers.
 # 
 # Contrast with AndTrigger.
 # 
-class AnyTrigger
+class OrTrigger
 
-	# Initialize a new instance of AnyTrigger, containing
+	# Initialize a new instance of OrTrigger, containing
 	# the given triggers.
 	# 
 	# * \*triggers:: The triggers to contain.
@@ -142,7 +142,7 @@ class AnyTrigger
 	#   # Matches only an event which has EITHER:
 	#   #  1. #color == :red, OR
 	#   #  2. #color == :blue
-	#   is_red_or_blue = AnyTrigger.new( is_red, is_blue )
+	#   is_red_or_blue = OrTrigger.new( is_red, is_blue )
 	# 
 	# 
 	#   # More complex example with nested logic triggers:
@@ -157,7 +157,7 @@ class AnyTrigger
 	end
 	
 	# Returns true if the event matches one or more of 
-	# the triggers that the AnyTrigger contains.
+	# the triggers that the OrTrigger contains.
 	# 
 	def match?( event )
 		@triggers.any? { |trigger| trigger.match? event }
@@ -585,8 +585,8 @@ class MouseMoveTrigger
 	#    
 	#    
 	#    # Matches if EITHER left OR right mouse are held down:
-	#    AnyTrigger.new( MouseMoveTrigger.new(:mouse_left),
-	#                    MouseMoveTrigger.new(:mouse_right) )
+	#    OrTrigger.new( MouseMoveTrigger.new(:mouse_left),
+	#                   MouseMoveTrigger.new(:mouse_right) )
 	# 
 	# 
 	def initialize( buttons=:any )

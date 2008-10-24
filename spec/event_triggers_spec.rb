@@ -59,12 +59,12 @@ end
 
 
 
-describe AnyTrigger do 
+describe OrTrigger do 
 	
 	before :each do 
 		trigger1 = InstanceOfTrigger.new(FakeEvent)
 		trigger2 = AttrTrigger.new( :a => 0.5 )
-		@trigger = AnyTrigger.new( trigger1, trigger2 )
+		@trigger = OrTrigger.new( trigger1, trigger2 )
 	end
 	
 	it_should_behave_like "an event trigger"
