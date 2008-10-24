@@ -12,6 +12,7 @@
 require "rubygame"
 include Rubygame
 include Rubygame::Events
+include Rubygame::EventTriggers
 
 $stdout.sync = true
 
@@ -40,11 +41,12 @@ Surface.autoload_dirs = [ File.dirname(__FILE__) ]
 
 class Panda
 	include Sprites::Sprite
-  
-  # Autoload the "panda.png" image and set its colorkey
+	include EventHandler::HasEventHandler
+
+	# Autoload the "panda.png" image and set its colorkey
 	@@pandapic = Surface["panda.png"]
 	@@pandapic.set_colorkey(@@pandapic.get_at(0,0))
-  
+
 	attr_accessor :vx, :vy, :speed
 	def initialize(x,y)
 		super()
@@ -216,6 +218,89 @@ Joystick.activate_all
 update_time = 0
 framerate = 0
 
+
+# Factory methods for creating event triggers
+
+# Returns a trigger that matches the released key event
+def released( key )
+	return KeyReleaseTrigger.new( key )
+end
+
+
+# Returns a trigger that matches the joystick axis event.
+# There are no built-in joystick event triggers in Rubygame
+# yet, sorry.
+def joyaxis( axis )
+	return AndTrigger.new( InstanceOfTrigger.new( JoystickAxisMoved ),
+	                       AttrTrigger.new(:joystick_id => 0,
+	                                       :axis => axis))
+end
+
+
+# Returns a trigger that matches the joystick button press event.
+def joypressed( button )
+	return AndTrigger.new( InstanceOfTrigger.new( JoystickButtonPressed ),
+	                       AttrTrigger.new(:joystick_id => 0,
+	                                       :button => button))
+end
+
+
+# Returns a trigger that matches the joystick button press event.
+def joyreleased( button )
+	return AndTrigger.new( InstanceOfTrigger.new( JoystickButtonReleased ),
+	                       AttrTrigger.new(:joystick_id => 0,
+	                                       :button => button))
+end
+
+
+#######################
+# PANDA 1 EVENT HOOKS #
+#######################
+
+hooks = {
+	# Start moving when an arrow key is pressed
+	:up    =>  proc { |owner, event| owner.vy = -1 },
+	:down  =>  proc { |owner, event| owner.vy =  1 },
+	:left  =>  proc { |owner, event| owner.vx = -1 },
+	:right =>  proc { |owner, event| owner.vx =  1 },
+
+	# Stop moving when the arrow key is released
+	released( :up    ) =>  proc { |owner, event| owner.vy = 0 },
+	released( :down  ) =>  proc { |owner, event| owner.vy = 0 },
+	released( :left  ) =>  proc { |owner, event| owner.vx = 0 },
+	released( :right ) =>  proc { |owner, event| owner.vx = 0 },
+
+	# Move according to how far the joystick axis is moved
+	joyaxis( 0 ) =>  proc { |owner, event| owner.vx = event.value },
+	joyaxis( 1 ) =>  proc { |owner, event| owner.vy = event.value },
+
+	# Fast speed when button is pressed, normal speed when released
+	joypressed(  4 ) => proc { |owner, event| owner.speed *= 2.0 },
+	joyreleased( 4 ) => proc { |owner, event| owner.speed *= 0.5 }
+}
+
+panda1.make_magic_hooks( hooks )
+
+
+#######################
+# PANDA 2 EVENT HOOKS #
+#######################
+
+hooks = {
+	# Move according to how far the joystick axis is moved
+	joyaxis( 2 ) =>  proc { |owner, event| owner.vx = event.value },
+	joyaxis( 3 ) =>  proc { |owner, event| owner.vy = event.value },
+
+	# Fast speed when button is pressed, normal speed when released
+	joypressed(  5 ) => proc { |owner, event| owner.speed *= 2.0 },
+	joyreleased( 5 ) => proc { |owner, event| owner.speed *= 0.5 }
+}
+
+panda2.make_magic_hooks( hooks )
+
+
+
+
 catch(:rubygame_quit) do
 	loop do
 		queue.each do |event|
@@ -227,33 +312,13 @@ catch(:rubygame_quit) do
 					throw :rubygame_quit 
 				when :q
 					throw :rubygame_quit 
-				when :up
-					panda1.vy = -1
-				when :down
-					panda1.vy = 1
-				when :left
-					panda1.vx = -1
-				when :right
-					panda1.vx = 1
 				when :s
 					$smooth = !$smooth
 					puts "#{$smooth?'En':'Dis'}abling smooth scale/rotate."
 				else
 					print "%s"%[event.string]
-				end
 
-			when KeyReleased
-				case event.key
-				when :up
-					panda1.vy = 0
-				when :down
-					panda1.vy = 0
-				when :left
-					panda1.vx = 0
-				when :right
-					panda1.vx = 0
 				end
-
 
 			when InputFocusGained, WindowUnminimized, WindowExposed
 				# ActiveEvent appears when the window gains or loses focus.
@@ -264,35 +329,12 @@ catch(:rubygame_quit) do
 			when QuitRequested
 				throw :rubygame_quit
 
-
 			when MousePressed
 				puts "click: [%d,%d]"%event.pos
-
-
-			when JoystickButtonPressed
-				case event.button
-				when 4; panda1.speed = 80
-				when 5; panda2.speed = 80
-				end
-				#puts "jdown: %d"%[event.button]
-
-			when JoystickButtonReleased
-				case event.button
-				when 4; panda1.speed = 40
-				when 5; panda2.speed = 40
-				end
-				#puts "jup: %d"%[event.button]
-
-
-			when JoystickAxisMoved
-				case(event.axis)
-				when 0; panda1.vx = event.value
-				when 1; panda1.vy = event.value
-				when 2; panda2.vx = event.value
-				when 3; panda2.vy = event.value
-				end
-				#puts "jaxis: %d %d"%[event.axis,event.value]
 			end
+
+			panda1.handle( event )
+			panda2.handle( event )
 
 		end
 
