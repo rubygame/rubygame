@@ -304,6 +304,25 @@ panda2.make_magic_hooks( hooks )
 class Game
 	include EventHandler::HasEventHandler
 
+	def initialize
+		super()                     # set up @event_handler
+
+		hooks = {
+			:escape  =>  :quit,
+			:q       =>  :quit,
+			:s       =>  :toggle_smooth,
+
+			QuitRequested     =>  :quit,
+
+			MousePressed      => proc { |owner, event|
+			                       puts "click: [%d,%d]"%event.pos
+			                     },
+		}
+
+		make_magic_hooks( hooks )
+
+	end
+
 	# Register the object to receive all events.
 	# Events will be passed to the object's #handle method.
 	def register( *objects )
@@ -312,6 +331,17 @@ class Game
 									 :trigger => YesTrigger.new,
 									 :action  => MethodAction.new(:handle) )
 		end
+	end
+
+	# Quit the game
+	def quit( event )
+		throw :rubygame_quit
+	end
+
+	# Toggle smooth effects
+	def toggle_smooth( event )
+		$smooth = !$smooth
+		puts "#{$smooth?'En':'Dis'}abling smooth scale/rotate."
 	end
 
 end
@@ -326,31 +356,11 @@ catch(:rubygame_quit) do
 		queue.each do |event|
 			case event
 
-			when KeyPressed
-				case event.key
-				when :escape
-					throw :rubygame_quit 
-				when :q
-					throw :rubygame_quit 
-				when :s
-					$smooth = !$smooth
-					puts "#{$smooth?'En':'Dis'}abling smooth scale/rotate."
-				else
-					print "%s"%[event.string]
-
-				end
-
 			when InputFocusGained, WindowUnminimized, WindowExposed
 				# ActiveEvent appears when the window gains or loses focus.
 				# This helps to ensure everything is refreshed after the Rubygame
 				# window has been covered up by a different window.
 				screen.update()
-
-			when QuitRequested
-				throw :rubygame_quit
-
-			when MousePressed
-				puts "click: [%d,%d]"%event.pos
 			end
 
 			$game.handle( event )
