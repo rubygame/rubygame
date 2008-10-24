@@ -304,8 +304,9 @@ panda2.make_magic_hooks( hooks )
 class Game
 	include EventHandler::HasEventHandler
 
-	def initialize
-		super()                     # set up @event_handler
+	def initialize( screen )
+
+		@screen = screen
 
 		hooks = {
 			:escape  =>  :quit,
@@ -317,6 +318,12 @@ class Game
 			MousePressed      => proc { |owner, event|
 			                       puts "click: [%d,%d]"%event.pos
 			                     },
+
+			# These help to ensure everything is refreshed after the
+			# Rubygame window has been covered up by a different window.
+			InputFocusGained  => :update_screen,
+			WindowUnminimized => :update_screen,
+			WindowExposed     => :update_screen
 		}
 
 		make_magic_hooks( hooks )
@@ -344,24 +351,20 @@ class Game
 		puts "#{$smooth?'En':'Dis'}abling smooth scale/rotate."
 	end
 
+	def update_screen( event )
+		@screen.update()
+	end
+
 end
 
 
-$game = Game.new
+$game = Game.new( screen )
 $game.register( panda1, panda2 )
 
 
 catch(:rubygame_quit) do
 	loop do
 		queue.each do |event|
-			case event
-
-			when InputFocusGained, WindowUnminimized, WindowExposed
-				# ActiveEvent appears when the window gains or loses focus.
-				# This helps to ensure everything is refreshed after the Rubygame
-				# window has been covered up by a different window.
-				screen.update()
-			end
 
 			$game.handle( event )
 
