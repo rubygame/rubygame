@@ -301,6 +301,17 @@ panda2.make_magic_hooks( hooks )
 
 
 
+class ClockTicked
+	attr_reader :time, :framerate
+
+	def initialize( ms, framerate )
+		@time = ms / 1000.0
+		@framerate = framerate
+	end
+end
+
+
+
 class Game
 	include EventHandler::HasEventHandler
 
@@ -323,7 +334,9 @@ class Game
 			# Rubygame window has been covered up by a different window.
 			InputFocusGained  => :update_screen,
 			WindowUnminimized => :update_screen,
-			WindowExposed     => :update_screen
+			WindowExposed     => :update_screen,
+
+			ClockTicked       => :update_framerate
 		}
 
 		make_magic_hooks( hooks )
@@ -351,6 +364,13 @@ class Game
 		puts "#{$smooth?'En':'Dis'}abling smooth scale/rotate."
 	end
 
+	def update_framerate( event )
+		unless @old_framerate == event.framerate
+			@screen.title = "Rubygame test [%d fps]"%event.framerate
+			@old_framerate = event.framerate
+		end
+	end
+
 	def update_screen( event )
 		@screen.update()
 	end
@@ -375,11 +395,9 @@ catch(:rubygame_quit) do
 		dirty_rects = pandas.draw(screen)
 		screen.update_rects(dirty_rects)
 
-		update_time = clock.tick()
-		unless framerate == clock.framerate
-			framerate = clock.framerate
-			screen.title = "Rubygame test [%d fps]"%framerate
-		end
+		update_time = clock.tick
+		queue << ClockTicked.new( update_time, clock.framerate )
+
 	end
 end
 
