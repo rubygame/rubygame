@@ -92,8 +92,8 @@ class AndTrigger
 	# Initialize a new instance of AndTrigger, containing
 	# the given triggers.
 	# 
-	# * \*triggers:: The triggers to contain.
-	#                (Array of triggers, required)
+	# \*triggers:: The triggers to contain.
+	#              (Array of triggers, required)
 	# 
 	# Example:
 	#   
@@ -131,8 +131,8 @@ class OrTrigger
 	# Initialize a new instance of OrTrigger, containing
 	# the given triggers.
 	# 
-	# * \*triggers:: The triggers to contain.
-	#                (Array of triggers, required)
+	# \*triggers:: The triggers to contain.
+	#              (Array of triggers, required)
 	# 
 	# Example:
 	#   
@@ -179,8 +179,8 @@ class AttrTrigger
 	# Initialize a new instance of AttrTrigger with a
 	# Hash of one or more :attr => value pairs.
 	# 
-	# * attributes:: The attributes / value pairs to check.
-	#                (Hash, required)
+	# attributes:: The attributes / value pairs to check.
+	#              (Hash, required)
 	# 
 	# Example:
 	# 
@@ -217,7 +217,7 @@ class BlockTrigger
 	# block. The block should take only 1 parameter, the event,
 	# and return true for matching events.
 	# 
-	# * &block:: The block to pass events to. (Proc, required)
+	# &block:: The block to pass events to. (Proc, required)
 	# 
 	def initialize( &block )
 		raise ArgumentError, "BlockTrigger needs a block" unless block_given?
@@ -284,7 +284,7 @@ class InstanceOfTrigger
 	# Initialize a new instance of InstanceOfTrigger with the
 	# given class.
 	# 
-	# * klass:: The class to check for. (Class, required)
+	# klass:: The class to check for. (Class, required)
 	# 
 	def initialize( klass )
 		@klass = klass
@@ -317,25 +317,25 @@ class KeyPressTrigger
 	# Initialize a new instance of KeyPressTrigger with the
 	# given key and modifier keys.
 	# 
-	# * key::   the key symbol to detect, or :any (default)
-	#           to detect any key. (Symbol, optional)
+	# key::   the key symbol to detect, or :any (default)
+	#         to detect any key. (Symbol, optional)
 	# 
-	# * mods::  an Array of one or more modifier key symbols, or
-	#           :none to detect key presses with exactly no modifiers,
-	#           or :any (default) to detect any key modifiers.
+	# mods::  an Array of one or more modifier key symbols, or
+	#         :none to detect key presses with exactly no modifiers,
+	#         or :any (default) to detect any key modifiers.
 	# 
-	#           Valid modifiers are: 
-	#             * :alt,   :left_alt,   :right_alt,
-	#             * :ctrl,  :left_ctrl,  :right_ctrl,
-	#             * :shift, :left_shift, :right_shift,
-	#             * :meta,  :left_meta,  :right_meta,
-	#             * :numlock
-	#             * :capslock
-	#             * :mode
+	#         Valid modifiers are: 
+	#         * :alt,   :left_alt,   :right_alt,
+	#         * :ctrl,  :left_ctrl,  :right_ctrl,
+	#         * :shift, :left_shift, :right_shift,
+	#         * :meta,  :left_meta,  :right_meta,
+	#         * :numlock
+	#         * :capslock
+	#         * :mode
 	# 
-	#           :alt, :ctrl, :shift, and :meta will match either the
-	#           left version or right version (e.g. :left_alt or
-	#           :right_alt).
+	#         :alt, :ctrl, :shift, and :meta will match either the
+	#         left version or right version (e.g. :left_alt or
+	#         :right_alt).
 	# 
 	# Example:
 	# 
@@ -361,17 +361,17 @@ class KeyPressTrigger
 	# key and mods BOTH match the trigger's expectations.
 	# 
 	# Key matches if either of these is true:
-	#  * the trigger's key is the symbol :any
-	#  * the event's key is the same as the trigger's key
+	# * the trigger's key is the symbol :any
+	# * the event's key is the same as the trigger's key
 	#
 	# Modifiers matches if any of these is true: 
-	#  * the trigger's @mods is the symbol :any
-	#  * the event has no modifiers and the trigger's @mods is
-	#    the symbol :none
-	#  * every one of the trigger's @mods matches one of the event's
-	#    modifiers. "Matches" means either it is the same symbol,
-	#    or it is a more general version. For example, :alt will 
-	#    match either :left_alt or :right_alt.
+	# * the trigger's @mods is the symbol :any
+	# * the event has no modifiers and the trigger's @mods is
+	#   the symbol :none
+	# * every one of the trigger's @mods matches one of the event's
+	#   modifiers. "Matches" means either it is the same symbol,
+	#   or it is a more general version. For example, :alt will 
+	#   match either :left_alt or :right_alt.
 	#
 	def match?( event )
 		if event.kind_of?( Events::KeyPressed )
@@ -481,8 +481,8 @@ class KindOfTrigger
 	# Initialize a new instance of KindOfTrigger with the
 	# given class or module.
 	# 
-	# * kind:: The class/module to check for.
-	#          (Class or Module, required)
+	# kind:: The class/module to check for.
+	#        (Class or Module, required)
 	# 
 	def initialize( kind )
 		@kind = kind
@@ -513,12 +513,12 @@ class MousePressTrigger
 	# Initialize a new instance of MousePressTrigger with
 	# the given mouse button.
 	# 
-	# * button:: The mouse button symbol to detect, or :any
-	#            to detect any button press.
+	# button:: The mouse button symbol to detect, or :any
+	#          to detect any button press.
 	# 
-	#            Valid mouse button symbols are: :mouse_left,
-	#            :mouse_middle, :mouse_right, :mouse_wheel_up,
-	#            and :mouse_wheel_down.
+	#          Valid mouse button symbols are: :mouse_left,
+	#          :mouse_middle, :mouse_right, :mouse_wheel_up,
+	#          and :mouse_wheel_down.
 	# 
 	def initialize( button=:any )
 		@button = button
@@ -642,12 +642,12 @@ class MouseReleaseTrigger
 	# Initialize a new instance of MouseReleaseTrigger with
 	# the given mouse button.
 	# 
-	# * button:: The mouse button symbol to detect, or :any
-	#            to detect any button press.
+	# button:: The mouse button symbol to detect, or :any
+	#          to detect any button press.
 	# 
-	#            Valid mouse button symbols are: :mouse_left,
-	#            :mouse_middle, :mouse_right, :mouse_wheel_up,
-	#            and :mouse_wheel_down.
+	#          Valid mouse button symbols are: :mouse_left,
+	#          :mouse_middle, :mouse_right, :mouse_wheel_up,
+	#          and :mouse_wheel_down.
 	# 
 	def initialize( button=:any )
 		@button = button

@@ -37,16 +37,16 @@ require 'rubygame/event_hook'
 # 
 # Here are a few ways you could use EventHandler:
 # 
-#  * One central EventHandler with EventHooks to perform
-#    all types of actions. This is good for simple apps.
+# * One central EventHandler with EventHooks to perform
+#   all types of actions. This is good for simple apps.
 # 
-#  * Multiple EventHandlers, one for each category of
-#    event. For example, one for keyboard input, one for
-#    mouse input, one for game logic events, etc.
+# * Multiple EventHandlers, one for each category of
+#   event. For example, one for keyboard input, one for
+#   mouse input, one for game logic events, etc.
 # 
-#  * An EventHandler in every game object (using the 
-#    HasEventHandler mixin module), being fed events from
-#    a central EventHandler.
+# * An EventHandler in every game object (using the 
+#   HasEventHandler mixin module), being fed events from
+#   a central EventHandler.
 # 
 # You can also extend the possibilities of EventHandler and
 # EventHook by creating your own event trigger and action

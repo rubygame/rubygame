@@ -126,8 +126,9 @@ module Rubygame
       # Create a new MouseReleased instance.
       # 
       # pos::     an Array for the new position of the mouse cursor.
-      #           [0,0] is the top-left corner of the window (or the
-      #           screen if running full-screen). (Array, required)
+      #           The point [0,0] is the top-left corner of the window
+      #           (or the screen if running full-screen).
+      #           (Array, required)
       # 
       # rel::     an Array for the position change since the last
       #           MouseMoved event, in pixels. (Array, required)

@@ -353,12 +353,12 @@ int rg_get_keyrepeat_value( VALUE vvalue, int default_value, char *name )
  *  events are automatically generated for as long as the key is held
  *  down. See also #disable_key_repeat.
  *
- *  * delay::    how many seconds to wait before starting to repeat.
- *               Default is 0.5 seconds. (Numeric or :default, optional)
+ *  delay::    how many seconds to wait before starting to repeat.
+ *             Default is 0.5 seconds. (Numeric or :default, optional)
  *
- *  * interval:: how many seconds to wait in between repetitions after
- *               the first one. Default is 0.03 seconds. 
- *               (Numeric or :default, optional)
+ *  interval:: how many seconds to wait in between repetitions after
+ *             the first one. Default is 0.03 seconds. 
+ *             (Numeric or :default, optional)
  *
  */
 VALUE rg_enable_key_repeat(int argc, VALUE *argv, VALUE module)

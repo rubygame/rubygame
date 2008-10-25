@@ -39,7 +39,7 @@ Release focus: Events.
   - Rubygame::EventTriggers module.
     Has several pre-made event trigger classes to use with EventHook.
 
-- Added Rubygame.enable_key_repeat and Rubygame.disable_keyrepeat.
+- Added Rubygame.enable_key_repeat and Rubygame.disable_key_repeat.
   Thanks to atiaxi for this new feature!
 
 === Fixes

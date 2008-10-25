@@ -273,14 +273,14 @@ module Rubygame
       #                is being pressed. The direction is either nil
       #                or one of these 8 symbols:
       # 
-      #                1. :up
-      #                2. :up_right
-      #                3. :right
-      #                4. :down_right
-      #                5. :down
-      #                6. :down_left
-      #                7. :left
-      #                8. :up_left
+      #                :up
+      #                :up_right
+      #                :right
+      #                :down_right
+      #                :down
+      #                :down_left
+      #                :left
+      #                :up_left
       # 
       def initialize( joystick_id, hat, direction )
 
