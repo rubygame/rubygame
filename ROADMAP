@@ -6,17 +6,31 @@ keep in mind that specific details may change over time.
 
 == 2.X.0 (_possible_ minor releases before 3.0.0)
 
-=== Focus: Time
+=== Focus: Clock
 
-- New Events::Tick class with lots of information
-  - Time since last frame, in both seconds and milliseconds.
+- New Events::ClockTicked class with lots of information
+  - Time since last frame, in both seconds and milliseconds
   - Current time
   - Current framerate
 
 - New clock class
-  - Based on Ruby's timer (allows multi-threading).
+  - Based on Ruby's timer (allows multi-threading)
   - Better framerate calculation algorithm
-  - #tick returns an instance of Events::Tick.
+  - #tick returns an instance of Events::Tick
+
+
+=== Focus: Surface & Rect
+
+- Surface improvements
+  - Make Surface instances copyable and marshalable
+  - Support for palettes on 8-bit Surfaces
+  - To Fix: New Surfaces never have alpha channels
+  - To Fix: Surface#set_at doesn't respect alpha
+  - To Add: Surface#pixels= (set pixel data directly)
+  - To Add: Surface.load_from_pixels (create from pixel data)
+
+- Rewrite Rect class in C for speed
+
 
 === Focus: Sprites
 
@@ -69,5 +83,3 @@ keep in mind that specific details may change over time.
   - Screen#update (cannot pass object with rect attribute)
   - Screen#update_rects (same as above)
   - Why not just call the ruby function from within C?
-
-
