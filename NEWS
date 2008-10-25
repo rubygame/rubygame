@@ -39,12 +39,30 @@ Release focus: Events.
   - Rubygame::EventTriggers module.
     Has several pre-made event trigger classes to use with EventHook.
 
+- Added Rubygame.enable_key_repeat and Rubygame.disable_keyrepeat.
+  Thanks to atiaxi for this new feature!
+
 === Fixes
+
+- Fixed: EventQueue#peek_each didn't yield any events.
+
+- Fixed: Segfault in extract_rgba_u8_as_u8() on x86_64 systems.
+  Thanks to ElCuGo for this fix!
+
+- Fixed: Several "cast from pointer" warnings on x86_64 systems.
+
+- Fixed: Build system didn't correctly compile with debug symbols
+  when using "debug" option.
+
+- Fixed: Surface#get_at didn't work correctly for 8-bit Surfaces.
 
 - Fixed: Ftor.new_from_to would always complain about "wrong number
   of arguments". Thanks to atiaxi for this fix!
 
 === Other Stuff
+
+- The panda demo (samples/demo_rubygame.rb) has been renovated to
+  demonstrate how to use the new features, and to be a better example.
 
 - Old event classes are deprecated and will be removed in 3.0.
   - ActiveEvent      (use Events::InputFocusGained,
