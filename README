@@ -13,7 +13,7 @@
  event and game object management.
 
  === Relevant Links
- 1. Rubygame: http://rubygame.sourceforge.net
+ 1. Rubygame: http://rubygame.org
  2. Ruby: http://www.ruby-lang.org
  3. Pygame: http://www.pygame.org
  4. SDL: http://www.libsdl.org
@@ -106,18 +106,22 @@
 
  == Usage
  
- See the documentation (online at http://rubygame.sourceforge.net, or
+ See the documentation (online at http://docs.rubygame.org, or
  generated locally with the 'rake rdoc' command). 
 
  We also recommend that you take a peek at the demo applications in
- the 'samples' directory, especially chimp.rb.
+ the 'samples' directory, especially demo_rubygame.rb and chimp.rb.
 
  == License
 
  Rubygame is distributed under the terms of the GNU Lesser GPL.
  See LICENSE for more details.
 
+ The contents of the file 'Rakefile' is licensed under the terms of the
+ MIT license. See that file for more details.
+
  Some of the sample files are distributed under licenses other than the
  GNU Lesser GPL. See 'samples/README' and 'samples/GPL' for more details.
 
- John Croisant (jacius at users.sourceforge.net)
+
+ John Croisant (jacius at gmail.com)
