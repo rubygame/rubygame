@@ -63,9 +63,9 @@ This will allow the libraries to be detected properly later on.
 == Step 2: Get Rubygame
 
 If you haven't already, download the latest Rubygame source from the 
-{download page}[http://sourceforge.net/project/showfiles.php?group_id=172781]. 
+{download page}[http://rubyforge.org/frs/?group_id=5089]. 
 If you're feeling adventurous, you could try the in-development code from
-the {Subversion repository}[http://sourceforge.net/svn/?group_id=172781].  
+the {Git repository}[http://github.com/jacius/rubygame].  
 You can decompress the .tar.bz2 file with either MSYS' <code>tar</code>
 (<code>tar xvjf rubygame-2.0.0.tar.bz2</code>) or a program like 
 {7zip}[http://www.7-zip.org].
