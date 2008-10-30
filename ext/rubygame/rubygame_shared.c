@@ -54,7 +54,7 @@ VALUE make_symbol(char *string)
 /* Returns a char* string from the given symbol */
 char *unmake_symbol(VALUE symbol)
 {
-	return rb_id2name( SYM2ID(symbol) );
+	return (char *)rb_id2name( SYM2ID(symbol) );
 }
 
 
