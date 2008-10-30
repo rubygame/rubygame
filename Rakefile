@@ -160,7 +160,7 @@ $options = {
 # Default behavior for win32 is to skip sdl_config,
 # since it's usually not available. It can still be
 # enabled through the options, though.
-if PLATFORM =~ /win32/
+if RUBY_PLATFORM =~ /win32/
 	$options[:"sdl-config"] = false
 end
 
