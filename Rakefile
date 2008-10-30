@@ -37,7 +37,6 @@ RUBYGAME_VERSION = [2,4,0]
 
 
 require 'rubygems'
-Gem::manage_gems
 
 require 'rake'
 require 'rake/gempackagetask'
