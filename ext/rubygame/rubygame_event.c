@@ -325,7 +325,7 @@ int rg_get_keyrepeat_value( VALUE vvalue, int default_value, char *name )
 				else
 				{
 					rb_raise( rb_eArgError, "unsupported symbol '%s' for %s", 
-					          RSTRING(rb_inspect(vvalue))->ptr, name );
+					          RSTRING_PTR(rb_inspect(vvalue)), name );
 				}
 		}
 
@@ -335,7 +335,7 @@ int rg_get_keyrepeat_value( VALUE vvalue, int default_value, char *name )
 				if( value < 1 )
 				{
 					rb_raise( rb_eArgError, "%s must be at least 0.001 seconds (got %s)",
-					          name, RSTRING(rb_inspect(vvalue))->ptr);
+					          name, RSTRING_PTR(rb_inspect(vvalue)));
 				}
 
 				return value;

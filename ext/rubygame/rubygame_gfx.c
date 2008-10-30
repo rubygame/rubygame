@@ -62,7 +62,7 @@ VALUE rbgm_draw_fillpolygon(VALUE, VALUE, VALUE);
 void extract_xy(VALUE point, Sint16* x, Sint16* y)
 {
 	point = convert_to_array(point);
-  if(RARRAY(point)->len < 2)
+  if(RARRAY_LEN(point) < 2)
     rb_raise(rb_eArgError,"expected argument as [x,y] form");
   *x = NUM2INT(rb_ary_entry(point,0));
   *y = NUM2INT(rb_ary_entry(point,1));
@@ -479,7 +479,7 @@ void draw_polygon(VALUE target, VALUE points, VALUE rgba, int aa, int fill)
 
   /* separate points into arrays of x and y values */
   points = convert_to_array(points);
-  length = RARRAY(points)->len;
+  length = RARRAY_LEN(points);
   x = alloca(sizeof (Sint16) * length);
   y = alloca(sizeof (Sint16) * length);
 
