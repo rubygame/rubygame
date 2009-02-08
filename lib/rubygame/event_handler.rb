@@ -89,7 +89,7 @@ class Rubygame::EventHandler
 	#  the top of the stack.
 	# 
 	def append_hook( hook )
-		hook = EventHook.new( hook ) if hook.kind_of?( Hash )
+		hook = Rubygame::EventHook.new( hook ) if hook.kind_of?( Hash )
 		@hooks = (@hooks - [hook]) | [hook]
 		return hook
 	end
@@ -103,7 +103,7 @@ class Rubygame::EventHandler
 	#  If the EventHandler already has that hook, it is moved to the top.
 	# 
 	def prepend_hook( hook )
-		hook = EventHook.new( hook ) if hook.kind_of?( Hash )
+		hook = Rubygame::EventHook.new( hook ) if hook.kind_of?( Hash )
 		@hooks = [hook] | @hooks
 		return hook
 	end
@@ -324,7 +324,7 @@ module Rubygame::EventHandler::HasEventHandler
 
 	# Sets @event_handler to a new EventHandler if needed.
 	def _make_event_handler
-		@event_handler = EventHandler.new() if @event_handler.nil?
+		@event_handler = Rubygame::EventHandler.new() if @event_handler.nil?
 	end
 
 	# This method is called by #make_magic_hooks to convert an
@@ -363,10 +363,10 @@ module Rubygame::EventHandler::HasEventHandler
 		case action
 
 		when Symbol
-			EventActions::MethodAction.new(action)
+			Rubygame::EventActions::MethodAction.new(action)
 
 		when Proc, Method
-			EventActions::BlockAction.new(&action)
+			Rubygame::EventActions::BlockAction.new(&action)
 
 		else
 			if action.respond_to? :perform
@@ -418,13 +418,13 @@ module Rubygame::EventHandler::HasEventHandler
 		when Symbol
 			case(trigger.to_s)
 			when /mouse/
-				EventTriggers::MousePressTrigger.new(trigger)
+				Rubygame::EventTriggers::MousePressTrigger.new(trigger)
 			else
-				EventTriggers::KeyPressTrigger.new(trigger)
+				Rubygame::EventTriggers::KeyPressTrigger.new(trigger)
 			end
 
 		when Class
-			EventTriggers::InstanceOfTrigger.new(trigger)
+			Rubygame::EventTriggers::InstanceOfTrigger.new(trigger)
 
 		else
 			if trigger.respond_to? :match?
@@ -441,7 +441,7 @@ module Rubygame::EventHandler::HasEventHandler
 
 	def _prepare_hook( hook )
 		if( hook.kind_of? Hash )
-			hook = EventHook.new( {:owner => self}.merge(hook) )
+			hook = Rubygame::EventHook.new( {:owner => self}.merge(hook) )
 		end
 		
 		if( hook.owner == nil )
