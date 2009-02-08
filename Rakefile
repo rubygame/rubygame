@@ -50,10 +50,20 @@ require 'English'
 class ShellCommandError < RuntimeError
 end
 
-# Execute the block (which is supposed to perform a shell command),
-# then raise ShellCommandError if the command failed.
-def try_shell( &block )
-  result = yield
+# Execute the shell command and raise ShellCommandError if
+# the command failed.
+# 
+# If verbose is true, outputs the command string to the console.
+# If it's false, it outputs the pretty string to the console instead.
+# 
+def try_shell( command, pretty="", verbose=false )
+  if verbose
+    puts command
+  else
+    puts pretty unless pretty.empty?
+  end
+
+  result = `#{command}`
   
   unless $CHILD_STATUS.exitstatus == 0
     raise ShellCommandError, "Command failed. Aborting."
@@ -65,7 +75,7 @@ end
 def try_sdl_config( flag )
   begin
     if $options[:"sdl-config"]
-      return try_shell { `sdl-config #{flag}`.chomp }
+      return try_shell("sdl-config #{flag}").chomp
     else
       return String.new
     end
@@ -291,12 +301,9 @@ class ExtensionModule
         link_command.gsub!("-arch ppc","")
       end
 
-      if( $options[:verbose] )
-        try_shell { sh link_command }
-      else
-        puts "Linking compiled files to create #{File.basename(@directory)}/#{File.basename(dynlib_full)}"
-        try_shell { `#{link_command}` }
-      end
+      try_shell( link_command,
+                 "Linking compiled files to create #{File.basename(@directory)}/#{File.basename(dynlib_full)}",
+                 $options[:verbose] )
     end
 
     task :build => [dynlib_full]   # Add this as a prereq of the build
@@ -325,12 +332,9 @@ class ExtensionModule
         compile_command.gsub!("-arch ppc","")
       end
 
-      if( $options[:verbose] )
-        try_shell { sh compile_command }
-      else
-        puts "Compiling #{File.basename(@directory)}/#{File.basename(t.source)}"
-        try_shell { `#{compile_command}` }
-      end
+      try_shell( compile_command,
+                 "Compiling #{File.basename(@directory)}/#{File.basename(t.source)}",
+                 $options[:verbose] )
     end
   rescue
     # Generate a .o rule for each .c file in the directory.
@@ -338,12 +342,10 @@ class ExtensionModule
       object = source.sub(".c", ".#{OBJEXT}")
       file object => ([source] + depends_headers( source )) do |t|
         compile_command = "#{CONFIG['CC']} -c #{CFLAGS} #{"-g " if $options[:debug]} #{source} -o #{t.name}"
-        if( $options[:verbose] )
-          try_shell { sh compile_command }
-        else
-          puts "Compiling #{File.basename(@directory)}/#{File.basename(source)}"
-          try_shell { `#{compile_command}` }
-        end
+
+        try_shell( compile_command,
+                   "Compiling #{File.basename(@directory)}/#{File.basename(t.source)}",
+                   $options[:verbose] )
       end
     end
   end
