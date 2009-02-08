@@ -247,10 +247,10 @@ VALUE rbgm_screen_update(int argc, VALUE *argv, VALUE self)
 	{
 		switch( TYPE(vx) ) {
 			case T_ARRAY: {
-				if( RARRAY(vx)->len < 4 )
+				if( RARRAY_LEN(vx) < 4 )
 				{
 					rb_raise(rb_eArgError,"Array is too short to be a Rect (%s for 4)",
-									 RARRAY(vx)->len);
+									 RARRAY_LEN(vx));
 				}
 				x = NUM2INT(rb_ary_entry(vx,0));
 				y = NUM2INT(rb_ary_entry(vx,1));
@@ -311,7 +311,7 @@ VALUE rbgm_screen_updaterects(VALUE self, VALUE array_rects)
 
   /* prepare an (uninitialized) array of Rects */
   array_rects = convert_to_array(array_rects);
-  num_rects = RARRAY(array_rects)->len;
+  num_rects = RARRAY_LEN(array_rects);
   rects = ALLOCA_N(SDL_Rect, num_rects);
 
   /* initialize the array of Rects from array_rects */

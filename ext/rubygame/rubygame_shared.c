@@ -54,7 +54,7 @@ VALUE make_symbol(char *string)
 /* Returns a char* string from the given symbol */
 char *unmake_symbol(VALUE symbol)
 {
-	return rb_id2name( SYM2ID(symbol) );
+	return (char *)rb_id2name( SYM2ID(symbol) );
 }
 
 
@@ -80,7 +80,7 @@ Uint32 collapse_flags(VALUE vflags)
 	{
     switch( TYPE(vflags) ){
 			case T_ARRAY: {
-				int len = RARRAY(vflags)->len;
+				int len = RARRAY_LEN(vflags);
 				for(i=0;  i < len;  i++)
         {
           flags |= NUM2UINT(  rb_ary_entry( vflags,i )  );
@@ -161,7 +161,7 @@ void extract_rgba_u8_as_u8(VALUE color, Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a)
 	*g = NUM2UINT(rb_ary_entry(color, 1));
 	*b = NUM2UINT(rb_ary_entry(color, 2));
 
-	if( RARRAY(color)->len > 3 )
+	if( RARRAY_LEN(color) > 3 )
 	{
 		*a = NUM2UINT(rb_ary_entry(color, 3));
 	}

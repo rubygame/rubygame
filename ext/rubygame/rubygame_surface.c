@@ -146,14 +146,14 @@ VALUE rbgm_surface_new(int argc, VALUE *argv, VALUE class)
 	/* Get width and height for new surface from vsize */
 	vsize = convert_to_array(vsize);
 
-	if(RARRAY(vsize)->len >= 2)
+	if(RARRAY_LEN(vsize) >= 2)
 	{
 		w = NUM2INT(rb_ary_entry(vsize,0));
 		h = NUM2INT(rb_ary_entry(vsize,1));
 	}
 	else
 		rb_raise(rb_eArgError,"Array is too short for Surface size (%d for 2)",\
-			RARRAY(vsize)->len);
+			RARRAY_LEN(vsize));
 	
 	flags = collapse_flags(vflags); /* in rubygame_shared */
 
