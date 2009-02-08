@@ -6,7 +6,7 @@
 
 
 # The version number for Rubygame.
-RUBYGAME_VERSION = [2,4,0]
+RUBYGAME_VERSION = [2,4,1]
 
 
 # 
