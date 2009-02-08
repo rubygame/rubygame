@@ -374,7 +374,7 @@ class KeyPressTrigger
 	#   match either :left_alt or :right_alt.
 	#
 	def match?( event )
-		if event.kind_of?( Events::KeyPressed )
+		if event.kind_of?( Rubygame::Events::KeyPressed )
 			((@key == :any) or (event.key == @key)) and \
 			((@mods == :any) or (@mods == :none and event.modifiers == [])\
 			                 or (_mods_match?(event.modifiers)))
@@ -436,7 +436,7 @@ class KeyReleaseTrigger
 	# See KeyPressTrigger#match? for more information.
 	# 
 	def match?( event )
-		if event.kind_of?( Events::KeyReleased )
+		if event.kind_of?( Rubygame::Events::KeyReleased )
 			((@key == :any) or (event.key == @key)) and \
 			((@mods == :any) or (@mods == :none and event.modifiers == [])\
 			                 or (_mods_match?(event.modifiers)))
@@ -529,7 +529,7 @@ class MousePressTrigger
 	# (or the trigger's button is :any).
 	# 
 	def match?( event )
-		if event.kind_of?( Events::MousePressed )
+		if event.kind_of?( Rubygame::Events::MousePressed )
 			((@button == :any) or (event.button == @button))
 		else
 			false
@@ -598,7 +598,7 @@ class MouseMoveTrigger
 	# See #new for information about how events match.
 	# 
 	def match?( event )
-		if event.kind_of?( Events::MouseMoved )
+		if event.kind_of?( Rubygame::Events::MouseMoved )
 			((@buttons == :any) or 
 			 (@buttons == :none and event.buttons == []) or 
 			 (_buttons_match?(event.buttons)) or
@@ -658,7 +658,7 @@ class MouseReleaseTrigger
 	# (or the trigger's button is :any).
 	# 
 	def match?( event )
-		if event.kind_of?( Events::MouseReleased )
+		if event.kind_of?( Rubygame::Events::MouseReleased )
 			((@button == :any) or (event.button == @button))
 		else
 			false
@@ -670,7 +670,7 @@ end
 
 # class TickTrigger
 # 	def match?( event )
-# 		event.kind_of?( Events::ClockTicked )
+# 		event.kind_of?( Rubygame::Events::ClockTicked )
 # 	end
 # end
 
