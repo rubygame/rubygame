@@ -1,5 +1,28 @@
 = NEWS
 
+== Rubygame 2.4.1
+
+Release focus: Bug fixes; Ruby 1.9 compatibility.
+
+=== Fixes
+
+- Fixed: Module scope problems with EventHandler and triggers.
+  They were trying to find the Events module, which only worked if
+  you had done 'include Rubygame' somewhere.
+
+- Fixed: Compiler warning in unmake_symbol().
+
+=== Other Stuff
+
+- Rubygame is compatible with Ruby 1.9.
+
+- Build system is compatible with Ruby 1.9.
+
+- Minor cleanup to build system internals.
+
+
+
+
 == Rubygame 2.4.0
 
 Release focus: Events.
