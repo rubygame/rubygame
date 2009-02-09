@@ -237,6 +237,10 @@ string_option :sitelibdir
 CFLAGS = [from_env_or_config("CFLAGS"),
           try_sdl_config("--cflags"),
           "-I. -I#{CONFIG['topdir']}",
+          (if CONFIG['rubyhdrdir']
+             "-I#{CONFIG['rubyhdrdir']} " +\
+             "-I#{File.join(CONFIG['rubyhdrdir'], CONFIG['arch'])}" 
+           end),
           "-DRUBYGAME_MAJOR_VERSION=#{RUBYGAME_VERSION[0]}",
           "-DRUBYGAME_MINOR_VERSION=#{RUBYGAME_VERSION[1]}",
           "-DRUBYGAME_PATCHLEVEL=#{RUBYGAME_VERSION[2]}"
