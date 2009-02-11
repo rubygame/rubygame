@@ -157,6 +157,7 @@ VALUE rbgm_screen_getresolution(VALUE module)
 {
   VALUE array;
   const SDL_VideoInfo* hw;
+  init_video_system();
   hw = SDL_GetVideoInfo();
   if(hw==NULL)
 	{
