@@ -32,6 +32,8 @@ VALUE cScreen;
 VALUE rbgm_screen_setmode(int, VALUE*, VALUE);
 VALUE rbgm_screen_getsurface(VALUE);
 
+VALUE rbgm_screen_getresolution(VALUE);
+
 VALUE rbgm_screen_getcaption(VALUE);
 VALUE rbgm_screen_setcaption(VALUE, VALUE);
 
@@ -148,6 +150,22 @@ VALUE rbgm_screen_getsurface(VALUE module)
 		rb_raise(eSDLError,"Couldn't get video surface: %s",SDL_GetError());
 	}
   return Data_Wrap_Struct( cScreen,0,0,surface );
+}
+
+
+VALUE rbgm_screen_getresolution(VALUE module)
+{
+  VALUE array;
+  const SDL_VideoInfo* hw;
+  hw = SDL_GetVideoInfo();
+  if(hw==NULL)
+	{
+		rb_raise(eSDLError,"Couldn't get video info: %s",SDL_GetError());
+	}
+  array = rb_ary_new();
+  rb_ary_push(array, INT2NUM(hw->current_w));
+  rb_ary_push(array, INT2NUM(hw->current_h));
+  return array;
 }
 
 /* Screen methods: */
@@ -423,6 +441,7 @@ void Rubygame_Init_Screen()
   rb_define_alias(rb_singleton_class(cScreen),"set_mode","new");
   rb_define_alias(rb_singleton_class(cScreen),"instance","new");
   rb_define_singleton_method(cScreen,"get_surface",rbgm_screen_getsurface, 0);
+  rb_define_singleton_method(cScreen,"get_resolution",rbgm_screen_getresolution, 0);
 
   /* These are inherited from Surface, but should not be called on Screen */
   rb_undef_method(cScreen,"set_alpha"); 

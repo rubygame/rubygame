@@ -28,6 +28,8 @@ extern VALUE cScreen;
 extern VALUE rbgm_screen_setmode(int, VALUE*, VALUE);
 extern VALUE rbgm_screen_getsurface(VALUE);
 
+extern VALUE rbgm_screen_getresolution(VALUE);
+
 extern VALUE rbgm_screen_getcaption(VALUE);
 extern VALUE rbgm_screen_setcaption(VALUE, VALUE);
 
