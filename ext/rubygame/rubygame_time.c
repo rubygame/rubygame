@@ -42,6 +42,35 @@ VALUE rbgm_time_getticks(VALUE);
 #define WORST_CLOCK_ACCURACY 12
 
 
+
+/* How often (milliseconds) to yield control to ruby while delaying */
+#define THREAD_DELAY_YIELD 5
+
+/* Delays the given amount of time, but broken down into parts.
+ * Control is yielded to ruby between each part, so that other
+ * threads can run.
+ */
+Uint32 rg_threaded_delay( Uint32 delay )
+{
+  if( delay <= 0 )
+    return 0;
+
+  Uint32 start;
+
+  start = SDL_GetTicks();
+
+  while( delay - (SDL_GetTicks() - start) > THREAD_DELAY_YIELD )
+  {
+    SDL_Delay(THREAD_DELAY_YIELD);
+    rb_thread_schedule();       /* give control to ruby */
+  }
+
+  SDL_Delay( delay - (SDL_GetTicks() - start) ); /* remainder */
+
+  return SDL_GetTicks() - start;
+}
+
+
 /*
  *  call-seq:
  *    wait( time )  ->  Integer
@@ -59,53 +88,53 @@ VALUE rbgm_time_getticks(VALUE);
  */
 VALUE rbgm_time_wait(VALUE module, VALUE milliseconds)
 {
-  Uint32 start, delay;
-
   if(!SDL_WasInit(SDL_INIT_TIMER))
+  {
     if(SDL_InitSubSystem(SDL_INIT_TIMER))
+    {
       rb_raise(eSDLError,"Could not initialize timer system: %s",\
                SDL_GetError());
+    }
+  }
 
-  delay = NUM2UINT(milliseconds);
-  start = SDL_GetTicks();
-  SDL_Delay(delay);
-  return INT2NUM(SDL_GetTicks() - start);
+  return INT2NUM( rg_threaded_delay(NUM2UINT(milliseconds)) );
 }
 
 /*--
  *  From pygame code, with a few modifications:
  *    - takes 'accuracy' argument
  *    - ruby syntax for raising exceptions
+ *    - uses rg_threaded_delay
  *++
  */
 static int accurate_delay(int ticks,int accuracy)
 {
   int funcstart, delay;
   if(ticks <= 0)
-	return 0;
-  
+    return 0;
+
   if(!SDL_WasInit(SDL_INIT_TIMER))
-	{
-	  if(SDL_InitSubSystem(SDL_INIT_TIMER))
-		{
-		  rb_raise(eSDLError,"Could not initialize timer system: %s",\
-				   SDL_GetError());
-		}
-	}
+  {
+    if(SDL_InitSubSystem(SDL_INIT_TIMER))
+    {
+      rb_raise(eSDLError,"Could not initialize timer system: %s",\
+               SDL_GetError());
+    }
+  }
 
   funcstart = SDL_GetTicks();
   if(ticks >= accuracy)
-	{
-	  delay = (ticks - 2) - (ticks % accuracy);
-	  if(delay >= accuracy)
-		{
-		  SDL_Delay(delay);
-		}
-	}
+  {
+    delay = (ticks - 2) - (ticks % accuracy);
+    if(delay >= accuracy)
+    {
+      rg_threaded_delay(delay);
+    }
+  }
   do{
     delay = ticks - (SDL_GetTicks() - funcstart);	
   }while(delay > 0);
-	
+
   return SDL_GetTicks() - funcstart;	
 }
 
