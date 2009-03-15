@@ -27,7 +27,7 @@
 #include "rubygame_joystick.h"
 #include "rubygame_screen.h"
 #include "rubygame_surface.h"
-#include "rubygame_time.h"
+#include "rubygame_clock.h"
 
 VALUE rbgm_init(VALUE);
 VALUE rbgm_quit(VALUE);

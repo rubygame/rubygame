@@ -25,7 +25,7 @@
  */
 
 #include "rubygame_shared.h"
-#include "rubygame_time.h"
+#include "rubygame_clock.h"
 
 void Rubygame_Init_Clock();
 

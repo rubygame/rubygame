@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef _RUBYGAME_TIME_H
-#define _RUBYGAME_TIME_H
+#ifndef _RUBYGAME_CLOCK_H
+#define _RUBYGAME_CLOCK_H
 
 extern void Rubygame_Init_Clock();
 

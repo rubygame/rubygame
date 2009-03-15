@@ -379,7 +379,7 @@ rubygame_core = ExtensionModule.new do |core|
                'rubygame_joystick',
                'rubygame_screen',
                'rubygame_surface',
-               'rubygame_time',
+               'rubygame_clock',
               ]
   core.create_all_tasks()
 end
