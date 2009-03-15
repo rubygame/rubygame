@@ -36,6 +36,20 @@ VALUE rbgm_time_delay(int, VALUE*, VALUE);
 VALUE rbgm_time_getticks(VALUE);
 
 
+/* Initialize the SDL timer system, if it hasn't been already. */
+void rg_init_sdl_timer()
+{
+  if(!SDL_WasInit(SDL_INIT_TIMER))
+  {
+    if(SDL_InitSubSystem(SDL_INIT_TIMER))
+    {
+      rb_raise(eSDLError,"Could not initialize timer system: %s",\
+               SDL_GetError());
+    }
+  }
+}
+
+
 /*  NOTICE: if you change this value "officially", don't forget to update the
  *  documentation for rbgm_time_delay!!
  */
@@ -110,14 +124,7 @@ Uint32 rg_threaded_delay( Uint32 delay, Uint32 yield )
  */
 VALUE rbgm_time_wait(int argc, VALUE *argv, VALUE module)
 {
-  if(!SDL_WasInit(SDL_INIT_TIMER))
-  {
-    if(SDL_InitSubSystem(SDL_INIT_TIMER))
-    {
-      rb_raise(eSDLError,"Could not initialize timer system: %s",\
-               SDL_GetError());
-    }
-  }
+  rg_init_sdl_timer();
 
   VALUE  vtime, vyield;
 
@@ -147,15 +154,6 @@ static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, Uint32 yield)
   int funcstart, delay;
   if(ticks <= 0)
     return 0;
-
-  if(!SDL_WasInit(SDL_INIT_TIMER))
-  {
-    if(SDL_InitSubSystem(SDL_INIT_TIMER))
-    {
-      rb_raise(eSDLError,"Could not initialize timer system: %s",\
-               SDL_GetError());
-    }
-  }
 
   funcstart = SDL_GetTicks();
   if(ticks >= accuracy)
@@ -215,6 +213,8 @@ static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, Uint32 yield)
  */
 VALUE rbgm_time_delay(int argc, VALUE *argv, VALUE module)
 {
+  rg_init_sdl_timer();
+
   VALUE vtime, vgran, vyield;
 
   rb_scan_args(argc,argv,"12", &vtime, &vgran, &vyield);
@@ -245,10 +245,8 @@ VALUE rbgm_time_delay(int argc, VALUE *argv, VALUE module)
  */
 VALUE rbgm_time_getticks( VALUE module )
 {
-  if(!SDL_WasInit(SDL_INIT_TIMER))
-	if(SDL_InitSubSystem(SDL_INIT_TIMER))
-	  rb_raise(eSDLError,"Could not initialize timer system: %s",\
-			   SDL_GetError());
+  rg_init_sdl_timer();
+
   return INT2NUM(SDL_GetTicks());
 }
 
