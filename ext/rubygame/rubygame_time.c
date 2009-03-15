@@ -247,7 +247,7 @@ VALUE rbgm_time_getticks( VALUE module )
 {
   rg_init_sdl_timer();
 
-  return INT2NUM(SDL_GetTicks());
+  return UINT2NUM(SDL_GetTicks());
 }
 
 
