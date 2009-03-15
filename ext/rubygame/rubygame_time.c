@@ -52,7 +52,7 @@ VALUE rbgm_time_getticks(VALUE);
  *        If 0, control is never given to ruby.
  *
  */
-Uint32 rg_threaded_delay( Uint32 delay, int yield )
+Uint32 rg_threaded_delay( Uint32 delay, Uint32 yield )
 {
   if( delay <= 0 )
     return 0;
@@ -142,7 +142,7 @@ VALUE rbgm_time_wait(int argc, VALUE *argv, VALUE module)
  *    - uses rg_threaded_delay
  *++
  */
-static int accurate_delay(int ticks, int accuracy, int yield)
+static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, Uint32 yield)
 {
   int funcstart, delay;
   if(ticks <= 0)
@@ -173,45 +173,65 @@ static int accurate_delay(int ticks, int accuracy, int yield)
   return SDL_GetTicks() - funcstart;	
 }
 
+
+
 /*
  *  call-seq:
- *    delay( time, gran=12 )  ->  Integer
+ *    Clock.delay( time, gran=12, yield=0 )  ->  Integer
  *
- *  time:: how many milliseconds to delay.
- *  gran:: the granularity (in milliseconds) to assume for the system. A
- *         smaller value should use less CPU time, but if it's lower than the
- *         actual system granularity, this function might wait too long. The
- *         default, 12 ms, has a fairly low risk of over-waiting for many
- *         systems.
-
- *  Use the CPU to more accurately wait for the given period. Returns the
- *  actual delay time, in milliseconds. This function is more accurate than 
- *  #wait, but is also somewhat more CPU-intensive.
+ *  time::    The target delay time, in milliseconds.
+ *  gran::    The assumed granularity (ms) of the system clock.
+ *  yield::   How often (ms) to yield control to ruby.
  *
- *  The Rubygame timer system will be initialized when you call this function,
- *  if it has not been already.
+ *  Returns:: The actual delay time, in milliseconds.
+ *
+ *  Pause the program for +time+ milliseconds. This function is more
+ *  accurate than Clock.wait, but uses slightly more CPU time. Both
+ *  this function and Clock.wait can be used to slow down the
+ *  framerate so that the application doesn't use too much CPU time.
+ *  See also Clock#tick for a good and easy way to limit the
+ *  framerate.
+ *
+ *  If +time+ is 0 or less, this function returns immediately without
+ *  delaying at all.
+ *
+ *  This function uses "busy waiting" (spinlock) during the last part
+ *  of the delay, for increased accuracy. The value of +gran+ affects
+ *  how many milliseconds of the delay are spent in spinlock, and thus
+ *  how much CPU it uses. A smaller +gran+ value uses less CPU, but if
+ *  it's smaller than the true system granularity, this function may
+ *  delay a few milliseconds too long. The default value (12ms) is very
+ *  safe, but a value of approximately 5ms would give a better balance
+ *  between accuracy and CPU usage on most modern computers.
+ *
+ *  If +yield+ is greater than 0, this function will allow other ruby
+ *  threads to run every +yield+ milliseconds. This is only useful if
+ *  your application is multithreaded. It's safe (but pointless) to
+ *  use this feature for single threaded applications.
+ *
+ *  The Rubygame timer system will be initialized when you call this
+ *  function, if it has not been already. See Clock.runtime.
  *
  */
 VALUE rbgm_time_delay(int argc, VALUE *argv, VALUE module)
 {
-  int ticks, goal, accuracy;
-  VALUE vtime, vgran;
+  VALUE vtime, vgran, vyield;
 
-  rb_scan_args(argc,argv,"11", &vtime, &vgran);
+  rb_scan_args(argc,argv,"12", &vtime, &vgran, &vyield);
 
-  goal = NUM2INT(vtime);
-  if(goal < 0)
-    goal = 0;
+  Uint32 delay = NUM2UINT(vtime);
 
-  if( RTEST(vgran) )
-    accuracy = NUM2INT(vgran);
-  else
-    accuracy = WORST_CLOCK_ACCURACY;
+  if(delay <= 0)
+    return INT2NUM(0);
 
-  ticks = accurate_delay( goal, accuracy, 0 );
+  Uint32 gran = RTEST(vgran) ? NUM2UINT(vgran) : WORST_CLOCK_ACCURACY;
 
-  return INT2NUM(ticks);
+  Uint32 yield = RTEST(vyield) ? NUM2UINT(vyield) : 0;
+
+  return UINT2NUM( accurate_delay(delay, gran, yield) );
 }
+
+
 
 /*
  *  call-seq:
@@ -231,6 +251,8 @@ VALUE rbgm_time_getticks( VALUE module )
 			   SDL_GetError());
   return INT2NUM(SDL_GetTicks());
 }
+
+
 
 void Rubygame_Init_Time()
 {
