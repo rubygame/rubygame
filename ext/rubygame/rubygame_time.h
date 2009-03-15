@@ -21,12 +21,12 @@
 #ifndef _RUBYGAME_TIME_H
 #define _RUBYGAME_TIME_H
 
-extern void Rubygame_Init_Time();
+extern void Rubygame_Init_Clock();
 
 extern VALUE cClock;
 
-extern VALUE rbgm_time_wait(int, VALUE*, VALUE);
-extern VALUE rbgm_time_delay(int, VALUE*, VALUE);
-extern VALUE rbgm_time_getticks(VALUE);
+extern VALUE rbgm_clock_wait(int, VALUE*, VALUE);
+extern VALUE rbgm_clock_delay(int, VALUE*, VALUE);
+extern VALUE rbgm_clock_runtime(VALUE);
 
 #endif

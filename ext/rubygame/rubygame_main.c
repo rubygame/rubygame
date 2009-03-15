@@ -127,7 +127,7 @@ void Init_rubygame_core()
                            INT2NUM(SDL_MINOR_VERSION),
                            INT2NUM(SDL_PATCHLEVEL)));
 
-	Rubygame_Init_Time();
+	Rubygame_Init_Clock();
 	Rubygame_Init_Surface();
 	Rubygame_Init_Screen();
 	Rubygame_Init_Event();

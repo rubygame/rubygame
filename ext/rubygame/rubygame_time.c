@@ -27,13 +27,13 @@
 #include "rubygame_shared.h"
 #include "rubygame_time.h"
 
-void Rubygame_Init_Time();
+void Rubygame_Init_Clock();
 
 VALUE cClock;
 
-VALUE rbgm_time_wait(int, VALUE*, VALUE);
-VALUE rbgm_time_delay(int, VALUE*, VALUE);
-VALUE rbgm_time_getticks(VALUE);
+VALUE rbgm_clock_wait(int, VALUE*, VALUE);
+VALUE rbgm_clock_delay(int, VALUE*, VALUE);
+VALUE rbgm_clock_getticks(VALUE);
 
 
 /* Initialize the SDL timer system, if it hasn't been already. */
@@ -122,7 +122,7 @@ Uint32 rg_threaded_delay( Uint32 delay, Uint32 yield )
  *  function, if it has not been already. See Clock.runtime.
  *
  */
-VALUE rbgm_time_wait(int argc, VALUE *argv, VALUE module)
+VALUE rbgm_clock_wait(int argc, VALUE *argv, VALUE module)
 {
   rg_init_sdl_timer();
 
@@ -211,7 +211,7 @@ static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, Uint32 yield)
  *  function, if it has not been already. See Clock.runtime.
  *
  */
-VALUE rbgm_time_delay(int argc, VALUE *argv, VALUE module)
+VALUE rbgm_clock_delay(int argc, VALUE *argv, VALUE module)
 {
   rg_init_sdl_timer();
 
@@ -243,7 +243,7 @@ VALUE rbgm_time_delay(int argc, VALUE *argv, VALUE module)
  *  The Rubygame timer system will be initialized when you call this function,
  *  if it has not been already.
  */
-VALUE rbgm_time_getticks( VALUE module )
+VALUE rbgm_clock_runtime( VALUE module )
 {
   rg_init_sdl_timer();
 
@@ -252,16 +252,20 @@ VALUE rbgm_time_getticks( VALUE module )
 
 
 
-void Rubygame_Init_Time()
+void Rubygame_Init_Clock()
 {
 #if 0
 	mRubygame = rb_define_module("Rubygame");
 #endif
 
   /* Clock class */
-  cClock = rb_define_class_under(mRubygame,"Clock",rb_cObject);
+  cClock = rb_define_class_under(mRubygame, "Clock", rb_cObject);
+
   /* Clock class methods */
-  rb_define_singleton_method(cClock,"wait",rbgm_time_wait,-1);
-  rb_define_singleton_method(cClock,"delay",rbgm_time_delay,-1);
-  rb_define_singleton_method(cClock,"runtime",rbgm_time_getticks,0);
+  rb_define_singleton_method(cClock, "wait",   rbgm_clock_wait,    -1);
+  rb_define_singleton_method(cClock, "delay",  rbgm_clock_delay,   -1);
+  rb_define_singleton_method(cClock, "runtime",rbgm_clock_runtime,  0);
+
+  /* Clock instance methods are defined in clock.rb. */
+
 }
