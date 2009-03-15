@@ -25,7 +25,7 @@ extern void Rubygame_Init_Time();
 
 extern VALUE cClock;
 
-extern VALUE rbgm_time_wait(VALUE, VALUE);
+extern VALUE rbgm_time_wait(int, VALUE*, VALUE);
 extern VALUE rbgm_time_delay(int, VALUE*, VALUE);
 extern VALUE rbgm_time_getticks(VALUE);
 

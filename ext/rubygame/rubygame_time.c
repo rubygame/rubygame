@@ -31,7 +31,7 @@ void Rubygame_Init_Time();
 
 VALUE cClock;
 
-VALUE rbgm_time_wait(VALUE, VALUE);
+VALUE rbgm_time_wait(int, VALUE*, VALUE);
 VALUE rbgm_time_delay(int, VALUE*, VALUE);
 VALUE rbgm_time_getticks(VALUE);
 
@@ -78,20 +78,37 @@ Uint32 rg_threaded_delay( Uint32 delay, int yield )
 
 /*
  *  call-seq:
- *    wait( time )  ->  Integer
+ *    Clock.wait( time, yield=0 )  ->  Integer
  *
- *  time:: how many milliseconds to wait.
+ *  time::    The target wait time, in milliseconds.
+ *  yield::   How often (ms) to yield control to ruby.
  *
- *  Wait approximately the given time (the accuracy depends upon processor 
- *  scheduling, but 10ms is common). Returns the actual delay time, in 
- *  milliseconds. This method is less CPU-intensive than #delay, but is
- *  slightly less accurate.
+ *  Returns:: The actual wait time, in milliseconds.
  *
- *  The Rubygame timer system will be initialized when you call this function,
- *  if it has not been already.
+ *  Pause the program for approximately +time+ milliseconds. Both this
+ *  function and Clock.delay can be used to slow down the framerate so
+ *  that the application doesn't use too much CPU time. See also
+ *  Clock#tick for a good and easy way to limit the framerate.
+ *
+ *  The accuracy of this function depends on processor scheduling,
+ *  which varies with operating system and hardware. The actual delay
+ *  time may be up to 10ms longer than +time+. If you need more
+ *  accuracy use Clock.delay, which is more accurate but uses slightly
+ *  more CPU time.
+ *
+ *  If +time+ is 0 or less, this function returns immediately without
+ *  delaying at all.
+ *
+ *  If +yield+ is greater than 0, this function will allow other ruby
+ *  threads to run every +yield+ milliseconds. This is only useful if
+ *  your application is multithreaded. It's safe (but pointless) to
+ *  use this feature for single threaded applications.
+ *
+ *  The Rubygame timer system will be initialized when you call this
+ *  function, if it has not been already. See Clock.runtime.
  *
  */
-VALUE rbgm_time_wait(VALUE module, VALUE milliseconds)
+VALUE rbgm_time_wait(int argc, VALUE *argv, VALUE module)
 {
   if(!SDL_WasInit(SDL_INIT_TIMER))
   {
@@ -102,8 +119,21 @@ VALUE rbgm_time_wait(VALUE module, VALUE milliseconds)
     }
   }
 
-  return INT2NUM( rg_threaded_delay( NUM2UINT(milliseconds), 0 ));
+  VALUE  vtime, vyield;
+
+  rb_scan_args(argc,argv,"11", &vtime, &vyield);
+
+  Uint32 time = NUM2UINT(vtime);
+
+  if(time <= 0)
+    return INT2NUM(0);
+
+  Uint32 yield = RTEST(vyield) ? NUM2UINT(vyield) : 0;
+
+  return UINT2NUM( rg_threaded_delay(time, yield) );
 }
+
+
 
 /*--
  *  From pygame code, with a few modifications:
@@ -211,7 +241,7 @@ void Rubygame_Init_Time()
   /* Clock class */
   cClock = rb_define_class_under(mRubygame,"Clock",rb_cObject);
   /* Clock class methods */
-  rb_define_singleton_method(cClock,"wait",rbgm_time_wait,1);
+  rb_define_singleton_method(cClock,"wait",rbgm_time_wait,-1);
   rb_define_singleton_method(cClock,"delay",rbgm_time_delay,-1);
   rb_define_singleton_method(cClock,"runtime",rbgm_time_getticks,0);
 }
