@@ -43,14 +43,16 @@ VALUE rbgm_time_getticks(VALUE);
 
 
 
-/* How often (milliseconds) to yield control to ruby while delaying */
-#define THREAD_DELAY_YIELD 5
-
 /* Delays the given amount of time, but broken down into parts.
  * Control is yielded to ruby between each part, so that other
  * threads can run.
+ *
+ * delay: How many milliseconds to delay.
+ * yield: How often (in ms) to give control to ruby.
+ *        If 0, control is never given to ruby.
+ *
  */
-Uint32 rg_threaded_delay( Uint32 delay )
+Uint32 rg_threaded_delay( Uint32 delay, int yield )
 {
   if( delay <= 0 )
     return 0;
@@ -59,10 +61,13 @@ Uint32 rg_threaded_delay( Uint32 delay )
 
   start = SDL_GetTicks();
 
-  while( delay - (SDL_GetTicks() - start) > THREAD_DELAY_YIELD )
+  if( yield > 0 )
   {
-    SDL_Delay(THREAD_DELAY_YIELD);
-    rb_thread_schedule();       /* give control to ruby */
+    while( delay - (SDL_GetTicks() - start) > yield )
+    {
+      SDL_Delay(yield);
+      rb_thread_schedule();       /* give control to ruby */
+    }
   }
 
   SDL_Delay( delay - (SDL_GetTicks() - start) ); /* remainder */
@@ -97,7 +102,7 @@ VALUE rbgm_time_wait(VALUE module, VALUE milliseconds)
     }
   }
 
-  return INT2NUM( rg_threaded_delay(NUM2UINT(milliseconds)) );
+  return INT2NUM( rg_threaded_delay( NUM2UINT(milliseconds), 0 ));
 }
 
 /*--
@@ -107,7 +112,7 @@ VALUE rbgm_time_wait(VALUE module, VALUE milliseconds)
  *    - uses rg_threaded_delay
  *++
  */
-static int accurate_delay(int ticks,int accuracy)
+static int accurate_delay(int ticks, int accuracy, int yield)
 {
   int funcstart, delay;
   if(ticks <= 0)
@@ -128,7 +133,7 @@ static int accurate_delay(int ticks,int accuracy)
     delay = (ticks - 2) - (ticks % accuracy);
     if(delay >= accuracy)
     {
-      rg_threaded_delay(delay);
+      rg_threaded_delay(delay, yield);
     }
   }
   do{
@@ -173,7 +178,7 @@ VALUE rbgm_time_delay(int argc, VALUE *argv, VALUE module)
   else
     accuracy = WORST_CLOCK_ACCURACY;
 
-  ticks = accurate_delay(goal,accuracy);
+  ticks = accurate_delay( goal, accuracy, 0 );
 
   return INT2NUM(ticks);
 }
