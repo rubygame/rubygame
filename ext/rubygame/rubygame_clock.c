@@ -151,11 +151,18 @@ VALUE rbgm_clock_wait(int argc, VALUE *argv, VALUE module)
  */
 static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, Uint32 yield)
 {
-  int funcstart, delay;
+  Uint32 funcstart, delay;
   if(ticks <= 0)
     return 0;
 
+  if( accuracy <= 0 )
+  {
+    /* delay with no accuracy is like wait (no spinlock) */
+    return rg_threaded_delay(ticks, yield);
+  }
+
   funcstart = SDL_GetTicks();
+
   if(ticks >= accuracy)
   {
     delay = (ticks - 2) - (ticks % accuracy);
