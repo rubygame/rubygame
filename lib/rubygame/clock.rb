@@ -71,6 +71,10 @@ module Rubygame
     # that can be changed by providing a different value for
     # +test_length+. Long tests provide more accurate results.
     # 
+    # You usually only need to call this once at the start of your
+    # application. You should not run any other ruby threads at the
+    # same time, as that will skew the calibration.
+    # 
     #--
     # 
     # I'm not 100% sure that this is a valid way to measure
