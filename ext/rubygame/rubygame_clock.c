@@ -63,10 +63,10 @@ void rg_init_sdl_timer()
  *
  * delay: How many milliseconds to delay.
  * yield: How often (in ms) to give control to ruby.
- *        If 0, control is never given to ruby.
+ *        If -1, control is never given to ruby.
  *
  */
-Uint32 rg_threaded_delay( Uint32 delay, Uint32 yield )
+Uint32 rg_threaded_delay( Uint32 delay, int yield )
 {
   if( delay <= 0 )
     return 0;
@@ -75,16 +75,23 @@ Uint32 rg_threaded_delay( Uint32 delay, Uint32 yield )
 
   start = SDL_GetTicks();
 
-  if( yield > 0 )
+  if( yield >= 0 )
   {
     while( delay - (SDL_GetTicks() - start) > yield )
     {
-      SDL_Delay(yield);
+      if( yield > 0 )
+      {
+        SDL_Delay(yield);
+      }
       rb_thread_schedule();       /* give control to ruby */
     }
   }
 
-  SDL_Delay( delay - (SDL_GetTicks() - start) ); /* remainder */
+  int remainder = delay - (SDL_GetTicks() - start);
+  if( remainder > 0 )
+  {
+    SDL_Delay( remainder );
+  }
 
   return SDL_GetTicks() - start;
 }
@@ -92,10 +99,14 @@ Uint32 rg_threaded_delay( Uint32 delay, Uint32 yield )
 
 /*
  *  call-seq:
- *    Clock.wait( time, yield=0 )  ->  Integer
+ *    Clock.wait( time, yield=false )  ->  Integer
  *
  *  time::    The target wait time, in milliseconds.
- *  yield::   How often (ms) to yield control to ruby.
+ *            (Non-negative Integer. Required.)
+ *  yield::   How often (ms) to let other ruby threads run.
+ *            If false (the default), other threads might stop
+ *            until the delay is over.
+ *            (Non-negative Integer or +false+. Optional.)
  *
  *  Returns:: The actual wait time, in milliseconds.
  *
@@ -113,10 +124,12 @@ Uint32 rg_threaded_delay( Uint32 delay, Uint32 yield )
  *  If +time+ is 0 or less, this function returns immediately without
  *  delaying at all.
  *
- *  If +yield+ is greater than 0, this function will allow other ruby
- *  threads to run every +yield+ milliseconds. This is only useful if
- *  your application is multithreaded. It's safe (but pointless) to
- *  use this feature for single threaded applications.
+ *  If +yield+ is a non-negative number, this function will allow other
+ *  ruby threads to run every +yield+ milliseconds. (A value of 0
+ *  causes the function to continuously yield control until the time
+ *  is over.) +yield+ is only useful if your application is
+ *  multithreaded. It's safe (but pointless) to use this feature for
+ *  single threaded applications.
  *
  *  The Rubygame timer system will be initialized when you call this
  *  function, if it has not been already. See Clock.runtime.
@@ -135,7 +148,7 @@ VALUE rbgm_clock_wait(int argc, VALUE *argv, VALUE module)
   if(time <= 0)
     return INT2NUM(0);
 
-  Uint32 yield = RTEST(vyield) ? NUM2UINT(vyield) : 0;
+  int yield = RTEST(vyield) ? NUM2UINT(vyield) : -1;
 
   return UINT2NUM( rg_threaded_delay(time, yield) );
 }
@@ -149,7 +162,7 @@ VALUE rbgm_clock_wait(int argc, VALUE *argv, VALUE module)
  *    - uses rg_threaded_delay
  *++
  */
-static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, Uint32 yield)
+static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, int yield)
 {
   Uint32 funcstart, delay;
   if(ticks <= 0)
@@ -182,11 +195,15 @@ static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, Uint32 yield)
 
 /*
  *  call-seq:
- *    Clock.delay( time, gran=12, yield=0 )  ->  Integer
+ *    Clock.delay( time, gran=12, yield=false )  ->  Integer
  *
  *  time::    The target delay time, in milliseconds.
+ *            (Non-negative Integer. Required.)
  *  gran::    The assumed granularity (ms) of the system clock.
- *  yield::   How often (ms) to yield control to ruby.
+ *  yield::   How often (ms) to let other ruby threads run.
+ *            If false (the default), other threads might stop
+ *            until the delay is over.
+ *            (Non-negative Integer or +false+. Optional.)
  *
  *  Returns:: The actual delay time, in milliseconds.
  *
@@ -209,10 +226,12 @@ static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, Uint32 yield)
  *  safe, but a value of approximately 5ms would give a better balance
  *  between accuracy and CPU usage on most modern computers.
  *
- *  If +yield+ is greater than 0, this function will allow other ruby
- *  threads to run every +yield+ milliseconds. This is only useful if
- *  your application is multithreaded. It's safe (but pointless) to
- *  use this feature for single threaded applications.
+ *  If +yield+ is a non-negative number, this function will allow other
+ *  ruby threads to run every +yield+ milliseconds. (A value of 0
+ *  causes the function to continuously yield control until the time
+ *  is over.) +yield+ is only useful if your application is
+ *  multithreaded. It's safe (but pointless) to use this feature for
+ *  single threaded applications.
  *
  *  The Rubygame timer system will be initialized when you call this
  *  function, if it has not been already. See Clock.runtime.
@@ -233,7 +252,7 @@ VALUE rbgm_clock_delay(int argc, VALUE *argv, VALUE module)
 
   Uint32 gran = RTEST(vgran) ? NUM2UINT(vgran) : WORST_CLOCK_ACCURACY;
 
-  Uint32 yield = RTEST(vyield) ? NUM2UINT(vyield) : 0;
+  int yield = RTEST(vyield) ? NUM2UINT(vyield) : -1;
 
   return UINT2NUM( accurate_delay(delay, gran, yield) );
 }
