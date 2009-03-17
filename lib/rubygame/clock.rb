@@ -56,6 +56,42 @@ module Rubygame
       yield self if block_given?
     end
 
+    # Calibrate @granularity to an appropriate value for this
+    # computer, to minimize CPU usage without reducing accuracy.
+    # See #tick and Clock.delay for more information about
+    # granularity.
+    # 
+    # The calibration process takes 0.5 seconds by default, but
+    # that can be changed by providing a different value for
+    # +test_length+. Long tests provide more accurate results.
+    # 
+    #--
+    # 
+    # I'm not 100% sure that this is a valid way to measure
+    # granularity, or that the granularity of ruby sleep is
+    # always the same as that of SDL_Delay. But it can be
+    # improved later if needed...
+    #
+    #++
+    def calibrate( test_length = 0.5 )
+      samples = []
+
+      end_time = Time.now + test_length
+
+      while( Time.now < end_time )
+        t = Time.now
+        sleep 0.01
+        samples << (Time.now - t - 0.01)
+      end
+
+      average = samples.inject{|sum,n| sum + n} / samples.length
+
+      # convert to ms, add some padding
+      gran = (average * 1000).to_i + 1
+
+      @granularity = gran
+    end
+
 
     # The target frametime (milliseconds/frame). See #tick
     attr_accessor :target_frametime
