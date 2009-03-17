@@ -79,7 +79,7 @@ module Rubygame
     # improved later if needed...
     #
     #++
-    def calibrate( test_length = 0.5 )
+    def calibrate_granularity( test_length = 0.5 )
       samples = []
 
       end_time = Time.now + test_length
