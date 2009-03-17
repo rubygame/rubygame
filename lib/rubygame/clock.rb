@@ -37,6 +37,7 @@ module Rubygame
     # The number of times #tick has been called.
     attr_reader :ticks
 
+
     # Granularity used for framerate limiting delays in #tick.
     # See #tick and Clock.delay. Default 12.
     attr_accessor :granularity
@@ -45,16 +46,21 @@ module Rubygame
     # See #tick and Clock.delay. Default false.
     attr_accessor :yield
 
+
     # Create a new Clock instance.
     def initialize()
       @start = Clock.runtime()
       @last_tick = @start
       @ticks = 0
+
       @target_frametime = nil
+
       @granularity = 12
       @yield = false
+
       yield self if block_given?
     end
+
 
     # Calibrate @granularity to an appropriate value for this
     # computer, to minimize CPU usage without reducing accuracy.
