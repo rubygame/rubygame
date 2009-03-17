@@ -68,9 +68,6 @@ void rg_init_sdl_timer()
  */
 Uint32 rg_threaded_delay( Uint32 delay, int yield )
 {
-  if( delay <= 0 )
-    return 0;
-
   Uint32 start;
 
   start = SDL_GetTicks();
@@ -121,9 +118,6 @@ Uint32 rg_threaded_delay( Uint32 delay, int yield )
  *  accuracy use Clock.delay, which is more accurate but uses slightly
  *  more CPU time.
  *
- *  If +time+ is 0 or less, this function returns immediately without
- *  delaying at all.
- *
  *  If +yield+ is a non-negative number, this function will allow other
  *  ruby threads to run every +yield+ milliseconds. (A value of 0
  *  causes the function to continuously yield control until the time
@@ -145,9 +139,6 @@ VALUE rbgm_clock_wait(int argc, VALUE *argv, VALUE module)
 
   Uint32 time = NUM2UINT(vtime);
 
-  if(time <= 0)
-    return INT2NUM(0);
-
   int yield = RTEST(vyield) ? NUM2UINT(vyield) : -1;
 
   return UINT2NUM( rg_threaded_delay(time, yield) );
@@ -165,8 +156,6 @@ VALUE rbgm_clock_wait(int argc, VALUE *argv, VALUE module)
 static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, int yield)
 {
   Uint32 funcstart, delay;
-  if(ticks <= 0)
-    return 0;
 
   if( accuracy <= 0 )
   {
@@ -214,9 +203,6 @@ static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, int yield)
  *  See also Clock#tick for a good and easy way to limit the
  *  framerate.
  *
- *  If +time+ is 0 or less, this function returns immediately without
- *  delaying at all.
- *
  *  This function uses "busy waiting" (spinlock) during the last part
  *  of the delay, for increased accuracy. The value of +gran+ affects
  *  how many milliseconds of the delay are spent in spinlock, and thus
@@ -246,9 +232,6 @@ VALUE rbgm_clock_delay(int argc, VALUE *argv, VALUE module)
   rb_scan_args(argc,argv,"12", &vtime, &vgran, &vyield);
 
   Uint32 delay = NUM2UINT(vtime);
-
-  if(delay <= 0)
-    return INT2NUM(0);
 
   Uint32 gran = RTEST(vgran) ? NUM2UINT(vgran) : WORST_CLOCK_ACCURACY;
 
