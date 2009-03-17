@@ -297,13 +297,6 @@ ttfont.render( "Press escape or q to quit.",
                true, [250,250,250] ).blit( background, [20,180] )
 
 
-# Now blit the background onto the screen and update the screen once.
-# During the loop, we'll use 'dirty rect' updating to refresh only the
-# parts of the screen that have changed.
-background.blit(screen,[0,0])
-screen.update()
-
-
 
 
 ############################
@@ -416,6 +409,12 @@ class Game
 		setup_clock()
 		setup_queue()
 		setup_event_hooks()
+
+		# Now blit the background onto the screen and update the screen
+		# once. During the loop, we'll use 'dirty rect' updating to
+		# refresh only the parts of the screen that have changed.
+		@background.blit(screen,[0,0])
+		@screen.update()
 
 	end
 
