@@ -67,13 +67,16 @@ module Rubygame
     # See #tick and Clock.delay for more information about
     # granularity.
     # 
-    # The calibration process takes 0.5 seconds by default, but
-    # that can be changed by providing a different value for
-    # +test_length+. Long tests provide more accurate results.
-    # 
-    # You usually only need to call this once at the start of your
-    # application. You should not run any other ruby threads at the
-    # same time, as that will skew the calibration.
+    # By default, the calibration process takes at most 0.5 seconds.
+    # You can specify a different maximum test length changed by 
+    # providing a different value for +max_time+.
+    # In future versions, the process may complete earlier than the
+    # max test time, but will not run longer.
+    #
+    # You usually only need to call this once, after you create the
+    # clock at the start of your application. You should not run any
+    # other ruby threads at the same time, as doing so will skew the
+    # calibration.
     # 
     #--
     # 
@@ -83,10 +86,10 @@ module Rubygame
     # improved later if needed...
     #
     #++
-    def calibrate_granularity( test_length = 0.5 )
+    def calibrate_granularity( max_time = 0.5 )
       samples = []
 
-      end_time = Time.now + test_length
+      end_time = Time.now + max_time
 
       while( Time.now < end_time )
         t = Time.now
