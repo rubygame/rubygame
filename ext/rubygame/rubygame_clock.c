@@ -155,7 +155,8 @@ VALUE rbgm_clock_wait(int argc, VALUE *argv, VALUE module)
  */
 static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, int yield)
 {
-  Uint32 funcstart, delay;
+  Uint32 funcstart;
+  int delay;
 
   if( accuracy <= 0 )
   {
