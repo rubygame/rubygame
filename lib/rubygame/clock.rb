@@ -18,6 +18,9 @@
 #++
 
 
+require "rubygame/events/clock_events"
+
+
 module Rubygame
 
 
@@ -61,6 +64,9 @@ module Rubygame
 
       @granularity = 12
       @yield = false
+
+      # Should #tick return a ClockTicked event?
+      @tick_events = false
 
       yield self if block_given?
     end
@@ -107,6 +113,18 @@ module Rubygame
       gran = (average * 1000).to_i + 1
 
       @granularity = gran
+    end
+
+
+    # Enable tick events, so that #tick will return a ClockTicked
+    # instance instead of a number of milliseconds. ClockTicked
+    # 
+    # 
+    # This option is available starting in Rubygame 2.5, and will
+    # become the default in Rubygame 3.0.
+    # 
+    def enable_tick_events
+      @tick_events = true
     end
 
 
@@ -198,12 +216,19 @@ module Rubygame
     # 
     def tick()
       passed = Clock.runtime() - @last_tick  # how long since the last tick?
+
       if @target_frametime
         passed += Clock.delay(@target_frametime - passed,
                               @granularity,
                               @yield)
       end
-      return passed
+
+      if @tick_events
+        return Rubygame::Events::ClockTicked.new( passed )
+      else
+        return passed
+      end
+
     ensure
       @last_tick = Clock.runtime()
       @ticks += 1
