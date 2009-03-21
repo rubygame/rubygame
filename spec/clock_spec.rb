@@ -17,6 +17,10 @@ describe Clock do
   end
 
 
+  it "should have a granularity accessor" do
+    lambda{@clock.granularity = 5}.should_not raise_error
+  end
+
   it "should have a yield accessor" do
     lambda{@clock.yield = 5}.should_not raise_error
   end
