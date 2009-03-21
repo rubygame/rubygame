@@ -12,10 +12,19 @@ include Rubygame::Events
 
 describe Clock do
 
+  before :each do
+    @clock = Clock.new
+  end
+
+
+  it "should have a yield accessor" do
+    lambda{@clock.yield = 5}.should_not raise_error
+  end
+
+
   describe "with tick events" do
 
     before :each do
-      @clock = Clock.new
       @clock.enable_tick_events
     end
     
@@ -37,7 +46,6 @@ describe Clock do
   describe "without tick events" do
     
     it "should return integer ticks" do
-      @clock = Clock.new
       @clock.tick.should be_instance_of(Fixnum)
     end
 
