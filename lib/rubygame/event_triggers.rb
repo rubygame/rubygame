@@ -42,7 +42,7 @@ require 'rubygame'
 # impact on your game's framerate.
 # 
 # Here is an overview of the event trigger classes that
-# come with Rubygame as of version 2.4:
+# come with Rubygame as of version 2.5:
 # 
 # 
 # AndTrigger::          Holds multiple other triggers, and
@@ -74,6 +74,8 @@ require 'rubygame'
 # MouseMoveTrigger::    Matches certain MouseMoved events.
 # 
 # MouseReleaseTrigger:: Matches certain MouseReleased events.
+# 
+# TickTrigger::         Matches ClockTicked events.
 # 
 # YesTrigger::          Matches every event, no matter what.
 # 
@@ -668,11 +670,17 @@ end
 
 
 
-# class TickTrigger
-# 	def match?( event )
-# 		event.kind_of?( Rubygame::Events::ClockTicked )
-# 	end
-# end
+# 
+# TickTrigger is an event trigger which will fire
+# when the Clock ticks (ClockTicked).
+# 
+class TickTrigger
+
+	# Returns true if the event is a ClockTicked event.
+	def match?( event )
+		event.kind_of?( Rubygame::Events::ClockTicked )
+	end
+end
 
 
 
