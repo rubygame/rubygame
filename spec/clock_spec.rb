@@ -4,8 +4,10 @@
 $:.unshift( File.join( File.dirname(__FILE__), "..", "lib" ) )
 $:.unshift( File.join( File.dirname(__FILE__), "..", "ext", "rubygame" ) )
 
+
 require 'rubygame'
 include Rubygame
+include Rubygame::Events
 
 
 describe Clock do
@@ -17,6 +19,11 @@ describe Clock do
       @clock.enable_tick_events
     end
     
+
+    it "should return ClockTicked events" do
+      @clock.tick.should be_instance_of(ClockTicked)
+    end
+
 
     it "should cache ClockTicked events" do
       Clock.stub!(:delay).and_return(10)
