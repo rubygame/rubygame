@@ -55,6 +55,10 @@ module Rubygame
 
       @target_frametime = nil
 
+      # Frametime samples for framerate calculation
+      @samples = []
+      @max_samples = 20
+
       @granularity = 12
       @yield = false
 
@@ -156,14 +160,10 @@ module Rubygame
     # Return the actual framerate (frames per second) recorded by the
     # Clock. See #tick.
     # 
-    # TODO: sample only a few seconds in the past, instead of the
-    # entire lifetime of the Clock.
-    # 
     def framerate
-      # below is same as: return @ticks / (lifetime / 1000.0)
-      return 1000.0 * @ticks / lifetime()
+      1000.0 * @samples.length / @samples.inject(0){|sum, n| sum + n}
     rescue ZeroDivisionError
-      return 0
+      0.0
     end
 
 
@@ -180,7 +180,7 @@ module Rubygame
     # Framerate limiting allows you to prevent the application from
     # running too fast (and using 100% of processor time) by pausing
     # the program very briefly each frame. The pause duration is
-    # calculated each frame to maintain a constant framerate.
+    # calculated each frame to maintain a stable framerate.
     # 
     # Framerate limiting is only enabled if you have set the
     # #target_framerate= or #target_frametime=. If you have done that,
@@ -199,14 +199,18 @@ module Rubygame
     def tick()
       passed = Clock.runtime() - @last_tick  # how long since the last tick?
       if @target_frametime
-        return Clock.delay(@target_frametime - passed,
-                           @granularity,
-                           @yield) + passed
+        passed += Clock.delay(@target_frametime - passed,
+                              @granularity,
+                              @yield)
       end
       return passed
     ensure
       @last_tick = Clock.runtime()
       @ticks += 1
+
+      # Save the frametime for framerate calculation
+      @samples.push(passed)
+      @samples.shift if @samples.length > @max_samples
     end
 
   end
