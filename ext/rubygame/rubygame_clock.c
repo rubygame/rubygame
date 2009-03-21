@@ -212,6 +212,8 @@ static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, int yield)
  *  delay a few milliseconds too long. The default value (12ms) is very
  *  safe, but a value of approximately 5ms would give a better balance
  *  between accuracy and CPU usage on most modern computers.
+ *  A granularity of 0ms makes this method act the same as Clock.wait
+ *  (i.e. no spinlock at all, very low CPU usage).
  *
  *  If +yield+ is a non-negative number, this function will allow other
  *  ruby threads to run every +yield+ milliseconds. (A value of 0
