@@ -16,6 +16,10 @@ describe Clock do
     @clock = Clock.new
   end
 
+  after :each do
+    Rubygame.quit
+  end
+
 
   it "should have a granularity accessor" do
     lambda{@clock.granularity = 5}.should_not raise_error
@@ -23,6 +27,20 @@ describe Clock do
 
   it "should have a yield accessor" do
     lambda{@clock.yield = 5}.should_not raise_error
+  end
+
+
+  describe "with target" do
+
+    it "should pass frametime, granularity, and yield to Clock.delay" do
+      @clock.target_frametime = 1
+      @clock.granularity = 2
+      @clock.yield = 3
+
+      Clock.should_receive(:delay).with(1,2,3).and_return(1)
+      @clock.tick
+    end
+
   end
 
 
