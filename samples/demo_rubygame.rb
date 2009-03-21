@@ -242,7 +242,7 @@ class << pandas
 	end
 end
 
-pandas.make_magic_hooks( ClockTicked   => :update,
+pandas.make_magic_hooks( :tick         => :update,
                          DrawSprites   => :do_draw,
                          UndrawSprites => :do_undraw )
 
@@ -479,7 +479,7 @@ class Game
 			WindowExposed     => :update_screen,
 
 			# Refresh the window title.
-			ClockTicked       => :update_framerate
+			:tick             => :update_framerate
 		}
 
 		make_magic_hooks( hooks )
