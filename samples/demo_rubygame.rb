@@ -66,16 +66,6 @@ Joystick.activate_all
 ########################
 
 
-# Holds information about the clock, created each frame.
-class ClockTicked
-	attr_reader :time, :framerate
-
-	def initialize( ms, framerate )
-		@time = ms / 1000.0
-		@framerate = framerate
-	end
-end
-
 # Signals sprites to draw themselves on the screen
 class DrawSprites
 	attr_accessor :screen
@@ -138,12 +128,12 @@ class Panda
 		# do nothing in base class, rotate/zoom image in subs
 	end
 
-	def update( event )
+	def update( tick_event )
 		x,y = @rect.center
-		self.update_image( event.time * 1000.0 )
+		self.update_image( tick_event.seconds * 1000.0 )
 		@rect.size = @image.size
 
-		base = @speed * event.time
+		base = @speed * tick_event.seconds
 		@rect.centerx = x + @vx * base
 		@rect.centery = y + @vy * base
 	end
@@ -461,6 +451,9 @@ class Game
     # This helps minimize CPU usage on systems with clocks
     # that are more accurate than the default granularity.
 		@clock.calibrate_granularity
+
+    # Make Clock#tick return a ClockTicked event.
+    @clock.enable_tick_events
 	end
 
 
@@ -511,8 +504,7 @@ class Game
 		@queue << UndrawSprites.new( @screen, @background )
 		@queue.fetch_sdl_events
 		@queue << DrawSprites.new( @screen )
-		@queue << ClockTicked.new( $game.clock.tick,
-		                           $game.clock.framerate )
+		@queue << $game.clock.tick
 		@queue.each do |event|
 			handle( event )
 		end
@@ -528,9 +520,10 @@ class Game
 
 	# Update the window title to display the current framerate.
 	def update_framerate( event )
-		unless @old_framerate == event.framerate
-			@screen.title = "Rubygame test [%d fps]"%event.framerate
-			@old_framerate = event.framerate
+    new_framerate = @clock.framerate.to_i
+		unless @old_framerate == new_framerate
+			@screen.title = "Rubygame test [%d fps]"%new_framerate
+			@old_framerate = new_framerate
 		end
 	end
 
