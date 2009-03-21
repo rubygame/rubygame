@@ -248,6 +248,7 @@ module Rubygame::EventHandler::HasEventHandler
 	# By default, triggers are converted according to these rules:
 	# 
 	#   * Symbols starting with "mouse" become a MouseClickTrigger.
+	#   * The symbol :tick becomes a TickTrigger. (Rubygame 2.5+)
 	#   * Keyboard symbols become a KeyPressTrigger.
 	#   * Classes become an InstanceOfTrigger.
 	#   * Objects with a #match? method are duplicated and used
@@ -419,6 +420,8 @@ module Rubygame::EventHandler::HasEventHandler
 			case(trigger.to_s)
 			when /mouse/
 				Rubygame::EventTriggers::MousePressTrigger.new(trigger)
+			when "tick"
+				Rubygame::EventTriggers::TickTrigger.new
 			else
 				Rubygame::EventTriggers::KeyPressTrigger.new(trigger)
 			end
