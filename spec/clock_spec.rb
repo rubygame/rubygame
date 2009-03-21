@@ -33,4 +33,14 @@ describe Clock do
 
   end
 
+
+  describe "without tick events" do
+    
+    it "should return integer ticks" do
+      @clock = Clock.new
+      @clock.tick.should be_instance_of(Fixnum)
+    end
+
+  end
+
 end
