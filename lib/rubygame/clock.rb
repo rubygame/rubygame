@@ -42,7 +42,8 @@ module Rubygame
 
 
     # Granularity used for framerate limiting delays in #tick.
-    # See #tick and Clock.delay. Default 12.
+    # You can calibrate this easily with #calibrate_granularity.
+    # See also #tick and Clock.delay. Default 12.
     attr_accessor :granularity
 
     # Yield time used for framerate limiting delays in #tick.
