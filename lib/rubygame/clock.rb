@@ -69,6 +69,9 @@ module Rubygame
       # Should #tick return a ClockTicked event?
       @tick_events = false
 
+      # Cache for past tick events with specific ms values
+      @tick_cache = {}
+
       yield self if block_given?
     end
 
@@ -227,7 +230,9 @@ module Rubygame
       end
 
       if @tick_events
-        return Rubygame::Events::ClockTicked.new( passed )
+        return (@tick_cache[passed] or 
+                 (@tick_cache[passed] =
+                  Rubygame::Events::ClockTicked.new( passed ) ))
       else
         return passed
       end
