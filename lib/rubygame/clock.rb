@@ -52,7 +52,7 @@ module Rubygame
 
     # Create a new Clock instance.
     def initialize()
-      @start = Clock.runtime()
+      @start = self.class.runtime()
       @last_tick = @start
       @ticks = 0
 
@@ -168,7 +168,7 @@ module Rubygame
     # Returns time in milliseconds since this Clock instance was created.
     # 
     def lifetime
-      Clock.runtime() - @start
+      self.class.runtime() - @start
     end
 
 
@@ -215,12 +215,14 @@ module Rubygame
     # code run faster, only slow it down if it is running too fast.)
     # 
     def tick()
-      passed = Clock.runtime() - @last_tick  # how long since the last tick?
+
+      # how long since the last tick?
+      passed = self.class.runtime() - @last_tick
 
       if @target_frametime
-        passed += Clock.delay(@target_frametime - passed,
-                              @granularity,
-                              @yield)
+        passed += self.class.delay(@target_frametime - passed,
+                                   @granularity,
+                                   @yield)
       end
 
       if @tick_events
@@ -230,7 +232,7 @@ module Rubygame
       end
 
     ensure
-      @last_tick = Clock.runtime()
+      @last_tick = self.class.runtime()
       @ticks += 1
 
       # Save the frametime for framerate calculation
