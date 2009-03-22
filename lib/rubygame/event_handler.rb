@@ -287,12 +287,26 @@ module Rubygame::EventHandler::HasEventHandler
 	#                            :mouse_left => :shoot,
 	#                            DiedEvent   => died_action )
 	# 
-	def make_magic_hooks( hash )
-		hash.collect do |trigger, action|
+	def make_magic_hooks( hooks_hash )
+		hooks_hash.collect do |trigger, action|
 			append_hook( :trigger => _make_magic_trigger( trigger ),
 									 :action  => _make_magic_action(  action  ))
 		end
 	end
+
+
+  # Exactly like #make_magic_hooks, but the hooks' owner will be the
+  # given object, instead of self. See EventHook for more information
+  # about hook owners.
+  # 
+  def make_magic_hooks_for( owner, hooks_hash )
+    hooks_hash.collect do |trigger, action|
+      append_hook( :owner   => owner,
+                   :trigger => _make_magic_trigger( trigger ),
+                   :action  => _make_magic_action(  action  ) )
+    end
+  end
+
 
 	# Exactly like #append_hook, except that the hook is put at the
 	# top of the stack (it will be handled first).
