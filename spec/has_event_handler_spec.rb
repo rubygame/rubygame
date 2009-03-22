@@ -223,5 +223,14 @@ describe HasEventHandler do
   end
 
 
+  describe "#make_magic_hooks_for" do
+    
+    it "should use the given owner" do
+      hooks = @object.make_magic_hooks_for( :owner, {:a => :foo } )
+      hooks[0].owner.should == :owner
+    end
+
+  end
+
 
 end
