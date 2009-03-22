@@ -111,6 +111,11 @@ describe HasEventHandler do
       hooks[0].trigger.should be_instance_of(InstanceOfTrigger)
     end
 
+    it "should turn :tick into TickTrigger" do
+      hooks = @object.make_magic_hooks( {:tick => :foo })
+      hooks[0].trigger.should be_instance_of(TickTrigger)
+    end
+
     it "should accept objects with #match? as triggers" do
       fake_trigger = Object.new
       class << fake_trigger; def match?; end; end
