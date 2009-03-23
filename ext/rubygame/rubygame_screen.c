@@ -158,16 +158,28 @@ VALUE rbgm_screen_getresolution(VALUE module)
   VALUE array;
   const SDL_VideoInfo* hw;
   init_video_system();
+
+  /* Test for existing Screen */
+  SDL_Surface *surface;
+  surface = SDL_GetVideoSurface();
+  if(surface != NULL)
+	{
+		rb_raise(eSDLError, "You cannot get resolution when there is " \
+             "an open Screen. See the docs for the reason.");
+	}
+
   hw = SDL_GetVideoInfo();
   if(hw==NULL)
 	{
 		rb_raise(eSDLError,"Couldn't get video info: %s",SDL_GetError());
 	}
+
   array = rb_ary_new();
   rb_ary_push(array, INT2NUM(hw->current_w));
   rb_ary_push(array, INT2NUM(hw->current_h));
   return array;
 }
+
 
 /* Screen methods: */
 
