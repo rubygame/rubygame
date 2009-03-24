@@ -135,6 +135,31 @@ VALUE rbgm_screen_setmode(int argc, VALUE *argv, VALUE module)
   return Data_Wrap_Struct( cScreen,0,0,screen ); 
 }
 
+
+
+/*
+ *  call-seq:
+ *     Screen.close
+ *
+ *  Close the Screen, making the Rubygame window disappear.
+ *  This method also exits from fullscreen mode, if needed.
+ *
+ *  After calling this method, you should discard any references
+ *  to the old Screen surface, as it is no longer valid, even
+ *  if you call Screen.new again.
+ *
+ *  (Note: You do not need to close the Screen to change its size
+ *  or flags, you can simply call Screen.new while already open.)
+ *
+ */
+VALUE rbgm_screen_close(VALUE module)
+{
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
+	return Qnil;
+}
+
+
+
 /*  call-seq:
  *     Screen.get_surface
  *
@@ -472,6 +497,7 @@ void Rubygame_Init_Screen()
   rb_define_singleton_method(cScreen,"new",rbgm_screen_setmode, -1);
   rb_define_alias(rb_singleton_class(cScreen),"set_mode","new");
   rb_define_alias(rb_singleton_class(cScreen),"instance","new");
+  rb_define_singleton_method(cScreen,"close", rbgm_screen_close, 0);
   rb_define_singleton_method(cScreen,"get_surface",rbgm_screen_getsurface, 0);
   rb_define_singleton_method(cScreen,"get_resolution",rbgm_screen_getresolution, 0);
 
