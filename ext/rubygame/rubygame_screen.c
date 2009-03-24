@@ -48,7 +48,7 @@ VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
 
 
 /* call-seq:
- *     new(size, depth=0, flags=[SWSURFACE])  ->  Screen
+ *     Screen.new( size, depth=0, flags=[SWSURFACE] )  ->  Screen
  *     (aliases: set_mode, instance)
  *
  *  Create a new Rubygame window if there is none, or modify the existing one.
@@ -136,7 +136,7 @@ VALUE rbgm_screen_setmode(int argc, VALUE *argv, VALUE module)
 }
 
 /*  call-seq:
- *     get_surface
+ *     Screen.get_surface
  *
  *  Returns the current display window, or raises SDLError if it
  *  fails to get it (for example, if it doesn't exist yet).
@@ -199,7 +199,8 @@ VALUE rbgm_screen_getresolution(VALUE module)
 }
 
 
-/* Screen methods: */
+/* Screen instance methods: */
+
 
 /*  call-seq:
  *     title  ->  String
