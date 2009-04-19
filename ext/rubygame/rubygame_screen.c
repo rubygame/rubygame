@@ -32,6 +32,8 @@ VALUE cScreen;
 VALUE rbgm_screen_setmode(int, VALUE*, VALUE);
 VALUE rbgm_screen_getsurface(VALUE);
 
+VALUE rbgm_screen_getresolution(VALUE);
+
 VALUE rbgm_screen_getcaption(VALUE);
 VALUE rbgm_screen_setcaption(VALUE, VALUE);
 
@@ -46,8 +48,8 @@ VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
 
 
 /* call-seq:
- *     new(size, depth=0, flags=[SWSURFACE])  ->  Screen
- *     (aliases: set_mode, instance)
+ *     Screen.new( size, depth=0, flags=[SWSURFACE] )  ->  Screen
+ *     (alias: open)
  *
  *  Create a new Rubygame window if there is none, or modify the existing one.
  *  You cannot create more than one Screen; the existing one will be replaced.
@@ -94,13 +96,13 @@ VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
  *                       OpenGL functions.
  *          RESIZABLE::  Create a resizable window. When the window is 
  *                       resized by the user, a ResizeEvent is
- *                       generated and #set_mode can be called again
+ *                       generated and this method can be called again
  *                       with the new size.
  *          NOFRAME::    If possible, create a window with no title bar or
  *                       frame decoration.
  *                       Fullscreen modes automatically have this flag set.
  */
-VALUE rbgm_screen_setmode(int argc, VALUE *argv, VALUE module)
+VALUE rbgm_screen_new(int argc, VALUE *argv, VALUE module)
 {
   SDL_Surface *screen;
   int w, h, depth;
@@ -133,8 +135,73 @@ VALUE rbgm_screen_setmode(int argc, VALUE *argv, VALUE module)
   return Data_Wrap_Struct( cScreen,0,0,screen ); 
 }
 
+
+/* call-seq:
+ *     Screen.set_mode( size, depth=0, flags=[SWSURFACE] )  ->  Screen
+ *
+ *  Deprecated alias for Screen.new. This method will be REMOVED
+ *  in Rubygame 3.0. You should use Screen.new (or its alias, Screen.open)
+ *  instead.
+ */
+VALUE rbgm_screen_setmode(int argc, VALUE *argv, VALUE module)
+{
+  rg_deprecated("Rubygame::Screen.set_mode", "3.0");
+  return rbgm_screen_new(argc, argv, module);
+}
+
+/* call-seq:
+ *     Screen.instance( size, depth=0, flags=[SWSURFACE] )  ->  Screen
+ *
+ *  Deprecated alias for Screen.new. This method will be REMOVED
+ *  in Rubygame 3.0. You should use Screen.new (or its alias, Screen.open)
+ *  instead.
+ */
+VALUE rbgm_screen_instance(int argc, VALUE *argv, VALUE module)
+{
+  rg_deprecated("Rubygame::Screen.instance", "3.0");
+  return rbgm_screen_new(argc, argv, module);
+}
+
+
+/*
+ *  call-seq:
+ *     Screen.close
+ *
+ *  Close the Screen, making the Rubygame window disappear.
+ *  This method also exits from fullscreen mode, if needed.
+ *
+ *  After calling this method, you should discard any references
+ *  to the old Screen surface, as it is no longer valid, even
+ *  if you call Screen.new again.
+ *
+ *  (Note: You do not need to close the Screen to change its size
+ *  or flags, you can simply call Screen.new while already open.)
+ *
+ */
+VALUE rbgm_screen_close(VALUE module)
+{
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
+	return Qnil;
+}
+
+
+/*
+ *  call-seq:
+ *     Screen.open?
+ *
+ *  True if there is an open Rubygame window.
+ *  See Screen.new and Screen.close.
+ *
+ */
+VALUE rbgm_screen_openp(VALUE module)
+{
+  return (SDL_GetVideoSurface() == NULL) ? Qfalse : Qtrue;
+}
+
+
+
 /*  call-seq:
- *     get_surface
+ *     Screen.get_surface
  *
  *  Returns the current display window, or raises SDLError if it
  *  fails to get it (for example, if it doesn't exist yet).
@@ -150,7 +217,55 @@ VALUE rbgm_screen_getsurface(VALUE module)
   return Data_Wrap_Struct( cScreen,0,0,surface );
 }
 
-/* Screen methods: */
+
+/*  call-seq:
+ *     Screen.get_resolution  ->  [width, height]
+ *
+ *  Returns the pixel dimensions of the user's display (i.e. monitor).
+ *  (That is not the same as Screen#size, which only measures the
+ *  Rubygame window.) You can use this information to detect
+ *  how large of a Screen can fit on the user's display.
+ *
+ *  This method can _only_ be used when there is no open Screen instance.
+ *  This method raises SDLError if there is a Screen instance (i.e.
+ *  you have done Screen.new before). This is a limitation of the SDL
+ *  function SDL_GetVideoInfo, which behaves differently when a Screen
+ *  is open than when it is closed.
+ *
+ *  This method will also raise SDLError if it cannot get the display
+ *  size for some other reason.
+ *
+ */
+VALUE rbgm_screen_getresolution(VALUE module)
+{
+  VALUE array;
+  const SDL_VideoInfo* hw;
+  init_video_system();
+
+  /* Test for existing Screen */
+  SDL_Surface *surface;
+  surface = SDL_GetVideoSurface();
+  if(surface != NULL)
+	{
+		rb_raise(eSDLError, "You cannot get resolution when there is " \
+             "an open Screen. See the docs for the reason.");
+	}
+
+  hw = SDL_GetVideoInfo();
+  if(hw==NULL)
+	{
+		rb_raise(eSDLError,"Couldn't get video info: %s",SDL_GetError());
+	}
+
+  array = rb_ary_new();
+  rb_ary_push(array, INT2NUM(hw->current_w));
+  rb_ary_push(array, INT2NUM(hw->current_h));
+  return array;
+}
+
+
+/* Screen instance methods: */
+
 
 /*  call-seq:
  *     title  ->  String
@@ -224,7 +339,7 @@ VALUE rbgm_screen_seticon(VALUE self, VALUE data)
  *
  *  Updates (refreshes) all or part of the Rubygame window, revealing to the 
  *  user any changes that have been made since the last update. If you're using
- *  a double-buffered display (see Display.set_mode), you should use
+ *  a double-buffered display (see Screen.new), you should use
  *  Screen#flip instead.
  *
  *  This method takes these arguments:
@@ -347,7 +462,7 @@ VALUE rbgm_screen_updaterects(VALUE self, VALUE array_rects)
 /*  call-seq:
  *     flip()
  *
- *  If the Rubygame display is double-buffered (see #set_mode), flips
+ *  If the Rubygame display is double-buffered (see Screen.new), flips
  *  the buffers and updates the whole screen. Otherwise, just updates the
  *  whole screen.
  */
@@ -402,8 +517,8 @@ VALUE rbgm_screen_setshowcursor(VALUE self, VALUE val)
  *  Surface#set_colorkey and Surface#set_alpha are not inherited.
  *
  *  Please note that only *one* Screen can exist, per application, at a time;
- *  this is a limitation of SDL. You *must* use Screen.set_mode to create the
- *  Screen or modify its properties.
+ *  this is a limitation of SDL. You *must* use Screen.new (or its alias,
+ *  Screen.open) to create or modify the Screen.
  *
  *  Also note that no changes to the Screen will be seen until it is refreshed.
  *  See #update, #update_rects, and #flip for ways to refresh all or part of
@@ -419,10 +534,19 @@ void Rubygame_Init_Screen()
 
   /* Screen class */
   cScreen = rb_define_class_under(mRubygame,"Screen",cSurface);
-  rb_define_singleton_method(cScreen,"new",rbgm_screen_setmode, -1);
-  rb_define_alias(rb_singleton_class(cScreen),"set_mode","new");
-  rb_define_alias(rb_singleton_class(cScreen),"instance","new");
+  rb_define_singleton_method(cScreen,"new",rbgm_screen_new, -1);
+  rb_define_alias(rb_singleton_class(cScreen),"open","new");
+
+  rb_define_singleton_method(cScreen,"close", rbgm_screen_close, 0);
+  rb_define_singleton_method(cScreen,"open?", rbgm_screen_openp, 0);
   rb_define_singleton_method(cScreen,"get_surface",rbgm_screen_getsurface, 0);
+  rb_define_singleton_method(cScreen,"get_resolution",rbgm_screen_getresolution, 0);
+
+  /* Deprecated: */
+  rb_define_singleton_method(cScreen,"set_mode", rbgm_screen_setmode, -1);
+  rb_define_singleton_method(cScreen,"instance", rbgm_screen_instance, -1);
+
+
 
   /* These are inherited from Surface, but should not be called on Screen */
   rb_undef_method(cScreen,"set_alpha"); 
