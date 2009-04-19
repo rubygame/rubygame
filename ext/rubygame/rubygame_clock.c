@@ -96,14 +96,14 @@ Uint32 rg_threaded_delay( Uint32 delay, int yield )
 
 /*
  *  call-seq:
- *    Clock.wait( time, yield=false )  ->  Integer
+ *    Clock.wait( time, threading=false )  ->  Integer
  *
- *  time::    The target wait time, in milliseconds.
- *            (Non-negative Integer. Required.)
- *  yield::   How often (ms) to let other ruby threads run.
- *            If false (the default), other threads might stop
- *            until the delay is over.
- *            (Non-negative Integer or +false+. Optional.)
+ *  time::       The target wait time, in milliseconds.
+ *               (Non-negative Integer. Required.)
+ *  threading::  How often (ms) to let other ruby threads run.
+ *               If false (the default), other threads might stop
+ *               until the delay is over.
+ *               (Non-negative Integer or +false+. Optional.)
  *
  *  Returns:: The actual wait time, in milliseconds.
  *
@@ -118,12 +118,12 @@ Uint32 rg_threaded_delay( Uint32 delay, int yield )
  *  accuracy use Clock.delay, which is more accurate but uses slightly
  *  more CPU time.
  *
- *  If +yield+ is a non-negative number, this function will allow other
- *  ruby threads to run every +yield+ milliseconds. (A value of 0
- *  causes the function to continuously yield control until the time
- *  is over.) +yield+ is only useful if your application is
- *  multithreaded. It's safe (but pointless) to use this feature for
- *  single threaded applications.
+ *  If +threading+ is a non-negative number, this function will
+ *  allow other ruby threads to run every +threading+ milliseconds.
+ *  (A value of 0 causes the function to continuously yield control
+ *  until the time is over.) +threading+ is only useful if your
+ *  application is multithreaded. It's safe (but pointless) to use
+ *  this feature for single threaded applications.
  *
  *  The Rubygame timer system will be initialized when you call this
  *  function, if it has not been already. See Clock.runtime.
@@ -185,15 +185,15 @@ static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, int yield)
 
 /*
  *  call-seq:
- *    Clock.delay( time, gran=12, yield=false )  ->  Integer
+ *    Clock.delay( time, gran=12, threading=false )  ->  Integer
  *
- *  time::    The target delay time, in milliseconds.
- *            (Non-negative Integer. Required.)
- *  gran::    The assumed granularity (ms) of the system clock.
- *  yield::   How often (ms) to let other ruby threads run.
- *            If false (the default), other threads might stop
- *            until the delay is over.
- *            (Non-negative Integer or +false+. Optional.)
+ *  time::       The target delay time, in milliseconds.
+ *               (Non-negative Integer. Required.)
+ *  gran::       The assumed granularity (ms) of the system clock.
+ *  threading::  How often (ms) to let other ruby threads run.
+ *               If false (the default), other threads might stop
+ *               until the delay is over.
+ *               (Non-negative Integer or +false+. Optional.)
  *
  *  Returns:: The actual delay time, in milliseconds.
  *
@@ -215,12 +215,12 @@ static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, int yield)
  *  A granularity of 0ms makes this method act the same as Clock.wait
  *  (i.e. no spinlock at all, very low CPU usage).
  *
- *  If +yield+ is a non-negative number, this function will allow other
- *  ruby threads to run every +yield+ milliseconds. (A value of 0
- *  causes the function to continuously yield control until the time
- *  is over.) +yield+ is only useful if your application is
- *  multithreaded. It's safe (but pointless) to use this feature for
- *  single threaded applications.
+ *  If +threading+ is a non-negative number, this function will
+ *  allow other ruby threads to run every +threading+ milliseconds.
+ *  (A value of 0 causes the function to continuously yield control
+ *  until the time is over.) +threading+ is only useful if your
+ *  application is multithreaded. It's safe (but pointless) to use
+ *  this feature for single threaded applications.
  *
  *  The Rubygame timer system will be initialized when you call this
  *  function, if it has not been already. See Clock.runtime.

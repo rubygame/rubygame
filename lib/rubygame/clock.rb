@@ -46,9 +46,9 @@ module Rubygame
     # See also #tick and Clock.delay. Default 12.
     attr_accessor :granularity
 
-    # Yield time used for framerate limiting delays in #tick.
-    # See #tick and Clock.delay. Default false.
-    attr_accessor :yield
+    # How often to let other threads run during framerate limiting
+    # delays in #tick. See #tick and Clock.delay. Default false.
+    attr_accessor :threading
 
 
     # Create a new Clock instance.
@@ -64,7 +64,7 @@ module Rubygame
       @max_samples = 20
 
       @granularity = 12
-      @yield = false
+      @threading = false
 
       # Should #tick return a ClockTicked event?
       @tick_events = false
@@ -210,7 +210,7 @@ module Rubygame
     # call it.
     # 
     # There are two other attributes which affect framerate limiting,
-    # #granularity and #yield. These are passed as parameters to
+    # #granularity and #threading. These are passed as parameters to
     # Clock.delay for the brief pause each frame. See Clock.delay for
     # the effects of those parameters on CPU usage and threading.
     # 
@@ -226,7 +226,7 @@ module Rubygame
       if @target_frametime
         passed += self.class.delay(@target_frametime - passed,
                                    @granularity,
-                                   @yield)
+                                   @threading)
       end
 
       if @tick_events
