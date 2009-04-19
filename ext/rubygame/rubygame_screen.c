@@ -49,7 +49,7 @@ VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
 
 /* call-seq:
  *     Screen.new( size, depth=0, flags=[SWSURFACE] )  ->  Screen
- *     (aliases: set_mode, instance)
+ *     (aliases: open; deprecated: set_mode, instance)
  *
  *  Create a new Rubygame window if there is none, or modify the existing one.
  *  You cannot create more than one Screen; the existing one will be replaced.
@@ -96,7 +96,7 @@ VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
  *                       OpenGL functions.
  *          RESIZABLE::  Create a resizable window. When the window is 
  *                       resized by the user, a ResizeEvent is
- *                       generated and #set_mode can be called again
+ *                       generated and this method can be called again
  *                       with the new size.
  *          NOFRAME::    If possible, create a window with no title bar or
  *                       frame decoration.
@@ -313,7 +313,7 @@ VALUE rbgm_screen_seticon(VALUE self, VALUE data)
  *
  *  Updates (refreshes) all or part of the Rubygame window, revealing to the 
  *  user any changes that have been made since the last update. If you're using
- *  a double-buffered display (see Display.set_mode), you should use
+ *  a double-buffered display (see Screen.new), you should use
  *  Screen#flip instead.
  *
  *  This method takes these arguments:
@@ -436,7 +436,7 @@ VALUE rbgm_screen_updaterects(VALUE self, VALUE array_rects)
 /*  call-seq:
  *     flip()
  *
- *  If the Rubygame display is double-buffered (see #set_mode), flips
+ *  If the Rubygame display is double-buffered (see Screen.new), flips
  *  the buffers and updates the whole screen. Otherwise, just updates the
  *  whole screen.
  */
@@ -491,8 +491,8 @@ VALUE rbgm_screen_setshowcursor(VALUE self, VALUE val)
  *  Surface#set_colorkey and Surface#set_alpha are not inherited.
  *
  *  Please note that only *one* Screen can exist, per application, at a time;
- *  this is a limitation of SDL. You *must* use Screen.set_mode to create the
- *  Screen or modify its properties.
+ *  this is a limitation of SDL. You *must* use Screen.new (or its alias,
+ *  Screen.open) to create or modify the Screen.
  *
  *  Also note that no changes to the Screen will be seen until it is refreshed.
  *  See #update, #update_rects, and #flip for ways to refresh all or part of
@@ -509,6 +509,7 @@ void Rubygame_Init_Screen()
   /* Screen class */
   cScreen = rb_define_class_under(mRubygame,"Screen",cSurface);
   rb_define_singleton_method(cScreen,"new",rbgm_screen_setmode, -1);
+  rb_define_alias(rb_singleton_class(cScreen),"open","new");
   rb_define_alias(rb_singleton_class(cScreen),"set_mode","new");
   rb_define_alias(rb_singleton_class(cScreen),"instance","new");
   rb_define_singleton_method(cScreen,"close", rbgm_screen_close, 0);
