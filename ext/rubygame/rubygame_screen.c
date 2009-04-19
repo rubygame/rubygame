@@ -159,6 +159,20 @@ VALUE rbgm_screen_close(VALUE module)
 }
 
 
+/*
+ *  call-seq:
+ *     Screen.open?
+ *
+ *  True if there is an open Rubygame window.
+ *  See Screen.new and Screen.close.
+ *
+ */
+VALUE rbgm_screen_openp(VALUE module)
+{
+  return (SDL_GetVideoSurface() == NULL) ? Qfalse : Qtrue;
+}
+
+
 
 /*  call-seq:
  *     Screen.get_surface
@@ -498,6 +512,7 @@ void Rubygame_Init_Screen()
   rb_define_alias(rb_singleton_class(cScreen),"set_mode","new");
   rb_define_alias(rb_singleton_class(cScreen),"instance","new");
   rb_define_singleton_method(cScreen,"close", rbgm_screen_close, 0);
+  rb_define_singleton_method(cScreen,"open?", rbgm_screen_openp, 0);
   rb_define_singleton_method(cScreen,"get_surface",rbgm_screen_getsurface, 0);
   rb_define_singleton_method(cScreen,"get_resolution",rbgm_screen_getresolution, 0);
 
