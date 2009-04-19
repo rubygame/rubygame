@@ -39,6 +39,8 @@ require "rubygame_core"
   end
 end
 
+require "rubygame/shared"
+
 require "rubygame/color"
 require "rubygame/constants"
 
