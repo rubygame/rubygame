@@ -49,7 +49,7 @@ VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
 
 /* call-seq:
  *     Screen.new( size, depth=0, flags=[SWSURFACE] )  ->  Screen
- *     (aliases: open; deprecated: set_mode, instance)
+ *     (alias: open)
  *
  *  Create a new Rubygame window if there is none, or modify the existing one.
  *  You cannot create more than one Screen; the existing one will be replaced.
@@ -102,7 +102,7 @@ VALUE rbgm_screen_setshowcursor(VALUE, VALUE);
  *                       frame decoration.
  *                       Fullscreen modes automatically have this flag set.
  */
-VALUE rbgm_screen_setmode(int argc, VALUE *argv, VALUE module)
+VALUE rbgm_screen_new(int argc, VALUE *argv, VALUE module)
 {
   SDL_Surface *screen;
   int w, h, depth;
@@ -135,6 +135,32 @@ VALUE rbgm_screen_setmode(int argc, VALUE *argv, VALUE module)
   return Data_Wrap_Struct( cScreen,0,0,screen ); 
 }
 
+
+/* call-seq:
+ *     Screen.set_mode( size, depth=0, flags=[SWSURFACE] )  ->  Screen
+ *
+ *  Deprecated alias for Screen.new. This method will be REMOVED
+ *  in Rubygame 3.0. You should use Screen.new (or its alias, Screen.open)
+ *  instead.
+ */
+VALUE rbgm_screen_setmode(int argc, VALUE *argv, VALUE module)
+{
+  rg_deprecated("Rubygame::Screen.set_mode", "3.0");
+  return rbgm_screen_new(argc, argv, module);
+}
+
+/* call-seq:
+ *     Screen.instance( size, depth=0, flags=[SWSURFACE] )  ->  Screen
+ *
+ *  Deprecated alias for Screen.new. This method will be REMOVED
+ *  in Rubygame 3.0. You should use Screen.new (or its alias, Screen.open)
+ *  instead.
+ */
+VALUE rbgm_screen_instance(int argc, VALUE *argv, VALUE module)
+{
+  rg_deprecated("Rubygame::Screen.instance", "3.0");
+  return rbgm_screen_new(argc, argv, module);
+}
 
 
 /*
@@ -508,14 +534,19 @@ void Rubygame_Init_Screen()
 
   /* Screen class */
   cScreen = rb_define_class_under(mRubygame,"Screen",cSurface);
-  rb_define_singleton_method(cScreen,"new",rbgm_screen_setmode, -1);
+  rb_define_singleton_method(cScreen,"new",rbgm_screen_new, -1);
   rb_define_alias(rb_singleton_class(cScreen),"open","new");
-  rb_define_alias(rb_singleton_class(cScreen),"set_mode","new");
-  rb_define_alias(rb_singleton_class(cScreen),"instance","new");
+
   rb_define_singleton_method(cScreen,"close", rbgm_screen_close, 0);
   rb_define_singleton_method(cScreen,"open?", rbgm_screen_openp, 0);
   rb_define_singleton_method(cScreen,"get_surface",rbgm_screen_getsurface, 0);
   rb_define_singleton_method(cScreen,"get_resolution",rbgm_screen_getresolution, 0);
+
+  /* Deprecated: */
+  rb_define_singleton_method(cScreen,"set_mode", rbgm_screen_setmode, -1);
+  rb_define_singleton_method(cScreen,"instance", rbgm_screen_instance, -1);
+
+
 
   /* These are inherited from Surface, but should not be called on Screen */
   rb_undef_method(cScreen,"set_alpha"); 
