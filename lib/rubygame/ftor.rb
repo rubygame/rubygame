@@ -18,8 +18,21 @@
 #	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #++
 
+require "rubygame"
+
+#--
+# Ftor is DEPRECATED and will be removed in Rubygame 3.0!
+# Warn the user when this file is loaded.
+#++
+Rubygame.deprecated("Rubygame::Ftor", "3.0")
+
+
 module Rubygame
 
+# *NOTE*: Ftor is DEPRECATED and will be removed in Rubygame 3.0!
+# A mostly-compatible vector class will be provided at or before
+# that time.
+# 
 # *NOTE*: you must require 'rubygame/ftor' manually to gain access to
 # Rubygame::Ftor. It is not imported with Rubygame by default!
 # 
