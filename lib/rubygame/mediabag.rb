@@ -19,8 +19,18 @@
 
 require "rubygame"
 
+#--
+# MediaBag is DEPRECATED and will be removed in Rubygame 3.0!
+# Warn the user when this file is loaded.
+#++
+Rubygame.deprecated("Rubygame::MediaBag", "3.0")
+
+
 module Rubygame
 
+  # *NOTE*: MediaBag is DEPRECATED and will be removed in Rubygame 3.0!
+  # Use the NamedResource functionality of Music, Sound, and Surface instead.
+  # 
   # *NOTE*: you must require 'rubygame/mediabag' manually to gain access to
   # Rubygame::MediaBag. It is not imported with Rubygame by default!
   # 
