@@ -1,5 +1,85 @@
 = NEWS
 
+== Rubygame 2.5.0
+
+Release focus: Clock improvements.
+
+=== Features
+
+- New and improved algorithm for calculating framerate.
+
+- Better Clock compatibility with multithreaded applications:
+
+  - Clock.delay and Clock.wait now accept a new argument: threading.
+    This controls how often to allow other ruby threads to run during
+    the pause. The default behavior is to block other threads, as
+    previous versions of Rubygame do.
+
+  - Added: Clock @threading.
+    This instance variable controls the threading value used while
+    delaying in #tick (if framerate limiting is active).
+
+- Better control over the balance between CPU usage and accuracy
+  when using Clock's framerate limiting:
+
+  - Added: Clock @granularity.
+    This instance variable controls the granularity value used while
+    delaying in #tick (if framerate limiting is active). Smaller
+    values lower CPU usage, but framerate limiting will be less
+    accurate if the granularity is lower than the system's actual
+    clock granularity. Use Clock#calibrate_granularity to find the
+    best value for the current system.
+
+  - Added: Clock#calibrate_granularity.
+    Call this after you create a Clock instance calibrate the Clock's
+    granularity to match the system's actual clock granularity. This
+    reduces wasteful CPU usage when using framerate limiting, without
+    reducing accuracy.
+
+- New ClockTicked event for use with EventHandlers:
+
+  - Added: ClockTicked event class.
+    If you call Clock#enable_tick_events, Clock#tick will return an
+    instance of ClockTicked instead of the raw delay time in milliseconds.
+
+  - Added: TickTrigger event trigger class.
+    Matches ClockTicked events.
+
+  - HasEventHandler#make_magic_hooks accepts the symbol :tick to create a
+    TickTrigger.
+
+- A few Screen additions:
+
+  - Added: Screen.get_resolution. Returns the user's desktop resolution.
+    Due to a limitation of SDL, this can ONLY be used when the Rubygame
+    window is closed (i.e. before you have called Screen.new, or after
+    you have called Screen.close).
+
+  - Added: Screen.close. Closes the Rubygame window, if it's open.
+
+  - Added: Screen.open?. True if the Rubygame window is open.
+
+  - Added: Screen.open (alias of Screen.new).
+
+- Added: HasEventHandler#make_magic_hooks_for.
+  Like HasEventHandler#make_magic_hooks, but the hook's owner will be 
+  the specified object, instead of the object with the handler.
+
+=== Other Stuff ===
+
+- Deprecation: Screen.set_mode and Screen.instance (both aliases of
+  Screen.new) are deprecated and will be removed in Rubygame 3.0.
+  Use Screen.new or Screen.open instead.
+
+- Deprecation: Ftor is deprecated and will be removed in Rubygame 3.0.
+  A mostly-compatible vector class will be provided at or before that time.
+
+- Deprecation: MediaBag is deprecated and will be removed in Rubygame 3.0.
+  Use the NamedResource functionality of Music, Sound, and Surface instead.
+
+
+
+
 == Rubygame 2.4.1
 
 Release focus: Bug fixes; Ruby 1.9 compatibility.

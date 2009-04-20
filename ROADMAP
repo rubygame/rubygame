@@ -6,19 +6,6 @@ keep in mind that specific details may change over time.
 
 == 2.X.0 (_possible_ minor releases before 3.0.0)
 
-=== Focus: Clock
-
-- New Events::ClockTicked class with lots of information
-  - Time since last frame, in both seconds and milliseconds
-  - Current time
-  - Current framerate
-
-- New clock class
-  - Based on Ruby's timer (allows multi-threading)
-  - Better framerate calculation algorithm
-  - #tick returns an instance of Events::Tick
-
-
 === Focus: Surface & Rect
 
 - Surface improvements
