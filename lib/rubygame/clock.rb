@@ -134,12 +134,26 @@ module Rubygame
     end
 
 
-    # The target frametime (milliseconds/frame). See #tick
-    attr_accessor :target_frametime
+    # Returns the current target frametime (milliseconds/frame).
+    # This is another way to access #target_framerate.
+    # Same as: 1000.0 / #target_framerate
+    # 
+    def target_frametime
+      @target_frametime
+    end
+
+
+    # Sets the target milliseconds per frame to +frametime+.
+    # This is another way to access #target_framerate.
+    # Same as: #target_framerate = 1000.0 / frametime
+    # 
+    def target_frametime=( frametime )
+      @target_frametime = frametime
+    end
 
 
     # Returns the current target framerate (frames/second).
-    # This is an alternate way to access @target_frametime.
+    # This is another to access #target_frametime.
     # Same as: 1000.0 / #target_frametime
     # 
     def target_framerate
@@ -154,7 +168,7 @@ module Rubygame
 
 
     # Sets the target number of frames per second to +framerate+.
-    # This is an alternate way to access @target_frametime.
+    # This is another way to access #target_frametime.
     # Same as: #target_frametime = 1000.0 / framerate
     # 
     def target_framerate=( framerate )
