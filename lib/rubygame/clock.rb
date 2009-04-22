@@ -194,11 +194,11 @@ module Rubygame
     # call-seq:
     #   frametime  ->  Float
     # 
-    # Return the actual frametime (seconds per frame) recorded by
+    # Return the actual frametime (milliseconds per frame) recorded by
     # the Clock. See #tick.
     # 
     def frametime
-      @samples.inject(0){|sum, n| sum + n} / (@samples.length * 1000.0)
+      @samples.inject(0){|sum, n| sum + n} / (@samples.length)
     rescue ZeroDivisionError
       0.0
     end
@@ -212,7 +212,7 @@ module Rubygame
     # and/or framerate limiting features.
     # 
     # Framerate monitoring allows you to check the #framerate (frames
-    # per second) or #frametime (seconds per frame) of your game.
+    # per second) or #frametime (milliseconds per frame) of your game.
     # 
     # Framerate limiting allows you to prevent the application from
     # running too fast (and using 100% of processor time) by pausing
