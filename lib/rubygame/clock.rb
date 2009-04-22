@@ -218,7 +218,10 @@ module Rubygame
 
 
     # Returns the number of milliseconds since you last called this
-    # method.
+    # method. Or, if you have called #enable_tick_events, this returns
+    # a ClockTicked event representing the time since you last called
+    # this method. (ClockTicked was added in Rubygame 2.5, and will
+    # become the default and only option in Rubygame 3.0.)
     # 
     # You must call this method once per frame (i.e. per iteration
     # of your main loop) if you want to use the framerate monitoring
