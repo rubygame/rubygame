@@ -133,7 +133,9 @@ module Rubygame
     end
 
 
-    # Returns the current target frametime (milliseconds/frame).
+    # Returns the current target frametime (milliseconds/frame),
+    # or nil if there is no target.
+    # 
     # This is another way to access #target_framerate.
     # Same as: 1000.0 / #target_framerate
     # 
@@ -143,6 +145,9 @@ module Rubygame
 
 
     # Sets the target milliseconds per frame to +frametime+.
+    # If +frametime+ is nil, the target is unset, and #tick
+    # will no longer apply any delay.
+    # 
     # This is another way to access #target_framerate.
     # Same as: #target_framerate = 1000.0 / frametime
     # 
@@ -151,7 +156,9 @@ module Rubygame
     end
 
 
-    # Returns the current target framerate (frames/second).
+    # Returns the current target framerate (frames/second),
+    # or nil if there is no target.
+    # 
     # This is another to access #target_frametime.
     # Same as: 1000.0 / #target_frametime
     # 
@@ -167,6 +174,9 @@ module Rubygame
 
 
     # Sets the target number of frames per second to +framerate+.
+    # If +framerate+ is nil, the target is unset, and #tick
+    # will no longer apply any delay.
+    # 
     # This is another way to access #target_frametime.
     # Same as: #target_frametime = 1000.0 / framerate
     # 
