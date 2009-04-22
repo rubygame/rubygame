@@ -123,8 +123,7 @@ module Rubygame
 
 
     # Enable tick events, so that #tick will return a ClockTicked
-    # instance instead of a number of milliseconds. ClockTicked
-    # 
+    # instance instead of a number of milliseconds.
     # 
     # This option is available starting in Rubygame 2.5, and will
     # become the default in Rubygame 3.0.
