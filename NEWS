@@ -48,6 +48,9 @@ Release focus: Clock improvements.
   - HasEventHandler#make_magic_hooks accepts the symbol :tick to create a
     TickTrigger.
 
+- Added: Clock#frametime.
+  Returns the actual milliseconds per frame recorded by the Clock.
+
 - A few Screen additions:
 
   - Added: Screen.get_resolution. Returns the user's desktop resolution.
