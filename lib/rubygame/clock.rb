@@ -57,7 +57,7 @@ module Rubygame
     # Create a new Clock instance.
     def initialize()
       @start = self.class.runtime()
-      @last_tick = @start
+      @last_tick = nil
       @ticks = 0
 
       @target_frametime = nil
@@ -263,7 +263,10 @@ module Rubygame
     def tick()
 
       # how long since the last tick?
-      passed = self.class.runtime() - @last_tick
+      passed = 0
+      if @last_tick
+        passed += self.class.runtime() - @last_tick
+      end
 
       if @target_frametime
         passed += self.class.delay(@target_frametime - passed,
