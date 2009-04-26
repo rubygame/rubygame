@@ -57,37 +57,32 @@ void rg_init_sdl_timer()
 
 
 
-/* Delays the given amount of time, but broken down into parts.
- * Control is yielded to ruby between each part, so that other
+/* Delays for the given amount of time, but possibly split into small
+ * parts. Control is given to ruby between each part, so that other
  * threads can run.
  *
  * delay: How many milliseconds to delay.
- * yield: How often (in ms) to give control to ruby.
- *        If -1, control is never given to ruby.
+ * nice:  If 1 (true), split the delay into smaller parts and allow
+ *        other ruby threads to run between each part.
  *
  */
-Uint32 rg_threaded_delay( Uint32 delay, int yield )
+Uint32 rg_threaded_delay( Uint32 delay, int nice )
 {
   Uint32 start;
 
   start = SDL_GetTicks();
 
-  if( yield >= 0 )
+  if( nice )
   {
-    while( delay - (SDL_GetTicks() - start) > yield )
+    while( SDL_GetTicks() < start + delay )
     {
-      if( yield > 0 )
-      {
-        SDL_Delay(yield);
-      }
+      SDL_Delay(1);
       rb_thread_schedule();       /* give control to ruby */
     }
   }
-
-  int remainder = delay - (SDL_GetTicks() - start);
-  if( remainder > 0 )
+  else
   {
-    SDL_Delay( remainder );
+    SDL_Delay( delay );
   }
 
   return SDL_GetTicks() - start;
@@ -96,14 +91,12 @@ Uint32 rg_threaded_delay( Uint32 delay, int yield )
 
 /*
  *  call-seq:
- *    Clock.wait( time, threading=false )  ->  Integer
+ *    Clock.wait( time, nice=false )  ->  Integer
  *
- *  time::       The target wait time, in milliseconds.
- *               (Non-negative Integer. Required.)
- *  threading::  How often (ms) to let other ruby threads run.
- *               If false (the default), other threads might stop
- *               until the delay is over.
- *               (Non-negative Integer or +false+. Optional.)
+ *  time::  The target wait time, in milliseconds.
+ *          (Non-negative Integer. Required.)
+ *  nice::  If true, try to let other ruby threads run during the delay.
+ *          (true or false. Optional.)
  *
  *  Returns:: The actual wait time, in milliseconds.
  *
@@ -118,12 +111,11 @@ Uint32 rg_threaded_delay( Uint32 delay, int yield )
  *  accuracy use Clock.delay, which is more accurate but uses slightly
  *  more CPU time.
  *
- *  If +threading+ is a non-negative number, this function will
- *  allow other ruby threads to run every +threading+ milliseconds.
- *  (A value of 0 causes the function to continuously yield control
- *  until the time is over.) +threading+ is only useful if your
- *  application is multithreaded. It's safe (but pointless) to use
- *  this feature for single threaded applications.
+ *  If +nice+ is true, this function will try to allow other ruby
+ *  threads to run during this function. Otherwise, other ruby threads
+ *  will probably also be paused. Setting +nice+ to true is only
+ *  useful if your application is multithreaded. It's safe (but
+ *  pointless) to use this feature for single threaded applications.
  *
  *  The Rubygame timer system will be initialized when you call this
  *  function, if it has not been already. See Clock.runtime.
@@ -133,15 +125,15 @@ VALUE rbgm_clock_wait(int argc, VALUE *argv, VALUE module)
 {
   rg_init_sdl_timer();
 
-  VALUE  vtime, vyield;
+  VALUE  vtime, vnice;
 
-  rb_scan_args(argc,argv,"11", &vtime, &vyield);
+  rb_scan_args(argc,argv,"11", &vtime, &vnice);
 
   Uint32 time = NUM2UINT(vtime);
 
-  int yield = RTEST(vyield) ? NUM2UINT(vyield) : -1;
+  int nice = (vnice == Qtrue) ? 1 : 0;
 
-  return UINT2NUM( rg_threaded_delay(time, yield) );
+  return UINT2NUM( rg_threaded_delay(time, nice) );
 }
 
 
@@ -153,7 +145,7 @@ VALUE rbgm_clock_wait(int argc, VALUE *argv, VALUE module)
  *    - uses rg_threaded_delay
  *++
  */
-static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, int yield)
+static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, int nice)
 {
   Uint32 funcstart;
   int delay;
@@ -161,7 +153,7 @@ static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, int yield)
   if( accuracy <= 0 )
   {
     /* delay with no accuracy is like wait (no spinlock) */
-    return rg_threaded_delay(ticks, yield);
+    return rg_threaded_delay(ticks, nice);
   }
 
   funcstart = SDL_GetTicks();
@@ -171,11 +163,13 @@ static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, int yield)
     delay = (ticks - 2) - (ticks % accuracy);
     if(delay >= accuracy)
     {
-      rg_threaded_delay(delay, yield);
+      rg_threaded_delay(delay, nice);
     }
   }
+
   do{
-    delay = ticks - (SDL_GetTicks() - funcstart);	
+    delay = ticks - (SDL_GetTicks() - funcstart);
+    rb_thread_schedule();       /* give control to ruby */
   }while(delay > 0);
 
   return SDL_GetTicks() - funcstart;	
@@ -185,15 +179,13 @@ static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, int yield)
 
 /*
  *  call-seq:
- *    Clock.delay( time, gran=12, threading=false )  ->  Integer
+ *    Clock.delay( time, gran=12, nice=false )  ->  Integer
  *
- *  time::       The target delay time, in milliseconds.
- *               (Non-negative Integer. Required.)
- *  gran::       The assumed granularity (ms) of the system clock.
- *  threading::  How often (ms) to let other ruby threads run.
- *               If false (the default), other threads might stop
- *               until the delay is over.
- *               (Non-negative Integer or +false+. Optional.)
+ *  time::  The target delay time, in milliseconds.
+ *          (Non-negative Integer. Required.)
+ *  gran::  The assumed granularity (in ms) of the system clock.
+ *  nice::  If true, try to let other ruby threads run during the delay.
+ *          (true or false. Optional.)
  *
  *  Returns:: The actual delay time, in milliseconds.
  *
@@ -215,12 +207,11 @@ static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, int yield)
  *  A granularity of 0ms makes this method act the same as Clock.wait
  *  (i.e. no spinlock at all, very low CPU usage).
  *
- *  If +threading+ is a non-negative number, this function will
- *  allow other ruby threads to run every +threading+ milliseconds.
- *  (A value of 0 causes the function to continuously yield control
- *  until the time is over.) +threading+ is only useful if your
- *  application is multithreaded. It's safe (but pointless) to use
- *  this feature for single threaded applications.
+ *  If +nice+ is true, this function will try to allow other ruby
+ *  threads to run during this function. Otherwise, other ruby threads
+ *  will probably also be paused. Setting +nice+ to true is only
+ *  useful if your application is multithreaded. It's safe (but
+ *  pointless) to use this feature for single threaded applications.
  *
  *  The Rubygame timer system will be initialized when you call this
  *  function, if it has not been already. See Clock.runtime.
@@ -230,17 +221,17 @@ VALUE rbgm_clock_delay(int argc, VALUE *argv, VALUE module)
 {
   rg_init_sdl_timer();
 
-  VALUE vtime, vgran, vyield;
+  VALUE vtime, vgran, vnice;
 
-  rb_scan_args(argc,argv,"12", &vtime, &vgran, &vyield);
+  rb_scan_args(argc,argv,"12", &vtime, &vgran, &vnice);
 
   Uint32 delay = NUM2UINT(vtime);
 
   Uint32 gran = RTEST(vgran) ? NUM2UINT(vgran) : WORST_CLOCK_ACCURACY;
 
-  int yield = RTEST(vyield) ? NUM2UINT(vyield) : -1;
+  int nice = (vnice == Qtrue) ? 1 : 0;
 
-  return UINT2NUM( accurate_delay(delay, gran, yield) );
+  return UINT2NUM( accurate_delay(delay, gran, nice) );
 }
 
 

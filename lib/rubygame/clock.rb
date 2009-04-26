@@ -48,9 +48,10 @@ module Rubygame
     # See also #tick and Clock.delay. Default 12.
     attr_accessor :granularity
 
-    # How often to let other threads run during framerate limiting
-    # delays in #tick. See #tick and Clock.delay. Default false.
-    attr_accessor :threading
+    # Whether to try to let other ruby threads run during framerate
+    # limiting delays in #tick. See #tick and Clock.delay.
+    # Default false.
+    attr_accessor :nice
 
 
     # Create a new Clock instance.
@@ -66,7 +67,7 @@ module Rubygame
       @max_samples = 20
 
       @granularity = 12
-      @threading = false
+      @nice = false
 
       # Should #tick return a ClockTicked event?
       @tick_events = false
@@ -251,7 +252,7 @@ module Rubygame
     # call it.
     # 
     # There are two other attributes which affect framerate limiting,
-    # #granularity and #threading. These are passed as parameters to
+    # #granularity and #nice. These are passed as parameters to
     # Clock.delay for the brief pause each frame. See Clock.delay for
     # the effects of those parameters on CPU usage and threading.
     # 
@@ -267,7 +268,7 @@ module Rubygame
       if @target_frametime
         passed += self.class.delay(@target_frametime - passed,
                                    @granularity,
-                                   @threading)
+                                   @nice)
       end
 
       if @tick_events
