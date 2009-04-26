@@ -269,9 +269,10 @@ module Rubygame
       end
 
       if @target_frametime
-        passed += self.class.delay(@target_frametime - passed,
-                                   @granularity,
-                                   @nice)
+        extra = @target_frametime - passed
+        if( extra > 0 )
+          passed += self.class.delay( extra, @granularity, @nice )
+        end
       end
 
       if @tick_events
