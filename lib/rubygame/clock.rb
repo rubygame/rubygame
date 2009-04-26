@@ -44,7 +44,7 @@ module Rubygame
 
 
     # Granularity used for framerate limiting delays in #tick.
-    # You can calibrate this easily with #calibrate_granularity.
+    # You can calibrate this easily with #calibrate.
     # See also #tick and Clock.delay. Default 12.
     attr_accessor :granularity
 
@@ -79,23 +79,26 @@ module Rubygame
     end
 
 
-    # Calibrate @granularity to an appropriate value for this
-    # computer, to minimize CPU usage without reducing accuracy.
-    # See #tick and Clock.delay for more information about
-    # granularity.
+    # Calibrate some Clock settings to match the current computer.
+    # This improves efficiency and minimizes CPU usage without
+    # reducing accuracy.
     # 
-    # By default, the calibration process takes at most 0.5 seconds.
-    # You can specify a different maximum test length changed by 
-    # providing a different value for +max_time+.
-    # In future versions, the process may complete earlier than the
-    # max test time, but will not run longer. Also, the default
-    # max_time may be lowered in future versions, but will not be
-    # raised.
+    # As of Rubygame 2.5, this method calibrates @granularity. See
+    # #tick and Clock.delay for more information about the effect of
+    # setting granularity. In future versions of Rubygame, this
+    # method may also calibrate additional Clock attributes.
+    # 
+    # By default, the calibration takes a maximum of 0.5 seconds to
+    # complete. You can specify a different maximum length by passing
+    # a different value for +max_time+. In future versions of
+    # Rubygame, calibration may take less than max_time, but will
+    # not take more. Also, the default max_time may be lowered in
+    # future versions, but will not be raised.
     # 
     # You usually only need to call this once, after you create the
-    # clock at the start of your application. You should not run any
-    # other ruby threads at the same time, as doing so will skew the
-    # calibration.
+    # Clock instance at the start of your application. You should not
+    # run any other ruby threads at the same time, as doing so will
+    # skew the calibration.
     # 
     #--
     # 
@@ -105,7 +108,7 @@ module Rubygame
     # improved later if needed...
     #
     #++
-    def calibrate_granularity( max_time = 0.5 )
+    def calibrate( max_time = 0.5 )
       samples = []
 
       end_time = Time.now + max_time
@@ -122,6 +125,8 @@ module Rubygame
       gran = (average * 1000).to_i + 1
 
       @granularity = gran
+
+      return nil
     end
 
 
