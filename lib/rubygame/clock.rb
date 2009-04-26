@@ -88,8 +88,10 @@ module Rubygame
     # You can specify a different maximum test length changed by 
     # providing a different value for +max_time+.
     # In future versions, the process may complete earlier than the
-    # max test time, but will not run longer.
-    #
+    # max test time, but will not run longer. Also, the default
+    # max_time may be lowered in future versions, but will not be
+    # raised.
+    # 
     # You usually only need to call this once, after you create the
     # clock at the start of your application. You should not run any
     # other ruby threads at the same time, as doing so will skew the
