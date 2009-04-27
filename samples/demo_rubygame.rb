@@ -450,7 +450,7 @@ class Game
     # Adjust the assumed granularity to match the system.
     # This helps minimize CPU usage on systems with clocks
     # that are more accurate than the default granularity.
-		@clock.calibrate_granularity
+		@clock.calibrate
 
     # Make Clock#tick return a ClockTicked event.
     @clock.enable_tick_events
