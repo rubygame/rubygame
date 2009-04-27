@@ -17,8 +17,8 @@ are not using Rubygame.
 
 2. If your game uses multiple ruby threads, set Clock#nice to true.
 
-3. Call Clock#tick once per frame. It returns a Rubygame::ClockTicked
-   event.
+3. Call Clock#tick once per frame. It returns a 
+   Rubygame::Events::ClockTicked instance.
 
 4. Use ClockTicked#seconds to see how much time passed since the
    previous frame. Use that number to calculate how far your
