@@ -156,7 +156,7 @@ static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, int nice)
 
   if( accuracy <= 0 )
   {
-    /* delay with no accuracy is like wait (no spinlock) */
+    /* delay with no accuracy is like wait (no busy waiting) */
     return rg_threaded_delay(ticks, nice);
   }
 
@@ -186,10 +186,11 @@ static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, int nice)
  *    Clock.delay( time, gran=12, nice=false )  ->  Integer
  *
  *  time::  The target delay time, in milliseconds.
- *          (Non-negative Integer. Required.)
+ *          (Non-negative integer. Required.)
  *  gran::  The assumed granularity (in ms) of the system clock.
+ *          (Non-negative integer. Optional. Default: 12.)
  *  nice::  If true, try to let other ruby threads run during the delay.
- *          (true or false. Optional.)
+ *          (true or false. Optional. Default: false.)
  *
  *  Returns:: The actual delay time, in milliseconds.
  *
@@ -200,16 +201,16 @@ static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, int nice)
  *  See also Clock#tick for a good and easy way to limit the
  *  framerate.
  *
- *  This function uses "busy waiting" (spinlock) during the last part
+ *  This function uses "busy waiting" during the last part
  *  of the delay, for increased accuracy. The value of +gran+ affects
- *  how many milliseconds of the delay are spent in spinlock, and thus
+ *  how many milliseconds of the delay are spent in busy waiting, and thus
  *  how much CPU it uses. A smaller +gran+ value uses less CPU, but if
  *  it's smaller than the true system granularity, this function may
  *  delay a few milliseconds too long. The default value (12ms) is very
  *  safe, but a value of approximately 5ms would give a better balance
  *  between accuracy and CPU usage on most modern computers.
  *  A granularity of 0ms makes this method act the same as Clock.wait
- *  (i.e. no spinlock at all, very low CPU usage).
+ *  (i.e. no busy waiting at all, very low CPU usage).
  *
  *  If +nice+ is true, this function will try to allow other ruby
  *  threads to run during this function. Otherwise, other ruby threads
