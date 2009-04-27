@@ -44,7 +44,9 @@ module Rubygame
       end
 
       # Return the time since the last tick, in milliseconds.
-      attr_reader :milliseconds
+      def milliseconds
+        @milliseconds
+      end
 
       # Return the time since the last tick, in seconds.
       def seconds
