@@ -229,8 +229,9 @@ def main
 
 	# This also differs from pygame. Rather than pass the desired framerate
 	# when you call clock.tick, you set the framerate for the clock, either
-	# when you create it, or afterwards with the desired_fps accessors.
-	clock = Clock.new { |clock| clock.target_framerate = 30 }
+	# when you create it, or afterwards with the target_framerate accessor.
+	clock = Clock.new
+	clock.target_framerate = 30
 
 	# Autoload the sound effects
 	whiff_sound = Sound['whiff.wav']
