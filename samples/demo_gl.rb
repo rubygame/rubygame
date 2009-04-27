@@ -106,8 +106,8 @@ GL::NewList(cube_list,GL::COMPILE_AND_EXECUTE)
 			GL::Vertex(cube[1]);
 			GL::Vertex(cube[2]);
 			GL::Vertex(cube[7]);
-  GL::PopMatrix()
-	GL::End()
+    GL::End()
+ GL::PopMatrix()
 GL::EndList()
 
 angle = 0

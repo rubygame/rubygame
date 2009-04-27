@@ -151,8 +151,10 @@ GL::NewList(cube_list,GL::COMPILE_AND_EXECUTE)
     GL::Vertex(cube[2]);
     GL::TexCoord(cube_st[5][3]);
     GL::Vertex(cube[7]);
+
+    GL::End()
+
   GL::PopMatrix()
-	GL::End()
 GL::EndList()
 
 angle = 0
