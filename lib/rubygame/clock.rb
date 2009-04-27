@@ -34,6 +34,11 @@ module Rubygame
   # Clock also provides instance methods to make it convenient to
   # monitor and limit application framerate. See #tick.
   # 
+  # An in-depth tutorial on using Clock is available. See
+  # doc/managing_framerate.rdoc[link:files/doc/managing_framerate_rdoc.html]
+  # in the Rubygame source distribution or in the online
+  # documentation.
+  # 
   class Clock
 
     # The runtime when the Clock was initialized.
