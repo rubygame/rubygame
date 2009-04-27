@@ -33,7 +33,7 @@ VALUE cClock;
 
 VALUE rbgm_clock_wait(int, VALUE*, VALUE);
 VALUE rbgm_clock_delay(int, VALUE*, VALUE);
-VALUE rbgm_clock_getticks(VALUE);
+VALUE rbgm_clock_runtime(VALUE);
 
 
 /* Initialize the SDL timer system, if it hasn't been already. */
