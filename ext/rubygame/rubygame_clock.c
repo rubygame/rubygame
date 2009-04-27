@@ -129,11 +129,15 @@ VALUE rbgm_clock_wait(int argc, VALUE *argv, VALUE module)
 
   rb_scan_args(argc,argv,"11", &vtime, &vnice);
 
-  Uint32 time = NUM2UINT(vtime);
+  int delay = NUM2INT(vtime);
+  if( delay < 0 )
+  {
+    delay = 0;
+  }
 
   int nice = (vnice == Qtrue) ? 1 : 0;
 
-  return UINT2NUM( rg_threaded_delay(time, nice) );
+  return UINT2NUM( rg_threaded_delay(delay, nice) );
 }
 
 
@@ -225,7 +229,11 @@ VALUE rbgm_clock_delay(int argc, VALUE *argv, VALUE module)
 
   rb_scan_args(argc,argv,"12", &vtime, &vgran, &vnice);
 
-  Uint32 delay = NUM2UINT(vtime);
+  int delay = NUM2INT(vtime);
+  if( delay < 0 )
+  {
+    delay = 0;
+  }
 
   Uint32 gran = RTEST(vgran) ? NUM2UINT(vgran) : WORST_CLOCK_ACCURACY;
 
