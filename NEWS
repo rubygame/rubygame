@@ -10,13 +10,13 @@ Release focus: Clock improvements.
 
 - Better Clock compatibility with multithreaded applications:
 
-  - Clock.delay and Clock.wait now accept a new argument: threading.
-    This controls how often to allow other ruby threads to run during
-    the pause. The default behavior is to block other threads, as
-    previous versions of Rubygame do.
+  - Clock.delay and Clock.wait now accept a new argument: +nice+.
+    If nice is +true+, these methods try to allow other ruby threads
+    to run during the delay. The default behavior is to block other
+    threads, as previous versions of Rubygame do.
 
-  - Added: Clock @threading.
-    This instance variable controls the threading value used while
+  - Added: Clock @nice.
+    This instance variable controls the +nice+ value used while
     delaying in #tick (if framerate limiting is active).
 
 - Better control over the balance between CPU usage and accuracy
@@ -27,14 +27,13 @@ Release focus: Clock improvements.
     delaying in #tick (if framerate limiting is active). Smaller
     values lower CPU usage, but framerate limiting will be less
     accurate if the granularity is lower than the system's actual
-    clock granularity. Use Clock#calibrate_granularity to find the
-    best value for the current system.
+    clock granularity. Use Clock#calibrate to find the best value for
+    the current system.
 
-  - Added: Clock#calibrate_granularity.
+  - Added: Clock#calibrate.
     Call this after you create a Clock instance calibrate the Clock's
     granularity to match the system's actual clock granularity. This
-    reduces wasteful CPU usage when using framerate limiting, without
-    reducing accuracy.
+    reduces wasteful CPU usage when using framerate limiting.
 
 - New ClockTicked event for use with EventHandlers:
 
@@ -51,6 +50,10 @@ Release focus: Clock improvements.
 - Added: Clock#frametime.
   Returns the actual milliseconds per frame recorded by the Clock.
 
+- New in-depth Clock tutorial, "Managing Framerate".
+  See doc/managing_framerate.rdoc[link:files/doc/managing_framerate_rdoc.html].
+  An accompanying code example has also been added, samples/framerate.rb.
+
 - A few Screen additions:
 
   - Added: Screen.get_resolution. Returns the user's desktop resolution.
@@ -65,10 +68,22 @@ Release focus: Clock improvements.
   - Added: Screen.open (alias of Screen.new).
 
 - Added: HasEventHandler#make_magic_hooks_for.
-  Like HasEventHandler#make_magic_hooks, but the hook's owner will be 
-  the specified object, instead of the object with the handler.
+  It's like make_magic_hooks, but the hook's owner will be the
+  specified object, instead of the object with the handler.
 
-=== Other Stuff ===
+=== Other Stuff
+
+- Various Clock fixes and improvements:
+
+  - Clock#tick when called for the first time, no longer considers the
+    creation time of the Clock instance to be "the previous tick",
+    when checking how much time has passed.
+
+  - Clock#tick won't do any extra delay if the frame has already taken
+    longer than the target.
+
+  - Clock.delay and Clock.wait handle negative numbers more gracefully.
+    Instead of hanging for a long time, they act as if the values were 0.
 
 - Deprecation: Screen.set_mode and Screen.instance (both aliases of
   Screen.new) are deprecated and will be removed in Rubygame 3.0.
