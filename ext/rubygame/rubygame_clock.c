@@ -235,7 +235,19 @@ VALUE rbgm_clock_delay(int argc, VALUE *argv, VALUE module)
     delay = 0;
   }
 
-  Uint32 gran = RTEST(vgran) ? NUM2UINT(vgran) : WORST_CLOCK_ACCURACY;
+  int gran;
+  if( RTEST(vgran) )
+  {
+    gran = NUM2UINT(vgran);
+    if( gran < 0 )
+    {
+      gran = 0;
+    }
+  }
+  else
+  {
+    gran = WORST_CLOCK_ACCURACY;
+  }
 
   int nice = (vnice == Qtrue) ? 1 : 0;
 
