@@ -1,0 +1,303 @@
+= Managing Framerate
+
+This is a guide to using the Rubygame::Clock class in your games to
+monitor and limit the game's framerate. It also gives tips and
+good practices for dealing with framerate and time units in your
+application.
+
+The theory and general information here is applicable to most game
+development platforms, so you may find this guide useful even if you
+are not using Rubygame.
+
+
+== The Short Version
+
+1. When your game launches, ceate a Clock instance, set the target
+   framerate, enable tick events, and calibrate it.
+
+2. If your game uses multiple ruby threads, set Clock#nice to true.
+
+3. Call Clock#tick once per frame. It returns a Rubygame::ClockTicked
+   event.
+
+4. Use ClockTicked#seconds to see how much time passed since the
+   previous frame. Use that number to calculate how far your
+   characters moved, etc.
+
+5. You can check the framerate with Clock#framerate.
+
+
+=== Usage Example
+
+  require "rubygame"
+  
+  $clock = Rubygame::Clock.new()
+
+  # Set the desired framerate.
+  $clock.target_framerate = 20
+
+  # Make Clock#tick return ClockTicked (Rubygame 2.5+)
+  $clock.enable_tick_events()
+
+  # Allow Clock to work nicely with multiple ruby threads.
+  # You can skip this if you don't use multiple threads.
+  $clock.nice = true
+  
+  # Optimize clock for this computer.
+  puts "Calibrating... "
+  $clock.calibrate()
+  puts "New granularity: %d ms"%[$clock.granularity]
+
+  i = 0
+  
+  catch :quit do  
+    loop do
+      
+      tick_event = $clock.tick()  # call tick once per frame.
+      
+      # Give tick_event to an event handler or queue, or whatever.
+
+      fps = $clock.framerate     # current framerate
+      diff = tick_event.seconds  # time since previous call to tick
+      
+      puts "Tick %0.2d = %0.2d fps (%0.4f s since previous)"%[i, fps, diff]
+      
+      i += 1
+      throw :quit if( i > 50 )
+      
+    end
+  end
+
+
+== Background
+
+Almost all games and other interactive applications have a main loop,
+code that is repeated many times per second to take user input, update
+the status of the game, and refresh the screen, among other things.
+Each repetition of this loop is one *frame*, and the number of frames
+that occur in one second is called the *framerate* or FPS (frames per
+second).
+
+
+== Effects of Framerate
+
+In general, the higher the framerate, the smoother the motion in your
+game seems. 
+
+At low framerates (generally less than 12-15 FPS), the game will
+feel "choppy" or "jerky" to the user. At even lower framerates 
+(less than 5), the user may find it frustrating to interact with the
+game. Obviously, that's bad!
+
+High framerates appear smoother, but only up to a point. For example,
+a user will almost certainly notice a big difference between 5 and 10
+FPS, but would probably not notice much difference between 50 and 100
+FPS. Framerates above 60 FPS are usually just a waste, as they use
+much more CPU power but have very little gained smoothness.
+
+So, it's best to find a balanced framerate, which will appear smooth to
+the user, without being wasteful. A good framerate is usually in the
+range of 20-40 FPS, but varies from game to game. For example, a
+fast-paced action game may need 60 FPS, while a slow-paced puzzle game
+may be fine with only 10.
+
+
+== Framerate Monitoring
+
+=== How to Enable Framerate Monitoring
+
+Rubygame's Clock class makes it simple to monitor (measure) framerate.
+Simply call Clock#tick exactly once in your main game loop. Clock will
+measure the time since the previous tick. From that information, 
+collected over many frames, it can determine the framerate that your
+game is running at.
+
+You can get the average recorded framerate, in frames per second, with
+Clock#framerate. 
+
+If you prefer, you can get the frametime (the average time it took to
+make one frame), measured in milliseconds per frame, with
+Clock#frametime. Clock#frametime is equivalent to 1000.0 /
+Clock#framerate.
+
+
+=== Finding Out How Long a Frame Took
+
+The Clock#tick method returns information about how long it has been
+since the previous frame. You can use this information to decide how
+far objects in your game should move. (See the Framerate Independence
+section, below).
+
+For backwards compatibility, Clock#tick by default returns the number
+milliseconds since the previous frame as an integer. But if you call
+Clock#enable_tick_events (in Rubygame 2.5+), Clock#tick will instead
+return an instance of ClockTicked containing that information. You can
+then get that information with either ClockTicked#milliseconds or
+ClockTicked#seconds, whichever is more convenient for you.
+
+
+== Framerate Limiting
+
+=== Why Limit the Framerate?
+
+If you don't limit the framerate of your game, the main loop will
+repeat as quickly as the computer can run it. This will make the game
+run as smoothly as possible, but it will also use as much of the
+computer's CPU power as it can!
+
+This can make other applications on the computer run more slowly or
+choppily. Also, running the CPU full throttle uses more electricity,
+so laptops and other mobile devices will lose battery charge faster.
+It can also make the laptop get uncomfortably warm, or trigger the
+fans on the laptop to turn on, causing unwanted noise.
+
+Another benefit of framerate limiting is that it can make your game
+run at a stable, consistent framerate. However, it is poor practice
+to assume that every frame will take the same amount of time. Instead,
+you should use the data returned by Clock#tick to see how long the
+frame took. The "Framerate Independence" section below further
+explains why and how to do that.
+
+
+=== How to Enable Framerate Limiting
+
+Enabling framerate limiting in Rubygame is easy as pie. Just set
+Clock#target_framerate= to the maximum framerate for your game. So
+if you wanted your game to stay at 20 frames per second, you would do:
+
+  my_clock = Rubygame::Clock.new
+  my_clock.target_framerate = 20 # frames per second
+
+There's also another way to set the target framerate: 
+Clock#target_frametime=. Instead of setting the number of frames per
+second, this allows you to set the number of milliseconds per frame.
+This has the same effect as setting the framerate, it's just another
+way of expressing it. So, the following is exactly equivalent to the
+earlier example:
+
+  my_clock = Rubygame::Clock.new
+  my_clock.target_frametime = 50 # milliseconds per frame
+
+To use framerate limiting, you also need to call Clock#tick once per
+frame, the same way you do for framerate monitoring (you should only
+call it once per frame, even if you're doing both monitoring and
+limiting). When framerate limiting is enabled, the tick method pauses
+the program for a brief time. The length of the pause carefully
+calculated each frame to keep a consistent framerate.
+
+However, framerate limiting only set the *maximum* framerate. In other
+words, it can only slow down your game if it's running too fast, not
+make your game run faster. So if your game naturally runs at 25 FPS,
+setting a target framerate of 30 FPS will have no effect.
+
+You can change the target framerate/frametime at any time.
+Setting the target back to nil will disable framerate limiting.
+
+
+=== Improving Clock Efficiency
+
+In Rubygame 2.5 and later, you can call Clock#calibrate to optimize
+the framerate limiting algorithm for the current computer. This
+minimizes wasted CPU power by setting Clock#granularity to match
+the system clock's granularity. The improvement varies by
+operating system and processor, and will be most noticeable
+on systems with high-precision system clocks.
+
+By default, the calibration will take up to a maximum of 0.5 seconds
+to complete. The needed amount of time will likely decrease in future
+versions of Rubygame. If you want to calibrate more quickly (but
+potentially less accurately), you can pass a different maximum time
+as a parameter to Clock#calibrate.
+
+You can also set Clock#granularity directly, if you wish. Setting
+Clock#granularity to 0 will use the least CPU possible, but will
+lose accuracy.
+
+
+=== Multithreaded Applications
+
+By default, Clock's framerate limiting feature will pause *all* ruby
+threads during the small pause each frame. This is a side effect of
+the SDL function used for the pause. It also affects Clock.delay and
+Clock.wait.
+
+Starting in Rubygame 2.5, Clock has a new attribute, Clock#nice.
+If true, Clock will try to give the other threads an opportunity to run
+during the brief pause each frame when performing framerate limiting.
+
+If you are calling Clock.delay or Clock.wait directly, you can get the
+same effect by passing true for the +nice+ parameter.
+
+*NOTE*: There is no guarantee or specification about how often other
+threads will allowed to run during the delay, or even that they will
+be allowed run during the delay at all. Setting +nice+ to true simply
+tells the Clock to *try* to be nice to other threads, if it can do so
+without losing accuracy.
+
+
+== Framerate Independence
+
+=== Why Be Framerate Independent?
+
+Some programmers are tempted to use framerate limiting to control the
+speed of the action in their games. In other words, they assume that
+every frame will take the same amount of time on all computers, so
+they define movement speeds and other gameplay rates in "per frame"
+units: move 2 pixel per frame, lose 1% HP per frame when poisoned,
+etc. This is called "framerate dependence", because the speed of the
+gameplay depends on how fast the framerate is.
+
+You should *almost always* avoid this programming practice, because
+it's not very robust, it usually makes the game more difficult to
+maintain or change in the future, and can lead to bugs and unwanted
+behavior.
+
+For example, if you programmed your game so that the characters move
+2 pixels per frame, and limited your game's framerate to 30 FPS, the
+character would move 60 pixels in one second. But if you later decided
+to change the framerate to 60 FPS, the character would move 120 pixels
+each second -- twice as fast! You would have to go through your entire
+game and adjust the speed for every character, which is a hassle.
+
+Also consider the other end: slow computers. Your game may reliably
+run at 30 FPS on your computer, but an older or slower computer might
+only be able to run at 15 FPS. In that case, all the characters would
+move half as fast, which could make the game a lot less fun. Even worse,
+if more objects started to appear on the screen, the framerate would
+start to drop, and the gameplay would get even slower!
+
+The solution to these problems is simple: define your gameplay in 
+per-second or per-millisecond units, instead of per-frame units.
+You can then use the frame time to calculate how much the game
+changed in the past frame. This is called "framerate independence".
+
+
+=== Framerate Independence with Rubygame
+
+It's very easy to make your game framerate independent with
+Rubygame. So, you have no excuse not to do it, not even laziness!
+
+The first step is making sure all your speeds and other gameplay
+rates are defined as per-second or per-millisecond units: move 60
+pixels per second, lose 30% HP per second, etc. The choice to use
+seconds or milliseconds is up to you, and doesn't make a difference as
+long as you use the same time scale everywhere.
+
+The second step is to use the value returned by Clock#tick each frame
+to find out how long it has been since the previous frame, and use
+that time to calculate how far the character has moved in the past frame,
+how much HP they have lost, etc. (I will assume for this tutorial that
+you have called Clock#enable_tick_events, so that Clock#tick will return
+a ClockTicked event.)
+
+This calculation is very simple: just multiply the number of seconds
+(or milliseconds) by the speed or rate. Remember to use the correct
+units! If your rates are defined in per-second units, multiply by
+ClockTicked#seconds; if they are per-millisecond units, multiply by
+ClockTicked#milliseconds.
+
+  tick_event = Clock.tick
+  movement = speed * tick_event.seconds
+
+For a full example of how to apply this concept in code, see
+samples/framerate.rb in the Rubygame source distribution.
