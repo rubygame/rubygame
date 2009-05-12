@@ -164,8 +164,10 @@ static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, int nice)
 
   if(ticks >= accuracy)
   {
-    delay = (ticks - 2) - (ticks % accuracy);
-    if(delay >= accuracy)
+    delay = ticks - (ticks % accuracy);
+    delay -= 2;   /* Aim low so we don't overshoot. */
+
+    if(delay >= accuracy && delay > 0)
     {
       rg_threaded_delay(delay, nice);
     }
