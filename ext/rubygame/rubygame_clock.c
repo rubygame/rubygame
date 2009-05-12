@@ -175,7 +175,11 @@ static Uint32 accurate_delay(Uint32 ticks, Uint32 accuracy, int nice)
 
   do{
     delay = ticks - (SDL_GetTicks() - funcstart);
-    rb_thread_schedule();       /* give control to ruby */
+
+    if( nice == 1 )
+    {
+      rb_thread_schedule();     /* give control to ruby */
+    }
   }while(delay > 0);
 
   return SDL_GetTicks() - funcstart;	
