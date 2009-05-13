@@ -1,5 +1,20 @@
 = NEWS
 
+== Rubygame 2.5.1
+
+Release focus: Bug fixes.
+
+=== Fixes
+
+- Fixed: Clock.delay would delay forever if the delay time and
+  granularity were very small.
+
+- Fixed: Clock.delay would always be "nice" to other Ruby threads
+  during the final part of the delay, even if nice = false.
+
+
+
+
 == Rubygame 2.5.0
 
 Release focus: Clock improvements.
