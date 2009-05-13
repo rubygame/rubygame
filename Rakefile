@@ -103,6 +103,7 @@ gem_spec = Gem::Specification.new do |s|
   s.homepage = "http://rubygame.org/"
   s.summary  = "Clean and powerful library for game programming"
   s.has_rdoc = true
+  s.rubyforge_project = "rubygame"
 
   s.files = FileList.new do |fl|
     fl.include("{lib,ext,samples,doc}/**/*")
