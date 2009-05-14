@@ -208,28 +208,22 @@ module Rubygame::EventHandler::HasEventHandler
 	#   player.append_hook( hook )
 	# 
 	def append_hook( hook )
+		_make_event_handler if @event_handler.nil?
 		hook = _prepare_hook( hook )
 		@event_handler.append_hook( hook )
-	rescue NoMethodError
-		_make_event_handler
-		retry
 	end
 	
 	# Passes the given event to the object's event handler.
 	def handle( event )
+		_make_event_handler if @event_handler.nil?
 		@event_handler.handle( event )
-	rescue NoMethodError
-		_make_event_handler
-		retry
 	end
 	
 	# Returns true if the object's event handler includes the given
 	# EventHook instance. 
 	def has_hook?( hook )
+		_make_event_handler if @event_handler.nil?
 		@event_handler.has_hook?( hook )
-	rescue NoMethodError
-		_make_event_handler
-		retry
 	end
 
 
@@ -316,11 +310,9 @@ module Rubygame::EventHandler::HasEventHandler
 	# See also EventHandler#prepend_hook.
 	# 
 	def prepend_hook( hook )
+		_make_event_handler if @event_handler.nil?
 		hook = _prepare_hook( hook )
 		@event_handler.prepend_hook( hook )
-	rescue NoMethodError
-		_make_event_handler
-		retry
 	end
 	
 	# Remove the given EventHook instance from the stack, if it
@@ -331,10 +323,8 @@ module Rubygame::EventHandler::HasEventHandler
 	#           exist on the stack.
 	# 
 	def remove_hook( hook )
+		_make_event_handler if @event_handler.nil?
 		@event_handler.remove_hook( hook )
-	rescue NoMethodError
-		_make_event_handler
-		retry
 	end
 
 	private
