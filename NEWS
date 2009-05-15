@@ -1,5 +1,17 @@
 = NEWS
 
+== Rubygame 2.5.2
+
+Release focus: Bug fixes.
+
+=== Fixes
+
+- Fixed: HasEventHandler#handle (and other methods) dealt with
+  NoMethodError exceptions in a stupid way.
+
+
+
+
 == Rubygame 2.5.1
 
 Release focus: Bug fixes.
