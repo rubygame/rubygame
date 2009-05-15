@@ -233,4 +233,12 @@ describe HasEventHandler do
   end
 
 
+  # Regression test
+  it "#handle should not eat NoMethodErrors" do
+    @object.make_magic_hooks( :a => proc{ bad_method_call() } )
+    lambda {
+      @object.handle( Events::KeyPressed.new(:a) )
+    }.should raise_error(NoMethodError)
+  end
+
 end
