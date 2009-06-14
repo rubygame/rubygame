@@ -118,6 +118,15 @@ gem_spec = Gem::Specification.new do |s|
     fl.include "doc/*.rdoc"
     fl.include "README", "LICENSE", "CREDITS", "ROADMAP", "NEWS"
   end
+
+  s.required_ruby_version = ">= 1.8"
+  s.add_dependency( "rake", ">=0.7.0" )
+  s.requirements = ["SDL       >= 1.2.7",
+                    "SDL_gfx   >= 2.0.10 (optional)",
+                    "SDL_image >= 1.2.3  (optional)",
+                    "SDL_mixer >= 1.2.7  (optional)",
+                    "SDL_ttf   >= 2.0.6  (optional)"]
+
 end
 
 task :binary do
