@@ -503,8 +503,8 @@ class Game
 	def step
 		@queue << UndrawSprites.new( @screen, @background )
 		@queue.fetch_sdl_events
-		@queue << DrawSprites.new( @screen )
 		@queue << $game.clock.tick
+		@queue << DrawSprites.new( @screen )
 		@queue.each do |event|
 			handle( event )
 		end
