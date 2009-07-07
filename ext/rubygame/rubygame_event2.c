@@ -154,8 +154,8 @@ VALUE rg_convert_joyballevent( SDL_Event ev )
   VALUE ball = UINT2NUM( ev.jball.ball );
 
   VALUE rel = rb_ary_new();
-  rb_ary_push( rel, UINT2NUM( ev.jball.xrel ) );
-  rb_ary_push( rel, UINT2NUM( ev.jball.yrel ) );
+  rb_ary_push( rel, INT2NUM( ev.jball.xrel ) );
+  rb_ary_push( rel, INT2NUM( ev.jball.yrel ) );
 
 
   VALUE args[] = { joystick_id, ball, rel };
