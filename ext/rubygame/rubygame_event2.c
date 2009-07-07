@@ -489,8 +489,8 @@ VALUE rg_convert_mousemotionevent( SDL_Event ev )
 
 
   VALUE rel = rb_ary_new();
-  rb_ary_push( rel, UINT2NUM( ev.motion.xrel ) );
-  rb_ary_push( rel, UINT2NUM( ev.motion.yrel ) );
+  rb_ary_push( rel, INT2NUM( ev.motion.xrel ) );
+  rb_ary_push( rel, INT2NUM( ev.motion.yrel ) );
 
 
   VALUE args[] = { pos, rel, buttons };
