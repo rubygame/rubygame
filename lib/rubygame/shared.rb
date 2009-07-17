@@ -33,4 +33,54 @@ module Rubygame
     end
   end
 
+
+  # Initialize the SDL video system if necessary.
+  def self.init_video_system    # :nodoc:
+    if( SDL::WasInit(SDL::INIT_VIDEO) == 0 )
+      return SDL::Init(SDL::INIT_VIDEO)
+    else
+      return 0
+    end
+  end
+
+
+  # Take nil, an integer, or an Array of integers. Returns an integer.
+  def self.collapse_flags( flags ) # :nodoc:
+    case flags
+    when Array
+      flags.inject(0){ |mem, flag|  mem|flag }
+    when Numeric
+      flags
+    when nil
+      0
+    else
+      raise( ArgumentError, "Wrong type for flags " +
+             "(wanted integer, Array, or nil; got #{flags.class})." )
+    end
+  end
+
+
+  def self.make_sdl_rgba( color ) # :nodoc:
+    extract_rgba_u8_as_u8( convert_color(color) ).collect! { |c| c.to_i }
+  end
+
+  def self.convert_color( color ) # :nodoc:
+    if color.kind_of?(Symbol) or color.kind_of?(String)
+      Rubygame::Color[color].to_sdl_rgba_ary
+    elsif color.respond_to? :to_sdl_rgba_ary
+      color.to_sdl_rgba_ary
+    elsif color.respond_to? :to_ary
+      color.to_ary
+    else
+      raise TypeError, "unsupported type #{color.class} for color"
+    end
+  end
+
+
+  def self.extract_rgba_u8_as_u8( color ) # :nodoc:
+    r,g,b,a = color[0,4]
+    a = 255 if a.nil?
+    [r,g,b,a]
+  end
+
 end
