@@ -57,3 +57,7 @@ require "rubygame/event_handler"
 require "rubygame/rect"
 require "rubygame/sprite"
 require "rubygame/clock"
+
+
+require "rubygame/surface"
+require "rubygame/screen"
