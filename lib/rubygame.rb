@@ -24,6 +24,9 @@
 # the Rubygame library modules.
 
 
+require "ruby-sdl-ffi"
+
+
 # Prefer local library over global installed version.
 $:.unshift( File.join( File.dirname(__FILE__), "..", "lib" ) )
 $:.unshift( File.join( File.dirname(__FILE__), "..", "ext", "rubygame" ) )
