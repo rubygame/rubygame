@@ -177,14 +177,14 @@ class Rubygame::SurfaceFFI
   # This function takes these arguments:
   # alpha:: requested opacity of the surface. Alpha must be from 0
   #         (fully transparent) to 255 (fully opaque).
-  # flags:: 0 or Rubygame::SRC_ALPHA (default). Most people will want the
+  # flags:: 0 or Rubygame::SRCALPHA (default). Most people will want the
   #         default, in which case this argument can be omitted. For advanced
   #         users: this flag affects the surface as described in the docs for
   #         the SDL C function, SDL_SetAlpha.
   #
   # Returns self.
   #
-  def set_alpha( alpha, flags=Rubygame::SRC_ALPHA )
+  def set_alpha( alpha, flags=Rubygame::SRCALPHA )
     result = SDL.SetAlpha(@struct, flags, alpha)
     raise Rubygame::SDLError, SDL.GetError() unless result == 0
     return self
