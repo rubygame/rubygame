@@ -191,41 +191,57 @@ class Rubygame::SurfaceFFI
   end
 
 
-#   # call-seq:
-#   #    colorkey  ->  [r,g,b]  or  nil
-#   #
-#   # Return the colorkey of the surface in the form [r,g,b] (or +nil+ if there
-#   # is no key). The colorkey of a surface is the exact color which will be
-#   # ignored when the surface is blitted, effectively turning that color
-#   # transparent. This is often used to make a blue (for example) background
-#   # on an image seem transparent.
-#   #
-#   def colorkey
-#   end
+  # call-seq:
+  #    colorkey  ->  [r,g,b]  or  nil
+  #
+  # Return the colorkey of the surface in the form [r,g,b] (or +nil+ if there
+  # is no key). The colorkey of a surface is the exact color which will be
+  # ignored when the surface is blitted, effectively turning that color
+  # transparent. This is often used to make a blue (for example) background
+  # on an image seem transparent.
+  #
+  def colorkey
+    if( (@struct.flags & Rubygame::SRCCOLORKEY) == Rubygame::SRCCOLORKEY )
+      SDL::GetRGB(@struct.format.colorkey, @struct.format)
+    else
+      nil
+    end 
+  end
 
 
-#   # Alternative form of #set_colorkey.
-#   #
-#   # Returns the new colorkey.
-#   #
-#   def colorkey=( color )
-#   end
+  # Alternative form of #set_colorkey.
+  #
+  # Returns the new colorkey.
+  #
+  def colorkey=( color )
+    set_colorkey( color )
+    return self.colorkey
+  end
 
 
-#   # Set the colorkey of the surface. See Surface#colorkey for a description
-#   # of colorkeys.
-#   #
-#   # This method takes these arguments:
-#   # color:: color to use as the key, in the form [r,g,b]. Can be +nil+ to
-#   #         un-set the colorkey.
-#   # flags:: 0 or Rubygame::SRC_COLORKEY (default) or
-#   #         Rubygame::SRC_COLORKEY|Rubygame::SDL_RLEACCEL. Most people will
-#   #         want the default, in which case this argument can be omitted. For
-#   #         advanced users: this flag affects the surface as described in the
-#   #         docs for the SDL C function, SDL_SetColorkey.
-#   #
-#   def set_colorkey( color, flags=0 )
-#   end
+  # Set the colorkey of the surface. See Surface#colorkey for a description
+  # of colorkeys.
+  #
+  # This method takes these arguments:
+  # color:: color to use as the key, in the form [r,g,b]. Can be +nil+ to
+  #         un-set the colorkey.
+  # flags:: 0 or Rubygame::SRCCOLORKEY (default) or
+  #         Rubygame::SRCCOLORKEY|Rubygame::SDL_RLEACCEL. Most people will
+  #         want the default, in which case this argument can be omitted. For
+  #         advanced users: this flag affects the surface as described in the
+  #         docs for the SDL C function, SDL_SetColorkey.
+  #
+  def set_colorkey( color, flags=Rubygame::SRCCOLORKEY )
+    if color.nil?
+      color, flags = 0, 0
+    else
+      color = SDL.MapRGBA( @struct.format, *Rubygame.make_sdl_rgba(color) )
+    end
+
+    result = SDL.SetColorKey(@struct, flags, color)
+    raise Rubygame::SDLError, SDL.GetError() unless result == 0
+    return self
+  end
 
   # Blit (copy) all or part of the surface's image to another surface,
   # at a given position. Returns a Rect representing the area of
