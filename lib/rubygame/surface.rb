@@ -162,15 +162,6 @@ class Rubygame::SurfaceFFI
     @struct.format.alpha
   end
 
-  # Alternative form of #set_alpha.
-  #
-  # Returns the new alpha value.
-  #
-  def alpha=( alpha )
-    set_alpha( alpha )
-    return self.alpha
-  end
-
   # Set the per-surface alpha (opacity; non-transparency) of the surface.
   # You can do the same thing with #alpha= if you don't care about flags.
   #
@@ -190,6 +181,8 @@ class Rubygame::SurfaceFFI
     return self
   end
 
+  alias :alpha= :set_alpha
+
 
   # call-seq:
   #    colorkey  ->  [r,g,b]  or  nil
@@ -206,16 +199,6 @@ class Rubygame::SurfaceFFI
     else
       nil
     end 
-  end
-
-
-  # Alternative form of #set_colorkey.
-  #
-  # Returns the new colorkey.
-  #
-  def colorkey=( color )
-    set_colorkey( color )
-    return self.colorkey
   end
 
 
@@ -242,6 +225,9 @@ class Rubygame::SurfaceFFI
     raise Rubygame::SDLError, SDL.GetError() unless result == 0
     return self
   end
+
+  alias :colorkey= :set_colorkey
+
 
   # Blit (copy) all or part of the surface's image to another surface,
   # at a given position. Returns a Rect representing the area of
