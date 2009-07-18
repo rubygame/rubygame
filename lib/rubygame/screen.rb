@@ -149,6 +149,7 @@ class Rubygame::ScreenFFI < Rubygame::SurfaceFFI
     # Cheating a bit. First arg can be a SDL::Surface to wrap it.
     #
     if( size.kind_of? SDL::Surface )
+      surf = size
       if( surf.pointer.null? )
         raise Rubygame::SDLError, "Screen cannot wrap NULL Surface!"
       elsif( surf.pointer != SDL.GetVideoSurface().pointer )
