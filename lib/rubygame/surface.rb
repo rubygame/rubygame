@@ -176,7 +176,7 @@ class Rubygame::SurfaceFFI
   # Returns self.
   #
   def set_alpha( alpha, flags=Rubygame::SRCALPHA )
-    result = SDL.SetAlpha(@struct, flags, alpha)
+    result = SDL.SetAlpha(@struct, flags, alpha.to_i)
     raise Rubygame::SDLError, SDL.GetError() unless result == 0
     return self
   end
