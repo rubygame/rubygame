@@ -53,6 +53,14 @@ class Rubygame::SurfaceFFI
       return self.new(surf)
     end
 
+
+    # Deprecated. Use Surface.load instead!
+    def load_image( filename )
+      Rubygame.deprecated( "Rubygame::Surface.load_image", "3.0" )
+      load( filename )
+    end
+
+
   end
 
   attr_reader :struct           # :nodoc:
