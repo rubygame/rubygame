@@ -413,6 +413,8 @@ class Rubygame::SurfaceFFI
              [x, y, @struct.w, @struct.h] )
     end
 
+    SDL.LockSurface(@struct)
+
     bpp = @struct.format.BytesPerPixel
     ptr = @struct.pixels + (y * @struct.pitch + x * bpp)
 
@@ -431,6 +433,8 @@ class Rubygame::SurfaceFFI
       when 4
         ptr.get_uint32(0)
       end
+
+    SDL.UnlockSurface(@struct)
 
     return SDL::GetRGBA(pixel, @struct.format) 
   end
