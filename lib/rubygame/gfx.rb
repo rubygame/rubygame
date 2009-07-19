@@ -110,4 +110,55 @@ class Rubygame::SurfaceFFI
   end
 
 
+
+  def _draw_circle(center, radius, color, smooth, solid) # :nodoc:
+    x, y = center.to_a.collect{|n| n.round}
+    radius = radius.to_i
+
+    r,g,b,a = Rubygame.make_sdl_rgba( color )
+
+    if solid
+      SDL::Gfx.filledCircleRGBA(@struct, x, y, radius, r,g,b,a)
+    elsif smooth
+      SDL::Gfx.aacircleRGBA(@struct, x, y, radius, r,g,b,a)
+    else
+      SDL::Gfx.circleRGBA(@struct, x, y, radius, r,g,b,a)
+    end
+  end
+
+  private :_draw_circle
+
+
+  # Draw a non-solid circle on the Surface, given the coordinates of its
+  # center and its radius. See also #draw_circle_a and #draw_circle_s
+  #
+  # This method takes these arguments:
+  # center::  the coordinates of circle's center, [x,y].
+  # radius::  the radius (pixels) of the circle.
+  # color::   the color of the shape. [r,g,b] or [r,g,b,a] (0-255),
+  #           color name, or Rubygame::Color.
+  #
+  def draw_circle( center, radius, color )
+    _draw_circle( center, radius, color, false, false )
+    return self
+  end
+
+
+  # Like #draw_circle, but the outline is anti-aliased.
+  #
+  def draw_circle_a( center, radius, color )
+    _draw_circle( center, radius, color, true, false )
+    return self
+  end
+
+
+  # Like #draw_circle, but the shape is solid, instead of an outline.
+  #
+  def draw_circle_s( center, radius, color )
+    _draw_circle( center, radius, color, false, true )
+    return self
+  end
+
+
+
 end
