@@ -40,10 +40,15 @@
 #
 class Rubygame::ScreenFFI < Rubygame::SurfaceFFI
 
+  class << self
+    # Inherited from Surface, but not applicable to Screen
+    undef :[], :[]=, :autoload, :autoload_dirs=, :autoload_dirs,
+          :basename, :exist?, :find_file, :load, :load_image
+  end
 
-  # Inherited from Surface, but should not be called on Screen
-  undef :alpha=, :set_alpha
-  # undef :colorkey=, :set_colorkey
+
+  # Inherited from Surface, but not applicable to Screen
+  undef :alpha=, :set_alpha, :colorkey=, :set_colorkey
 
 
   class << self
