@@ -690,19 +690,68 @@ class Rubygame::SurfaceFFI
   end
 
 
-#   # Flips the source surface horizontally (if +horz+ is true), vertically
-#   # (if +vert+ is true), or both (if both are true). This operation is
-#   # non-destructive; the original image can be perfectly reconstructed by
-#   # flipping the resultant image again.
-#   #
-#   # This operation does NOT require SDL_gfx.
-#   #
-#   # A similar effect can (supposedly) be achieved by giving X or Y zoom
-#   # factors of -1 to #rotozoom (only if compiled with SDL_gfx 2.0.13 or
-#   # greater). Your mileage may vary.
-#   #
-#   def flip( horz, vert )
-#   end
+  # Flips the source surface horizontally (if +horz+ is true), vertically
+  # (if +vert+ is true), or both (if both are true). This operation is
+  # non-destructive; the original image can be perfectly reconstructed by
+  # flipping the resultant image again.
+  #
+  # This operation does NOT require SDL_gfx.
+  #
+  # A similar effect can (supposedly) be achieved by giving X or Y zoom
+  # factors of -1 to #rotozoom (only if compiled with SDL_gfx 2.0.13 or
+  # greater). Your mileage may vary.
+  #
+  def flip( horz, vert )
+    require "enumerator"
+
+    pix = self.pixels
+
+    # Slice into rows of bytes
+    table = pix.to_enum(:each_byte).enum_slice(@struct.pitch).collect
+
+    if horz
+      # Flip columns... it's a little bit complicated.
+      table.collect! do |row|
+        # Slice into pixels
+        row = row.enum_slice(@struct.format.BytesPerPixel).collect
+
+        if( row.length != @struct.w )
+          # There are some padding bytes at the end.
+          # Reverse only the meaningful bytes.
+          row[0,@struct.w] = row.slice(0,@struct.w).reverse!
+        else
+          row.reverse!
+        end
+        
+        row
+      end
+    end
+
+    if vert
+      # Flip rows
+      table.reverse!
+    end
+
+    # Pack the new data back into a bytestring
+    pix = table.flatten!.pack("C"*pix.length)
+
+
+    # Make a new Surface like this one.
+    rmask = @struct.format.Rmask
+    gmask = @struct.format.Gmask
+    bmask = @struct.format.Bmask
+    amask = @struct.format.Amask
+    surf = SDL.CreateRGBSurface(@struct.flags, @struct.w, @struct.h,
+                                @struct.format.BitsPerPixel,
+                                rmask, gmask, bmask, amask)
+
+    # Overwrite the pixel data with the flipped data
+    surf.pixels.put_bytes(0,pix)
+
+    # Wrap and return it
+    return self.class.new( surf )
+
+  end
 
 
   def to_s
