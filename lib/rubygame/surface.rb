@@ -604,4 +604,12 @@ class Rubygame::SurfaceFFI
 #   def flip( horz, vert )
 #   end
 
+
+  def to_s
+    "#<%s:%#.x>"%[self.class.name, self.object_id]
+  end
+
+  alias :inspect :to_s
+
+
 end
