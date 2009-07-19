@@ -421,7 +421,7 @@ class Rubygame::SurfaceFFI
                    "wrong number of arguments (#{args.length} for 1)" )
           end
 
-    if( x < 0 or x > @struct.w or y < 0 or y > @struct.h)
+    if( x < 0 or x >= @struct.w or y < 0 or y >= @struct.h)
       raise( IndexError, "point [%d,%d] is out of bounds for %dx%d Surface"%\
              [x, y, @struct.w, @struct.h] )
     end
@@ -470,7 +470,7 @@ class Rubygame::SurfaceFFI
   def set_at( pos, color )
     x,y = pos.to_ary.collect { |n| n.round }
 
-    if( x < 0 or x > @struct.w or y < 0 or y > @struct.h)
+    if( x < 0 or x >= @struct.w or y < 0 or y >= @struct.h)
       raise( IndexError, "point [%d,%d] is out of bounds for %dx%d Surface"%\
              [x, y, @struct.w, @struct.h] )
     end
