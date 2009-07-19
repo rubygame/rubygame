@@ -440,17 +440,53 @@ class Rubygame::SurfaceFFI
   end
 
 
-#   # Set the color of the pixel at the given coordinate.
-#   #
-#   # color can be one of:
-#   # * an Array, [r,g,b] or [r,g,b,a] with each component in 0-255
-#   # * an instance of ColorRGB, ColorHSV, etc.
-#   # * the name of a color in Rubygame::Color, as a Symbol or String
-#   #
-#   # Raises IndexError if the coordinates are out of bounds.
-#   #
-#   def set_at( [x,y], color )
-#   end
+  # Set the color of the pixel at the given coordinate.
+  #
+  # color can be one of:
+  # * an Array, [r,g,b] or [r,g,b,a] with each component in 0-255
+  # * an instance of ColorRGB, ColorHSV, etc.
+  # * the name of a color in Rubygame::Color, as a Symbol or String
+  #
+  # Raises IndexError if the coordinates are out of bounds.
+  #
+  def set_at( pos, color )
+    x,y = pos.to_ary.collect { |n| n.round }
+
+    if( x < 0 or x > @struct.w or y < 0 or y > @struct.h)
+      raise( IndexError, "point [%d,%d] is out of bounds for %dx%d Surface"%\
+             [x, y, @struct.w, @struct.h] )
+    end
+
+    color = _map_sdl_color( color )
+
+    SDL.LockSurface(@struct)
+
+    bpp = @struct.format.BytesPerPixel
+    ptr = @struct.pixels + (y * @struct.pitch + x * bpp)
+
+    case bpp
+    when 1
+      ptr.put_uint8(0, color)
+    when 2
+      ptr.put_uint16(0, color)
+    when 3
+      if( FFI::Platform::BYTE_ORDER == FFI::Platform::BIG_ENDIAN )
+        ptr.put_uint8(0, (color >> 16) & 0xff)
+        ptr.put_uint8(1, (color >> 8)  & 0xff)
+        ptr.put_uint8(2, color & 0xff)
+      else
+        ptr.put_uint8(0, color & 0xff)
+        ptr.put_uint8(1, (color >> 8)  & 0xff)
+        ptr.put_uint8(2, (color >> 16) & 0xff)
+      end
+    when 4
+      ptr.put_uint32(0, color)
+    end
+
+    SDL.UnlockSurface(@struct)
+
+    return
+  end
 
 
   # Return a string of pixel data for the Surface. Most users will not
