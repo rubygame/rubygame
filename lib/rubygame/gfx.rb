@@ -257,4 +257,63 @@ class Rubygame::SurfaceFFI
 
 
 
+  def _draw_polygon(points, color, smooth, solid) # :nodoc:
+
+    len = points.length
+    xpts = FFI::Buffer.new(:int16, len)
+    ypts = FFI::Buffer.new(:int16, len)
+
+    points.each_with_index { |point, i|
+      xpts[i].put_int16( 0, point[0].round )
+      ypts[i].put_int16( 0, point[1].round )
+    }
+
+    r,g,b,a = Rubygame.make_sdl_rgba( color )
+
+    if solid
+      SDL::Gfx.filledPolygonRGBA(@struct, xpts, ypts, len, r,g,b,a)
+    elsif smooth
+      SDL::Gfx.aapolygonRGBA(@struct, xpts, ypts, len, r,g,b,a)
+    else
+      SDL::Gfx.polygonRGBA(@struct, xpts, ypts, len, r,g,b,a)
+    end
+  end
+
+  private :_draw_polygon
+
+
+  # Draw a non-solid polygon, given the coordinates of its vertices, in the
+  # order that they are connected. This is essentially a series of connected
+  # dots. See also #draw_polygon_a and #draw_polygon_s.
+  #
+  # This method takes these arguments:
+  # points::  an Array containing the coordinate pairs for each vertex of the
+  #           polygon, in the order that they are connected, e.g.
+  #           [ [x1,y1], [x2,y2], ..., [xn,yn] ].
+  # color::   the color of the shape. [r,g,b] or [r,g,b,a] (0-255),
+  #           color name, or Rubygame::Color.
+  #
+  def draw_polygon( points, color )
+    _draw_polygon( points, color, false, false )
+    return self
+  end
+
+
+  # Like #draw_polygon, but the lines are anti-aliased.
+  #
+  def draw_polygon_a( points, color )
+    _draw_polygon( points, color, true, false )
+    return self
+  end
+
+
+  # Like #draw_polygon, but the shape is solid, instead of an outline.
+  #
+  def draw_polygon_s( points, color )
+    _draw_polygon( points, color, false, true )
+    return self
+  end
+
+
+
 end
