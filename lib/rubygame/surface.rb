@@ -408,6 +408,9 @@ class Rubygame::SurfaceFFI
   #    get_at( x,y )
   #
   # Return the color [r,g,b,a] (0-255) of the pixel at [x,y].
+  # If the Surface does not have a per-pixel alpha channel (i.e. not
+  # 32-bit), alpha will always be 255. The Surface's overall alpha
+  # value (from #set_alpha) does not affect the returned alpha value.
   #
   # Raises IndexError if the coordinates are out of bounds.
   #
