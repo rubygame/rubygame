@@ -358,4 +358,34 @@ class Rubygame::SurfaceFFI
   end
 
 
+  # Return a zoomed version of the Surface.
+  #
+  # This method takes these arguments:
+  # zoom::    a Numeric factor to scale by in both x and y directions,
+  #           or an Array with separate x and y scale factors.
+  # smooth::  whether to anti-alias the new surface.
+  #           By the way, if true, the new surface will be 32bit RGBA.
+  #
+  def zoom( zoom, smooth=false )
+    smooth = smooth ? 1 : 0
+
+    surf = case zoom
+           when Array
+             zx, zy = zoom.collect { |n| n.to_f }
+             SDL::Gfx.zoomSurface(@struct, zx, zy, smooth)
+           when Numeric
+             zoom = zoom.to_f
+             SDL::Gfx.zoomSurface(@struct, zoom, zoom, smooth)
+           else
+             raise ArgumentError, "Invalid zoom factor: #{zoom.inspect}"
+           end
+
+    if( surf.pointer.null? )
+      raise( Rubygame::SDLError, "Zoom failed: " + SDL.GetError() )
+    end
+
+    return self.class.new(surf)
+  end
+
+
 end
