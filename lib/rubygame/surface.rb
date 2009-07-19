@@ -12,6 +12,49 @@
 
 class Rubygame::SurfaceFFI
 
+
+  class << self
+
+    # Load an image file from the disk to a Surface. If the image has an alpha
+    # channel (e.g. PNG with transparency), the Surface will as well. If the
+    # image cannot be loaded (for example if the image format is unsupported),
+    # will raise SDLError.
+    #
+    # This method is only usable if Rubygame was compiled with the SDL_image
+    # library; you can check Rubygame::VERSIONS[:sdl_image] to see if it was.
+    #
+    # This method takes this argument:
+    # filename:: a string containing the relative or absolute path to the
+    #            image file. The file must have the proper file extension,
+    #            as it is used to determine image format.
+    #
+    # These formats may be supported, but some may not be available on a
+    # particular system.
+    # BMP:: "Windows Bitmap" format.
+    # GIF:: "Graphics Interchange Format."
+    # JPG:: "Independent JPEG Group" format.
+    # LBM:: "Linear Bitmap" format (?)
+    # PCX:: "PC Paintbrush" format
+    # PNG:: "Portable Network Graphics" format.
+    # PNM:: "Portable Any Map" format. (i.e., PPM, PGM, or PBM)
+    # TGA:: "Truevision TARGA" format.
+    # TIF:: "Tagged Image File Format"
+    # XCF:: "eXperimental Computing Facility" (GIMP native format).
+    # XPM:: "XPixMap" format.
+    # 
+    def load( filename )
+      surf = SDL::Image.Load( filename )
+
+      if( surf.pointer.null? )
+        raise( Rubygame::SDLError, "Couldn't load image \"%s\": %s",
+               filename, SDL.GetError() )
+      end
+
+      return self.new(surf)
+    end
+
+  end
+
   attr_reader :struct           # :nodoc:
 
 
