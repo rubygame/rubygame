@@ -537,7 +537,10 @@ class Rubygame::SurfaceFFI
   #
   def pixels
     len = @struct.pitch * @struct.h
-    return @struct.pixels.get_bytes(0, len)
+    SDL.LockSurface(@struct)
+    pix = @struct.pixels.get_bytes(0, len)
+    SDL.UnlockSurface(@struct)
+    return pix
   end
 
 
