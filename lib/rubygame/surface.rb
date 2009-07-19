@@ -1,15 +1,20 @@
 
-#--
-#
-# TODO:
-#
-#  colorkey, colorkey=, set_colorkey
-#  get_at, set_at
-#  flip
-#  load, etc.
-#
-#++
 
+
+# Surface represents an image, a block of colored pixels arranged in a
+# 2D grid. You can load image files to a new Surface with #load_image,
+# or create an empty one with Surface.new and draw shapes on it with
+# #draw_line, #draw_circle, and all the rest.
+#
+# One of the most important Surface concepts is #blit, copying image
+# data from one Surface onto another. By blitting Surfaces onto the
+# Screen (which is a special type of Surface) and then using
+# Screen#update, you can make images appear for the player to see.
+#
+# As of Rubygame 2.3.0, Surface includes the Rubygame::NamedResource
+# mixin module, which can perform autoloading of images on demand,
+# among other things.
+#
 class Rubygame::SurfaceFFI
 
   include Rubygame::NamedResource
