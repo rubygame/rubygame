@@ -445,4 +445,29 @@ class Rubygame::SurfaceFFI
     end
   end
 
+
+
+  # Return a version of the Surface zoomed to a new size.
+  #
+  # This method takes these arguments:
+  # width::   the desired width. If nil, the width will stay the same.
+  # height::  the desired height. If nil, the height will stay the same.
+  # smooth::  whether to anti-alias the new surface. This option can be
+  #           omitted, in which case the surface will not be anti-aliased.
+  #           If true, the new surface will be 32bit RGBA.
+  #
+  def zoom_to( width, height, smooth=false )
+    zoomx = case width
+            when nil;      1.0
+            when Numeric;  width.to_f / @struct.w
+            end
+             
+    zoomy = case height
+            when nil;      1.0
+            when Numeric;  height.to_f / @struct.h
+            end
+
+    return self.zoom( [zoomx, zoomy], smooth )
+  end
+
 end
