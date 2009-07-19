@@ -185,16 +185,14 @@ class Rubygame::SurfaceFFI
       # Pixel format is retrieved from the video surface.
       pixformat = vs.format
     else
-      raise Rubygame::SDLError, "You have to open the Screen first, for now."
-
-      # # We can only get the system color depth when the
-      # # video system has been initialized.
-      # if( Rubygame.init_video_system == 0 )
-      #   pixformat = SDL.GetVideoInfo().vfmt
-      # else
-      #   raise(Rubygame::SDLError,
-      #         "Could not initialize SDL video subsystem.")
-      # end
+      # We can only get the system color depth when the
+      # video system has been initialized.
+      if( Rubygame.init_video_system == 0 )
+        pixformat = SDL.GetVideoInfo().vfmt
+      else
+        raise(Rubygame::SDLError,
+              "Could not initialize SDL video subsystem.")
+      end
     end
 
     rmask = pixformat.Rmask
