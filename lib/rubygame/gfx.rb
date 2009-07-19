@@ -161,4 +161,55 @@ class Rubygame::SurfaceFFI
 
 
 
+  def _draw_ellipse(center, radii, color, smooth, solid) # :nodoc:
+    x, y = center.to_a.collect{|n| n.round}
+    radx, rady = radii.to_a.collect{|n| n.round}
+
+    r,g,b,a = Rubygame.make_sdl_rgba( color )
+
+    if solid
+      SDL::Gfx.filledEllipseRGBA(@struct, x, y, radx, rady, r,g,b,a)
+    elsif smooth
+      SDL::Gfx.aaellipseRGBA(@struct, x, y, radx, rady, r,g,b,a)
+    else
+      SDL::Gfx.ellipseRGBA(@struct, x, y, radx, rady, r,g,b,a)
+    end
+  end
+
+  private :_draw_ellipse
+
+
+  # Draw a non-solid ellipse (oval) on the Surface, given the 
+  # coordinates of its center and its horizontal and vertical radii.
+  # See also #draw_ellipse_a and #draw_ellipse_s
+  #
+  # This method takes these arguments:
+  # center::  the coordinates of ellipse's center, [x,y].
+  # radii::   the x and y radii (pixels), [rx,ry].
+  # color::   the color of the shape. [r,g,b] or [r,g,b,a] (0-255),
+  #           color name, or Rubygame::Color.
+  #
+  def draw_ellipse( center, radii, color )
+    _draw_ellipse( center, radii, color, false, false )
+    return self
+  end
+
+
+  # Like #draw_ellipse, but the ellipse border is anti-aliased.
+  #
+  def draw_ellipse_a( center, radii, color )
+    _draw_ellipse( center, radii, color, true, false )
+    return self
+  end
+
+
+  # Like #draw_ellipse, but the shape is solid, instead of an outline.
+  #
+  def draw_ellipse_s( center, radii, color )
+    _draw_ellipse( center, radii, color, false, true )
+    return self
+  end
+
+
+
 end
