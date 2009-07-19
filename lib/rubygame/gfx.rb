@@ -67,4 +67,47 @@ class Rubygame::SurfaceFFI
   end
 
 
+
+  def _draw_box(pt1, pt2, color, solid) # :nodoc:
+    x1, y1 = pt1.to_a.collect{|n| n.round}
+    x2, y2 = pt2.to_a.collect{|n| n.round}
+
+    r,g,b,a = Rubygame.make_sdl_rgba( color )
+
+    if solid
+      SDL::Gfx.boxRGBA(@struct, x1, y1, x2, y2, r,g,b,a)
+    else
+      SDL::Gfx.rectangleRGBA(@struct, x1, y1, x2, y2, r,g,b,a)
+    end
+  end
+
+  private :_draw_box
+
+
+  # Draw a non-solid box (rectangle) on the Surface, given the
+  # coordinates of its top-left corner and bottom-right corner. See
+  # also #draw_box_s
+  #
+  # This method takes these arguments:
+  # point1::  the coordinates of top-left corner, [x1,y1].
+  # point2::  the coordinates of bottom-right corner, [x2,y2].
+  # color::   the color of the shape. [r,g,b] or [r,g,b,a] (0-255),
+  #           color name, or Rubygame::Color.
+  #
+  def draw_box( point1, point2, color )
+    _draw_box( point1, point2, color, false )
+    return self
+  end
+
+
+  # Like #draw_box, but the shape is solid, instead of an outline.
+  # (You may find using #fill to be more convenient and perhaps faster
+  # than this method.)
+  #
+  def draw_box_s( point1, point2, color )
+    _draw_box( point1, point2, color, true )
+    return self
+  end
+
+
 end
