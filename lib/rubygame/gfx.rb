@@ -212,4 +212,49 @@ class Rubygame::SurfaceFFI
 
 
 
+  def _draw_arc(center, radius, angles, color, solid) # :nodoc:
+    x, y = center.to_a.collect{|n| n.round}
+    radius = radius.round
+    ang1, ang2 = angles.to_a.collect{|n| n.round}
+
+    r,g,b,a = Rubygame.make_sdl_rgba( color )
+
+    if solid
+      SDL::Gfx.filledPieRGBA(@struct, x, y, radius, ang1, ang2, r,g,b,a)
+    else
+      SDL::Gfx.pieRGBA(@struct, x, y, radius, ang1, ang2, r,g,b,a)
+    end
+  end
+
+  private :_draw_arc
+
+
+  # Draw a non-solid arc (part of a circle), given the coordinates of
+  # its center, radius, and starting/ending angles.
+  # See also #draw_arc_s
+  #
+  # This method takes these arguments:
+  # center::  the coordinates of circle's center, [x,y].
+  # radius::  the radius (pixels) of the circle.
+  # angles::  the start and end angles (in degrees) of the arc, [start,end].
+  #           Angles are given *CLOCKWISE* from the positive x
+  #           (remember that the positive Y direction is down, rather than up).
+  # color::   the color of the shape. [r,g,b] or [r,g,b,a] (0-255),
+  #           color name, or Rubygame::Color.
+  #
+  def draw_arc( center, radius, angles, color )
+    _draw_arc( center, radius, angles, color, false )
+    return self
+  end
+
+
+  # Like #draw_arc, but the shape is solid, instead of an outline.
+  #
+  def draw_arc_s( center, radius, angles, color )
+    _draw_arc( center, radius, angles, color, true )
+    return self
+  end
+
+
+
 end
