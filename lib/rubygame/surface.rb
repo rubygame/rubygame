@@ -403,12 +403,37 @@ class Rubygame::SurfaceFFI
   end
 
 
-#   # Return the color [r,g,b,a] of the pixel at the given coordinate.
-#   #
-#   # Raises IndexError if the coordinates are out of bounds.
-#   #
-#   def get_at( x,y )
-#   end
+  # Return the color [r,g,b,a] (0-255) of the pixel at [x,y].
+  # 
+  # Raises IndexError if the coordinates are out of bounds.
+  #
+  def get_at( x,y )
+    if( x < 0 or x > @struct.w or y < 0 or y > @struct.h)
+      raise( IndexError, "point [%d,%d] is out of bounds for %dx%d Surface"%\
+             [x, y, @struct.w, @struct.h] )
+    end
+
+    bpp = @struct.format.BytesPerPixel
+    ptr = @struct.pixels + (y * @struct.pitch + x * bpp)
+
+    pixel =
+      case bpp
+      when 1
+        ptr.get_uint8(0)
+      when 2
+        ptr.get_uint16(0)
+      when 3
+        if( FFI::Platform::BYTE_ORDER == FFI::Platform::BIG_ENDIAN )
+          (ptr.get_uint8(0) << 16)|(ptr.get_uint8(1) << 8)|ptr.get_uint8(2)
+        else
+          ptr.get_uint8(0)|(ptr.get_uint8(1) << 8)|(ptr.get_uint8(2) << 16)
+        end
+      when 4
+        ptr.get_uint32(0)
+      end
+
+    return SDL::GetRGBA(pixel, @struct.format) 
+  end
 
 
 #   # Set the color of the pixel at the given coordinate.
