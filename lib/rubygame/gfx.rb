@@ -316,4 +316,46 @@ class Rubygame::SurfaceFFI
 
 
 
+  # Return a rotated and/or zoomed version of the given surface. Note
+  # that rotating a Surface anything other than a multiple of 90
+  # degrees will cause the new surface to be larger than the original
+  # to accomodate the corners (which would otherwise extend beyond the
+  # surface).
+  #
+  # May raise Rubygame::SDLError if the rotozoom fails.
+  # 
+  # angle::   degrees to rotate counter-clockwise (negative for
+  #           clockwise).
+  # zoom::    scaling factor(s). A number (to scale X and Y by the same
+  #           factor) or an array of 2 numbers (to scale X and Y by 
+  #           different factors). Negative numbers flip the image.
+  #           NOTE: Due to a quirk in SDL_gfx, if angle is not 0, the
+  #           image is zoomed by the X factor on both X and Y, and the
+  #           Y factor is only used for flipping (if it's negative).
+  # smooth::  whether to anti-alias the new surface.
+  #           By the way, if true, the new surface will be 32bit RGBA.
+  # 
+  def rotozoom( angle, zoom, smooth=false )
+    smooth = smooth ? 1 : 0
+
+    surf = case zoom
+           when Array
+             zx, zy = zoom.collect { |n| n.to_f }
+             SDL::Gfx.rotozoomSurfaceXY(@struct, angle, zx, zy, smooth)
+           when Numeric
+             zoom = zoom.to_f
+             SDL::Gfx.rotozoomSurface(@struct, angle, zoom, smooth)
+           else
+             raise ArgumentError, "Invalid zoom factor: #{zoom.inspect}"
+           end
+
+    if( surf.pointer.null? )
+      raise( Rubygame::SDLError,
+             "Rotozoom failed: " + SDL.GetError() )
+    end
+
+    return self.class.new(surf)
+  end
+
+
 end
