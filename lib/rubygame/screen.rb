@@ -95,22 +95,22 @@ class Rubygame::ScreenFFI < Rubygame::SurfaceFFI
     end
 
 
-    # Returns the pixel dimensions of the user's display (i.e. monitor).
-    # (That is not the same as Screen#size, which only measures the
-    # Rubygame window.) You can use this information to detect
-    # how large of a Screen can fit on the user's display.
-    #
-    # This method can _only_ be used when there is no open Screen instance.
-    # This method raises SDLError if there is a Screen instance (i.e.
-    # you have done Screen.new before). This is a limitation of the SDL
-    # function SDL_GetVideoInfo, which behaves differently when a Screen
-    # is open than when it is closed.
-    #
-    # This method will also raise SDLError if it cannot get the display
-    # size for some other reason.
-    #
-    def get_resolution
-    end
+#     # Returns the pixel dimensions of the user's display (i.e. monitor).
+#     # (That is not the same as Screen#size, which only measures the
+#     # Rubygame window.) You can use this information to detect
+#     # how large of a Screen can fit on the user's display.
+#     #
+#     # This method can _only_ be used when there is no open Screen instance.
+#     # This method raises SDLError if there is a Screen instance (i.e.
+#     # you have done Screen.new before). This is a limitation of the SDL
+#     # function SDL_GetVideoInfo, which behaves differently when a Screen
+#     # is open than when it is closed.
+#     #
+#     # This method will also raise SDLError if it cannot get the display
+#     # size for some other reason.
+#     #
+#     def get_resolution
+#     end
 
   end
 
