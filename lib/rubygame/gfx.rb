@@ -470,4 +470,14 @@ class Rubygame::SurfaceFFI
     return self.zoom( [zoomx, zoomy], smooth )
   end
 
+
+
+  # Flips the source surface horizontally (if +horz+ is true), vertically
+  # (if +vert+ is true), or both (if both are true).
+  #
+  def flip( horz, vert )
+    self.zoom( [ (horz ? -1.0 : 1.0), (vert ? -1.0 : 1.0)], false )
+  end
+
+
 end
