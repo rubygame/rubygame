@@ -403,11 +403,23 @@ class Rubygame::SurfaceFFI
   end
 
 
+  # call-seq:
+  #    get_at( [x,y] )
+  #    get_at( x,y )
+  #
   # Return the color [r,g,b,a] (0-255) of the pixel at [x,y].
-  # 
+  #
   # Raises IndexError if the coordinates are out of bounds.
   #
-  def get_at( x,y )
+  def get_at( *args )
+    x,y = case args.length
+          when 1; args[0].to_ary.collect { |n| n.round }
+          when 2; [args[0].round, args[1].round]
+          else
+            raise( ArgumentError,
+                   "wrong number of arguments (#{args.length} for 1)" )
+          end
+
     if( x < 0 or x > @struct.w or y < 0 or y > @struct.h)
       raise( IndexError, "point [%d,%d] is out of bounds for %dx%d Surface"%\
              [x, y, @struct.w, @struct.h] )
