@@ -12,8 +12,27 @@
 
 class Rubygame::SurfaceFFI
 
+  include Rubygame::NamedResource
 
   class << self
+
+    # Searches each directory in Surface.autoload_dirs for a file with
+    # the given filename. If it finds that file, loads it and returns
+    # a Surface instance. If it doesn't find the file, returns nil.
+    #
+    # See Rubygame::NamedResource for more information about this
+    # functionality.
+    #
+    def autoload( name )
+      path = find_file( name )
+
+      if( path )
+        return load( path )
+      else
+        return nil
+      end
+    end
+
 
     # Load an image file from the disk to a Surface. If the image has an alpha
     # channel (e.g. PNG with transparency), the Surface will as well. If the
