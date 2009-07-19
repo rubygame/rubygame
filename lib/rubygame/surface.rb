@@ -452,11 +452,16 @@ class Rubygame::SurfaceFFI
   end
 
 
-  # Set the color of the pixel at the given coordinate.
+  # call-seq:
+  #     set_at( [x,y], color )
+  #
+  # Set the color of the pixel at [x,y]. If no alpha value is given,
+  # or if the Surface does not have a per-pixel alpha channel (i.e. not
+  # 32-bit), the pixel will be set at full opacity.
   #
   # color can be one of:
-  # * an Array, [r,g,b] or [r,g,b,a] with each component in 0-255
-  # * an instance of ColorRGB, ColorHSV, etc.
+  # * an Array, [r,g,b] or [r,g,b,a] with each component in 0-255.
+  # * an instance of Rubygame::ColorRGB, Rubygame::ColorHSV, etc.
   # * the name of a color in Rubygame::Color, as a Symbol or String
   #
   # Raises IndexError if the coordinates are out of bounds.
