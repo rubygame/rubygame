@@ -103,27 +103,44 @@ class Rubygame::SurfaceFFI
     end
 
 
-#     # Load an image file from memory (in the form of the given data)
-#     # to a Surface. If the image has an alpha channel (e.g. PNG with
-#     # transparency), the Surface will as well. If the image cannot be
-#     # loaded (for example if the image format is unsupported), will
-#     # raise SDLError.
-#     # 
-#     # This method is only usable if Rubygame was compiled with the
-#     # SDL_image library; you can check Rubygame::VERSIONS[:sdl_image]
-#     # to see if it was.
-#     # 
-#     # This method takes these arguments:
-#     # data:: a string containing the data for the image, such as
-#     #        IO::read would return.
-#     # type:: The type of file that the image is (i.e. 'TGA'). Case is
-#     #        not important. If absent, the library will try to
-#     #        automatically detect the type.
-#     # 
-#     # See Surface.load for a list of possible supported file types.
-#     # 
-#     def load_from_string( data, type=nil )
-#     end
+    # Load an image file from memory (in the form of the given data)
+    # to a Surface. If the image has an alpha channel (e.g. PNG with
+    # transparency), the Surface will as well. If the image cannot be
+    # loaded (for example if the image format is unsupported), will
+    # raise SDLError.
+    # 
+    # This method is only usable if Rubygame was compiled with the
+    # SDL_image library; you can check Rubygame::VERSIONS[:sdl_image]
+    # to see if it was.
+    # 
+    # This method takes these arguments:
+    # data:: a string containing the data for the image, such as
+    #        IO::read would return.
+    # type:: The type of file that the image is (i.e. 'TGA'). Case is
+    #        not important. If absent, the library will try to
+    #        automatically detect the type.
+    # 
+    # See Surface.load for a list of possible supported file types.
+    # 
+    def load_from_string( data, type=nil )
+      raw = FFI::Buffer.new(:char, data.length)
+      raw.put_bytes(0, data)
+
+      rw = SDL.RWFromMem( raw, data.length )
+
+      surf = if type
+               SDL::Image.LoadTyped_RW(rw, 1, type)
+             else
+               SDL::Image.Load_RW(rw, 1)
+             end
+      
+      if surf.pointer.null?
+        raise( Rubygame::SDLError,
+               "Couldn't load image from string: #{SDL.GetError()}" )
+      end
+
+      return new(surf)
+    end
 
   end
 
