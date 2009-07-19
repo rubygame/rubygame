@@ -333,7 +333,7 @@ class Rubygame::SurfaceFFI
     if color.nil?
       color, flags = 0, 0
     else
-      color = SDL.MapRGBA( @struct.format, *Rubygame.make_sdl_rgba(color) )
+      color = _map_sdl_color( color )
     end
 
     result = SDL.SetColorKey(@struct, flags, color)
@@ -388,7 +388,7 @@ class Rubygame::SurfaceFFI
   #         with color. Omit to fill the entire surface.
   #
   def fill( color, rect=nil )
-    color = SDL.MapRGBA( @struct.format, *Rubygame.make_sdl_rgba(color) )
+    color = _map_sdl_color( color )
     rect = SDL::Rect.new( rect.to_ary ) unless rect.nil?
     SDL.FillRect( @struct, rect, color )
     return self
@@ -611,5 +611,11 @@ class Rubygame::SurfaceFFI
 
   alias :inspect :to_s
 
+
+  private
+
+  def _map_sdl_color( color )
+    SDL.MapRGBA( @struct.format, *Rubygame.make_sdl_rgba(color) )
+  end
 
 end
