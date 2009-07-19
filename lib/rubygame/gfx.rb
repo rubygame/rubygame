@@ -358,6 +358,37 @@ class Rubygame::SurfaceFFI
   end
 
 
+  # Return the dimensions of the surface that would be returned if
+  # #rotozoom were called on a Surface of the given size, with
+  # the same angle and zoom factors.
+  #
+  # This method takes these arguments:
+  # size::  an Array with the hypothetical Surface width and height (pixels)
+  # angle:: degrees to rotate counter-clockwise (negative for clockwise).
+  # zoom::  scaling factor(s). A number (to scale X and Y by the same
+  #         factor) or an array of 2 numbers (to scale X and Y by 
+  #         different factors). NOTE: Due to a quirk in SDL_gfx, if
+  #         angle is not 0, the image is zoomed by the X factor on
+  #         both X and Y, and the Y factor is only used for flipping
+  #         (if it's negative).
+  #
+  def self.rotozoom_size( size, angle, zoom )
+    w, h = size
+
+    case zoom
+    when Array
+      zx, zy = zoom.collect { |n| n.to_f }
+      SDL::Gfx.rotozoomSurfaceSizeXY(w, h, angle, zx, zy)
+    when Numeric
+      zoom = zoom.to_f
+      SDL::Gfx.rotozoomSurfaceSize(w, h, angle, zoom)
+    else
+      raise ArgumentError, "Invalid zoom factor: #{zoom.inspect}"
+    end
+  end
+
+
+
   # Return a zoomed version of the Surface.
   #
   # This method takes these arguments:
@@ -387,5 +418,31 @@ class Rubygame::SurfaceFFI
     return self.class.new(surf)
   end
 
+
+
+  # Return the dimensions of the surface that would be returned if
+  # #zoom were called on a Surface of the given size, with the same
+  # zoom factors.
+  #
+  # This method takes these arguments:
+  # size::  an Array with the hypothetical Surface width and height (pixels)
+  # zoom::  scaling factor(s). A number (to scale X and Y by the same
+  #         factor) or an array of 2 numbers (to scale X and Y by 
+  #         different factors).
+  #
+  def self.zoom_size( size, zoom )
+    w, h = size
+
+    case zoom
+    when Array
+      zx, zy = zoom.collect { |n| n.to_f }
+      SDL::Gfx.zoomSurfaceSize(w, h, zx, zy)
+    when Numeric
+      zoom = zoom.to_f
+      SDL::Gfx.zoomSurfaceSize(w, h, zoom, zoom)
+    else
+      raise ArgumentError, "Invalid zoom factor: #{zoom.inspect}"
+    end
+  end
 
 end
