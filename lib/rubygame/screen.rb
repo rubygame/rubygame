@@ -88,8 +88,7 @@ class Rubygame::ScreenFFI < Rubygame::SurfaceFFI
 
       if s.pointer.null?
         raise( Rubygame::SDLError,
-               "Couldn't get video surface: %s",
-               SDL.GetError() )
+               "Couldn't get video surface: #{SDL.GetError()}" )
       end
 
       return self.new( s )
@@ -193,8 +192,8 @@ class Rubygame::ScreenFFI < Rubygame::SurfaceFFI
     if( @struct.pointer.null? )
       @struct = nil
       raise( Rubygame::SDLError,
-             "Couldn't set [%d x %d] %d bpp video mode: %s",
-             w, h, depth, SDL.GetError() )
+             "Couldn't set [%d x %d] %d bpp video mode: %s"%\
+             [w, h, depth, SDL.GetError()] )
     end
 
   end

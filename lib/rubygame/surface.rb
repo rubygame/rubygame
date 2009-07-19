@@ -88,8 +88,8 @@ class Rubygame::SurfaceFFI
       surf = SDL::Image.Load( filename )
 
       if( surf.pointer.null? )
-        raise( Rubygame::SDLError, "Couldn't load image \"%s\": %s",
-               filename, SDL.GetError() )
+        raise( Rubygame::SDLError, "Couldn't load image \"%s\": %s"%\
+               [filename, SDL.GetError()] )
       end
 
       return self.new(surf)
@@ -563,7 +563,7 @@ class Rubygame::SurfaceFFI
         other = Rubygame::ScreenFFI.get_surface
       rescue Rubygame::SDLError
         raise( Rubygame::SDLError, "Cannot convert Surface with no target " +
-               "given and no Screen made: %s", SDL.GetError() )
+               "given and no Screen made: #{SDL.GetError()}" )
       end
     end
 
@@ -578,7 +578,7 @@ class Rubygame::SurfaceFFI
 
     if( newsurf.nil? or newsurf.pointer.null?)
       raise( Rubygame::SDLError,
-             "Could not convert the Surface: %s", SDL.GetError() )
+             "Could not convert the Surface: #{SDL.GetError()}" )
     end
 
     # Wrap it
@@ -605,7 +605,7 @@ class Rubygame::SurfaceFFI
 
     if( newsurf.nil? or newsurf.pointer.null?)
       raise( Rubygame::SDLError,
-             "Could not convert the Surface to display format: %s",
+             "Could not convert the Surface to display format: %s"%\
              SDL.GetError() )
     end
 
@@ -634,7 +634,7 @@ class Rubygame::SurfaceFFI
     if( newsurf.nil? or newsurf.pointer.null?)
       raise( Rubygame::SDLError,
              "Could not convert the Surface to display format "+
-             "with alpha channel: %s", SDL.GetError() )
+             "with alpha channel: #{SDL.GetError()}" )
     end
 
     # Wrap it
@@ -648,8 +648,8 @@ class Rubygame::SurfaceFFI
   def savebmp( filename )
     result = SDL.SaveBMP( @struct, filename )
     if(result != 0)
-      raise( Rubygame::SDLError, "Couldn't save surface to file %s: %s",
-             filename, SDL.GetError() )
+      raise( Rubygame::SDLError, "Couldn't save surface to file %s: %s"%\
+             [filename, SDL.GetError()] )
     end
     nil
   end
