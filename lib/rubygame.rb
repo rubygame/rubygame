@@ -60,4 +60,5 @@ require "rubygame/clock"
 
 
 require "rubygame/surface"
+require "rubygame/gfx"
 require "rubygame/screen"
