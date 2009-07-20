@@ -36,7 +36,7 @@ require "rbconfig"
 
 require "rubygame_core"
 
-%W{ rubygame_gfx rubygame_image rubygame_ttf rubygame_mixer }.each do |mod|
+%W{ rubygame_gfx rubygame_image rubygame_mixer rubygame_ttf }.each do |mod|
   begin
     require mod
   rescue LoadError
@@ -62,3 +62,4 @@ require "rubygame/clock"
 require "rubygame/surface"
 require "rubygame/gfx"
 require "rubygame/screen"
+require "rubygame/ttf"
