@@ -33,7 +33,7 @@
 # mixin module, which can perform autoloading of images on demand,
 # among other things.
 #
-class Rubygame::SurfaceFFI
+class Rubygame::Surface
 
   include Rubygame::NamedResource
 

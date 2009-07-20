@@ -566,7 +566,7 @@ void Init_rubygame_ttf()
                            INT2NUM(SDL_TTF_PATCHLEVEL)));
 
 
-	cTTF = rb_define_class_under(mRubygame,"TTF",rb_cObject);
+	cTTF = rb_define_class_under(mRubygame,"OldTTF",rb_cObject);
 
 	rb_define_singleton_method(cTTF,"new",rbgm_ttf_new,2);
 	rb_define_singleton_method(cTTF,"setup",rbgm_ttf_setup,0);

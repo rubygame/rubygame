@@ -233,13 +233,13 @@ void Init_rubygame_shared()
 	mRubygame = rb_define_module("Rubygame");
 
 	/* Rubygame::Surface class */
-	if( !rb_const_defined(mRubygame,rb_intern("Surface")) )
+	if( !rb_const_defined(mRubygame,rb_intern("OldSurface")) )
 	{
-		cSurface = rb_define_class_under(mRubygame,"Surface",rb_cObject);
+		cSurface = rb_define_class_under(mRubygame,"OldSurface",rb_cObject);
 	}
 	else
 	{
-		cSurface = rb_const_get(mRubygame,rb_intern("Surface"));
+		cSurface = rb_const_get(mRubygame,rb_intern("OldSurface"));
 	}
 
 	/* Rubygame::SDLError class */

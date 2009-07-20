@@ -529,11 +529,11 @@ void Rubygame_Init_Screen()
 {
 #if 0
   mRubygame = rb_define_module("Rubygame");
-  cSurface = rb_define_class_under(mRubygame,"Surface",rb_cObject);
+  cSurface = rb_define_class_under(mRubygame,"OldSurface",rb_cObject);
 #endif
 
   /* Screen class */
-  cScreen = rb_define_class_under(mRubygame,"Screen",cSurface);
+  cScreen = rb_define_class_under(mRubygame,"OldScreen",cSurface);
   rb_define_singleton_method(cScreen,"new",rbgm_screen_new, -1);
   rb_define_alias(rb_singleton_class(cScreen),"open","new");
 

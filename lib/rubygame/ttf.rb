@@ -30,7 +30,7 @@
 # method. If you need more flexibility, you can check the library version
 # that Rubygame was compiled against with the #version method.
 #
-class Rubygame::TTF_FFI
+class Rubygame::TTF
 
 
   # Attempt to setup the TTF class for use by initializing SDL_ttf.
@@ -245,7 +245,7 @@ class Rubygame::TTF_FFI
       raise Rubygame::SDLError, "Could not render text: #{SDL.GetError()}"
     end
 
-    return Rubygame::SurfaceFFI.new( surf )
+    return Rubygame::Surface.new( surf )
 
   end
 

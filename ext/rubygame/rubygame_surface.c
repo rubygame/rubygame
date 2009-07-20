@@ -1102,7 +1102,7 @@ void Rubygame_Init_Surface()
 
 #if 0
 	mRubygame = rb_define_module("Rubygame");
-	cSurface = rb_define_class_under(mRubygame,"Surface",rb_cObject);
+	cSurface = rb_define_class_under(mRubygame,"OldSurface",rb_cObject);
 #endif
 
 	rb_define_singleton_method(cSurface,"new",rbgm_surface_new,-1);

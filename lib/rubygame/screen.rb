@@ -38,7 +38,7 @@
 # refreshed. See #update, #update_rects, and #flip for ways to refresh
 # all or part of the Screen.
 #
-class Rubygame::ScreenFFI < Rubygame::SurfaceFFI
+class Rubygame::Screen < Rubygame::Surface
 
   class << self
     # Inherited from Surface, but not applicable to Screen

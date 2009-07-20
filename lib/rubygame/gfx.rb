@@ -19,7 +19,7 @@
 
 
 
-class Rubygame::SurfaceFFI
+class Rubygame::Surface
 
 
   def _draw_line(pt1, pt2, color, smooth) # :nodoc:
