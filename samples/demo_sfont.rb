@@ -25,7 +25,7 @@ EOF
     font_name = args[0]
 	end
 
-  screen = Screen.set_mode([700,400])
+  screen = Screen.open([700,400])
   queue = EventQueue.new()
   queue.ignore = [ActiveEvent,MouseMotionEvent,MouseUpEvent,MouseDownEvent]
 

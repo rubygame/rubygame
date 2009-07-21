@@ -30,7 +30,7 @@ Surface.autoload_dirs = [ File.dirname(__FILE__) ]
 
 
 
-screen = Screen.set_mode([320,240])
+screen = Screen.open([320,240])
 screen.title = "Drawing test"
 
 

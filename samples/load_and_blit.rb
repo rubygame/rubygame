@@ -7,7 +7,7 @@ include Rubygame
 
 Rubygame.init
 
-screen = Screen.set_mode([320,240])
+screen = Screen.open([320,240])
 
 queue = EventQueue.new() { 
   |q| q.ignore = [MouseMotionEvent, ActiveEvent]

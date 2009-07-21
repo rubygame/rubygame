@@ -254,7 +254,7 @@ pandas.make_magic_hooks( :tick         => :update,
 
 
 # Create the SDL window
-screen = Screen.set_mode([320,240])
+screen = Screen.open([320,240])
 screen.title = "Rubygame test"
 screen.show_cursor = false;
 

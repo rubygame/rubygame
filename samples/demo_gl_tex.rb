@@ -31,7 +31,7 @@ Rubygame::GL.set_attrib(Rubygame::GL::BLUE_SIZE, 5)
 Rubygame::GL.set_attrib(Rubygame::GL::DEPTH_SIZE, 16)
 Rubygame::GL.set_attrib(Rubygame::GL::DOUBLEBUFFER, 1)
 
-Rubygame::Screen.set_mode([WIDE,HIGH], 16, [Rubygame::OPENGL])
+Rubygame::Screen.open([WIDE,HIGH], 16, [Rubygame::OPENGL])
 queue = Rubygame::EventQueue.new()
 clock = Rubygame::Clock.new { |c| c.target_framerate = 60 }
 

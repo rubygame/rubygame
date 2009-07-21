@@ -7,7 +7,7 @@ require 'rubygame'
 
 # Initialize Rubygame
 Rubygame.init
-screen = Rubygame::Screen.set_mode([320,200])
+screen = Rubygame::Screen.open([320,200])
 queue = Rubygame::EventQueue.new
 
 # Initialize fonts

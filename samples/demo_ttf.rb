@@ -142,7 +142,7 @@ def test_iu_aa(font,screen,y)
 end
 
 def main
-  screen = Screen.set_mode([300,300])
+  screen = Screen.open([300,300])
   queue = EventQueue.new()
   queue.ignore = SDL_EVENTS - [QuitEvent, KeyDownEvent]
 
