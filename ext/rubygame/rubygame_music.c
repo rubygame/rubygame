@@ -978,7 +978,7 @@ void Rubygame_Init_Music()
    *  can perform autoloading of music on demand, among other things.
    *
    */
-  cMusic = rb_define_class_under(mRubygame,"Music",rb_cObject);
+  cMusic = rb_define_class_under(mRubygame,"OldMusic",rb_cObject);
 
 	/* Include the Rubygame::NamedResource mixin module. */
 	rg_include_named_resource(cMusic);
