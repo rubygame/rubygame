@@ -831,7 +831,7 @@ void Rubygame_Init_Sound()
    *  can perform autoloading of sounds on demand, among other things.
    *
 	 */
-  cSound = rb_define_class_under(mRubygame,"Sound",rb_cObject);
+  cSound = rb_define_class_under(mRubygame,"OldSound",rb_cObject);
 
 	/* Include the Rubygame::NamedResource mixin module. */
 	rg_include_named_resource(cSound);
