@@ -152,6 +152,75 @@ module Rubygame
 
 
 
+    # Returns a sanitized symbol for the given key.
+    #
+    def self._convert_key_symbol( key )
+      init_video_system
+
+      name = case key
+             when SDL::K_1;             "number 1"
+             when SDL::K_2;             "number 2"
+             when SDL::K_3;             "number 3"
+             when SDL::K_4;             "number 4"
+             when SDL::K_5;             "number 5"
+             when SDL::K_6;             "number 6"
+             when SDL::K_7;             "number 7"
+             when SDL::K_8;             "number 8"
+             when SDL::K_9;             "number 9"
+             when SDL::K_0;             "number 0"
+             when SDL::K_EXCLAIM;       "exclamation mark"
+             when SDL::K_QUOTEDBL;      "double quote"
+             when SDL::K_HASH;          "hash"
+             when SDL::K_DOLLAR;        "dollar"
+             when SDL::K_AMPERSAND;     "ampersand"
+             when SDL::K_QUOTE;         "quote"
+             when SDL::K_LEFTPAREN;     "left parenthesis"
+             when SDL::K_RIGHTPAREN;    "right parenthesis"
+             when SDL::K_ASTERISK;      "asterisk"
+             when SDL::K_PLUS;          "plus"
+             when SDL::K_MINUS;         "minus"
+             when SDL::K_PERIOD;        "period"
+             when SDL::K_COMMA;         "comma"
+             when SDL::K_SLASH;         "slash"
+             when SDL::K_SEMICOLON;     "semicolon"
+             when SDL::K_LESS;          "less than"
+             when SDL::K_EQUALS;        "equals"
+             when SDL::K_GREATER;       "greater than"
+             when SDL::K_QUESTION;      "question mark"
+             when SDL::K_AT;            "at"
+             when SDL::K_LEFTBRACKET;   "left bracket"
+             when SDL::K_BACKSLASH;     "backslash"
+             when SDL::K_RIGHTBRACKET;  "right bracket"
+             when SDL::K_CARET;         "caret"
+             when SDL::K_UNDERSCORE;    "underscore"
+             when SDL::K_BACKQUOTE;     "backquote"
+             when SDL::K_KP1;           "keypad 1"
+             when SDL::K_KP2;           "keypad 2"
+             when SDL::K_KP3;           "keypad 3"
+             when SDL::K_KP4;           "keypad 4"
+             when SDL::K_KP5;           "keypad 5"
+             when SDL::K_KP6;           "keypad 6"
+             when SDL::K_KP7;           "keypad 7"
+             when SDL::K_KP8;           "keypad 8"
+             when SDL::K_KP9;           "keypad 9"
+             when SDL::K_KP0;           "keypad 0"
+             when SDL::K_KP_PERIOD;     "keypad period"
+             when SDL::K_KP_DIVIDE;     "keypad divide"
+             when SDL::K_KP_MULTIPLY;   "keypad multiply"
+             when SDL::K_KP_MINUS;      "keypad minus"
+             when SDL::K_KP_PLUS;       "keypad plus"
+             when SDL::K_KP_EQUALS;     "keypad equals"
+             when SDL::K_KP_ENTER;      "keypad enter"
+             else;                      SDL::GetKeyName( key )
+             end
+
+      name.downcase!
+      name.gsub!(/[- ]/, "_")
+      return name.to_sym
+    end
+
+
+
   end
 
 end
