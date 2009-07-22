@@ -78,8 +78,8 @@ module Rubygame
     #
     def self._convert_activeevent( ev )
       
-      state = ev.active.state
-      gain  = ev.active.gain
+      state = ev.state
+      gain  = ev.gain
 
       # any_state = SDL::APPACTIVE | SDL::APPINPUTFOCUS | SDL::APPMOUSEFOCUS
       # if( state & any_state == 0 )
@@ -122,9 +122,9 @@ module Rubygame
     # Convert SDL's joystick axis events into JoystickAxisMoved.
     #
     def self._convert_joyaxisevent( ev )
-      joy_id = ev.jaxis.which
-      axis   = ev.jaxis.axis
-      value  = ev.jaxis.value
+      joy_id = ev.which
+      axis   = ev.axis
+      value  = ev.value
 
       # Convert value to the -1.0 .. 1.0 range
       value = if( value > 0 )
@@ -141,8 +141,7 @@ module Rubygame
     # Convert SDL's joystick ball events into JoystickBallMoved.
     #
     def self._convert_joyballevent( ev )
-      return JoystickBallmoved.new( ev.jball.which, ev.jball.ball,
-                                    [ev.jball.xrel, ev.jball.xrel] )
+      return JoystickBallmoved.new( ev.which, ev.ball, [ev.xrel, ev.xrel] )
     end
 
 
@@ -151,11 +150,11 @@ module Rubygame
     # JoystickButtonReleased.
     #
     def self._convert_joybuttonevent( ev )
-      case ev.jbutton.state
+      case ev.state
       when SDL::PRESSED
-        JoystickButtonPressed.new( ev.jbutton.which, ev.jbutton.button )
+        JoystickButtonPressed.new( ev.which, ev.button )
       when SDL::RELEASED
-        JoystickButtonReleased.new( ev.jbutton.which, ev.jbutton.button )
+        JoystickButtonReleased.new( ev.which, ev.button )
       else
         raise( Rubygame::SDLError, "Unknown joystick button state "+
                "#{ev.jbutton.state}. This is a bug in Rubygame." )
@@ -167,7 +166,7 @@ module Rubygame
     # Convert SDL's joystick hat events into JoystickHatMoved.
     #
     def self._convert_joyhatevent( ev )
-      dir = case ev.jhat.value
+      dir = case ev.value
             when SDL::HAT_RIGHTUP;    :up_right
             when SDL::HAT_RIGHTDOWN;  :down_right
             when SDL::HAT_LEFTUP;     :up_left
@@ -179,7 +178,7 @@ module Rubygame
             else;                     nil
             end
 
-      return JoystickHatmoved.new( ev.jhat.which, ev.jhat.hat, dir )
+      return JoystickHatmoved.new( ev.which, ev.hat, dir )
     end
 
 
@@ -187,7 +186,7 @@ module Rubygame
     # Returns a sanitized symbol for the given key.
     #
     def self._convert_key_symbol( key )
-      init_video_system
+      Rubygame.init_video_system
 
       name = case key
              when SDL::K_1;             "number 1"
@@ -291,12 +290,12 @@ module Rubygame
     # Convert SDL's keyboard events into KeyPressed / KeyReleased.
     #
     def self._convert_keyboardevent( ev )
-      key  = _convert_key_symbol( ev.key.keysym.sym );
-      mods = _convert_keymods( ev.key.keysym.mod );
+      key  = _convert_key_symbol( ev.keysym.sym );
+      mods = _convert_keymods( ev.keysym.mod );
 
-      case ev.key.state
+      case ev.state
       when SDL::PRESSED
-        unicode = _convert_unicode( ev.key.keysym.unicode )
+        unicode = _convert_unicode( ev.keysym.unicode )
         KeyPressed.new( key, mods, unicode )
       when SDL::RELEASED
         KeyReleased.new( key, mods )
@@ -311,7 +310,7 @@ module Rubygame
     # Convert SDL's mouse click events into MousePressed / MouseReleased.
     #
     def self._convert_mouseclickevent( ev )
-      button = case ev.button.button
+      button = case ev.button
                when SDL::BUTTON_LEFT;         :mouse_left
                when SDL::BUTTON_MIDDLE;       :mouse_middle
                when SDL::BUTTON_RIGHT;        :mouse_right
@@ -320,9 +319,9 @@ module Rubygame
                else;                          ("mouse_%d"%button).to_sym
                end
 
-      pos = [ev.button.x, ev.button.y]
+      pos = [ev.x, ev.y]
 
-      case ev.button.state
+      case ev.state
       when SDL::PRESSED
         MousePressed.new( pos, button )
       when SDL::RELEASED
@@ -338,7 +337,7 @@ module Rubygame
     # Convert SDL's mouse motion events into MouseMoved
     #
     def self._convert_mousemotionevent( ev )
-      mods = ev.motion.state
+      mods = ev.state
 
       btns = []
       btns << :mouse_left        if( mods & SDL::BUTTON_LMASK )
@@ -347,8 +346,8 @@ module Rubygame
       btns << :mouse_wheel_up    if( mods & (1<<(SDL::BUTTON_WHEELUP - 1)) )
       btns << :mouse_wheel_down  if( mods & (1<<(SDL::BUTTON_WHEELDOWN - 1)) )
 
-      pos = [ev.motion.x,    ev.motion.y]
-      rel = [ev.motion.xrel, ev.motion.yrel]
+      pos = [ev.x,    ev.y]
+      rel = [ev.xrel, ev.yrel]
 
       return MouseMoved.new( pos, rel, btns )
     end
@@ -359,28 +358,28 @@ module Rubygame
     # corresponding class.
     #
     def self._convert_sdlevent( ev )
-      case ev.type
-      when SDL::ACTIVEEVENT
+      case ev
+      when SDL::ActiveEvent
         return _convert_activeevent(ev)
-      when SDL::VIDEOEXPOSE
+      when SDL::ExposeEvent
         return WindowExposed.new()
-      when SDL::JOYAXISMOTION
+      when SDL::JoyAxisEvent
         return _convert_joyaxisevent(ev)
-      when SDL::JOYBALLMOTION
+      when SDL::JoyBallEvent
         return _convert_joyballevent(ev)
-      when SDL::JOYBUTTONDOWN, SDL::JOYBUTTONUP
+      when SDL::JoyButtonEvent
         return _convert_joybuttonevent(ev)
-      when SDL::JOYHATMOTION
+      when SDL::JoyHatEvent
         return _convert_joyhatevent(ev)
-      when SDL::KEYDOWN, SDL::KEYUP
+      when SDL::KeyboardEvent
         return _convert_keyboardevent(ev)
-      when SDL::MOUSEBUTTONDOWN, SDL::MOUSEBUTTONUP
+      when SDL::MouseButtonEvent
         return _convert_mouseclickevent(ev)
-      when SDL::MOUSEMOTION
+      when SDL::MouseMotionEvent
         return _convert_mousemotionevent(ev)
-      when SDL::VIDEORESIZE
-        return WindowResized.new( [ev.resize.w, ev.resize.h] )
-      when SDL::QUIT
+      when SDL::ResizeEvent
+        return WindowResized.new( [ev.w, ev.h] )
+      when SDL::QuitEvent
         return QuitRequested.new()
       end
     end
