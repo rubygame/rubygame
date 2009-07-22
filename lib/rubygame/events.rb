@@ -256,6 +256,26 @@ module Rubygame
 
 
 
+    # Convert SDL's keyboard events into KeyPressed / KeyReleased.
+    #
+    def self._convert_keyboardevent( ev )
+      key  = _convert_key_symbol( ev.key.keysym.sym );
+      mods = _convert_keymods( ev.key.keysym.mod );
+
+      case ev.key.state
+      when SDL::PRESSED
+        unicode = _convert_unicode( ev.key.keysym.unicode )
+        KeyPressed.new( key, mods, unicode )
+      when SDL::RELEASED
+        KeyReleased.new( key, mods )
+      else
+        raise( Rubygame::SDLError, "Unknown keyboard event state "+
+               "#{ev.key.state}. This is a bug in Rubygame." )
+      end
+    end
+
+
+
   end
 
 end
