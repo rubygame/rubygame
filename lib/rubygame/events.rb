@@ -106,6 +106,15 @@ module Rubygame
 
 
 
+    # Convert SDL's joystick ball events into JoystickBallMoved.
+    #
+    def self._convert_joyballevent( ev )
+      return JoystickBallmoved.new( ev.jball.which, ev.jball.ball,
+                                    [ev.jball.xrel, ev.jball.xrel] )
+    end
+
+
+
   end
 
 end
