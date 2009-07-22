@@ -32,6 +32,60 @@ module Rubygame
   # deprecated and should not be used anymore.
   # 
   module Events
+
+    private
+
+
+    # Convert SDL's ACTIVEEVENT into zero or more of:
+    #
+    #  InputFocusGained   or  InputFocusLost
+    #  MouseFocusGained   or  MouseFocusLost
+    #  WindowUnminimized  or  WindowMinimized
+    #
+    # Returns a ruby Array of the events it generated.
+    #
+    def self._convert_activeevent( ev )
+      
+      state = ev.active.state
+      gain  = ev.active.gain
+
+      # any_state = SDL::APPACTIVE | SDL::APPINPUTFOCUS | SDL::APPMOUSEFOCUS
+      # if( state & any_state == 0 )
+      #   raise( Rubygame::SDLError, "Unknown ACTIVEEVENT state #{state}. "+
+      #          "This is a bug in Rubygame." )
+      # end
+
+      events = []
+
+      if( SDL::APPACTIVE & state )
+        if( gain == 1 )
+          events << WindowUnminimized.new
+        else
+          events << WindowMinimized.new
+        end
+      end
+
+      if( SDL::APPINPUTFOCUS & state )
+        if( gain == 1 )
+          events << InputFocusGained.new
+        else
+          events << InputFocusLost.new
+        end
+      end
+
+      if( SDL::APPMOUSEFOCUS & state )
+        if( gain == 1 )
+          events << MouseFocusGained.new
+        else
+          events << MouseFocusLost.new
+        end
+      end
+
+      return events
+
+    end
+
+
   end
 
 end
