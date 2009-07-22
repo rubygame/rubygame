@@ -221,6 +221,29 @@ module Rubygame
 
 
 
+    # Convert an OR'd list of KMODs into an Array of symbols.
+    #
+    def self._convert_keymods( mods )
+      return [] if mods == 0
+
+      array = []
+      array << :left_shift   if( mods & SDL::KMOD_LSHIFT )
+      array << :right_shift  if( mods & SDL::KMOD_RSHIFT )
+      array << :left_ctrl    if( mods & SDL::KMOD_LCTRL  )
+      array << :right_ctrl   if( mods & SDL::KMOD_RCTRL  )
+      array << :left_alt     if( mods & SDL::KMOD_LALT   )
+      array << :right_alt    if( mods & SDL::KMOD_RALT   )
+      array << :left_meta    if( mods & SDL::KMOD_LMETA  )
+      array << :right_meta   if( mods & SDL::KMOD_RMETA  )
+      array << :numlock      if( mods & SDL::KMOD_NUM    )
+      array << :capslock     if( mods & SDL::KMOD_CAPS   )
+      array << :mode         if( mods & SDL::KMOD_MODE   )
+
+      return array
+    end
+
+
+
   end
 
 end
