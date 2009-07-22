@@ -303,6 +303,26 @@ module Rubygame
 
 
 
+    # Convert SDL's mouse motion events into MouseMoved
+    #
+    def self._convert_mousemotionevent( ev )
+      mods = ev.motion.state
+
+      btns = []
+      btns << :mouse_left        if( mods & SDL::BUTTON_LMASK )
+      btns << :mouse_middle      if( mods & SDL::BUTTON_MMASK )
+      btns << :mouse_right       if( mods & SDL::BUTTON_RMASK )
+      btns << :mouse_wheel_up    if( mods & (1<<(SDL::BUTTON_WHEELUP - 1)) )
+      btns << :mouse_wheel_down  if( mods & (1<<(SDL::BUTTON_WHEELDOWN - 1)) )
+
+      pos = [ev.motion.x,    ev.motion.y]
+      rel = [ev.motion.xrel, ev.motion.yrel]
+
+      return MouseMoved.new( pos, rel, btns )
+    end
+
+
+
   end
 
 end
