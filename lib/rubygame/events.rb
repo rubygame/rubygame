@@ -115,6 +115,23 @@ module Rubygame
 
 
 
+    # Convert SDL's joystick button events into JoystickButtonPressed or
+    # JoystickButtonReleased.
+    #
+    def self._convert_joybuttonevent( ev )
+      case ev.jbutton.state
+      when SDL::PRESSED
+        JoystickButtonPressed.new( ev.jbutton.which, ev.jbutton.button )
+      when SDL::RELEASED
+        JoystickButtonReleased.new( ev.jbutton.which, ev.jbutton.button )
+      else
+        raise( Rubygame::SDLError, "Unknown joystick button state "+
+               "#{ev.jbutton.state}. This is a bug in Rubygame." )
+      end
+    end
+
+
+
   end
 
 end
