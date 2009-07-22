@@ -132,6 +132,26 @@ module Rubygame
 
 
 
+    # Convert SDL's joystick hat events into JoystickHatMoved.
+    #
+    def self._convert_joyhatevent( ev )
+      dir = case ev.jhat.value
+            when SDL::HAT_RIGHTUP;    :up_right
+            when SDL::HAT_RIGHTDOWN;  :down_right
+            when SDL::HAT_LEFTUP;     :up_left
+            when SDL::HAT_LEFTDOWN;   :down_left
+            when SDL::HAT_UP;         :up
+            when SDL::HAT_RIGHT;      :right
+            when SDL::HAT_DOWN;       :down
+            when SDL::HAT_LEFT;       :left
+            else;                     nil
+            end
+
+      return JoystickHatmoved.new( ev.jhat.which, ev.jhat.hat, dir )
+    end
+
+
+
   end
 
 end
