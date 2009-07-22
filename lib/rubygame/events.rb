@@ -86,6 +86,26 @@ module Rubygame
     end
 
 
+
+    # Convert SDL's joystick axis events into JoystickAxisMoved.
+    #
+    def self._convert_joyaxisevent( ev )
+      joy_id = ev.jaxis.which
+      axis   = ev.jaxis.axis
+      value  = ev.jaxis.value
+
+      # Convert value to the -1.0 .. 1.0 range
+      value = if( value > 0 )
+                value / 32767.0
+              else
+                value / 32768.0
+              end
+
+      return JoystickAxismoved.new( joy_id, axis, value )
+    end
+
+
+
   end
 
 end
