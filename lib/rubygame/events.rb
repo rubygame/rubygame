@@ -244,6 +244,18 @@ module Rubygame
 
 
 
+    # Convert a Unicode char into a UTF8 ruby byte-string.
+    #
+    def self._convert_unicode( int )
+      if( int > 0 )
+        [int].pack('U')
+      else
+        ""
+      end
+    end
+
+
+
   end
 
 end
