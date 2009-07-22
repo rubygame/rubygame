@@ -323,6 +323,37 @@ module Rubygame
 
 
 
+    # Converts an SDL_Event (C type) into a Rubygame event of the
+    # corresponding class.
+    #
+    def self._convert_sdlevent( ev )
+      case ev.type
+      when SDL::ACTIVEEVENT
+        return _convert_activeevent(ev)
+      when SDL::VIDEOEXPOSE
+        return WindowExposed.new()
+      when SDL::JOYAXISMOTION
+        return _convert_joyaxisevent(ev)
+      when SDL::JOYBALLMOTION
+        return _convert_joyballevent(ev)
+      when SDL::JOYBUTTONDOWN, SDL::JOYBUTTONUP
+        return _convert_joybuttonevent(ev)
+      when SDL::JOYHATMOTION
+        return _convert_joyhatevent(ev)
+      when SDL::KEYDOWN, SDL::KEYUP
+        return _convert_keyboardevent(ev)
+      when SDL::MOUSEBUTTONDOWN, SDL::MOUSEBUTTONUP
+        return _convert_mouseclickevent(ev)
+      when SDL::MOUSEMOTION
+        return _convert_mousemotionevent(ev)
+      when SDL::VIDEORESIZE
+        return WindowResized.new( [ev.resize.w, ev.resize.h] )
+      when SDL::QUIT
+        return QuitRequested.new()
+      end
+    end
+
+
   end
 
 end
