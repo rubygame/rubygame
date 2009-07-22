@@ -276,6 +276,33 @@ module Rubygame
 
 
 
+    # Convert SDL's mouse click events into MousePressed / MouseReleased.
+    #
+    def self._convert_mouseclickevent( ev )
+      button = case ev.button.button
+               when SDL::BUTTON_LEFT;         :mouse_left
+               when SDL::BUTTON_MIDDLE;       :mouse_middle
+               when SDL::BUTTON_RIGHT;        :mouse_right
+               when SDL::BUTTON_WHEELUP;      :mouse_wheel_up
+               when SDL::BUTTON_WHEELDOWN;    :mouse_wheel_down
+               else;                          ("mouse_%d"%button).to_sym
+               end
+
+      pos = [ev.button.x, ev.button.y]
+
+      case ev.button.state
+      when SDL::PRESSED
+        MousePressed.new( pos, button )
+      when SDL::RELEASED
+        MouseReleased.new( pos, button )
+      else
+        raise( Rubygame::SDLError, "Unknown mouse event state "+
+               "#{ev.button.state}. This is a bug in Rubygame." )
+      end
+    end
+
+
+
   end
 
 end
