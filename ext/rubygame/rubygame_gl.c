@@ -126,7 +126,7 @@ void Rubygame_Init_GL()
 	mRubygame = rb_define_module("Rubygame");
 #endif
 
-  mGL = rb_define_module_under(mRubygame,"GL");
+  mGL = rb_define_module_under(mRubygame,"OldGL");
   Define_GL_Constants();
 
 #ifdef HAVE_OPENGL
