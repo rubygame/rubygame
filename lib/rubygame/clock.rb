@@ -222,9 +222,12 @@ module Rubygame
     # Clock. See #tick.
     # 
     def framerate
-      1000.0 * @samples.length / @samples.inject(0){|sum, n| sum + n}
-    rescue ZeroDivisionError
-      0.0
+      sum = @samples.inject(0){|sum, n| sum + n}
+      if sum == 0
+        return 0.0
+      else
+        1000.0 * @samples.length / sum
+      end
     end
 
 
