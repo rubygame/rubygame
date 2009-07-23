@@ -41,6 +41,168 @@ module Rubygame
   # 
   class Clock
 
+    class << self
+
+      # time::  The target delay time, in milliseconds.
+      #         (Non-negative integer. Required.)
+      # gran::  The assumed granularity (in ms) of the system clock.
+      #         (Non-negative integer. Optional. Default: 12.)
+      # nice::  If true, try to let other ruby threads run during the delay.
+      #         (true or false. Optional. Default: false.)
+      #
+      # Returns:: The actual delay time, in milliseconds.
+      #
+      # Pause the program for +time+ milliseconds. This function is more
+      # accurate than Clock.wait, but uses slightly more CPU time. Both
+      # this function and Clock.wait can be used to slow down the
+      # framerate so that the application doesn't use too much CPU time.
+      # See also Clock#tick for a good and easy way to limit the
+      # framerate.
+      #
+      # This function uses "busy waiting" during the last part
+      # of the delay, for increased accuracy. The value of +gran+ affects
+      # how many milliseconds of the delay are spent in busy waiting, and thus
+      # how much CPU it uses. A smaller +gran+ value uses less CPU, but if
+      # it's smaller than the true system granularity, this function may
+      # delay a few milliseconds too long. The default value (12ms) is very
+      # safe, but a value of approximately 5ms would give a better balance
+      # between accuracy and CPU usage on most modern computers.
+      # A granularity of 0ms makes this method act the same as Clock.wait
+      # (i.e. no busy waiting at all, very low CPU usage).
+      #
+      # If +nice+ is true, this function will try to allow other ruby
+      # threads to run during this function. Otherwise, other ruby threads
+      # will probably also be paused. Setting +nice+ to true is only
+      # useful if your application is multithreaded. It's safe (but
+      # pointless) to use this feature for single threaded applications.
+      #
+      # The Rubygame timer system will be initialized when you call this
+      # function, if it has not been already. See Clock.runtime.
+      #
+      def delay( time, gran=12, nice=false )
+        _init_sdl_timer
+        time = 0 if time < 0
+        gran = 0 if gran < 0
+        _accurate_delay( time, gran, nice )
+      end
+
+
+      # time::  The target wait time, in milliseconds.
+      #         (Non-negative Integer. Required.)
+      # nice::  If true, try to let other ruby threads run during the delay.
+      #         (true or false. Optional.)
+      #
+      # Returns:: The actual wait time, in milliseconds.
+      #
+      # Pause the program for approximately +time+ milliseconds. Both this
+      # function and Clock.delay can be used to slow down the framerate so
+      # that the application doesn't use too much CPU time. See also
+      # Clock#tick for a good and easy way to limit the framerate.
+      #
+      # The accuracy of this function depends on processor scheduling,
+      # which varies with operating system and hardware. The actual delay
+      # time may be up to 10ms longer than +time+. If you need more
+      # accuracy use Clock.delay, which is more accurate but uses slightly
+      # more CPU time.
+      #
+      # If +nice+ is true, this function will try to allow other ruby
+      # threads to run during this function. Otherwise, other ruby threads
+      # will probably also be paused. Setting +nice+ to true is only
+      # useful if your application is multithreaded. It's safe (but
+      # pointless) to use this feature for single threaded applications.
+      #
+      # The Rubygame timer system will be initialized when you call this
+      # function, if it has not been already. See Clock.runtime.
+      #
+      def wait( time, nice=false )
+        _init_sdl_timer
+        time = 0 if time < 0
+        _threaded_delay( time, nice )
+      end
+
+
+      # Return the number of milliseconds since the Rubygame timer
+      # system was initialized.
+      #
+      # The Rubygame timer system will be initialized when you call
+      # this function, if it has not been already.
+      #
+      def runtime
+        SDL.GetTicks().to_i
+      end
+
+
+
+      private
+
+
+      # Initialize the SDL timer system, if it hasn't been already.
+      def _init_sdl_timer
+        if( SDL.WasInit( SDL::INIT_TIMER ) == 0 )
+          if( SDL.InitSubSystem( SDL::INIT_TIMER ) != 0)
+            raise( Rubygame::SDLError,
+                   "Could not initialize timer system: #{SDL.GetError()}" )
+          end
+        end
+      end
+
+
+      # Delays for the given amount of time, but possibly split into
+      # small parts. Control is given to ruby between each part, so
+      # that other threads can run.
+      #
+      # delay: How many milliseconds to delay.
+      # nice:  If true, split the delay into smaller parts and
+      #        allow other ruby threads to run between each part.
+      #
+      def _threaded_delay( delay, nice )
+        start = SDL.GetTicks()
+        stop = start + delay
+
+        if nice
+          while( SDL.GetTicks() < stop )
+            SDL.Delay(1)
+          end
+        else
+          SDL.Delay( delay.to_i )
+        end
+
+        return (SDL.GetTicks() - start).to_i
+      end
+
+
+      # Based on pygame code, with a few modifications:
+      #   - takes 'accuracy' argument
+      #   - ruby syntax for raising exceptions
+      #   - uses rg_threaded_delay
+      #
+      def _accurate_delay( ticks, accuracy, nice )
+        return _threaded_delay( ticks, nice ) if( accuracy <= 0 )
+
+        start = SDL.GetTicks()
+
+        if( ticks >= accuracy )
+          delay = ticks - (ticks % accuracy)
+          delay -= 2  # Aim low so we don't overshoot.
+
+          if( delay >= accuracy and delay > 0 )
+            _threaded_delay( delay, nice )
+          end
+        end
+
+        delay = ticks - (SDL.GetTicks() - start)
+        while( delay > 0 )
+          delay = ticks - (SDL.GetTicks() - start)
+        end
+
+        return (SDL.GetTicks() - start).to_i
+      end
+
+    end
+
+
+
+
     # The runtime when the Clock was initialized.
     attr_reader :start
 

@@ -292,9 +292,9 @@ void Rubygame_Init_Clock()
   cClock = rb_define_class_under(mRubygame, "Clock", rb_cObject);
 
   /* Clock class methods */
-  rb_define_singleton_method(cClock, "wait",   rbgm_clock_wait,    -1);
-  rb_define_singleton_method(cClock, "delay",  rbgm_clock_delay,   -1);
-  rb_define_singleton_method(cClock, "runtime",rbgm_clock_runtime,  0);
+  rb_define_singleton_method(cClock, "oldwait",   rbgm_clock_wait,    -1);
+  rb_define_singleton_method(cClock, "olddelay",  rbgm_clock_delay,   -1);
+  rb_define_singleton_method(cClock, "oldruntime",rbgm_clock_runtime,  0);
 
   /* Clock instance methods are defined in clock.rb. */
 
