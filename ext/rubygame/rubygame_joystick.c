@@ -319,7 +319,7 @@ void Rubygame_Init_Joystick()
 	mRubygame = rb_define_module("Rubygame");
 #endif
 
-	cJoy = rb_define_class_under(mRubygame,"Joystick",rb_cObject);
+	cJoy = rb_define_class_under(mRubygame,"OldJoystick",rb_cObject);
 	rb_define_singleton_method(cJoy,"num_joysticks",rbgm_joy_numjoysticks,0);
 	rb_define_singleton_method(cJoy,"get_name",rbgm_joy_getname,1);
 
