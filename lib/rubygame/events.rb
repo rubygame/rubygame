@@ -133,7 +133,7 @@ module Rubygame
                 value / 32768.0
               end
 
-      return JoystickAxismoved.new( joy_id, axis, value )
+      return JoystickAxisMoved.new( joy_id, axis, value )
     end
 
 
@@ -141,7 +141,7 @@ module Rubygame
     # Convert SDL's joystick ball events into JoystickBallMoved.
     #
     def self._convert_joyballevent( ev )
-      return JoystickBallmoved.new( ev.which, ev.ball, [ev.xrel, ev.xrel] )
+      return JoystickBallMoved.new( ev.which, ev.ball, [ev.xrel, ev.xrel] )
     end
 
 
@@ -178,7 +178,7 @@ module Rubygame
             else;                     nil
             end
 
-      return JoystickHatmoved.new( ev.which, ev.hat, dir )
+      return JoystickHatMoved.new( ev.which, ev.hat, dir )
     end
 
 
