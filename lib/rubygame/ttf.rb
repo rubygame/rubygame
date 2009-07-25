@@ -19,6 +19,11 @@
 
 
 
+require "ruby-sdl-ffi/ttf"
+
+Rubygame::VERSIONS[:sdl_ttf] = SDL::TTF.Linked_Version().to_ary
+
+
 # TTF provides an interface to SDL_ttf, allowing TrueType Font files to be
 # loaded and used to render text to Surfaces.
 #
