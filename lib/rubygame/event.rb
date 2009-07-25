@@ -19,12 +19,6 @@
 
 module Rubygame
 
-	# List of all Rubygame hardware event classes. *Do not modify!*
-	SDL_EVENTS = [ActiveEvent, KeyDownEvent, KeyUpEvent,\
-		MouseMotionEvent,MouseDownEvent,MouseUpEvent,JoyAxisEvent,\
-		JoyBallEvent, JoyHatEvent,JoyDownEvent, JoyUpEvent,\
-		ResizeEvent, QuitEvent]
-  
 	# Converts a keyboard symbol (keysym) into a human-readable text string.
 	# If either Shift key was being pressed, alphanumeric or punctuation keys 
 	# will be made uppercase or alternate, based on U.S. keyboard layout.
@@ -310,4 +304,12 @@ module Rubygame
 	# pressed the close button.)
 	class QuitEvent < Event
 	end
+
+
+	# List of all Rubygame hardware event classes. *Do not modify!*
+	SDL_EVENTS = [ActiveEvent, KeyDownEvent, KeyUpEvent,\
+		MouseMotionEvent,MouseDownEvent,MouseUpEvent,JoyAxisEvent,\
+		JoyBallEvent, JoyHatEvent,JoyDownEvent, JoyUpEvent,\
+		ResizeEvent, QuitEvent]
+  
 end # module Rubygame
