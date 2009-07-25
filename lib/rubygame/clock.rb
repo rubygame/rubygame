@@ -20,7 +20,8 @@
 #++
 
 
-require "rubygame/events/clock_events"
+
+require( File.join( File.dirname(__FILE__), "events", "clock_events" ) )
 
 
 module Rubygame
