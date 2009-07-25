@@ -20,31 +20,38 @@
 #++
 
 
+%w{
 
-require "rubygame/main"
-require "rubygame/shared"
+  main
+  shared
 
-require "rubygame/audio"
-require "rubygame/clock"
-require "rubygame/constants"
-require "rubygame/color"
-require "rubygame/event"
-require "rubygame/events"
-require "rubygame/event_handler"
-require "rubygame/gl"
-require "rubygame/joystick"
-require "rubygame/named_resource"
-require "rubygame/queue"
-require "rubygame/rect"
-require "rubygame/surface"
+  audio
+  clock
+  constants
+  color
+  event
+  events
+  event_handler
+  gl
+  joystick
+  named_resource
+  queue
+  rect
+  surface
 
-require "rubygame/gfx"
+  gfx
 
-require "rubygame/image"
+  image
 
-require "rubygame/screen"
-require "rubygame/sprite"
+  screen
+  sprite
 
-require "rubygame/ttf"
+  ttf
 
-require "rubygame/mixer"
+  mixer
+
+}.each do |f|
+
+  require( File.join( File.dirname(__FILE__), "rubygame", f ) )
+
+end
