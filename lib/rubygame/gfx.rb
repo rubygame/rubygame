@@ -19,6 +19,12 @@
 
 
 
+require "ruby-sdl-ffi/gfx"
+
+# SDL_gfx has no function to get the version number.
+Rubygame::VERSIONS[:sdl_gfx] = [0, 0, 0]
+
+
 class Rubygame::Surface
 
 
