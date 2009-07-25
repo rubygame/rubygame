@@ -19,6 +19,119 @@
 
 module Rubygame
 
+  class << self
+
+    # Retrieves all pending events from SDL's event stack and converts them
+    # into Rubygame Event objects. Returns an Array of all the events, in
+    # the order they were read.
+    #
+    # This method is used by the EventQueue class, so don't call it if you are
+    # using EventQueue for event management! If you do, the EventQueue will not
+    # receive all the events, because they will have been removed from SDL's
+    # event stack by this method.
+    #
+    # However, if you aren't using EventQueue, you can safely use this method
+    # to make your own event management system.
+    #
+    def fetch_sdl_events
+      events = []
+      until( ( event = SDL::PollEvent() ).nil? )
+        events << _convert_sdlevent(event)
+      end
+      return events
+    end
+
+
+    private
+
+
+    def _convert_active( state ) # :nodoc:
+      states = []
+      states << "mouse"    if (state & SDL::APPMOUSEFOCUS)
+      states << "keyboard" if (state & SDL::APPINPUTFOCUS)
+      states << "active"   if (state & SDL::APPACTIVE)
+      return states
+    end
+
+
+    def _convert_keymod( mods ) # :nodoc:
+      array = []
+      array << SDL::K_LSHIFT   if( mods & SDL::KMOD_LSHIFT )
+      array << SDL::K_RSHIFT   if( mods & SDL::KMOD_RSHIFT )
+      array << SDL::K_LCTRL    if( mods & SDL::KMOD_LCTRL  )
+      array << SDL::K_RCTRL    if( mods & SDL::KMOD_RCTRL  )
+      array << SDL::K_LALT     if( mods & SDL::KMOD_LALT   )
+      array << SDL::K_RALT     if( mods & SDL::KMOD_RALT   )
+      array << SDL::K_LMETA    if( mods & SDL::KMOD_LMETA  )
+      array << SDL::K_RMETA    if( mods & SDL::KMOD_RMETA  )
+      array << SDL::K_NUMLOCK  if( mods & SDL::KMOD_NUM    )
+      array << SDL::K_CAPSLOCK if( mods & SDL::KMOD_CAPS   )
+      array << SDL::K_MODE     if( mods & SDL::KMOD_MODE   )
+      return array
+    end
+
+
+    def _convert_mousebuttons( state ) # :nodoc:
+      states = []
+      states << SDL::BUTTON_LEFT    if (state & SDL::BUTTON_LMASK)
+      states << SDL::BUTTON_MIDDLE  if (state & SDL::BUTTON_MMASK)
+      states << SDL::BUTTON_RIGHT   if (state & SDL::BUTTON_RMASK)
+      return states
+    end
+
+
+    def _convert_sdlevent( ev ) # :nodoc:
+      case ev.type
+
+      when SDL::ACTIVEEVENT
+        return ActiveEvent.new( (ev.gain == 1), _convert_active(ev.state) )
+
+      when SDL::VIDEOEXPOSE
+        return ExposeEvent.new()
+
+      when SDL::JOYAXISMOTION
+        return JoyAxisEvent.new( ev.which, ev.axis, ev.value )
+
+      when SDL::JOYBALLMOTION
+        return JoyBallEvent.new( ev.which, ev.ball, [ev.xrel, ev.yrel] )
+
+      when SDL::JOYBUTTONDOWN
+        return JoyDownEvent.new( ev.which, ev.button )
+
+      when SDL::JOYBUTTONUP
+        return JoyUpEvent.new( ev.which, ev.button )
+
+      when SDL::JOYHATMOTION
+        return JoyHatEvent.new( ev.which, ev.hat, ev.value )
+
+      when SDL::KEYDOWN
+        return KeyDownEvent.new(ev.keysym.sym, _convert_keymod(ev.keysym.mod))
+
+      when SDL::KEYUP
+        return KeyUpEvent.new(ev.keysym.sym, _convert_keymod(ev.keysym.mod))
+
+      when SDL::MOUSEBUTTONDOWN
+        return MouseDownEvent.new( [ev.x, ev.y], ev.button )
+
+      when SDL::MOUSEBUTTONUP
+        return MouseUpEvent.new( [ev.x, ev.y], ev.button )
+
+      when SDL::MOUSEMOTION
+        return MouseMotionEvent.new( [ev.x, ev.y], [ev.xrel, ev.yrel],
+                                     _convert_mousebuttons(ev.state) )
+
+      when SDL::VIDEORESIZE
+        return ResizeEvent.new( [ev.w, ev.h] )
+
+      when SDL::QUIT
+        return QuitEvent.new()
+      end
+
+    end
+
+  end
+
+
 	# Converts a keyboard symbol (keysym) into a human-readable text string.
 	# If either Shift key was being pressed, alphanumeric or punctuation keys 
 	# will be made uppercase or alternate, based on U.S. keyboard layout.
