@@ -17,8 +17,12 @@
 #	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #++
 
-require 'rubygame/event_triggers'
-require 'rubygame/event_actions'
+
+
+%w{ event_triggers event_actions }.each do |f|
+  require( File.join( File.dirname(__FILE__), f ) )
+end
+
 
 module Rubygame 
 
