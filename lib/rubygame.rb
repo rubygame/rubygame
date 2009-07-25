@@ -19,52 +19,32 @@
 #
 #++
 
-# This file is loaded when you "require 'rubygame'".
-# It loads up the compiled C extensions and the rest of
-# the Rubygame library modules.
 
 
-require "ruby-sdl-ffi"
-
-
-# Prefer local library over global installed version.
-$:.unshift( File.join( File.dirname(__FILE__), "..", "lib" ) )
-$:.unshift( File.join( File.dirname(__FILE__), "..", "ext", "rubygame" ) )
-
-
-require "rbconfig"
-
-require "rubygame_core"
-
-%W{ rubygame_gfx rubygame_image rubygame_mixer rubygame_ttf }.each do |mod|
-  begin
-    require mod
-  rescue LoadError
-    warn( "Warning: Unable to require optional module: #{mod}.") if $VERBOSE
-  end
-end
-
+require "rubygame/main"
 require "rubygame/shared"
 
-require "rubygame/color"
+require "rubygame/audio"
+require "rubygame/clock"
 require "rubygame/constants"
-
+require "rubygame/color"
 require "rubygame/event"
 require "rubygame/events"
-require "rubygame/queue"
 require "rubygame/event_handler"
-
-require "rubygame/rect"
-require "rubygame/sprite"
-require "rubygame/clock"
-
-
-require "rubygame/surface"
-require "rubygame/gfx"
-require "rubygame/screen"
-require "rubygame/ttf"
-require "rubygame/audio"
-require "rubygame/music"
-require "rubygame/sound"
 require "rubygame/gl"
 require "rubygame/joystick"
+require "rubygame/named_resource"
+require "rubygame/queue"
+require "rubygame/rect"
+require "rubygame/surface"
+
+require "rubygame/gfx"
+
+require "rubygame/image"
+
+require "rubygame/screen"
+require "rubygame/sprite"
+
+require "rubygame/ttf"
+
+require "rubygame/mixer"
