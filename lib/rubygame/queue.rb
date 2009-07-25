@@ -21,7 +21,7 @@
 # 
 #++
 
-require "rubygame/event"
+
 
 module Rubygame
 
