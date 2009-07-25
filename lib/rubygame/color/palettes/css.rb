@@ -17,9 +17,7 @@
 #	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #++
 
-require 'rubygame/color'
-require 'rubygame/color/palettes/palette'
-require 'rubygame/color/palettes/x11'
+
 
 module Rubygame
 	module Color

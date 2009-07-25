@@ -17,14 +17,17 @@
 #	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #++
 
-require 'rubygame/color/models/base'
-require 'rubygame/color/models/rgb'
-require 'rubygame/color/models/hsv'
-require 'rubygame/color/models/hsl'
 
-require 'rubygame/color/palettes/palette'
-require 'rubygame/color/palettes/x11'
-require 'rubygame/color/palettes/css'
+
+%w{  base rgb hsv hsl  }.each do |f|
+  require( File.join( File.dirname(__FILE__), "color", "models", f ) )
+end
+
+%w{  palette x11 css  }.each do |f|
+  require( File.join( File.dirname(__FILE__), "color", "palettes", f ) )
+end
+
+
 
 module Rubygame
 
