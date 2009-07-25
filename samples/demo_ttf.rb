@@ -191,3 +191,5 @@ def main
 end
 
 main()
+
+Rubygame.quit

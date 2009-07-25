@@ -149,3 +149,5 @@ catch(:rubygame_quit) do
 
 	end
 end
+
+Rubygame.quit
