@@ -30,6 +30,9 @@ module Rubygame
   }
 
 
+  # Initialize Rubygame. This should be called soon after you
+  # +require+ Rubygame, so that everything will work properly.
+  #
   def self.init
     if( SDL.Init(SDL::INIT_EVERYTHING) == 0 )
       SDL.EnableUNICODE(1)
@@ -39,6 +42,11 @@ module Rubygame
   end
 
 
+  # Quit Rubygame. This should be used before your program terminates,
+  # especially if you have been using a fullscreen Screen! (Otherwise,
+  # the desktop resolution might not revert to its previous setting on
+  # some platforms, and your users will be frustrated and confused!)
+  #
   def self.quit
     SDL.Quit
   end
