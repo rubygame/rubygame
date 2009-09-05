@@ -2,7 +2,7 @@
 #  This file is one part of:
 #  Rubygame -- Ruby code and bindings to SDL to facilitate game creation
 # 
-#  Copyright (C) 2008  John Croisant
+#  Copyright (C) 2008-2009  John Croisant
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,68 @@
 
 
 module Rubygame
+
+
+  # Enable key repeat, so that additional keyboard release and press
+  # events are automatically generated for as long as the key is held
+  # down. See also #disable_key_repeat.
+  #
+  # delay::    how many seconds to wait before starting to repeat.
+  #            Default is 0.5 seconds. (Numeric or :default, optional)
+  #
+  # interval:: how many seconds to wait in between repetitions after
+  #            the first one. Default is 0.03 seconds. 
+  #            (Numeric or :default, optional)
+  #
+  def self.enable_key_repeat( delay=:default, interval=:default )
+
+    delay = if delay == :default
+              SDL::DEFAULT_REPEAT_DELAY
+            else
+              delay.to_f
+            end
+
+    interval = if interval == :default
+                 SDL::DEFAULT_REPEAT_INTERVAL
+               else
+                 interval.to_f
+               end
+
+    if delay < 0.001
+      raise( ArgumentError,
+             "delay must be at least 0.001 sec (got #{delay})" )
+    end
+
+    if interval < 0.001
+      raise( ArgumentError,
+             "interval must be at least 0.001 sec (got #{interval})" )
+    end
+
+    result = SDL.EnableKeyRepeat( (delay * 1000).to_i, (interval * 1000).to_i )
+
+    if result != 0
+      raise( Rubygame::SDLError,
+             "Could not enable key repeat: #{SDL.GetError()}" )
+    end
+
+    return nil
+  end
+
+
+  # Disable key repeat, undoing the effect of #enable_key_repeat.
+  #
+  def self.disable_key_repeat
+    result = SDL.EnableKeyRepeat( 0, 0 )
+
+    if result != 0
+      raise( Rubygame::SDLError,
+             "Could not disable key repeat: #{SDL.GetError()}" )
+    end
+
+    return nil
+  end
+
+
 
   # The Events module contains classes representing various
   # hardware events (e.g. keyboard presses, mouse clicks)
