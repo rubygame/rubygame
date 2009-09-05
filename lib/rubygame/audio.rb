@@ -135,7 +135,7 @@ module Rubygame
   #
   # May raise an SDLError if the audio device could not be opened.
   #
-  def audio_driver
+  def self.audio_driver
     open_audio
     return SDL.AudioDriverName
   end
