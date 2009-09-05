@@ -140,11 +140,4 @@ module Rubygame
     return SDL.AudioDriverName
   end
 
-
-  AUDIO_U8     = SDL::AUDIO_U8
-  AUDIO_S8     = SDL::AUDIO_S8
-  AUDIO_U16SYS = SDL::AUDIO_U16SYS
-  AUDIO_S16SYS = SDL::AUDIO_S16SYS
-
-
 end
