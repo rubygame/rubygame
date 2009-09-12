@@ -602,8 +602,8 @@ class Rubygame::Surface
 
   private
 
-  def _map_sdl_color( color )
-    SDL.MapRGBA( @struct.format, *Rubygame.make_sdl_rgba(color) )
+  def _map_sdl_color( color ) # :nodoc:
+    SDL.MapRGBA( @struct.format, *Rubygame::Color.make_sdl_rgba(color) )
   end
 
 end

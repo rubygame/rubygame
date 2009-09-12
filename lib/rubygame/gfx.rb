@@ -32,7 +32,7 @@ class Rubygame::Surface
     x1, y1 = pt1.to_a.collect{|n| n.round}
     x2, y2 = pt2.to_a.collect{|n| n.round}
 
-    r,g,b,a = Rubygame.make_sdl_rgba( color )
+    r,g,b,a = Rubygame::Color.make_sdl_rgba( color )
 
     if( y1 == y2 )
       SDL::Gfx.hlineRGBA(@struct, x1, x2, y1, r,g,b,a)
@@ -78,7 +78,7 @@ class Rubygame::Surface
     x1, y1 = pt1.to_a.collect{|n| n.round}
     x2, y2 = pt2.to_a.collect{|n| n.round}
 
-    r,g,b,a = Rubygame.make_sdl_rgba( color )
+    r,g,b,a = Rubygame::Color.make_sdl_rgba( color )
 
     if solid
       SDL::Gfx.boxRGBA(@struct, x1, y1, x2, y2, r,g,b,a)
@@ -121,7 +121,7 @@ class Rubygame::Surface
     x, y = center.to_a.collect{|n| n.round}
     radius = radius.to_i
 
-    r,g,b,a = Rubygame.make_sdl_rgba( color )
+    r,g,b,a = Rubygame::Color.make_sdl_rgba( color )
 
     if solid
       SDL::Gfx.filledCircleRGBA(@struct, x, y, radius, r,g,b,a)
@@ -171,7 +171,7 @@ class Rubygame::Surface
     x, y = center.to_a.collect{|n| n.round}
     radx, rady = radii.to_a.collect{|n| n.round}
 
-    r,g,b,a = Rubygame.make_sdl_rgba( color )
+    r,g,b,a = Rubygame::Color.make_sdl_rgba( color )
 
     if solid
       SDL::Gfx.filledEllipseRGBA(@struct, x, y, radx, rady, r,g,b,a)
@@ -223,7 +223,7 @@ class Rubygame::Surface
     radius = radius.round
     ang1, ang2 = angles.to_a.collect{|n| n.round}
 
-    r,g,b,a = Rubygame.make_sdl_rgba( color )
+    r,g,b,a = Rubygame::Color.make_sdl_rgba( color )
 
     if solid
       SDL::Gfx.filledPieRGBA(@struct, x, y, radius, ang1, ang2, r,g,b,a)
@@ -274,7 +274,7 @@ class Rubygame::Surface
       ypts[i].put_int16( 0, point[1].round )
     }
 
-    r,g,b,a = Rubygame.make_sdl_rgba( color )
+    r,g,b,a = Rubygame::Color.make_sdl_rgba( color )
 
     if solid
       SDL::Gfx.filledPolygonRGBA(@struct, xpts, ypts, len, r,g,b,a)

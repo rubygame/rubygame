@@ -222,10 +222,10 @@ class Rubygame::TTF
   #
   def _render( text, smooth, color, back, shaded, blended, solid ) # :nodoc;
 
-    color = SDL::Color.new( Rubygame.make_sdl_rgba(color) )
+    color = SDL::Color.new( Rubygame::Color.make_sdl_rgba(color) )
 
     if back
-      back = SDL::Color.new( Rubygame.make_sdl_rgba(back) )
+      back = SDL::Color.new( Rubygame::Color.make_sdl_rgba(back) )
     end
 
     surf =
