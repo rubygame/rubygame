@@ -110,18 +110,23 @@ class Panda
 	include Sprites::Sprite
 	include EventHandler::HasEventHandler
 
-	# Autoload the "panda.png" image and set its colorkey
-	@@pandapic = Surface["panda.png"]
-	@@pandapic.set_colorkey(@@pandapic.get_at(0,0))
+  def self.pandapic
+    return @pandapic if @pandapic
+    # Autoload the "panda.png" image and set its colorkey
+    @pandapic = Surface["panda.png"]
+    @pandapic.set_colorkey(@pandapic.get_at(0,0))
+    @pandapic.to_display_alpha
+  end
+
 
 	attr_accessor :vx, :vy, :speed
 	def initialize(x,y)
 		super()
 		@vx, @vy = 0,0
 		@speed = 40
-		@image = @@pandapic
-		@rect = Rect.new(x,y,*@@pandapic.size)
-
+    @pandapic = self.class.pandapic
+		@image = @pandapic
+		@rect = Rect.new(x,y,*@pandapic.size)
 	end
 
 	def update_image(time)
@@ -154,7 +159,7 @@ class SpinnyPanda < Panda
 
 	def update_image(time)
 		@angle += (@rate * time) % 360
-		@image = @@pandapic.rotozoom(@angle,1,$smooth)
+		@image = @pandapic.rotozoom(@angle,1,$smooth)
 	end
 end
 
@@ -172,7 +177,7 @@ class ExpandaPanda < Panda
 	def update_image(time)
 		@delta = (@delta + time*@rate/36) % (Math::PI*2)
 		zoom = 1 + Math.sin(@delta)/2
-		@image = @@pandapic.zoom(zoom,$smooth)
+		@image = @pandapic.zoom(zoom,$smooth)
 	end
 end
 
@@ -189,62 +194,11 @@ class WobblyPanda < Panda
 
 	def update_image(time)
 		@delta = (@delta + time*@rate/36) % (Math::PI*2)
-		zoomx = (1.5 + Math.sin(@delta)/6) * @@pandapic.width
-		zoomy = (1.5 + Math.cos(@delta)/5) * @@pandapic.height
-		@image = @@pandapic.zoom_to(zoomx,zoomy,$smooth)
+		zoomx = (1.5 + Math.sin(@delta)/6) * @pandapic.width
+		zoomy = (1.5 + Math.cos(@delta)/5) * @pandapic.height
+		@image = @pandapic.zoom_to(zoomx,zoomy,$smooth)
 	end
 end
-
-
-# Create the very cute panda objects!
-panda1 = SpinnyPanda.new(100,50)
-panda2 = ExpandaPanda.new(150,50)
-panda3 = WobblyPanda.new(200,50,0.5)
-
-# Set their depths. This affects which one appears in front
-# of the other in case they overlap.
-panda1.depth = 0        # in between the others
-panda2.depth = 10       # behind both of the others
-panda3.depth = -10      # in front of both of the others
-
-
-
-
-###############
-# PANDA GROUP #
-###############
-
-
-# Create a spritegroup to manage the pandas.
-pandas = Sprites::Group.new
-pandas.extend(Sprites::UpdateGroup)
-pandas.extend(Sprites::DepthSortGroup)
-
-# Add the pandas to the group.
-pandas.push(panda1,panda2,panda3)
-
-
-# Extend the pandas group with event hooks.
-class << pandas
-	include EventHandler::HasEventHandler
-
-	# Draw all the sprites and refresh
-	# those parts of the screen
-	def do_draw( event )
-		dirty_rects = draw( event.screen )
-		event.screen.update_rects(dirty_rects)
-	end
-
-	# Erase the sprites from the screen by
-	# drawing over them with the background.
-	def do_undraw( event )
-		undraw( event.screen, event.background )
-	end
-end
-
-pandas.make_magic_hooks( :tick         => :update,
-                         DrawSprites   => :do_draw,
-                         UndrawSprites => :do_undraw )
 
 
 
@@ -289,9 +243,9 @@ ttfont.render( "Press escape or q to quit.",
 
 
 
-############################
-# EVENT HOOKS AND HANDLING #
-############################
+#########################
+# EVENT HOOKS FACTORIES #
+#########################
 
 
 # Factory methods for creating event triggers
@@ -328,51 +282,105 @@ def joyreleased( button )
 end
 
 
-#######################
-# PANDA 1 EVENT HOOKS #
-#######################
 
-hooks = {
-	# Start moving when an arrow key is pressed
-	:up    =>  proc { |owner, event| owner.vy = -1 },
-	:down  =>  proc { |owner, event| owner.vy =  1 },
-	:left  =>  proc { |owner, event| owner.vx = -1 },
-	:right =>  proc { |owner, event| owner.vx =  1 },
-
-	# Stop moving when the arrow key is released
-	released( :up    ) =>  proc { |owner, event| owner.vy = 0 },
-	released( :down  ) =>  proc { |owner, event| owner.vy = 0 },
-	released( :left  ) =>  proc { |owner, event| owner.vx = 0 },
-	released( :right ) =>  proc { |owner, event| owner.vx = 0 },
-
-	# Move according to how far the joystick axis is moved
-	joyaxis( 0 ) =>  proc { |owner, event| owner.vx = event.value },
-	joyaxis( 1 ) =>  proc { |owner, event| owner.vy = event.value },
-
-	# Fast speed when button is pressed, normal speed when released
-	joypressed(  4 ) => proc { |owner, event| owner.speed *= 2.0 },
-	joyreleased( 4 ) => proc { |owner, event| owner.speed *= 0.5 }
-}
-
-panda1.make_magic_hooks( hooks )
+###################
+# PANDA INSTANCES #
+###################
 
 
-#######################
-# PANDA 2 EVENT HOOKS #
-#######################
+def make_pandas( game )
 
-hooks = {
-	# Move according to how far the joystick axis is moved
-	joyaxis( 2 ) =>  proc { |owner, event| owner.vx = event.value },
-	joyaxis( 3 ) =>  proc { |owner, event| owner.vy = event.value },
+  # Create the very cute panda objects!
+  panda1 = SpinnyPanda.new(100,50)
+  panda2 = ExpandaPanda.new(150,50)
+  panda3 = WobblyPanda.new(200,50,0.5)
 
-	# Fast speed when button is pressed, normal speed when released
-	joypressed(  5 ) => proc { |owner, event| owner.speed *= 2.0 },
-	joyreleased( 5 ) => proc { |owner, event| owner.speed *= 0.5 }
-}
+  # Set their depths. This affects which one appears in front
+  # of the other in case they overlap.
+  panda1.depth = 0        # in between the others
+  panda2.depth = 10       # behind both of the others
+  panda3.depth = -10      # in front of both of the others
 
-panda2.make_magic_hooks( hooks )
 
+  # PANDA GROUP #
+
+  # Create a spritegroup to manage the pandas.
+  pandas = Sprites::Group.new
+  pandas.extend(Sprites::UpdateGroup)
+  pandas.extend(Sprites::DepthSortGroup)
+
+  # Add the pandas to the group.
+  pandas.push(panda1,panda2,panda3)
+
+
+  # Extend the pandas group with event hooks.
+  class << pandas
+    include EventHandler::HasEventHandler
+
+    # Draw all the sprites and refresh
+    # those parts of the screen
+    def do_draw( event )
+      dirty_rects = draw( event.screen )
+      event.screen.update_rects(dirty_rects)
+    end
+
+    # Erase the sprites from the screen by
+    # drawing over them with the background.
+    def do_undraw( event )
+      undraw( event.screen, event.background )
+    end
+  end
+
+  pandas.make_magic_hooks( :tick         => :update,
+                           DrawSprites   => :do_draw,
+                           UndrawSprites => :do_undraw )
+
+
+  # PANDA 1 EVENT HOOKS #
+
+  hooks = {
+    # Start moving when an arrow key is pressed
+    :up    =>  proc { |owner, event| owner.vy = -1 },
+    :down  =>  proc { |owner, event| owner.vy =  1 },
+    :left  =>  proc { |owner, event| owner.vx = -1 },
+    :right =>  proc { |owner, event| owner.vx =  1 },
+
+    # Stop moving when the arrow key is released
+    released( :up    ) =>  proc { |owner, event| owner.vy = 0 },
+    released( :down  ) =>  proc { |owner, event| owner.vy = 0 },
+    released( :left  ) =>  proc { |owner, event| owner.vx = 0 },
+    released( :right ) =>  proc { |owner, event| owner.vx = 0 },
+
+    # Move according to how far the joystick axis is moved
+    joyaxis( 0 ) =>  proc { |owner, event| owner.vx = event.value },
+    joyaxis( 1 ) =>  proc { |owner, event| owner.vy = event.value },
+
+    # Fast speed when button is pressed, normal speed when released
+    joypressed(  4 ) => proc { |owner, event| owner.speed *= 2.0 },
+    joyreleased( 4 ) => proc { |owner, event| owner.speed *= 0.5 }
+  }
+
+  panda1.make_magic_hooks( hooks )
+
+
+  # PANDA 2 EVENT HOOKS #
+
+  hooks = {
+    # Move according to how far the joystick axis is moved
+    joyaxis( 2 ) =>  proc { |owner, event| owner.vx = event.value },
+    joyaxis( 3 ) =>  proc { |owner, event| owner.vy = event.value },
+
+    # Fast speed when button is pressed, normal speed when released
+    joypressed(  5 ) => proc { |owner, event| owner.speed *= 2.0 },
+    joyreleased( 5 ) => proc { |owner, event| owner.speed *= 0.5 }
+  }
+
+  panda2.make_magic_hooks( hooks )
+
+
+  game.register( pandas, panda1, panda2 )
+
+end
 
 
 
@@ -538,8 +546,7 @@ end
 
 $game = Game.new( screen, background )
 
-# Register the pandas to receive events.
-$game.register( pandas, panda1, panda2 )
+make_pandas( $game )
 
 # Start the main game loop. It will repeat forever
 # until the user quits the game!
