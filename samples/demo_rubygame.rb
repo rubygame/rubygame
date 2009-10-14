@@ -46,11 +46,13 @@ $smooth = false
 Rubygame.init()
 
 
-# SDL_gfx is required for drawing shapes and rotating/zooming Surfaces.
-$gfx_ok = (VERSIONS[:sdl_gfx] != nil)
+# SDL_gfx is required for rotating/zooming Surfaces.
+$gfx_ok = [:rotozoom, :zoom, :zoom_to].all? { |method|
+  Rubygame::Surface.new([1,1]).respond_to?( method )
+}
 
 unless ( $gfx_ok )
-	raise "You must have SDL_gfx support to run this demo!"
+	raise "This demo requires Surface rotozoom and zoom support (SDL_gfx)"
 end
 
 
