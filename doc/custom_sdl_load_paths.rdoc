@@ -1,0 +1,79 @@
+= Custom SDL Load Paths
+
+In Rubygame 2.6 and later, you can tell Rubygame to look in custom
+locations to find the SDL libraries (e.g. DLL files). This is mostly
+intended for when you are packaging your application in a stand-alone
+package (e.g. with RubyScript2Exe), and want to distribute the SDL
+libraries with your application, so that users do not need to install
+SDL.
+
+== Setting Load Paths
+
+Setting custom load paths is easy: just set the SDL_PATHS constant
+to an Array of directories before you do `require "rubygame"`.
+Note: You really must set SDL_PATHS *before* loading Rubygame!
+
+Rubygame will look first in the paths in SDL_PATHS, in the order they
+are given in the array. If Rubygame can't find a SDL library in any of
+the SDL_PATHS directories, Rubygame will then search for the library
+in some common library paths for the current operating system (e.g.
+"C:\windows\system32\" on Windows, "/usr/lib/" on Linux, etc.).
+
+For example, if the SDL libraries are in "mygame/libs/", and your
+main script is "mygame/mygame.rb", you could do the following in
+"mygame/mygame.rb":
+
+  main_dir = File.dirname(__FILE__)
+  SDL_PATHS = [ File.join( main_dir, "libs" ) ]
+  
+  require "rubygame"
+  
+  # ... the rest of your code ...
+
+== Per-OS Load Paths
+
+If you prefer to split the libraries into a separate directory for
+each operating system, you can set SDL_PATHS to a Hash instead. For
+example:
+
+  main_dir = File.dirname(__FILE__)
+  SDL_PATHS = {
+    /linux/   => File.join( main_dir, "libs", "linux"   ),
+    /bsd/     => File.join( main_dir, "libs", "bsd"     ),
+    /darwin/  => File.join( main_dir, "libs", "mac"     ),
+    /windows/ => File.join( main_dir, "libs", "windows" ),
+  }
+  
+  require "rubygame"
+  
+  # ... the rest of your code ...
+
+Each key in the hash should be a Regexp that matches an OS name. As of
+this writing (October 2009), the list of recognized OS names is:
+
+* "darwin" (MacOS X)
+* "freebsd"
+* "linux"
+* "openbsd"
+* "solaris"
+* "windows"
+
+== Library File Names
+
+Rubygame has certain expectations about the names of library files for
+each operating system ("[NAME]" is replaced with e.g. "SDL"):
+
+'Nix::    lib[NAME].so
+Mac::     lib[NAME].dylib or [NAME].framework/[NAME]
+Windows:: [NAME].dll
+
+The specific libraries used by Rubygame are:
+
+SDL::        libSDL.so; libSDL.dylib or SDL.framework/SDL; SDL.dll
+SDL_gfx::    libSDL_gfx.so; libSDL_gfx.dylib or SDL_gfx.framework/SDL_gfx; SDL_gfx.dll
+SDL_image::  libSDL_image.so; libSDL_image.dylib or SDL_image.framework/SDL_image; SDL_image.dll
+SDL_mixer::  libSDL_mixer.so; libSDL_mixer.dylib or SDL_mixer.framework/SDL_mixer; SDL_mixer.dll
+SDL_ttf::    libSDL_ttf.so; libSDL_ttf.dylib or SDL_ttf.framework/SDL_ttf; SDL_ttf.dll
+
+SDL is absolutely required. The others are optional, but strongly
+recommended, because they provide a lot of extra functionality.
