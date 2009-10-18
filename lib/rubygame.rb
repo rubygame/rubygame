@@ -57,7 +57,7 @@ end
 
 # SDL_image is optional, rescue if it fails.
 begin
-#  require File.join( dir, "rubygame", "image" )
+  require File.join( dir, "rubygame", "image" )
 rescue LoadError => e
   puts( "Warning: Could not load SDL_image! " +
         "Continuing anyway, but image loading will be missing.\n" +
