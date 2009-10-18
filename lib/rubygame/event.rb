@@ -34,6 +34,7 @@ module Rubygame
     # to make your own event management system.
     #
     def fetch_sdl_events
+      deprecated("Rubygame.fetch_sdl_events", "3.0")
       events = []
       until( ( event = SDL::PollEvent() ).nil? )
         events << _convert_sdlevent(event)
