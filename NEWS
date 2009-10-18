@@ -1,5 +1,23 @@
 = NEWS
 
+== Rubygame 2.5.3
+
+Release focus: Bug fixes.
+
+=== Fixes
+
+- Updated gemspec to list (install-time) dependency on Rake. [#24]
+
+- Fixed: MouseMoved and JoyBallMoved were wrongly using unsigned ints
+  for relative x and y positions. [#26]
+
+- Fixed: Clock#framerate returned Infinity under some conditions.
+
+- Fixed: Panda demo used the wrong order of steps for redrawing sprites.
+
+
+
+
 == Rubygame 2.5.2
 
 Release focus: Bug fixes.
