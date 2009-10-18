@@ -20,13 +20,6 @@
 
 
 
-#--
-# Ftor is DEPRECATED and will be removed in Rubygame 3.0!
-# Warn the user when this file is loaded.
-#++
-Rubygame.deprecated("Rubygame::Ftor", "3.0")
-
-
 module Rubygame
 
 # *NOTE*: Ftor is DEPRECATED and will be removed in Rubygame 3.0!
@@ -87,6 +80,7 @@ class Ftor
 	# Create a new Ftor by specifying its x and y components. See also #new_am
   # and #new_from_to.
 	def initialize(x,y)
+    Rubygame.deprecated("Rubygame::Ftor", "3.0")
     @x, @y = x, y
 	end
 
