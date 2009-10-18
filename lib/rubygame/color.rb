@@ -94,14 +94,10 @@ module Rubygame
       end
     end
 
-    def self.extract_rgba_u8_as_u8( color ) # :nodoc:
-      r,g,b,a = color[0,4]
+    def self.make_sdl_rgba( color ) # :nodoc:
+      r,g,b,a = convert_color(color).collect!{ |c| c.to_i }[0,4]
       a = 255 if a.nil?
       [r,g,b,a]
-    end
-
-    def self.make_sdl_rgba( color ) # :nodoc:
-      extract_rgba_u8_as_u8( convert_color(color) ).collect! { |c| c.to_i }
     end
 
 	end
