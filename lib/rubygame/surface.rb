@@ -20,7 +20,7 @@
 
 
 # Surface represents an image, a block of colored pixels arranged in a
-# 2D grid. You can load image files to a new Surface with #load_image,
+# 2D grid. You can load image files to a new Surface with #load,
 # or create an empty one with Surface.new and draw shapes on it with
 # #draw_line, #draw_circle, and all the rest.
 #
