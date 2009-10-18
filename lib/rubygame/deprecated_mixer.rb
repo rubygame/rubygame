@@ -269,7 +269,9 @@ class Rubygame::Mixer::Sample
   end
 
 
-  attr_reader :struct
+  attr_reader :struct # :nodoc:
+  protected :struct
+
 
   # call-seq: new
   def initialize( struct=nil )
@@ -341,7 +343,9 @@ class Rubygame::Mixer::Music
   end
 
 
-  attr_reader :struct
+  attr_reader :struct # :nodoc:
+  protected :struct
+
 
   # call-seq: new
   def initialize( struct=nil )

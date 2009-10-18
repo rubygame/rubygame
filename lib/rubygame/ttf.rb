@@ -84,8 +84,8 @@ class Rubygame::TTF
   end
 
 
-  attr_reader :struct
-
+  attr_reader :struct # :nodoc:
+  protected :struct
 
 
   def _get_style( style )       # :nodoc:

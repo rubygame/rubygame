@@ -44,7 +44,8 @@ class Rubygame::Surface
   #++
 
 
-  attr_reader :struct           # :nodoc:
+  attr_reader :struct # :nodoc:
+  protected :struct
 
 
   # Create and initialize a new Surface object.

@@ -116,7 +116,8 @@ class Rubygame::Music
   end
 
 
-  attr_reader :struct           # :nodoc:
+  attr_reader :struct # :nodoc:
+  protected :struct
 
 
   # call-seq:
