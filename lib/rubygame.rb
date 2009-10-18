@@ -19,39 +19,71 @@
 #
 #++
 
+dir = File.dirname(__FILE__)
 
-%w{
 
-  main
-  shared
-
-  audio
-  clock
-  constants
-  color
-  event
-  events
-  event_handler
-  gl
-  joystick
-  named_resource
-  queue
-  rect
-  surface
-
-  gfx
-
-  image
-
-  screen
-  sprite
-
-  ttf
-
-  mixer
-
+# Require Rubygame files. If these fail, don't rescue.
+# Note: screen.rb is intentionally loaded late.
+%w{ main
+    shared
+    audio
+    clock
+    constants
+    color
+    event
+    events
+    event_handler
+    gl
+    joystick
+    named_resource
+    queue
+    rect
+    surface
+    sprite
 }.each do |f|
-
-  require( File.join( File.dirname(__FILE__), "rubygame", f ) )
-
+  require File.join( dir, "rubygame", f )
 end
+
+
+# SDL_gfx is optional, rescue if it fails.
+begin
+  require File.join( dir, "rubygame", "gfx" )
+rescue LoadError => e
+  puts( "Warning: Could not load SDL_gfx! " +
+        "Continuing anyway, but some Surface methods will be missing.\n" +
+        "Error message was:\n#{e.message.inspect}" )
+end
+
+
+# SDL_image is optional, rescue if it fails.
+begin
+#  require File.join( dir, "rubygame", "image" )
+rescue LoadError => e
+  puts( "Warning: Could not load SDL_image! " +
+        "Continuing anyway, but image loading will be missing.\n" +
+        "Error message was:\n#{e.message.inspect}" )
+end
+
+
+# SDL_mixer is optional, rescue if it fails.
+begin
+  require File.join( dir, "rubygame", "mixer" )
+rescue LoadError => e
+  puts( "Warning: Could not load SDL_mixer! " +
+        "Continuing anyway, but audio features will be missing.\n" +
+        "Error message was:\n#{e.message.inspect}" )
+end
+
+
+# SDL_ttf is optional, rescue if it fails.
+begin
+  require File.join( dir, "rubygame", "ttf" )
+rescue LoadError => e
+  puts( "Warning: Could not load SDL_ttf! " +
+        "Continuing anyway, but the TTF class will be missing.\n" +
+        "Error message was:\n#{e.message.inspect}" )
+end
+
+
+# Loaded late so Screen can undefine some inherited Surface methods.
+require File.join( dir, "rubygame", "screen" )
