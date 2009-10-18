@@ -42,13 +42,18 @@ class Rubygame::Screen < Rubygame::Surface
 
   class << self
     # Inherited from Surface, but not applicable to Screen
-    undef :[], :[]=, :autoload, :autoload_dirs=, :autoload_dirs,
-          :basename, :exist?, :find_file, :load, :load_image
+    [ :[], :[]=, :autoload, :autoload_dirs=, :autoload_dirs,
+      :basename, :exist?, :find_file, :load, :load_image
+    ].each { |m|
+      eval "undef #{m.inspect} if respond_to? #{m.inspect}"
+    }
   end
 
 
   # Inherited from Surface, but not applicable to Screen
-  undef :alpha=, :set_alpha, :colorkey=, :set_colorkey
+  [ :alpha=, :set_alpha, :colorkey=, :set_colorkey ].each { |m|
+    eval "undef #{m.inspect} if respond_to? #{m.inspect}"
+  }
 
 
   class << self
