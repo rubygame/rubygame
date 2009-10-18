@@ -1,11 +1,11 @@
 # 
 # This is the Rakefile for Rubygame. It's used for packaging,
-# installing generating the documentation, and running specs.
+# installing, generating the documentation, and running specs.
 # 
 
 
 # The version number for Rubygame.
-RUBYGAME_VERSION = [2,5,3]
+RUBYGAME_VERSION = [2,5,99]
 
 
 
@@ -47,6 +47,7 @@ gem_spec = Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 1.8"
   s.add_dependency( "rake", ">=0.7.0" )
+  s.add_dependency( "ruby-sdl-ffi", ">=0.1.0" )
   s.requirements = ["SDL       >= 1.2.7",
                     "SDL_gfx   >= 2.0.10 (optional)",
                     "SDL_image >= 1.2.3  (optional)",
