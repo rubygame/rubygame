@@ -26,10 +26,20 @@
 module Rubygame
 
   # Warn of a deprecated Rubygame feature.
-  def self.deprecated( feature, version ) # :nodoc:
-    if $VERBOSE
-      warn( "warning: #{feature} is DEPRECATED and will be removed in " + \
-            "Rubygame #{version}! Please see the docs for more information." )
+  def self.deprecated( feature, version=nil ) # :nodoc:
+    @deprec_warned ||= {}
+
+    if $VERBOSE and not @deprec_warned[feature]
+      if version
+        warn( "warning: #{feature} is DEPRECATED and will be removed " +
+              "in Rubygame #{version}! Please see the docs for more "  +
+              "information." )
+      else
+        warn( "warning: #{feature} is DEPRECATED and will be removed " +
+              "in a future version of Rubygame! Please see the docs "  +
+              "for more information." )
+      end
+      @deprec_warned[feature] = true
     end
   end
 
