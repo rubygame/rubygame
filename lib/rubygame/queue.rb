@@ -128,6 +128,8 @@ module Rubygame
       if @new_style_events
         self.push( Rubygame::Events.fetch_sdl_events() )
       else
+        Rubygame.deprecated("Rubygame::EventQueue with old event classes",
+                            "3.0")
         self.push( Rubygame.fetch_sdl_events() )
       end
 		end
