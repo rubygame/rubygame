@@ -19,7 +19,8 @@
 #
 #++
 
-dir = File.dirname(__FILE__)
+
+this_dir = File.expand_path( File.dirname(__FILE__) )
 
 
 # Require Rubygame files. If these fail, don't rescue.
@@ -41,13 +42,13 @@ dir = File.dirname(__FILE__)
     surface
     sprite
 }.each do |f|
-  require File.join( dir, "rubygame", f )
+  require File.join( this_dir, "rubygame", f )
 end
 
 
 # SDL_gfx is optional, rescue if it fails.
 begin
-  require File.join( dir, "rubygame", "gfx" )
+  require File.join( this_dir, "rubygame", "gfx" )
 rescue LoadError => e
   puts( "Warning: Could not load SDL_gfx! " +
         "Continuing anyway, but some Surface methods will be missing.\n" +
@@ -57,7 +58,7 @@ end
 
 # SDL_image is optional, rescue if it fails.
 begin
-  require File.join( dir, "rubygame", "image" )
+  require File.join( this_dir, "rubygame", "image" )
 rescue LoadError => e
   puts( "Warning: Could not load SDL_image! " +
         "Continuing anyway, but image loading will be missing.\n" +
@@ -67,7 +68,7 @@ end
 
 # SDL_mixer is optional, rescue if it fails.
 begin
-  require File.join( dir, "rubygame", "mixer" )
+  require File.join( this_dir, "rubygame", "mixer" )
 rescue LoadError => e
   puts( "Warning: Could not load SDL_mixer! " +
         "Continuing anyway, but audio features will be missing.\n" +
@@ -77,7 +78,7 @@ end
 
 # SDL_ttf is optional, rescue if it fails.
 begin
-  require File.join( dir, "rubygame", "ttf" )
+  require File.join( this_dir, "rubygame", "ttf" )
 rescue LoadError => e
   puts( "Warning: Could not load SDL_ttf! " +
         "Continuing anyway, but the TTF class will be missing.\n" +
@@ -86,4 +87,4 @@ end
 
 
 # Loaded late so Screen can undefine some inherited Surface methods.
-require File.join( dir, "rubygame", "screen" )
+require File.join( this_dir, "rubygame", "screen" )
