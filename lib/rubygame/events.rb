@@ -114,7 +114,7 @@ module Rubygame
     # However, if you aren't using EventQueue, you can safely use this
     # method to make your own event management system.
     #
-    def fetch_sdl_events
+    def self.fetch_sdl_events
       events = []
       until( ( event = SDL::PollEvent() ).nil? )
         case ( event = _convert_sdlevent(event) )
