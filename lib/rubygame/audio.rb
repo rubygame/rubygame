@@ -63,6 +63,10 @@ module Rubygame
   def self.open_audio( options={} )
     return false if audio_open?
 
+    unless options.kind_of? Hash
+      raise TypeError, "invalid options Hash: #{options.inspect}"
+    end
+
     buff = (options[:buffer] or 1024)
     chan = (options[:channels] or 2)
     freq = (options[:frequency] or SDL::Mixer::DEFAULT_FREQUENCY)
