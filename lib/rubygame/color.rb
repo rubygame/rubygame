@@ -83,15 +83,22 @@ module Rubygame
     # Convert a color name (string or symbol), Color instance, or Array
     # to a color array.
     def self.convert_color( color ) # :nodoc:
-      if color.kind_of?(Symbol) or color.kind_of?(String)
-        Rubygame::Color[color].to_sdl_rgba_ary
-      elsif color.respond_to? :to_sdl_rgba_ary
-        color.to_sdl_rgba_ary
-      elsif color.respond_to? :to_ary
-        color.to_ary
-      else
-        raise TypeError, "unsupported type #{color.class} for color"
+      color = 
+        if color.kind_of?(Symbol) or color.kind_of?(String)
+          Rubygame::Color[color].to_sdl_rgba_ary
+        elsif color.respond_to? :to_sdl_rgba_ary
+          color.to_sdl_rgba_ary
+        elsif color.respond_to? :to_ary
+          color.to_ary
+        else
+          raise TypeError, "unsupported type #{color.class} for color"
+        end
+
+      unless color.size.between?(3,4) and color.all?{|n| n.kind_of? Numeric}
+        raise TypeError, "invalid color: #{color.inspect}"
       end
+
+      return color
     end
 
     def self.make_sdl_rgba( color ) # :nodoc:
