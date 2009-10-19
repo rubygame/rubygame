@@ -36,8 +36,8 @@ describe Surface, "(creation)" do
 
   it "should raise ArgumentError when #new size is an Array of non-Numerics" do
     lambda {
-      Surface.new(["not", "numeric", "members"])
-    }.should raise_error(TypeError)
+      Surface.new(["not", "numerics"])
+    }.should raise_error(ArgumentError)
   end
 
   it "should raise ArgumentError when #new size is too short" do
