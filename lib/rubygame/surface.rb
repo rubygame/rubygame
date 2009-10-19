@@ -94,6 +94,14 @@ class Rubygame::Surface
       return
     end
 
+    unless size.kind_of? Array
+      raise TypeError, "Surface size is not an Array: #{size.inspect}"
+    end
+
+    unless size.length == 2 and size.all?{ |n| n.kind_of? Numeric }
+      raise ArgumentError, "Invalid Surface size: #{size.inspect}"
+    end
+
 
     pixformat = nil
 
@@ -275,6 +283,10 @@ class Rubygame::Surface
   #            Can also be an Array of no less than 4 values.
   #
   def blit( target, pos, src_rect=nil )
+    unless target.kind_of? Surface
+      raise TypeError, "blit target must be a Surface"
+    end
+
     src_x, src_y, src_w, src_h =
       case src_rect
       when SDL::Rect
@@ -304,6 +316,10 @@ class Rubygame::Surface
   #         with color. Omit to fill the entire surface.
   #
   def fill( color, rect=nil )
+    unless rect.nil? or rect.kind_of? Array
+      raise TypeError, "invalid fill Rect: #{rect.inspect}"
+    end
+
     color = _map_sdl_color( color )
     rect = SDL::Rect.new( rect.to_ary ) unless rect.nil?
     SDL.FillRect( @struct, rect, color )
