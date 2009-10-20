@@ -52,7 +52,7 @@ begin
 rescue LoadError => e
   puts( "Warning: Could not load SDL_gfx! " +
         "Continuing anyway, but some Surface methods will be missing.\n" +
-        "Error message was:\n#{e.message.inspect}" )
+        "Error message was: #{e.message.inspect}" )
 end
 
 
@@ -62,7 +62,7 @@ begin
 rescue LoadError => e
   puts( "Warning: Could not load SDL_image! " +
         "Continuing anyway, but image loading will be missing.\n" +
-        "Error message was:\n#{e.message.inspect}" )
+        "Error message was: #{e.message.inspect}" )
 end
 
 
@@ -72,7 +72,7 @@ begin
 rescue LoadError => e
   puts( "Warning: Could not load SDL_mixer! " +
         "Continuing anyway, but audio features will be missing.\n" +
-        "Error message was:\n#{e.message.inspect}" )
+        "Error message was: #{e.message.inspect}" )
 end
 
 
@@ -82,7 +82,7 @@ begin
 rescue LoadError => e
   puts( "Warning: Could not load SDL_ttf! " +
         "Continuing anyway, but the TTF class will be missing.\n" +
-        "Error message was:\n#{e.message.inspect}" )
+        "Error message was: #{e.message.inspect}" )
 end
 
 
