@@ -88,3 +88,7 @@ end
 
 # Loaded late so Screen can undefine some inherited Surface methods.
 require File.join( this_dir, "rubygame", "screen" )
+
+
+Rubygame.init
+at_exit { Rubygame.quit }
