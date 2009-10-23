@@ -283,7 +283,7 @@ class Rubygame::Surface
   #            Can also be an Array of no less than 4 values.
   #
   def blit( target, pos, src_rect=nil )
-    unless target.kind_of? Surface
+    unless target.kind_of? Rubygame::Surface
       raise TypeError, "blit target must be a Surface"
     end
 
