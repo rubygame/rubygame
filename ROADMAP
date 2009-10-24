@@ -1,22 +1,22 @@
 = ROADMAP
 
 This represents the direction Rubygame will be going in, but
-keep in mind that specific details may change over time.
+keep in mind that plans and details may change over time.
 
 
-== 2.X.0 (_possible_ minor releases before 3.0.0)
+== 2.X (_possible_ minor releases before 3.0)
 
 === Focus: Surface & Rect
 
 - Surface improvements
   - Make Surface instances copyable and marshalable
   - Support for palettes on 8-bit Surfaces
+  - Export as OpenGL-ready 32bit pixel data.
   - To Fix: New Surfaces never have alpha channels
-  - To Fix: Surface#set_at doesn't respect alpha
   - To Add: Surface#pixels= (set pixel data directly)
   - To Add: Surface.load_from_pixels (create from pixel data)
 
-- Rewrite Rect class in C for speed
+- Optimize Rect for speed
 
 
 === Focus: Sprites
@@ -24,18 +24,20 @@ keep in mind that specific details may change over time.
 - New sprite system
   - New Sprite, Scene, and Camera classes.
   - More powerful and simpler to use.
-  - Integration with the Chipmunk physics library.
+  - Integration with the Chipmunk physics library?
 
 
 
-== 3.0.0 (next major release)
+== 3.0 (next major release)
 
 - Backwards compatibility is broken:
   - Deprecated classes / methods retired:
     - Rubygame::Mixer module.
     - Rubygame::Mixer::Sample class. Use Rubygame::Sound.
     - Rubygame::Mixer::Music class. Use Rubygame::Music.
-    - Rubygame::Surface.load_image method. User Rubygame::Surface.load.
+    - Rubygame::Surface.load_image method. Use Rubygame::Surface.load.
+    - Rubygame::Ftor class. An alternative class will be provided.
+    - Rubygame::MediaBag class. Use Surface#[], Sound#[], and Music#[].
   - Surface#get_at
   - Sprites::Group#collide_group
 
@@ -44,7 +46,17 @@ keep in mind that specific details may change over time.
 
 
 
-== On the horizon...
+== Possible future developments
+
+- Switch from SDL_gfx to SPriG for graphics primitives.
+  - SPriG provides more functionality and flexibility, and a more
+    consistent interface.
+  - How does speed compare?
+  - Is it buggy?
+
+- Alternative back-ends:
+  - OpenGL (faster rendering, better Mac support)
+  - Allegro?
 
 - Polygon, circle, and other geometric primitives
   - Drawing, with styles?
@@ -65,8 +77,3 @@ keep in mind that specific details may change over time.
   - E.g. moves a sprite from point A to point B over N seconds.
   - Many types of effects, easy to define custom ones.
   - Takes parameters: start/end time, others depending on effect.
-
-- C equivalent of Rect.new_from_object (see rect.rb)
-  - Screen#update (cannot pass object with rect attribute)
-  - Screen#update_rects (same as above)
-  - Why not just call the ruby function from within C?

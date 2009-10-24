@@ -1,5 +1,80 @@
 = NEWS
 
+== Rubygame 2.6.0
+
+Release focus: Ported to FFI.
+
+=== FFI
+
+Rubygame is now pure Ruby, with no compiled C code. Instead, it uses
+Ruby-FFI (or compatible FFI implementations) to directly access SDL
+and related libraries. That means:
+
+- It is much easier to install. You can install it directly from
+  RubyGems (`gem install rubygame`) on any operating system, and you
+  don't need a C compiler or SDL headers.
+
+- It is now possible to use Rubygame on JRuby, and possibly on
+  Rubinius.
+
+- Rubygame will be slightly slower than before. But, the hard work is
+  still being done by SDL, so the speed decrease is only minor. The
+  increased portability and ease of future development greatly
+  outweighs the small speed loss.
+
+Despite the major architectural change, Rubygame 2.6 API is meant to
+be backwards compatible with Rubygame 2.5 and earlier. If you find an
+API incompatibility, you should report it as a bug.
+
+However, there are a few minor incompatibilities that are already known,
+and most likely cannot or will not be fixed:
+
+- Surface#flip now needs SDL_gfx to run. Before, it needed only plain
+  SDL, but the code for it was too slow when reimplemented in Ruby.
+
+- Rubygame::VERSIONS[:sdl_gfx] now reports [0,0,0] when SDL_gfx is
+  available, instead of its real version number. SDL_gfx does not
+  currently provide any way to detect its version number at run time.
+  (VERSIONS still reports nil when SDL_gfx is not available, the same
+  as in 2.5 and earlier.)
+
+=== Fixes
+
+- Fixed: Surface#set_at() now correctly sets the pixel's opacity for
+  Surfaces with an alpha channel. If no opacity is given for the new
+  color (i.e. only RGB), the pixel will be fully opaque.
+
+  - Note: Due to a long-standing bug, Surface.new cannot create a
+    Surface with an alpha channel. Use Surface#to_display_alpha to
+    create an alpha-channeled copy of the Surface, or load an image
+    file that has an alpha channel already.
+
+=== Other Changes
+
+- Rubygame now automatically initializes itself when loaded and cleans
+  itself up at exit. So, you no longer need to call Rubygame.init or
+  Rubygame.quit in your code (but it won't hurt if you do).
+
+- Added: New sample application, a basic image viewer.
+  See samples/image_viewer.rb.
+
+- Added: Documentation listing every keyboard symbol used by Rubygame.
+  See doc/keyboard_symbols.rdoc.
+
+- Added: Guide to setting custom load parts for SDL libraries.
+  See doc/custom_sdl_load_paths.rdoc.
+
+- Surface#alpha= is now a true alias for Surface#set_alpha. It was a
+  separate method before. It can still be used in the same way as
+  before.
+
+- Surface#colorkey= is now a true alias for Surface#set_colorkey. It
+  was a separate method before. It can still be used in the same way
+  as before.
+
+
+
+
 == Rubygame 2.5.3
 
 Release focus: Bug fixes.
