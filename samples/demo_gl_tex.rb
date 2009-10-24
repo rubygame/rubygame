@@ -21,7 +21,7 @@ WIDE = 640
 HIGH = 480
 SCALE = 500.0
 shadedCube=true
-TEXTURE = "ruby.png"
+TEXTURE = "rubygame.png"
 
 Rubygame.init
 
