@@ -49,6 +49,10 @@ and most likely cannot or will not be fixed:
     create an alpha-channeled copy of the Surface, or load an image
     file that has an alpha channel already.
 
+- Fixed: Music.load now automatically opens audio if needed. MP3s (and
+  perhaps other file types) would fail to load in some circumstances
+  if audio was not open.
+
 === Other Changes
 
 - Rubygame now automatically initializes itself when loaded and cleans
