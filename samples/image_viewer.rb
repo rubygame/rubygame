@@ -26,11 +26,11 @@ at_exit { Rubygame.quit }
 
 # Decide which image file to load.
 this_dir = File.dirname( __FILE__ )
-file = File.expand_path( "ruby.png", this_dir ) # default file
+file = File.expand_path( "rubygame.png", this_dir ) # default file
 if ARGV[0]
   file = File.expand_path( ARGV[0], this_dir )
 else
-  puts "You can pass an image to this file to load it."
+  puts "You can pass an script to this file to load it."
 end
 
 
