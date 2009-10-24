@@ -6,14 +6,14 @@ Copyright and licensing information for those items is included herein
 for your convenience.
 
 
-
-"ruby.png"         copyright (C) 2006  John Croisant
-"term16.png"       copyright (C) 2005  John Croisant
 "panda.png"        copyright (C) 2004  John Croisant
+"ruby.png"         copyright (C) 2006  John Croisant
+"rubygame.png"     copyright (C) 2009  John Croisant
 "song.ogg"         copyright (C) 1999  Bjorn De Meyer
+"term16.png"       copyright (C) 2005  John Croisant
 
 
-"ruby.png", "term16.png", "panda.png", and "song.ogg"
+"panda.png", "ruby.png", "rubygame.png", "song.ogg", and "term16.png"
 are licensed under the Creative Commons Attribution-ShareAlike 2.5 License. 
 
 To view a copy of this license, visit
@@ -28,7 +28,8 @@ or send a letter to:
 
 
 
-"FreeSans.ttf"     copyright (C) 2002-2003  Free Software Foundation
+"FreeSans.ttf"     Copyleft 2002, 2003, 2005, 2008, 2009
+                   Free Software Foundation.
 
 "FreeSans.ttf" is licensed under the GNU General Public License.
 
