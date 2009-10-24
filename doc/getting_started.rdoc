@@ -1,5 +1,9 @@
 = Getting Started with Rubygame
 
+This guide is also available on the Rubygame wiki:
+
+* http://rubygame.org/wiki/Getting_started
+
 == About Rubygame
 
 Rubygame is a cross-platform game-development library for Ruby,
