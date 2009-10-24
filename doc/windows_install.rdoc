@@ -1,123 +1,51 @@
-= Compiling Rubygame on Windows
+Note: You can view the latest version of this guide online at the
+Rubygame wiki: http://rubygame.org/wiki/Windows_Installation_Guide
 
-(For the most up-to-date version of this document, see the Rubygame wiki:
-http://rubygame.wiki.sourceforge.net/win32_compile)
+== Gather Dependencies
 
-This document gives some helpful guidelines to for compiling and installing
-Rubygame on Microsoft Windows. However, these instructions are not perfect,
-so they might not work for you. If you use this guide, we'd love to hear about
-what worked and what didn't; just send a message to the {rubygame-users mailing
-list}[https://sourceforge.net/mail/?group_id=172781]!
+* {Ruby}[http://www.ruby-lang.org/en/downloads/], the language itself.
+  The easiest option here is the one-click installer. This will
+  install Ruby and a number of useful libraries without any hassle.
 
-The usual caveats apply: follow these instructions at your own risk and so
-forth.  Please direct comments or questions to the {Rubygame user's mailing
-list}[http://sourceforge.net/mail/?group_id=172781].
+* {SDL}[http://www.libsdl.org/download-1.2.php].
+  Download the Win32 binary package, e.g. "SDL-1.2.14-win32.zip".
 
-== Step 1: Gather Dependencies
+The rest are optional dependencies, but highly recommended. If you
+don't have them, you won't be able to use certain features of
+Rubygame.
 
-- You'll need a build environment for Windows. In this guide, we'll use 
-  {MinGW}[http://www.mingw.org/MinGWiki/index.php/GettingStarted].  
-  - Grab MinGW-NNN.exe (e.g. MinGW-5.12.exe) from the {downloads page}[http://sourceforge.net/project/showfiles.php?group_id=2435&package_id=82721]
-    and install it. (Note: you might need to expand the "MinGW" section to see
-    the MinGW-NNN.exe files.)
-  - Optional, but recommended: install MSYS-NNNN.exe (e.g. MSYS-1.0.10.exe)
-    from the same page as above. (You might have to expand the MSYS section.)
-  - Add the full path to the compiler executible to your system PATH if it 
-    isn't there already.  You should be able to type <code>gcc -v</code> at a
-    command line and see a version number.
+* {SDL_image}[http://www.libsdl.org/projects/SDL_image/].
+  Grab the Win32 binary package, e.g. "SDL_image-1.2.8-win32.zip".
 
-- {Download Ruby}[http://www.ruby-lang.org/en/downloads/], the language itself.
-  The easiest option here is the one-click installer.  This will install
-  Ruby and a number of useful libraries without any hassle.
+* {SDL_mixer}[http://www.libsdl.org/projects/SDL_mixer/].
+  Just like before, grab the Win32 binary package, e.g.
+  "SDL_mixer-1.2.9-win32.zip".
 
-- {SDL}[http://www.libsdl.org/download-1.2.php]. In the <b>Development 
-  Libraries</b> section (near the bottom of the page), grab the 
-  SDL-devel-1.2.??-VC6.zip file. (The VC6 package is just fine, even though
-  we're using with MinGW to compile.)
+* {SDL_ttf}[http://www.libsdl.org/projects/SDL_ttf/].
+  Again, get the Win32 binary package, e.g. "SDL_ttf-2.0.9-win32.zip".
 
-The rest are optional dependencies, but highly recommended. If you don't have
-them, you won't be able to use certain features of Rubygame.
+* {SDL_gfx}[http://www.ferzkopp.net/joomla/content/view/19/14/]
+  ({compiled version}[http://download.rubygame.org/files/extras/]).
+  Many thanks to a generous Rubygame user (bmatthew1) for providing a
+  compiled Windows DLL for SDL_gfx!
 
-- {SDL_image}[http://www.libsdl.org/projects/SDL_image/]. Grab the Win32 
-  binary package with 'devel' in the name.
-- {SDL_mixer}[http://www.libsdl.org/projects/SDL_mixer/]. Just like before,
-  grab the Win32 binary package with 'devel' in the name.
-- {SDL_ttf}[http://www.libsdl.org/projects/SDL_ttf/]. Again, get the
-  Win32 binary package with 'devel' in the name
-- {SDL_gfx}[http://www.ferzkopp.net/joomla/content/view/19/14/].  This is
-  the trickiest dependency, because there is currently no official package for
-  a precompiled version of SDL_gfx. If you are able to compile this yourself,
-  great! Otherwise, some nice features of Rubygame have to be disabled;
-  make sure you add the --no-gfx flag when you get to the "Set up environment
-  variables" section, below.
+Once you have downloaded everything, unzip them and copy the *.dll
+files into the <code>C:\windows\system32\</code> directory. This will
+allow the libraries to be detected and loaded by Rubygame.
 
-Once you have downloaded everything, extract each archive into a convenient
-location on your hard drive.  You'll thank yourself later if you use a short
-path with no spaces in it.  For this example, we'll unzip everything under 
-<code>C:\\src\\</code>.
+== Install Rubygame
 
-Next, copy the *.dll file from each library's folder into 
-<code>C:\\windows\\system32\\</code>.
-This will allow the libraries to be detected properly later on.
+The simplest way to install Rubygame is: <code>gem install rubygame</code>
 
-== Step 2: Get Rubygame
+Or you can {download the source from
+Github}[http://github.com/jacius/rubygame/] and follow the
+installation instructions in README.
 
-If you haven't already, download the latest Rubygame source from the 
-{download page}[http://rubyforge.org/frs/?group_id=5089]. 
-If you're feeling adventurous, you could try the in-development code from
-the {Git repository}[http://github.com/jacius/rubygame].  
-You can decompress the .tar.bz2 file with either MSYS' <code>tar</code>
-(<code>tar xvjf rubygame-2.0.0.tar.bz2</code>) or a program like 
-{7zip}[http://www.7-zip.org].
+== Conclusion
 
-Extract the source into another folder of your choice, such as 
-<code>C:\\src\\rubygame</code>.
+If all goes well, you have successfully installed Rubygame. Try to
+execute <code>require 'rubygame'</code> in an irb session and run the
+provided samples to ensure that everything is acceptable.
 
-== Step 3: Set up environment variables
-
-Environment variables are used to configure the build process for your
-system; it helps the compiler to locate the headers and libraries it needs to
-compile Rubygame. 
-
-Create a text file in your Rubygame directory called "envsetup.bat".
-In it, use code based on the following to set your variables.
-Be sure to replace '\src\' (lines 3-7) with the path to where you unpacked
-the libraries.
-
- set CC=gcc
- set CFLAGS=-DHAVE_ISINF -D_MSC_VER=1200 
- set CFLAGS=%CFLAGS% -I \src\SDL-1.2.11\include
- set CFLAGS=%CFLAGS% -I \src\SDL_gfx-2.0.15
- set CFLAGS=%CFLAGS% -I \src\SDL_image-1.2.5\include
- set CFLAGS=%CFLAGS% -I \src\SDL_mixer-1.2.7\include
- set CFLAGS=%CFLAGS% -I \src\SDL_ttf-2.0.8\include
- 
- set LDSHARED=gcc -shared
- set LINK_FLAGS=-L \windows\system32 -lSDL
- set LIBRUBYARG_SHARED=-L \ruby\bin -lmsvcrt-ruby18
-
-The -L parameter for LIBRUBYARG_SHARED may be different if you installed
-Ruby to a path other than C:/ruby.
-
-== Step 4: Compile and install Rubygame
-
-Open a command prompt and navigate to the root of your Rubygame source
-directory.  Type:
-
- envsetup.bat
- rake install
-
-IMPORTANT: If you are missing an optional library (such as SDL_gfx), you must
-disable optional features by passing a "no-???" command to rake before the word
-"install". For example, to disable features that depend on SDL_gfx, you would
-type this instead of the above:
-
- envsetup.bat
- rake no-sdl-gfx install
-
-If all goes well, you have built and installed Rubygame.
-Try to execute <code>require 'rubygame'</code> in an irb session and run
-the provided samples to ensure that everything is acceptable.
-
-(Thanks to Ash Wilson (smashwilson) for contributing the original version of 
-these instructions.)
+If you have any trouble installing Rubygame, please post in the
+{forums}[http://rubygame.org/forums/].

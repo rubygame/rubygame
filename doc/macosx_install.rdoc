@@ -1,70 +1,84 @@
-= How to install Rubygame on Mac OS X
+Note: You can view the latest version of this guide online at the
+Rubygame wiki: http://rubygame.org/wiki/Mac_Installation_Guide
 
-This is an outline of the steps to compile and use Rubygame on Mac OS X!
+== Installing Xcode
+
+Rubygame does not need to be compiled anymore (since version 2.6),
+but you will need to install the Xcode development tools in order
+to install the dependencies with Fink or Darwinports, as well as
+to compile rsdl.
+
+You can find Xcode on your Mac OS X installation disc. Or, you can
+download Xcode online. You must register for a (free) Mac developer
+account for this.
+
+* Mac OS X 10.5 (Leopard) and 10.6 (Snow Leopard):
+  {Xcode 3.1}[https://connect.apple.com/cgi-bin/WebObjects/MemberSite.woa/wa/getSoftware?bundleID=20414]
+
+* Mac OS X 10.3 (Panther) and 10.4 (Tiger):
+  {Xcode 2.5}[http://connect.apple.com/cgi-bin/WebObjects/MemberSite.woa/wa/getSoftware?bundleID=19907]
 
 == Installing dependencies...
 
-You have two options for installing the software libraries that Rubygame
-depends on: Darwinports or Fink. Which option you choose is just a matter of
-preference.
+You have two options for installing the software libraries that
+Rubygame depends on: Fink or Darwinports. Which option you choose is
+just a matter of preference.
 
-=== ...with Darwinports[http://darwinports.opendarwin.org/]
-
-
-1. {Install darwinports}[http://darwinports.opendarwin.org/getdp/]
-2. Open a new terminal (can be found in /Applications/Utilities).
-3. Install SDL: 
-
-    sudo port install libsdl
-
-4. (Optional, but *highly* recommended:) Install the SDL companion 
-   libraries: 
-
-    sudo port install libsdl_gfx libsdl_image libsdl_mixer libsdl_ttf
-
-=== ...with Fink[http://www.finkproject.org/]
+=== ...with {Fink}[http://www.finkproject.org/]
 
 1. {Install Fink}[http://www.finkproject.org/download/index.php?phpLang=en]
    and update to the latest version.
 2. Open a new terminal (can be found in /Applications/Utilities).
 3. Install SDL:
 
-    sudo apt-get install sdl
+     sudo apt-get install sdl
 
 4. (Optional, but *highly* recommended:) Install the SDL companion
    libraries:
 
-    sudo apt-get install sdl-gfx13 sdl-image sdl-mixer sdl-ttf
+     sudo apt-get install sdl-gfx13 sdl-image sdl-mixer sdl-ttf
+
+Thanks to Matt Crinklaw for these instructions.
+
+=== ...with {Darwinports}[http://darwinports.com/]
+
+1. {Install Darwinports}[http://darwinports.com/download/] (you must
+   register first).
+2. Open a new terminal (can be found in /Applications/Utilities).
+3. Install SDL:
+
+     sudo port install libsdl
+
+4. (Optional, but *highly* recommended:) Install the SDL companion
+   libraries:
+
+     sudo port install libsdl_gfx libsdl_image libsdl_mixer libsdl_ttf
+
+Thanks to Raffael Mancini (sepisultrum) for these instructions.
 
 == Installing rsdl
 
-In order to use Rubygame applications on Mac OS X, you must use a special wrapper for the ruby interpreter, called rsdl.
+In order to use Rubygame applications on Mac OS X, you must use a special wrapper for the Ruby interpreter, called rsdl.
 
-1. {Download and unpack rsdl}[http://www.kumaryu.net/?c=plugin;plugin=attach_download;p=%28Ruby%29+Ruby%2FSDL%CD%D1ruby;file_name=rsdl.tar.gz].
+1. {Get rsdl}[http://github.com/knu/rsdl].
 2. From within the rsdl directory:
 
-    make
-    sudo cp rsdl /usr/local/bin/
-    
+     ruby ./configure.rb
+     make
+     sudo cp rsdl /usr/local/bin/
 
 == Installing Rubygame
-1. {Download and unpack Rubygame}[http://rubyforge.org/frs/?group_id=5089].
-2. From within the rubygame directory:
 
-    sudo rake install
+The simplest way to install Rubygame is: <code>gem install rubygame</code>
 
-3. Please refer to the README file for options that you can pass to setup.rb
-   or rake (depending on your version of Rubygame)
+Or you can {download the source
+from Github}[http://github.com/jacius/rubygame/] and follow the installation instructions in README.
 
 == Running an application
 
 If all went well, you can now run Rubygame applications like so: 
-<code>rsdl a_rubygame_app.rb</code>
 
-If something bad happened along the way, you can {email rubygame-users}[https://sourceforge.net/mail/?group_id=172781]
-and we'll try to help! Be sure to include plenty of details and paste any error
-messages that occur (plus a good bit of the text right before the error
-messages).
+    rsdl a_rubygame_app.rb
 
-(Many thanks to Raffael Mancini (sepisultrum) and Matt Crinklaw for
-instructions to install dependencies with darwinports and fink, respectively.)
+If you have any trouble installing Rubygame, please post in the
+{forums}[http://rubygame.org/forums/].
