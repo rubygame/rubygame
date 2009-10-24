@@ -19,19 +19,20 @@
 
 
 
-# **IMPORTANT**: Music is only available if Rubygame was compiled
-# with SDL_mixer support!
+# *IMPORTANT*: this class only exists if SDL_mixer is available!
+# Your code should check "defined?(Rubygame::Music) != nil" to see if
+# you can use this class, or be prepared to rescue from NameError.
 #
 # Music holds a song, streamed from an audio file (see #load for
 # supported formats). There are two important differences between
 # the Music and Sound classes:
 #
-#   1. Only one Music can be playing. If you try to play
-#      a second song, the first one will be stopped.
+# 1. Only one Music can be playing. If you try to play
+#    a second song, the first one will be stopped.
 #
-#   2. Music doesn't load the entire audio file, so it can begin
-#      quickly and doesn't use much memory. This is good, because
-#      music files are usually much longer than sound effects!
+# 2. Music doesn't load the entire audio file, so it can begin
+#    quickly and doesn't use much memory. This is good, because
+#    music files are usually much longer than sound effects!
 #
 # Music can #play, #pause/#unpause, #stop, #rewind, #jump_to another
 # time, adjust #volume, and #fade_out (fade in by passing an option

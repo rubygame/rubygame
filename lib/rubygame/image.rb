@@ -46,13 +46,15 @@ class Rubygame::Surface
     end
 
 
+    # *IMPORTANT*: this method only exists if SDL_image is available!
+    # Your code should check "defined?(Rubygame::Surface.load) != nil"
+    # to see if you can use this method, or be prepared to rescue from
+    # NameError.
+    # 
     # Load an image file from the disk to a Surface. If the image has an alpha
     # channel (e.g. PNG with transparency), the Surface will as well. If the
     # image cannot be loaded (for example if the image format is unsupported),
     # will raise SDLError.
-    #
-    # This method is only usable if Rubygame was compiled with the SDL_image
-    # library; you can check Rubygame::VERSIONS[:sdl_image] to see if it was.
     #
     # This method takes this argument:
     # filename:: a string containing the relative or absolute path to the
@@ -92,15 +94,17 @@ class Rubygame::Surface
     end
 
 
+    # *IMPORTANT*: this method only exists if SDL_image is available!
+    # Your code should check
+    # "defined?(Rubygame::Surface.load_from_string) != nil" to see if
+    # you can use this method, or be prepared to rescue from
+    # NameError.
+    # 
     # Load an image file from memory (in the form of the given data)
     # to a Surface. If the image has an alpha channel (e.g. PNG with
     # transparency), the Surface will as well. If the image cannot be
     # loaded (for example if the image format is unsupported), will
     # raise SDLError.
-    # 
-    # This method is only usable if Rubygame was compiled with the
-    # SDL_image library; you can check Rubygame::VERSIONS[:sdl_image]
-    # to see if it was.
     # 
     # This method takes these arguments:
     # data:: a string containing the data for the image, such as

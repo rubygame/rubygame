@@ -50,6 +50,10 @@ class Rubygame::Surface
   private :_draw_line
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:draw_line)" to see if
+  # you can use this method, or be prepared to rescue from NameError.
+  #
   # Draw a line segment between two points on the Surface.
   # See also #draw_line_a
   #
@@ -65,6 +69,10 @@ class Rubygame::Surface
   end
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:draw_line_a)" to see if
+  # you can use this method, or be prepared to rescue from NameError.
+  #
   # Like #draw_line, but the line will be anti-aliased.
   #
   def draw_line_a( point1, point2, color )
@@ -90,6 +98,10 @@ class Rubygame::Surface
   private :_draw_box
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:draw_box)" to see if
+  # you can use this method, or be prepared to rescue from NameError.
+  #
   # Draw a non-solid box (rectangle) on the Surface, given the
   # coordinates of its top-left corner and bottom-right corner. See
   # also #draw_box_s
@@ -106,6 +118,11 @@ class Rubygame::Surface
   end
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:draw_box_s)" to see
+  # if you can use this method, or be prepared to rescue from
+  # NameError.
+  #
   # Like #draw_box, but the shape is solid, instead of an outline.
   # (You may find using #fill to be more convenient and perhaps faster
   # than this method.)
@@ -135,6 +152,11 @@ class Rubygame::Surface
   private :_draw_circle
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:draw_circle)" to see
+  # if you can use this method, or be prepared to rescue from
+  # NameError.
+  #
   # Draw a non-solid circle on the Surface, given the coordinates of its
   # center and its radius. See also #draw_circle_a and #draw_circle_s
   #
@@ -150,6 +172,10 @@ class Rubygame::Surface
   end
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:draw_circle_a)" to see if
+  # you can use this method, or be prepared to rescue from NameError.
+  #
   # Like #draw_circle, but the outline is anti-aliased.
   #
   def draw_circle_a( center, radius, color )
@@ -158,6 +184,11 @@ class Rubygame::Surface
   end
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:draw_circle_s)" to
+  # see if you can use this method, or be prepared to rescue from
+  # NameError.
+  #
   # Like #draw_circle, but the shape is solid, instead of an outline.
   #
   def draw_circle_s( center, radius, color )
@@ -185,6 +216,11 @@ class Rubygame::Surface
   private :_draw_ellipse
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:draw_ellipse)" to see
+  # if you can use this method, or be prepared to rescue from
+  # NameError.
+  #
   # Draw a non-solid ellipse (oval) on the Surface, given the 
   # coordinates of its center and its horizontal and vertical radii.
   # See also #draw_ellipse_a and #draw_ellipse_s
@@ -201,6 +237,10 @@ class Rubygame::Surface
   end
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:draw_ellipse_a)" to see if
+  # you can use this method, or be prepared to rescue from NameError.
+  #
   # Like #draw_ellipse, but the ellipse border is anti-aliased.
   #
   def draw_ellipse_a( center, radii, color )
@@ -209,6 +249,11 @@ class Rubygame::Surface
   end
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:draw_ellipse_s)" to
+  # see if you can use this method, or be prepared to rescue from
+  # NameError.
+  #
   # Like #draw_ellipse, but the shape is solid, instead of an outline.
   #
   def draw_ellipse_s( center, radii, color )
@@ -235,6 +280,10 @@ class Rubygame::Surface
   private :_draw_arc
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:draw_arc)" to see if
+  # you can use this method, or be prepared to rescue from NameError.
+  #
   # Draw a non-solid arc (part of a circle), given the coordinates of
   # its center, radius, and starting/ending angles.
   # See also #draw_arc_s
@@ -254,6 +303,11 @@ class Rubygame::Surface
   end
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:draw_arc_s)" to see
+  # if you can use this method, or be prepared to rescue from
+  # NameError.
+  #
   # Like #draw_arc, but the shape is solid, instead of an outline.
   #
   def draw_arc_s( center, radius, angles, color )
@@ -288,6 +342,11 @@ class Rubygame::Surface
   private :_draw_polygon
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:draw_polygon)" to see
+  # if you can use this method, or be prepared to rescue from
+  # NameError.
+  #
   # Draw a non-solid polygon, given the coordinates of its vertices, in the
   # order that they are connected. This is essentially a series of connected
   # dots. See also #draw_polygon_a and #draw_polygon_s.
@@ -305,6 +364,11 @@ class Rubygame::Surface
   end
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:draw_polygon_a)" to
+  # see if you can use this method, or be prepared to rescue from
+  # NameError.
+  #
   # Like #draw_polygon, but the lines are anti-aliased.
   #
   def draw_polygon_a( points, color )
@@ -313,6 +377,11 @@ class Rubygame::Surface
   end
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:draw_polygon_s)" to
+  # see if you can use this method, or be prepared to rescue from
+  # NameError.
+  #
   # Like #draw_polygon, but the shape is solid, instead of an outline.
   #
   def draw_polygon_s( points, color )
@@ -322,6 +391,10 @@ class Rubygame::Surface
 
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:rotozoom)" to see if
+  # you can use this method, or be prepared to rescue from NameError.
+  #
   # Return a rotated and/or zoomed version of the given surface. Note
   # that rotating a Surface anything other than a multiple of 90
   # degrees will cause the new surface to be larger than the original
@@ -364,6 +437,11 @@ class Rubygame::Surface
   end
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:rotozoom_size)" to
+  # see if you can use this method, or be prepared to rescue from
+  # NameError.
+  #
   # Return the dimensions of the surface that would be returned if
   # #rotozoom were called on a Surface of the given size, with
   # the same angle and zoom factors.
@@ -395,6 +473,10 @@ class Rubygame::Surface
 
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:zoom)" to see if you
+  # can use this method, or be prepared to rescue from NameError.
+  #
   # Return a zoomed version of the Surface.
   #
   # This method takes these arguments:
@@ -426,6 +508,10 @@ class Rubygame::Surface
 
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:zoom_size)" to see if
+  # you can use this method, or be prepared to rescue from NameError.
+  #
   # Return the dimensions of the surface that would be returned if
   # #zoom were called on a Surface of the given size, with the same
   # zoom factors.
@@ -453,6 +539,10 @@ class Rubygame::Surface
 
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:zoom_to)" to see if
+  # you can use this method, or be prepared to rescue from NameError.
+  #
   # Return a version of the Surface zoomed to a new size.
   #
   # This method takes these arguments:
@@ -478,6 +568,10 @@ class Rubygame::Surface
 
 
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:flip)" to see if you
+  # can use this method, or be prepared to rescue from NameError.
+  #
   # Flips the source surface horizontally (if +horz+ is true), vertically
   # (if +vert+ is true), or both (if both are true).
   #

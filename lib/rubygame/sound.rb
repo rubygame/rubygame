@@ -19,8 +19,9 @@
 
 
 
-# **IMPORTANT**: Sound is only available if Rubygame was compiled
-# with SDL_mixer support!
+# *IMPORTANT*: this class only exists if SDL_mixer is available!
+# Your code should check "defined?(Rubygame::Sound) != nil" to see if
+# you can use this class, or be prepared to rescue from NameError.
 #
 # Sound holds a sound effect, loaded from an audio file (see #load for
 # supported formats).

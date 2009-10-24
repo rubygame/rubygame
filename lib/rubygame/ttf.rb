@@ -24,16 +24,15 @@ require "ruby-sdl-ffi/ttf"
 Rubygame::VERSIONS[:sdl_ttf] = SDL::TTF.Linked_Version().to_ary
 
 
+# *IMPORTANT*: this class only exists if SDL_ttf is available!
+# Your code should check "defined?(Rubygame::TTF) != nil" to see if
+# you can use this class, or be prepared to rescue from NameError.
+# 
 # TTF provides an interface to SDL_ttf, allowing TrueType Font files to be
 # loaded and used to render text to Surfaces.
 #
 # The TTF class *must* be initialized with the #setup method before any
 # TTF objects can be created or used.
-#
-# This class is only usable if Rubygame was compiled with the SDL_ttf
-# library. You may test if this feature is available with the #usable?
-# method. If you need more flexibility, you can check the library version
-# that Rubygame was compiled against with the #version method.
 #
 class Rubygame::TTF
 
