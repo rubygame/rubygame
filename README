@@ -69,6 +69,34 @@
  demo_rubygame.rb, and chimp.rb.
 
 
+ == About the version number
+
+ The version number of Rubygame has a strict meaning, to help you
+ decide whether the new version might break your application. The
+ version number has 3 parts: the major number, the minor number, and
+ the patch number. For the example of Rubygame 2.6.0:
+
+     2   .   6   .   0
+   MAJOR . MINOR . PATCH
+
+ When a new release of Rubygame is made, one of the version numbers
+ will go up, and the numbers that come after it will be reset to 0.
+ Which number will go up depends on how much the Rubygame API changed:
+
+ - *MAJOR*: API has changed, and old apps _must_ be updated.
+   An example of this is when a class has been significantly changed,
+   or a method has renamed/moved to another module and the old name is
+   removed.
+
+ - *MINOR*: API has changed, but old apps will still work.
+   An example of this is when a new feature has been added, or a
+   method has been renamed but the old name is still supported.
+
+ - *PATCH*: API has not changed at all.
+   An example of this is when a bug has been fixed, or existing code
+   has been improved beneath the surface.
+
+
  == License
 
  Rubygame is distributed under the terms of the GNU Lesser GPL.
