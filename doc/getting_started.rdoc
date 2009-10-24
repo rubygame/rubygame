@@ -2,46 +2,71 @@
 
 == About Rubygame
 
-Rubygame is a combination extension and library for the Ruby language,
-designed for creating computer games (and having fun doing it!).
-As an extension, it provides an interface to the Simple DirectMedia Library
-(SDL) and its companion libraries SDL_gfx, SDL_image, SDL_ttf, and SDL_mixer.
-As a Ruby library, it provides classes/modules which implement some useful
-concepts such as Sprites, Event Queues, and rasterized fonts (SFont).
+Rubygame is a cross-platform game-development library for Ruby,
+inspired by Pygame. Rubygame strives to empower game developers by
+providing them with powerful and flexible mid-to-high level tools.
+Instead of worrying about low-level technical details, you can focus
+your energy on more interesting things (like making a fun game).
 
-== Suggested Order
+== Installing Rubygame
+
+Installation guides for Mac and Windows are available in the 'doc'
+directory:
+
+Mac::     {doc/macosx_install.rdoc}[link:doc/macosx_install.rdoc]
+Windows:: {doc/windows_install.rdoc}[link:doc/windows_install.rdoc]
+
+You can also find installation instructions for many operating systems
+online at the Rubygame wiki:
+
+* http://rubygame.org/wiki/Installation_Instructions
+
+== Guides and tutorials
+
+The Rubygame wiki has a list of guides and tutorials to help you get
+started using Rubygame:
+
+* http://rubygame.org/wiki/Guides_and_tutorials
+
+== Suggested order of reading
 
 To get acquainted with Rubygame, we recommend exploring the available classes
 and modules in this order.
 
 First, take a look at the most fundamental classes: 
-- Rubygame::Screen (the display window, what the user sees)
-- Rubygame::Surface (stores image data which can be copied to the Screen)
-- Rubygame::Rect (stores a rectangular area, like part of the Screen)
 
-As a next step, read about the event Queue and the hardware events, which
-allow you to take keyboard and mouse input, among other things.
-- Rubygame::EventQueue (stores events for processing)
-- Rubygame::KeyDownEvent (keyboard button is pressed)
-- Rubygame::KeyUpEvent (keyboard button is released)
-- Rubygame::MouseDownEvent (mouse button is clicked)
-- Rubygame::MouseUpEvent (mouse button is released)
-- Rubygame::MouseMotionEvent (mouse cursor is moved)
-- Rubygame::QuitEvent (user tries to close the window)
-- Rubygame::JoyDownEvent (joystick button is pressed)
-- Rubygame::JoyUpEvent (joystick button is released)
-- Rubygame::JoyAxisEvent (joystick axis is moved)
-- Rubygame::JoyBallEvent (joystick trackball is moved)
-- Rubygame::JoyHatEvent (joystick 8-directional hat switch is moved)
-- Rubygame::ActiveEvent (the Screen gets keyboard and/or mouse focus)
-- Rubygame::ResizeEvent (the Screen is resized)
-- Rubygame::ExposeEvent (the Screen is redrawn, mostly for OpenGL)
+Rubygame::Surface:: An image canvas that you can load from an image
+                    file, draw shapes on and "blit" (copy) to other
+                    Surfaces (or the Screen).
+Rubygame::Screen::  A special Surface that is displayed to the user.
+                    Everything drawn on the Screen appears in the
+                    application window on the user's desktop.
+Rubygame::Rect::    A rectangular area, used for choosing what parts
+                    of a Surface to copy from or to, among other uses.
 
-Finally, familiarize yourself with:
-- Rubygame::Clock for monitoring and controlling framerate to save resources
-- Rubygame::Sprites for an easy-to-use yet flexible on-screen object framework
-- Rubygame::TTF and Rubygame::SFont for rendering text
-- Rubygame::GL for hardware-accelerated 3D graphics with OpenGL
+As a next step, read about the EventQueue, EventHandler, and the user
+input event classes. These allow you to handle keyboard, mouse, and
+joystick input from the user, among other things. By creating your own
+event classes, these systems can also be used to represent things
+occuring within your game, such as the player losing a life or the
+level being completed.
 
-There are several sample applications in the rubygame/samples/ directory
+Rubygame::EventQueue::   A special Array that caches events to be
+                         handled later.
+Rubygame::EventHandler:: A flexible hook-based system for performing
+                         actions when certain types of events occur.
+Rubygame::Events::       A module containing all the built-in event
+                         classes in Rubygame.
+
+Finally, you may be interested in these features:
+
+Rubygame::Sprites:: A simple and flexible game object framework.
+Rubygame::Sound::   Play sound effects to make your game more lively.
+Rubygame::Music::   Play music to enhance your game's mood.
+Rubygame::Clock::   Monitor and control framerate to lower CPU use.
+Rubygame::TTF::     Render text with TrueType fonts.
+Rubygame::SFont::   Render text with bitmap-based fonts.
+Rubygame::GL::      Enable OpenGL 2D & 3D graphics.
+
+There are several sample applications in the 'samples' directory
 packaged with Rubygame which can also help you get started.
