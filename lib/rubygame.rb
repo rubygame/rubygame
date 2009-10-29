@@ -27,7 +27,6 @@ this_dir = File.expand_path( File.dirname(__FILE__) )
 # Note: screen.rb is intentionally loaded late.
 %w{ main
     shared
-    audio
     clock
     constants
     color
