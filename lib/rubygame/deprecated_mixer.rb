@@ -81,10 +81,10 @@ module Rubygame::Mixer
 
     Rubygame.deprecated( "Rubygame::Mixer", "3.0" )
 
-    frequency = (frequency or 22050)
-    format    = (format    or AUDIO_U16SYS)
-    channels  = (channels  or 2)
-    buffer    = (buffer    or 1024)
+    frequency ||= 22050
+    format    ||= SDL::Mixer::DEFAULT_FORMAT
+    channels  ||= 2
+    buffer    ||= 1024
 
     result = SDL::Mixer.OpenAudio(frequency, format, channels, buffer)
 
