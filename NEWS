@@ -1,5 +1,23 @@
 = NEWS
 
+== Rubygame 2.6.1
+
+Release focus: Bug fixes.
+
+=== Fixes
+
+- Fixed: Rubygame::Mixer.open_audio was using a different default
+  audio format than it did in 2.5.3, which caused an error on Mac.
+  (Note: The Rubygame::Mixer.open_audio is deprecated, but kept for
+  backwards compatibility. Use Rubygame.open_audio instead.)
+
+- Fixed: Rubygame no longer tries to load audio features if SDL_mixer
+  is not available. Trying to load them would cause an error, and
+  didn't match the old behavior.
+
+
+
+
 == Rubygame 2.6.0
 
 Release focus: Ported to FFI.
