@@ -60,6 +60,23 @@ class Rubygame::Screen < Rubygame::Surface
 
     alias :open :new
 
+    # Deprecated alias for Screen.new. This method will be REMOVED in
+    # Rubygame 3.0. You should use Screen.new (or its alias,
+    # Screen.open) instead.
+    # 
+    def set_mode( size, depth=0, flags=[Rubygame::SWSURFACE] )
+      Rubygame.deprecated("Rubygame::Screen.set_mode", "3.0")
+      new( size, depth, flags )
+    end
+
+    # Deprecated alias for Screen.new. This method will be REMOVED in
+    # Rubygame 3.0. You should use Screen.new (or its alias,
+    # Screen.open) instead.
+    # 
+    def instance( size, depth=0, flags=[Rubygame::SWSURFACE] )
+      Rubygame.deprecated("Rubygame::Screen.instance", "3.0")
+      new( size, depth, flags )
+    end
 
     # Close the Screen, making the Rubygame window disappear.
     # This method also exits from fullscreen mode, if needed.
