@@ -1,5 +1,19 @@
 = NEWS
 
+== Rubygame 2.6.2
+
+Release focus: Bug fixes.
+
+=== Fixes
+
+- Fixed: Rubygame::Screen.set_mode and Rubygame::Screen.instance were
+  accidently lost during the FFI port. (Note: those methods are
+  deprecated, but kept for backwards compatibility. New code should
+  use Rubygame::Screen.new or Rubygame::Screen.open instead.)
+
+
+
+
 == Rubygame 2.6.1
 
 Release focus: Bug fixes.
