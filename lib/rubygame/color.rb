@@ -102,9 +102,16 @@ module Rubygame
     end
 
     def self.make_sdl_rgba( color ) # :nodoc:
-      r,g,b,a = convert_color(color).collect!{ |c| c.to_i }[0,4]
-      a = 255 if a.nil?
-      [r,g,b,a]
+      @rgba_colors ||= {}
+      converted_color = @rgba_colors[color]
+
+      if converted_color.nil?
+        r,g,b,a = convert_color(color).collect!{ |c| c.to_i }[0,4]
+        a = 255 if a.nil?
+        converted_color = [r,g,b,a]
+        @rgba_colors[color] = converted_color
+      end
+      converted_color
     end
 
 	end
