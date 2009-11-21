@@ -59,6 +59,14 @@ module Rubygame
 			end
 			alias :inspect :to_s
 			
+			def hash
+				@hash ||= ((@h.hash << 4) +
+				           (@s.hash << 3) +
+				           (@l.hash << 2) +
+				           (@a.hash << 1) +
+				           self.class.hash)
+			end
+
 			class << self
 
 				def new_from_rgba( rgba )
