@@ -76,7 +76,7 @@ class Rubygame::Surface
     # XPM:: "XPixMap" format.
     # 
     def load( filename )
-      surf = SDL::Image.Load( filename )
+      surf = SDL::Image.Load( filename.to_s )
 
       if( surf.pointer.null? )
         raise( Rubygame::SDLError, "Couldn't load image \"%s\": %s"%\

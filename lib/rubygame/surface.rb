@@ -601,7 +601,7 @@ class Rubygame::Surface
   # May raise SDLError if a problem occurs.
   #
   def savebmp( filename )
-    result = SDL.SaveBMP( @struct, filename )
+    result = SDL.SaveBMP( @struct, filename.to_s )
     if(result != 0)
       raise( Rubygame::SDLError, "Couldn't save surface to file %s: %s"%\
              [filename, SDL.GetError()] )

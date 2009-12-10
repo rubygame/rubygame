@@ -75,7 +75,7 @@ class Rubygame::TTF
              "You must call TTF.setup before opening a font." )
     end
 
-    @struct = SDL::TTF.OpenFont( file, size )
+    @struct = SDL::TTF.OpenFont( file.to_s, size )
 
     if( @struct.pointer.null? )
       raise Rubygame::SDLError, "Could not open font: #{SDL.GetError()}"

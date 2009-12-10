@@ -257,7 +257,7 @@ class Rubygame::Mixer::Sample
   def self.load_audio( filename )
     Rubygame.deprecated( "Rubygame::Mixer::Sample", "3.0" )
 
-    chunk = SDL::Mixer.LoadWAV( filename )
+    chunk = SDL::Mixer.LoadWAV( filename.to_s )
 
     if( chunk.pointer.null? )
       raise( Rubygame::SDLError,
@@ -331,7 +331,7 @@ class Rubygame::Mixer::Music
   def self.load_audio
     Rubygame.deprecated( "Rubygame::Mixer::Music", "3.0" )
 
-    music = SDL::Mixer.LoadMUS( filename )
+    music = SDL::Mixer.LoadMUS( filename.to_s )
 
     if( music.pointer.null? )
       raise( Rubygame::SDLError,

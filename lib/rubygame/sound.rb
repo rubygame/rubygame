@@ -73,7 +73,7 @@ class Rubygame::Sound
     def load( filename )
       Rubygame.open_audio
 
-      sound = SDL::Mixer.LoadWAV( filename )
+      sound = SDL::Mixer.LoadWAV( filename.to_s )
 
       if( sound.pointer.null? )
         raise( Rubygame::SDLError, "Could not load Sound file '%s': %s"%

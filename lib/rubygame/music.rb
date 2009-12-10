@@ -76,7 +76,7 @@ class Rubygame::Music
     def load( filename )
       Rubygame.open_audio
 
-      music = SDL::Mixer.LoadMUS( filename )
+      music = SDL::Mixer.LoadMUS( filename.to_s )
 
       if( music.pointer.null? )
         raise( Rubygame::SDLError, "Could not load Music file '%s': %s"%
