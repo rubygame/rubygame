@@ -48,6 +48,9 @@ class Rubygame::Color::Palette
 	
 	# Store a color by name in this palette. See #sanitize_name
 	def []=( name, color )
+    # Uncache colors with this name, to avoid using obsolete value.
+    Rubygame::Color.remove_from_cache( name )
+
 		name = sanitize_name( name )
 		@colors[name] = color
 	end

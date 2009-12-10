@@ -111,6 +111,12 @@ module Rubygame
         end
     end
 
+
+    def self.remove_from_cache( color_name )
+      @rgba_cache ||= {}
+      @rgba_cache.delete( color_name )
+    end
+
 	end
 end
 
