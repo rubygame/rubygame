@@ -48,18 +48,53 @@ class Rubygame::Surface
   protected :struct
 
 
-  # Create and initialize a new Surface object.
+  # call-seq:
+  #   new( size, opts={} )
+  #   new( size, depth=0, flags=[] )  # DEPRECATED
+  # 
+  # Create and initialize a new Surface.
   #
-  # A Surface is a grid of image data which you blit (i.e. copy) onto other
-  # Surfaces. Since the Rubygame display is also a Surface (see the Screen
-  # class), Surfaces can be blit to the screen; this is the most common way
-  # to display images on the screen.
+  # A Surface is a grid of image data which you blit (i.e. copy) onto
+  # other Surfaces. Since the Screen is also a Surface, Surfaces can
+  # be blit to the screen; this is the most common way to display
+  # images on the screen.
   #
   # This method may raise SDLError if the SDL video subsystem could
   # not be initialized for some reason.
   #
   # This function takes these arguments:
-  # size::  requested surface size; an array of the form [width, height].
+  # 
+  # size:: Surface size to create, [width, height] (in pixels).
+  # 
+  # opts::
+  #   Hash of options. The possible options are:
+  # 
+  #   :depth::    Requested color depth (in bits per pixel). If this
+  #               is 0 or unspecified, Rubygame automatically chooses
+  #               the depth based on the Screen mode or system depth.
+  #               Possible values: 0, 8, 15, 16, 24, 32. Default: 0.
+  # 
+  #   :alpha::    If true, Surfaces with depth 32 will have an alpha
+  #               channel (per-pixel transparency). Default: true.
+  #               (Note: Other depths cannot have an alpha channel.)
+  # 
+  #   :hardware:: If true, try to create a hardware accelerated
+  #               Surface (using a graphics card), which may be very
+  #               fast to blit onto other hardware accelerated
+  #               Surfaces, but somewhat slower to access in other
+  #               ways. Creates a normal, non-accelerated Surface if
+  #               hardware Surfaces are not available. Default: false.
+  # 
+  #   :masks::    For advanced users. Set the Surface's color masks
+  #               manually, as [r,g,b,a]. If this is nil or
+  #               unspecified, the color masks are calculated
+  #               automatically.
+  # 
+  # For backwards compatibility, you can provide the following
+  # arguments instead of the ones above. However, this form is
+  # DEPRECATED and will be removed in Rubygame 3.0:
+  # 
+  # size::  Surface size to create, [width, height] (in pixels).
   # depth:: requested color depth (in bits per pixel). If depth is 0 (default),
   #         automatically choose a color depth: either the depth of the Screen
   #         mode (if one has been set), or the greatest color depth available
@@ -80,7 +115,7 @@ class Rubygame::Surface
   #                       also enable alpha. as needed. For a description
   #                       of alpha, see #alpha.
   #
-  def initialize( size, depth=0, flags=[] )
+  def initialize( size, *args )
 
     # Cheating a bit. First arg can be a SDL::Surface to wrap it.
     #
@@ -93,6 +128,85 @@ class Rubygame::Surface
       end
       return
     end
+
+    # Support old argument style for backwards compatibility.
+    if args.size > 1 or not args[0].is_a? Hash
+      _initialize_old( size, *args )
+      return
+    end
+
+    args = _parse_args( size, args[0] )
+
+    @struct = SDL.CreateRGBSurface( args[:flags],
+                                    args[:width], args[:height],
+                                    args[:depth], *args[:masks] )
+  end
+
+
+  private
+
+
+  def _parse_args( size, options )
+    unless size.is_a?(Array) and size.size == 2 and
+        size.all?{ |i| i.is_a?(Integer) and i > 0 }
+      raise( TypeError, "Invalid size: " + size.inspect +
+             " (expected [width,height] array of integers >= 0)" )
+    end
+
+    depth = options[:depth] || 0
+    unless depth.is_a?(Integer) and depth >= 0
+      raise( TypeError, "Invalid depth: " + depth.inspect +
+             " (expected integer >= 0)" )
+    end
+
+    alpha = options.has_key?(:alpha) ? options[:alpha] : true
+
+    masks = options[:masks]
+    if masks.nil?
+      masks = _make_masks( depth, alpha )
+    else
+      unless masks.size == 4 and masks.all?{|m| m.is_a?(Integer) and m >= 0}
+        raise( TypeError, "Invalid masks: " + masks.inspect +
+               " (expected [r,g,b,a] array of integers >= 0)" )
+      end
+    end
+
+    flags = 0
+    flags |= SDL::HWSURFACE if options[:hardware]    
+
+    { :width  => size[0],
+      :height => size[1],
+      :depth  => depth,
+      :masks  => masks,
+      :flags  => flags,
+    }
+  end
+
+
+  # Calculate color masks based on requested depth and (for 32 bit)
+  # whether or not to have an alpha channel.
+  def _make_masks( depth, alpha ) # :nodoc:
+    a = alpha ? 0xff000000 : 0
+
+    masks = case depth
+            when 32;  [0xff0000,  0x00ff00,  0x0000ff,  a]
+            when 24;  [0xff0000,  0x00ff00,  0x0000ff,  0]
+            when 16;  [0x00f800,  0x0007e0,  0x00001f,  0]
+            when 15;  [0x007c00,  0x0003e0,  0x00001f,  0]
+            else      [       0,         0,         0,  0]
+            end
+
+    if FFI::Platform::BYTE_ORDER == FFI::Platform::BIG_ENDIAN
+      masks[0,3] = masks[0,3].reverse
+    end
+
+    masks
+  end
+
+
+  # Initialize the Surface in the deprecated (pre-2.7) way.
+  def _initialize_old( size, depth=0, flags=[] ) # :nodoc:
+    Rubygame.deprecated("Old Surface#new arguments style", "3.0")
 
     unless size.kind_of? Array
       raise TypeError, "Surface size is not an Array: #{size.inspect}"
@@ -138,6 +252,8 @@ class Rubygame::Surface
                                    rmask, gmask, bmask, amask)
   end
 
+
+  public
 
 
   # Return the width (in pixels) of the surface.
