@@ -79,6 +79,12 @@ Rake::RDocTask.new do |rd|
                         "NEWS")
 end
 
+desc "Generate RI-formatted docs."
+task(:ri) do
+  sh('rdoc --ri --threads=1 --force-update --output "./ri" ./lib')
+end
+
+
 
 
 #########
@@ -89,6 +95,7 @@ require 'rake/clean'
 task(:clean) { puts "Cleaning out temporary generated files" }
 task(:clobber) { puts "Cleaning out final generated files" }
 
+CLOBBER.include("ri")
 
 
 ###########
