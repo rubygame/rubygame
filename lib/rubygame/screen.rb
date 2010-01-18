@@ -153,12 +153,73 @@ class Rubygame::Screen < Rubygame::Surface
 
 
 
+  # call-seq:
+  #   new( size, opts={} )
+  #   new( size, depth=0, flags=[] )  # DEPRECATED
+  # 
   # Create a new Rubygame window if there is none, or modify the
   # existing one. You cannot create more than one Screen; the existing
   # one will be replaced. (This is a limitation of SDL.)
   # 
   # Returns the resulting Screen.
   #
+  # size:: Screen size to create, [width, height] (in pixels).
+  # 
+  # opts::
+  #   Hash of options. The possible options are:
+  # 
+  #   :depth::      Requested color depth (in bits per pixel). If this
+  #                 is 0 or unspecified, Rubygame automatically
+  #                 chooses the depth based on the system depth.
+  #                 Possible values: 0, 8, 15, 16, 24, 32. Default: 0.
+  # 
+  #   :fullscreen:: If true, use fullscreen mode. If a hardware
+  #                 resolution change is not possible (for whatever
+  #                 reason), the next higher resolution will be used
+  #                 and the display window centered on a black
+  #                 background. Default: false.
+  # 
+  #   :resizable::  If true, the user will be able to resize the
+  #                 Rubygame window. When the window is resized, a
+  #                 ResizeEvent or Events::WindowResized event is
+  #                 generated. You should then use Screen.open to
+  #                 re-create the display surface at the new size.
+  #                 Default: false.
+  # 
+  #   :noframe::    If true, try to create a window with no title bar
+  #                 or frame decoration. This is automatically true
+  #                 when :fullscreen is true. Default: false.
+  # 
+  #   :hardware::   If true, try to create a hardware accelerated
+  #                 Surface (using a graphics card), which may be very
+  #                 fast to blit onto other hardware accelerated
+  #                 Surfaces, but somewhat slower to access in other
+  #                 ways. Creates a normal, non-accelerated Surface if
+  #                 hardware Surfaces are not available. Default:
+  #                 false.
+  # 
+  #   :doublebuf::  If true, enable hardware double buffering; only
+  #                 valid when :hardware is true. Calling #flip will
+  #                 switch the buffers and update the screen. All
+  #                 drawing will take place on the surface that is not
+  #                 displayed at the moment. If double buffering could
+  #                 not be enabled then #flip will just update the
+  #                 entire screen. Default: false.
+  # 
+  #   :opengl::     If true, create an OpenGL rendering context
+  #                 instead of a normal SDL display. You must set
+  #                 proper OpenGL video attributes with GL#set_attrib
+  #                 before calling this method with this flag. You can
+  #                 then use an OpenGL library (e.g. ruby-opengl) to
+  #                 do all OpenGL-related functions. Please note that
+  #                 you can't blit or draw regular SDL Surfaces onto
+  #                 an OpenGL-mode screen; you must use OpenGL
+  #                 functions. Default: false.
+  # 
+  # For backwards compatibility, you can provide the following
+  # arguments instead of the ones above. However, this form is
+  # DEPRECATED and will be removed in Rubygame 3.0:
+  # 
   # size::  requested window size (in pixels), in the form [width,height]
   # depth:: requested color depth (in bits per pixel). If 0 (default), the
   #         current system color depth.
@@ -204,7 +265,7 @@ class Rubygame::Screen < Rubygame::Surface
   #                      frame decoration.
   #                      Fullscreen modes automatically have this flag set.
   #
-  def initialize(  size, depth=0, flags=[Rubygame::SWSURFACE] )
+  def initialize( size, *args )
 
     # Cheating a bit. First arg can be a SDL::Surface to wrap it.
     #
@@ -220,7 +281,41 @@ class Rubygame::Screen < Rubygame::Surface
       return
     end
 
+    # Support old argument style for backwards compatibility.
+    if args.size > 1 or not args[0].is_a? Hash
+      _initialize_old( size, *args )
+      return
+    end
 
+    args = _parse_args( size, args[0] )
+
+    @struct = SDL.SetVideoMode( args[:width], args[:height],
+                                args[:depth], args[:flags] )
+
+    if( @struct.pointer.null? )
+      @struct = nil
+      raise( Rubygame::SDLError,
+             "Couldn't set [%d x %d] %d bpp video mode: %s"%\
+             [args[:width], args[:height], args[:depth], SDL.GetError()] )
+    end
+  end
+
+
+  def _parse_args( size, options ) # :nodoc:
+    args = super
+
+    flags = args[:flags]
+
+    flags |= SDL::FULLSCREEN if options[:fullscreen]
+    flags |= SDL::RESIZABLE  if options[:resizable]
+    flags |= SDL::NOFRAME    if options[:noframe]
+    flags |= SDL::DOUBLEBUF  if options[:doublebuf]
+    flags |= SDL::OPENGL     if options[:opengl]
+
+    args.merge( :flags => flags )
+  end
+
+  def _initialize_old( size, depth=0, flags=[] ) # :nodoc:
     w,h = size
     flags = Rubygame.collapse_flags(flags)
 
@@ -232,7 +327,6 @@ class Rubygame::Screen < Rubygame::Surface
              "Couldn't set [%d x %d] %d bpp video mode: %s"%\
              [w, h, depth, SDL.GetError()] )
     end
-
   end
 
 
