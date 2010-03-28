@@ -378,7 +378,7 @@ module Rubygame
                when SDL::BUTTON_RIGHT;        :mouse_right
                when SDL::BUTTON_WHEELUP;      :mouse_wheel_up
                when SDL::BUTTON_WHEELDOWN;    :mouse_wheel_down
-               else;                          ("mouse_%d"%button).to_sym
+               else;                          ("mouse_%d"%ev.button).to_sym
                end
 
       pos = [ev.x, ev.y]
