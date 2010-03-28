@@ -402,11 +402,13 @@ module Rubygame
       mods = ev.state
 
       btns = []
-      btns << :mouse_left        if( mods & SDL::BUTTON_LMASK )
-      btns << :mouse_middle      if( mods & SDL::BUTTON_MMASK )
-      btns << :mouse_right       if( mods & SDL::BUTTON_RMASK )
-      btns << :mouse_wheel_up    if( mods & (1<<(SDL::BUTTON_WHEELUP - 1)) )
-      btns << :mouse_wheel_down  if( mods & (1<<(SDL::BUTTON_WHEELDOWN - 1)) )
+      btns << :mouse_left        if (mods & SDL::BUTTON_LMASK) != 0
+      btns << :mouse_middle      if (mods & SDL::BUTTON_MMASK) != 0
+      btns << :mouse_right       if (mods & SDL::BUTTON_RMASK) != 0
+      btns << :mouse_wheel_up    if (mods & 
+                                     (1 << (SDL::BUTTON_WHEELUP - 1))) != 0
+      btns << :mouse_wheel_down  if (mods & 
+                                     (1 << (SDL::BUTTON_WHEELDOWN - 1))) != 0
 
       pos = [ev.x,    ev.y]
       rel = [ev.xrel, ev.yrel]
