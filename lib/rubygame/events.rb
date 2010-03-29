@@ -144,14 +144,14 @@ module Rubygame
       gain  = ev.gain
 
       # any_state = SDL::APPACTIVE | SDL::APPINPUTFOCUS | SDL::APPMOUSEFOCUS
-      # if( state & any_state == 0 )
+      # if (state & any_state) == 0
       #   raise( Rubygame::SDLError, "Unknown ACTIVEEVENT state #{state}. "+
       #          "This is a bug in Rubygame." )
       # end
 
       events = []
 
-      if( SDL::APPACTIVE & state )
+      if (SDL::APPACTIVE & state) != 0
         if( gain == 1 )
           events << WindowUnminimized.new
         else
@@ -159,7 +159,7 @@ module Rubygame
         end
       end
 
-      if( SDL::APPINPUTFOCUS & state )
+      if (SDL::APPINPUTFOCUS & state) != 0
         if( gain == 1 )
           events << InputFocusGained.new
         else
@@ -167,7 +167,7 @@ module Rubygame
         end
       end
 
-      if( SDL::APPMOUSEFOCUS & state )
+      if (SDL::APPMOUSEFOCUS & state) != 0
         if( gain == 1 )
           events << MouseFocusGained.new
         else
@@ -320,17 +320,17 @@ module Rubygame
       return [] if mods == 0
 
       array = []
-      array << :left_shift   if( mods & SDL::KMOD_LSHIFT )
-      array << :right_shift  if( mods & SDL::KMOD_RSHIFT )
-      array << :left_ctrl    if( mods & SDL::KMOD_LCTRL  )
-      array << :right_ctrl   if( mods & SDL::KMOD_RCTRL  )
-      array << :left_alt     if( mods & SDL::KMOD_LALT   )
-      array << :right_alt    if( mods & SDL::KMOD_RALT   )
-      array << :left_meta    if( mods & SDL::KMOD_LMETA  )
-      array << :right_meta   if( mods & SDL::KMOD_RMETA  )
-      array << :numlock      if( mods & SDL::KMOD_NUM    )
-      array << :capslock     if( mods & SDL::KMOD_CAPS   )
-      array << :mode         if( mods & SDL::KMOD_MODE   )
+      array << :left_shift   if (mods & SDL::KMOD_LSHIFT) != 0
+      array << :right_shift  if (mods & SDL::KMOD_RSHIFT) != 0
+      array << :left_ctrl    if (mods & SDL::KMOD_LCTRL ) != 0
+      array << :right_ctrl   if (mods & SDL::KMOD_RCTRL ) != 0
+      array << :left_alt     if (mods & SDL::KMOD_LALT  ) != 0
+      array << :right_alt    if (mods & SDL::KMOD_RALT  ) != 0
+      array << :left_meta    if (mods & SDL::KMOD_LMETA ) != 0
+      array << :right_meta   if (mods & SDL::KMOD_RMETA ) != 0
+      array << :numlock      if (mods & SDL::KMOD_NUM   ) != 0
+      array << :capslock     if (mods & SDL::KMOD_CAPS  ) != 0
+      array << :mode         if (mods & SDL::KMOD_MODE  ) != 0
 
       return array
     end
