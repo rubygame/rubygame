@@ -37,9 +37,8 @@ Rubygame::VERSIONS[:sdl_ttf] = SDL::TTF.Linked_Version().to_ary
 class Rubygame::TTF
 
 
-  # Attempt to setup the TTF class for use by initializing SDL_ttf.
-  # This *must* be called before the TTF class can be used.
-  # Raises SDLError if there is a problem initializing SDL_ttf.
+  # Initializes SDL_ttf. Optional. This will be called automatically
+  # the first time SDL_ttf is needed.
   #
   def self.setup
     if( SDL::TTF.WasInit() == 0 and SDL::TTF.Init() != 0 )
@@ -70,10 +69,7 @@ class Rubygame::TTF
   #        the bottom of the descent to the top of the ascent.)
   #
   def initialize( file, size )
-    if( SDL::TTF.WasInit() == 0 )
-      raise( Rubygame::SDLError,
-             "You must call TTF.setup before opening a font." )
-    end
+    self.class.setup
 
     @struct = SDL::TTF.OpenFont( file.to_s, size )
 
