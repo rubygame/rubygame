@@ -515,7 +515,7 @@ class Rubygame::Surface
 
     if other.nil?
       begin
-        other = Rubygame::ScreenFFI.get_surface
+        other = Rubygame::Screen.get_surface
       rescue Rubygame::SDLError
         raise( Rubygame::SDLError, "Cannot convert Surface with no target " +
                "given and no Screen made: #{SDL.GetError()}" )
