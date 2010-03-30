@@ -389,6 +389,31 @@ class Rubygame::Surface
     return self
   end
 
+  # *IMPORTANT*: this method only exists if SDL_gfx is available!
+  # Your code should check "surface.respond_to?(:bezier_curve)" to see if
+  # you can use this method, or be prepared to rescue from NameError.
+  #
+  # Draws a bezier curve.
+  #
+  # This method takes these arguments:
+  # points::          an array of points [ [x0, y0], [x1, y1], ... [xn, yn] ]
+  # color::           the color of the curve. [r,g,b] or [r,g,b,a] (0-255)
+  # weird_parameter:: i have _no_ idea what this does, just leave it at it's
+  #                   default value (4). If you know what this parameter does,
+  #                   feel free to edit this comment.
+  def bezier_curve( points, color, weird_parameter = 100 )
+    len = points.length
+    xpts = FFI::Buffer.new(:int16, len)
+    ypts = FFI::Buffer.new(:int16, len)
+    
+    points.each_with_index do |p, i|
+      xpts[i].put_int16( 0, p[0].round )
+      ypts[i].put_int16( 0, p[1].round )
+    end
+    
+    r,g,b,a = Rubygame::Color.make_sdl_rgba(color)
+    SDL::Gfx.bezierRGBA(@struct, xpts, ypts, len, weird_parameter, r, g, b, a)
+  end
 
 
   # *IMPORTANT*: this method only exists if SDL_gfx is available!
