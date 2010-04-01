@@ -1,5 +1,38 @@
 = NEWS
 
+== Rubygame 2.6.3
+
+Release focus: Bug fixes.
+
+=== Fixes
+
+- Fixed: MouseMoved events always reported that all buttons were
+  being pressed, even when they were not. [#38]
+
+- Fixed: MousePressed and MouseReleased events would raise an error
+  for mouse buttons larger than 5. [#40]
+
+- Fixed: KeyPressed and KeyReleased events always reported that all
+  modifier keys were being pressed, even when they were not. [#41]
+
+- Fixed: Rubygame would generate spurious WindowUnminimized,
+  InputFocusGained, and MouseFocusGained events (or the opposite)
+  whenever any one of those events actually occurred.
+
+- Fixed: Surface#convert would raise NameError if no Screen was open,
+  due to a typo. [#42]
+
+=== Other Changes
+
+- Rubygame will now skip auto-initialization if the RUBYGAME_NOINIT
+  environment variable (`ENV["RUBYGAME_NOINIT"]`) is set to "1",
+  "true", or "yes" (case insensitive). You must set the environment
+  variable *before* doing `require "rubygame"`. This is intended
+  for special cases where auto-initialization is not wanted.
+
+
+
+
 == Rubygame 2.6.2
 
 Release focus: Bug fixes.
