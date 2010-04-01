@@ -89,5 +89,9 @@ end
 require File.join( this_dir, "rubygame", "screen" )
 
 
-Rubygame.init
-at_exit { Rubygame.quit }
+# Handle initialization automatically unless the RUBYGAME_NOINIT
+# environmental variable is set to something truthy.
+unless /^(1|t|true|y|yes)$/i =~ ENV["RUBYGAME_NOINIT"]
+  Rubygame.init
+  at_exit { Rubygame.quit }
+end
