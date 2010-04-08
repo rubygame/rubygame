@@ -339,6 +339,23 @@ class Rubygame::Screen < Rubygame::Surface
   end
 
 
+  # Returns a copy of the Screen, as a Surface instance. The copy will
+  # not be frozen, even if the original was frozen.
+  def dup
+    surf = convert(self, flags)
+    surf.taint if tainted?
+    return surf
+  end
+
+  # Like #dup, but if the original was frozen, the copy will also be
+  # frozen.
+  def clone
+    surf = dup()
+    surf.freeze if self.frozen?
+    return surf
+  end
+
+
   # Like Surface#convert. Returns a Surface instance.
   def convert( other=nil, flags=nil )
 
