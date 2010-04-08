@@ -651,6 +651,8 @@ class Rubygame::Surface
   #
   def convert( other=nil, flags=nil )
 
+    # If you update this code, update Screen#convert too.
+
     if other.nil?
       begin
         other = Rubygame::Screen.get_surface

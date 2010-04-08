@@ -339,6 +339,38 @@ class Rubygame::Screen < Rubygame::Surface
   end
 
 
+  # Like Surface#convert. Returns a Surface instance.
+  def convert( other=nil, flags=nil )
+
+    # Copied from Surface#convert, except the end.
+
+    if other.nil?
+      begin
+        other = Rubygame::Screen.get_surface
+      rescue Rubygame::SDLError
+        raise( Rubygame::SDLError, "Cannot convert Surface with no target " +
+               "given and no Screen made: #{SDL.GetError()}" )
+      end
+    end
+
+    flags = Rubygame.collapse_flags(flags)
+
+    newsurf =
+      if( Rubygame.init_video_system() == 0 )
+        SDL.ConvertSurface( @struct, other.struct.format, flags )
+      else
+        nil
+      end
+
+    if( newsurf.nil? or newsurf.pointer.null?)
+      raise( Rubygame::SDLError,
+             "Could not convert the Surface: #{SDL.GetError()}" )
+    end
+
+    # Wrap it in a Surface (not a Screen)
+    return Rubygame::Surface.new( newsurf )
+  end
+
 
   # If the Rubygame display is double-buffered (see Screen.new), flips
   # the buffers and updates the whole screen. Otherwise, just updates
