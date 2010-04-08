@@ -389,19 +389,28 @@ class Rubygame::Surface
     return self
   end
 
-  # *IMPORTANT*: this method only exists if SDL_gfx is available!
-  # Your code should check "surface.respond_to?(:bezier_curve)" to see if
-  # you can use this method, or be prepared to rescue from NameError.
+  # *IMPORTANT*: this method only exists if SDL_gfx is available! Your
+  # code should check "surface.respond_to?(:draw_curve)" to see if you
+  # can use this method, or be prepared to rescue from NameError.
   #
-  # Draws a bezier curve.
+  # Draws a Bézier curve with the given control points, color and
+  # number of steps.
   #
   # This method takes these arguments:
-  # points::          an array of points [ [x0, y0], [x1, y1], ... [xn, yn] ]
-  # color::           the color of the curve. [r,g,b] or [r,g,b,a] (0-255)
-  # weird_parameter:: i have _no_ idea what this does, just leave it at it's
-  #                   default value (4). If you know what this parameter does,
-  #                   feel free to edit this comment.
-  def bezier_curve( points, color, weird_parameter = 100 )
+  # points::  an Array containing the coordinates for each control
+  #           point of the curve, in the order that they are connected.
+  #           [ [x0, y0], [x1, y1], ... [xn, yn] ]
+  # color::   the color of the curve. [r,g,b] or [r,g,b,a] (0-255),
+  #           color name, or Rubygame::Color.
+  # quality:: rendering quality (smoothness) of the curve. Smaller
+  #           values are faster to draw, but look more "polygonal".
+  #           (Default: 5; Minimum: 2)
+  #
+  def draw_curve( points, color, quality = 5 )
+    if quality < 2
+      raise ArgumentError, "quality must be 2 or greater (got #{quality})"
+    end
+
     len = points.length
     xpts = FFI::Buffer.new(:int16, len)
     ypts = FFI::Buffer.new(:int16, len)
@@ -412,7 +421,10 @@ class Rubygame::Surface
     end
     
     r,g,b,a = Rubygame::Color.make_sdl_rgba(color)
-    SDL::Gfx.bezierRGBA(@struct, xpts, ypts, len, weird_parameter, r, g, b, a)
+    SDL::Gfx.bezierRGBA(@struct, xpts, ypts, len,
+                        steps.to_i, r, g, b, a)
+
+    return self
   end
 
 
