@@ -143,6 +143,14 @@ class Rubygame::Surface
   end
 
 
+  # This method is used by #dup and #clone.
+  def initialize_copy( original ) # :nodoc:
+    ostruct = original.struct
+    # Copies the Surface by "converting" it to its own format.
+    @struct = SDL.ConvertSurface( ostruct, ostruct.format, ostruct.flags )
+  end
+
+  
   private
 
 
