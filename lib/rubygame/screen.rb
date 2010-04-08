@@ -149,6 +149,15 @@ class Rubygame::Screen < Rubygame::Surface
       return [info.current_w, info.current_h]
     end
 
+
+    # Sets the window icon for the Screen. Same as Screen#icon=, but
+    # you can call it before opening the Screen, which may be
+    # necessary on some versions of Windows.
+    #
+    def icon=( surface )
+      SDL.WM_SetIcon( surface.send(:struct), nil )
+    end
+
   end
 
 
@@ -415,12 +424,16 @@ class Rubygame::Screen < Rubygame::Surface
   #        areas (like the taskbar entry). If omitted or +nil+, no icon
   #        will be shown at all.
   #
+  # NOTE: On Win32 systems, you may need to use Screen.icon= to set
+  # the icon *before* opening the Screen. Otherwise, the icon might
+  # not be used.
+  # 
   # NOTE: The SDL docs state that icons on Win32 systems must be 32x32
   # pixels. That may or may not be true anymore, but you might want to
   # consider it when creating games to run on Windows.
   #
   def icon=( surface )
-    SDL.WM_SetIcon( surface.struct, nil )
+    self.class.icon = surface
     return self
   end
 
