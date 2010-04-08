@@ -150,6 +150,20 @@ class Rubygame::Surface
     @struct = SDL.ConvertSurface( ostruct, ostruct.format, ostruct.flags )
   end
 
+  if false
+    # Returns a new copy of the Surface. The copy will not be frozen,
+    # even if the original was frozen.
+    def dup
+      # Stub method for documentation purposes.
+    end
+
+    # Like #dup, but if the original was frozen, the copy will also be
+    # frozen.
+    def clone
+      # Stub method for documentation purposes.
+    end
+  end
+
   
   private
 
