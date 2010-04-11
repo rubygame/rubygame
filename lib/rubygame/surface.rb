@@ -757,6 +757,83 @@ class Rubygame::Surface
   alias :inspect :to_s
 
 
+
+  # Used by Marshal.dump(). Counterpart to #marshal_load.
+  def marshal_dump              # :nodoc:
+    SDL.LockSurface(@struct)
+
+    m = masks
+
+    dump = {
+      :flags    => @struct.flags,
+      :width    => @struct.w,
+      :height   => @struct.h,
+      :pitch    => @struct.pitch,
+      :depth    => depth,
+      :rmask    => m[0],
+      :gmask    => m[1],
+      :bmask    => m[2],
+      :amask    => m[3],
+      :pixels   => pixels,
+      :alpha    => alpha,
+      :colorkey => colorkey,
+      :clip     => SDL.GetClipRect(@struct).to_ary,
+      :tainted  => tainted?,
+      :frozen   => frozen?,
+    }
+
+    # TODO: dump palette if it has one
+    # unless @struct.format[:palette].null?
+    #   ...
+    # end
+
+    SDL.UnlockSurface(@struct)
+
+    return dump
+  end
+
+
+  # Used by Marshal.load(). Counterpart to #marshal_dump.
+  def marshal_load( dump )      # :nodoc:
+    # Create a new surface similar to the original, but empty.
+    @struct = SDL.CreateRGBSurface( dump[:flags],
+                                    dump[:width], dump[:height],
+                                    dump[:depth],
+                                    dump[:rmask], dump[:gmask],
+                                    dump[:bmask], dump[:amask] )
+    SDL.LockSurface(@struct)
+
+    # Overwrite the pixel data.
+    @struct.pixels.put_bytes(0, dump[:pixels])
+    
+    if dump[:colorkey]
+      set_colorkey( dump[:colorkey],
+                    dump[:flags] & (SDL::SRCCOLORKEY|SDL::RLEACCEL) )
+    end
+
+    if dump[:alpha]
+      set_alpha( dump[:alpha], dump[:flags] & SDL::SRCALPHA )
+    end
+
+    # TODO: load palette if it has one
+    # if dump[:palette]
+    #   ...
+    # end
+
+    self.clip = dump[:clip] if dump[:clip]
+
+    SDL.UnlockSurface(@struct)
+
+    if dump[:tainted]
+      self.taint
+    end
+
+    if dump[:frozen]
+      self.freeze
+    end
+  end
+
+
   private
 
   def _map_sdl_color( color ) # :nodoc:

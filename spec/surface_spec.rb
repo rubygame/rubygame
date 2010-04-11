@@ -98,6 +98,76 @@ describe Surface, "(loading from string)" do
 end
 
 
+describe Surface, "(marshalling)", do
+
+  before :each do
+    @surf = Rubygame::Surface.new([10,20], :depth => 32, :alpha => true)
+    @surf.set_at([0,0], [12,34,56,78])
+    @surf.set_at([9,9], [90,12,34,56])
+    @surf.colorkey = [34,23,12]
+    @surf.alpha = 123
+    @surf.clip = [4,3,2,1]
+  end
+
+  it "should support Marshal.dump" do
+    lambda { Marshal.dump(@surf) }.should_not raise_error
+  end
+
+  it "should support Marshal.load" do
+    lambda { Marshal.load( Marshal.dump(@surf) ) }.should_not raise_error
+  end
+
+  it "should preserve size" do
+    surf2 = Marshal.load( Marshal.dump(@surf) )
+    surf2.size.should == [10,20]
+  end
+
+  it "should preserve depth" do
+    surf2 = Marshal.load( Marshal.dump(@surf) )
+    surf2.depth.should == 32
+  end
+
+  it "should preserve flags" do
+    surf2 = Marshal.load( Marshal.dump(@surf) )
+    surf2.flags.should == @surf.flags
+  end
+
+  it "should preserve pixel data" do
+    surf2 = Marshal.load( Marshal.dump(@surf) )
+    surf2.get_at([0,0]).should == [12,34,56,78]
+    surf2.get_at([9,9]).should == [90,12,34,56]
+  end
+
+  it "should preserve colorkey" do
+    surf2 = Marshal.load( Marshal.dump(@surf) )
+    surf2.colorkey.should == [34,23,12]
+  end
+
+  it "should preserve alpha" do
+    surf2 = Marshal.load( Marshal.dump(@surf) )
+    surf2.alpha.should == 123
+  end
+
+  it "should preserve clip" do
+    surf2 = Marshal.load( Marshal.dump(@surf) )
+    surf2.clip.should == Rubygame::Rect.new(4,3,2,1)
+  end
+
+  it "should preserve taint status" do
+    @surf.taint
+    surf2 = Marshal.load( Marshal.dump(@surf) )
+    surf2.should be_tainted
+  end
+
+  it "should preserve frozen status" do
+    @surf.freeze
+    surf2 = Marshal.load( Marshal.dump(@surf) )
+    surf2.should be_frozen
+  end
+
+end
+
+
 describe Surface, "(named resource)" do
   before :each do
     Surface.autoload_dirs = [samples_dir]
