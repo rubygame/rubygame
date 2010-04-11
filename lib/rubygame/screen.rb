@@ -356,6 +356,16 @@ class Rubygame::Screen < Rubygame::Surface
   end
 
 
+  def marshal_dump
+    raise "Screen class cannot be marshalled. Use #dup to convert to Surface first."
+  end
+
+  def marshal_load
+    raise "Screen class cannot be unmarshalled."
+  end
+
+
+
   # Like Surface#convert. Returns a Surface instance.
   def convert( other=nil, flags=nil )
 
