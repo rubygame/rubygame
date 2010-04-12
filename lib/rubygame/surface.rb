@@ -599,6 +599,21 @@ class Rubygame::Surface
   end
 
 
+  # Overwrite the Surface's pixel data from a string (like #pixels).
+  # The pixel data must exactly match the length and format of the
+  # Surface.
+  #
+  def pixels=( new_pixels )
+    expected = @struct.pitch * @struct.h
+    unless new_pixels.length == expected
+      raise "Invalid data length (got %d, expected %d)"%[new_pixels.length,
+                                                         expected]
+    end
+    SDL.LockSurface(@struct)
+    @struct.pixels.put_bytes(0, new_pixels)
+    SDL.UnlockSurface(@struct)
+  end
+
 
   # Return the clipping area for this Surface. See also #clip=.
   #
@@ -804,7 +819,7 @@ class Rubygame::Surface
     SDL.LockSurface(@struct)
 
     # Overwrite the pixel data.
-    @struct.pixels.put_bytes(0, dump[:pixels])
+    self.pixels = dump[:pixels]
     
     if dump[:colorkey]
       set_colorkey( dump[:colorkey],
