@@ -37,7 +37,7 @@ gem_spec = Gem::Specification.new do |s|
     fl.include("{lib,samples,doc}/**/*")
   end
 
-  s.require_paths = ["lib", "lib/rubygame/"]
+  s.require_paths = ["lib"]
 
   s.has_rdoc = true
   s.extra_rdoc_files = FileList.new do |fl|
