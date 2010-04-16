@@ -5,7 +5,8 @@
 
 
 # The version number for Rubygame.
-RUBYGAME_VERSION = [2,6,3]
+# If you update this, also update lib/rubygame/main.rb.
+RUBYGAME_VERSION = [2,6,4]
 
 
 
