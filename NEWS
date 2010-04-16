@@ -1,5 +1,21 @@
 = NEWS
 
+== Rubygame 2.6.4
+
+Release focus: Bug fix.
+
+=== Fixes
+
+- Fixed: Rubygame's "require_path" setting in the gem spec was
+  interfering with ruby-opengl (and potentially others). [#43]
+
+  If you have problems loading ruby-opengl when Rubygame 2.6.* is
+  installed via RubyGems, you should uninstall all versions of the
+  Rubygame gem, then reinstall version 2.6.4 (or later).
+
+
+
+
 == Rubygame 2.6.3
 
 Release focus: Bug fixes.

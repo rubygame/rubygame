@@ -5,7 +5,8 @@
 
 
 # The version number for Rubygame.
-RUBYGAME_VERSION = [2,6,3]
+# If you update this, also update lib/rubygame/main.rb.
+RUBYGAME_VERSION = [2,6,4]
 
 
 
@@ -37,7 +38,7 @@ gem_spec = Gem::Specification.new do |s|
     fl.include("{lib,samples,doc}/**/*")
   end
 
-  s.require_paths = ["lib", "lib/rubygame/"]
+  s.require_paths = ["lib"]
 
   s.has_rdoc = true
   s.extra_rdoc_files = FileList.new do |fl|
