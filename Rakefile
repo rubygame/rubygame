@@ -86,6 +86,14 @@ task(:ri) do
 end
 
 
+###########
+# VERBOSE #
+###########
+
+desc "Run tasks more verbosely"
+task :verbose do
+  ENV["SPEC_OPTS"] = "--format specdoc #{ENV["SPEC_OPTS"]}"
+end
 
 
 #########
