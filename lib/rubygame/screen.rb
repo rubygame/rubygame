@@ -356,11 +356,11 @@ class Rubygame::Screen < Rubygame::Surface
   end
 
 
-  def marshal_dump
+  def marshal_dump              # :nodoc:
     raise "Screen class cannot be marshalled. Use #dup to convert to Surface first."
   end
 
-  def marshal_load
+  def marshal_load              # :nodoc:
     raise "Screen class cannot be unmarshalled."
   end
 
