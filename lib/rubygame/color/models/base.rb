@@ -81,6 +81,19 @@ module ColorBase
 		wrap( rgba )
 	end
 
+
+  def to_rgba_ary
+    raise "Cannot convert #{self.class} to RGBA"
+  end
+
+  # Converts the color to an RGBA array of integers 
+  # ranging from 0 to 255, as SDL wants.
+  def to_sdl_rgba_ary
+    self.to_rgba_ary.collect { |i| (i * 255).to_i }
+  end
+
+
+  
 	private
 	
 	def wrap( rgba )
