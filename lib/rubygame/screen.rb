@@ -440,7 +440,10 @@ class Rubygame::Screen < Rubygame::Surface
                  "Invalid args for #{self.class}#update: #{args.inspect}" )
         end
 
-    SDL.UpdateRect( @struct, *(r.clip!( self.make_rect ).to_sdl) );
+    # Clip the rect to the screen's boundaries and make it all integers.
+    r = r.clip!([0,0,w,h]).map{|n| n.round }
+
+    SDL.UpdateRect( @struct, *r );
 
     return self
   end
