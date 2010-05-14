@@ -368,6 +368,68 @@ end
 
 
 
+describe JoystickButtonReleaseTrigger do
+
+	before :each do 
+		@event_class   = JoystickButtonReleased
+		@trigger_class = JoystickButtonReleaseTrigger
+		@trigger       = @trigger_class.new
+	end
+
+	it_should_behave_like "an event trigger"
+
+	it "should match any JoystickButtonReleased by default" do
+		@trigger = @trigger_class.new()
+		event = @event_class.new( 0, 0 )
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should match if trigger joystick and button are :any" do
+		@trigger = @trigger_class.new( :any, :any )
+		event = @event_class.new( 0, 0 )
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should match if joystick matches" do
+		@trigger = @trigger_class.new( 1, :any )
+		event = @event_class.new( 1, 0 )
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should not match if joystick does not match" do
+		@trigger = @trigger_class.new( 2, :any )
+		event = @event_class.new( 1, 0 )
+		@trigger.match?( event ).should be_false
+	end
+
+	it "should match if button matches" do
+		@trigger = @trigger_class.new( :any, 1 )
+		event = @event_class.new( 0, 1 )
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should not match if button does not match" do
+		@trigger = @trigger_class.new( :any, 2 )
+		event = @event_class.new( 0, 1 )
+		@trigger.match?( event ).should be_false
+	end
+
+	it "should match if both joystick and button match" do
+		@trigger = @trigger_class.new( 1, 2 )
+		event = @event_class.new( 1, 2 )
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should not match if neither joystick and button matches" do
+		@trigger = @trigger_class.new( 3, 4 )
+		event = @event_class.new( 1, 2 )
+		@trigger.match?( event ).should be_false
+	end
+
+end
+
+
+
 describe "a keyboard event trigger", :shared => true do
 
 	it_should_behave_like "an event trigger"

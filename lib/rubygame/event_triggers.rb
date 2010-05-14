@@ -431,6 +431,49 @@ end
 
 
 # 
+# JoystickButtonReleaseTrigger is an event trigger which fires when
+# a joystick button is released (i.e. JoystickButtonReleased).
+# 
+class JoystickButtonReleaseTrigger
+
+	# Initialize a new instance of JoystickButtonReleaseTrigger with the
+	# given button and joystick.
+	# 
+	# joystick:: The Rubygame::Joystick or integer ID of a joystick to
+	#            detect, or :any to detect events for any joystick.
+	# button::   The button number to detect, or :any to detect events
+	#            for any button.
+	# 
+	def initialize( joystick=:any, button=:any )
+		@button = button
+		@id = case joystick
+					when Rubygame::Joystick
+						joystick.id
+					when Fixnum, :any
+						joystick
+					else
+						raise ArgumentError, "Invalid joystick: #{joystick.inspect}"
+					end
+	end
+
+	# Returns true if all of the following are true:
+	# 
+	# * The event is a JoystickButtonReleased event.
+	# * The event's button is the same as the trigger's button, or the
+	#   trigger's button is :any.
+	# * The event's joystick ID is the same as the trigger's ID, or the
+	#   trigger's ID is :any.
+	# 
+	def match?( event )
+		event.kind_of?( Rubygame::Events::JoystickButtonReleased ) and
+			((@button == :any) or (event.button == @button)) and
+			((@id == :any) or (event.joystick_id == @id))
+	end
+end
+
+
+
+# 
 # KeyPressTrigger is an event trigger which fires when
 # a key on the keyboard is pressed down (i.e. KeyPressed).
 # See also KeyReleaseTrigger.
