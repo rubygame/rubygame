@@ -401,23 +401,23 @@ end
 
 
 
-# describe TickTrigger do 
-#
-# 	before :each do 
-# 		@trigger = TickTrigger.new
-# 	end
-#
-# 	it_should_behave_like "an event trigger"
-#
-# 	it "should match if the event is an instance of TickEvent" do 
-# 		@trigger.match?( TickEvent.new(0.1) ).should be_true
-# 	end
-#
-# 	it "should not match if the event is not an instance of TickEvent" do 
-# 		@trigger.match?( :foo ).should be_false
-# 	end
-#	
-# end
+describe TickTrigger do 
+
+	before :each do 
+		@trigger = TickTrigger.new
+	end
+
+	it_should_behave_like "an event trigger"
+
+	it "should match if the event is an instance of ClockTicked" do 
+		@trigger.match?( ClockTicked.new(0.1) ).should be_true
+	end
+
+	it "should not match if the event is not an instance of TickEvent" do 
+		@trigger.match?( :foo ).should be_false
+	end
+	
+end
 
 
 
