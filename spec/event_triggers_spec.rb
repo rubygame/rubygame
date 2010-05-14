@@ -244,6 +244,68 @@ end
 
 
 
+describe JoystickBallMoveTrigger do
+
+	before :each do 
+		@event_class   = JoystickBallMoved
+		@trigger_class = JoystickBallMoveTrigger
+		@trigger       = @trigger_class.new
+	end
+
+	it_should_behave_like "an event trigger"
+
+	it "should match any JoystickBallMoved by default" do
+		@trigger = @trigger_class.new()
+		event = @event_class.new( 0, 0, [0,0] )
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should match if trigger joystick and ball are :any" do
+		@trigger = @trigger_class.new( :any, :any )
+		event = @event_class.new( 0, 0, [0,0] )
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should match if joystick matches" do
+		@trigger = @trigger_class.new( 1, :any )
+		event = @event_class.new( 1, 0, [0,0] )
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should not match if joystick does not match" do
+		@trigger = @trigger_class.new( 2, :any )
+		event = @event_class.new( 1, 0, [0,0] )
+		@trigger.match?( event ).should be_false
+	end
+
+	it "should match if ball matches" do
+		@trigger = @trigger_class.new( :any, 1 )
+		event = @event_class.new( 0, 1, [0,0] )
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should not match if ball does not match" do
+		@trigger = @trigger_class.new( :any, 2 )
+		event = @event_class.new( 0, 1, [0,0] )
+		@trigger.match?( event ).should be_false
+	end
+
+	it "should match if both joystick and ball match" do
+		@trigger = @trigger_class.new( 1, 2 )
+		event = @event_class.new( 1, 2, [0,0] )
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should not match if neither joystick and ball matches" do
+		@trigger = @trigger_class.new( 3, 4 )
+		event = @event_class.new( 1, 2, [0,0] )
+		@trigger.match?( event ).should be_false
+	end
+
+end
+
+
+
 describe "a keyboard event trigger", :shared => true do
 
 	it_should_behave_like "an event trigger"

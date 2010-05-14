@@ -345,6 +345,49 @@ end
 
 
 # 
+# JoystickBallMoveTrigger is an event trigger which fires when
+# a joystick ball is moved (i.e. JoystickBallMoved).
+# 
+class JoystickBallMoveTrigger
+
+	# Initialize a new instance of JoystickBallMoveTrigger with the
+	# given ball and joystick.
+	# 
+	# joystick:: The Rubygame::Joystick or integer ID of a joystick to
+	#            detect, or :any to detect events for any joystick.
+	# ball::     The ball number to detect, or :any to detect events
+	#            for any ball.
+	# 
+	def initialize( joystick=:any, ball=:any )
+		@ball = ball
+		@id = case joystick
+					when Rubygame::Joystick
+						joystick.id
+					when Fixnum, :any
+						joystick
+					else
+						raise ArgumentError, "Invalid joystick: #{joystick.inspect}"
+					end
+	end
+
+	# Returns true if all of the following are true:
+	# 
+	# * The event is a JoystickBallMoved event.
+	# * The event's ball is the same as the trigger's ball, or the
+	#   trigger's ball is :any.
+	# * The event's joystick ID is the same as the trigger's ID, or the
+	#   trigger's ID is :any.
+	# 
+	def match?( event )
+		event.kind_of?( Rubygame::Events::JoystickBallMoved ) and
+			((@ball == :any) or (event.ball == @ball)) and
+			((@id == :any) or (event.joystick_id == @id))
+	end
+end
+
+
+
+# 
 # KeyPressTrigger is an event trigger which fires when
 # a key on the keyboard is pressed down (i.e. KeyPressed).
 # See also KeyReleaseTrigger.
