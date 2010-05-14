@@ -380,3 +380,142 @@ describe Surface, "(get_at)" do
 
   end
 end
+
+
+
+describe Surface, "(palette)" do 
+
+  after(:each) do
+    Rubygame.quit
+  end
+
+
+  describe "depth 1" do
+    before :each do
+      @surf = Surface.new([1,1], :depth => 1)
+    end
+
+    it "should have a palette with 2 entries" do
+      @surf.palette.size.should == 2
+    end
+
+    it "should have black and white entries" do
+      @surf.palette.should include([0,0,0])
+      @surf.palette.should include([255,255,255])
+    end
+  end
+
+
+  (2..8).each do |d|
+
+    describe "depth #{d}" do
+      before :each do
+        @surf = Surface.new([1,1], :depth => d)
+      end
+
+      it "should have a palette with #{2**d} entries" do
+        @surf.palette.size.should == 2**d
+      end
+
+      it "palette should be all black by default" do
+        @surf.palette.each{ |entry|  entry.should == [0,0,0] }
+      end
+    end
+
+  end
+
+
+  describe "depth >8" do
+    it "should not have a palette" do
+      (9..32).each { |i|
+        Surface.new([1,1], :depth => i).palette.should be_nil
+      }
+    end
+  end
+
+
+end
+
+
+describe Surface, "(set_palette)" do 
+
+  after(:each) do
+    Rubygame.quit
+  end
+
+
+  (2..8).each do |d|
+
+    describe "depth #{d}" do
+      before :each do
+        @surf = Surface.new([1,1], :depth => d)
+      end
+
+      it "should overwrite a single entry" do
+        @surf.set_palette([[1,2,3]])
+        @surf.palette[0..2].should == [[1,2,3], [0,0,0], [0,0,0]]
+      end
+
+      it "should overwrite multiple entries" do
+        @surf.set_palette([[1,2,3], [4,5,6]])
+        @surf.palette[0..2].should == [[1,2,3], [4,5,6], [0,0,0]]
+      end
+
+      it "should overwrite a single entry with an offset" do
+        @surf.set_palette([[1,2,3]], :offset => 1)
+        @surf.palette[0..2].should == [[0,0,0], [1,2,3], [0,0,0]]
+      end
+
+      it "should overwrite multiple entries with an offset" do
+        @surf.set_palette([[1,2,3], [4,5,6]], :offset => 1)
+        @surf.palette[0..3].should == [[0,0,0], [1,2,3], [4,5,6], [0,0,0]]
+      end
+
+      it "should work with a ColorRGB" do
+        @surf.set_palette([Rubygame::Color::ColorRGB.new([1,0,1])])
+        @surf.palette[0..2].should == [[255,0,255], [0,0,0], [0,0,0]]
+      end
+
+      it "should work with a ColorHSV" do
+        @surf.set_palette([Rubygame::Color::ColorHSV.new([0.2,0.2,0.2])])
+        @surf.palette[0..2].should == [[48,51,40], [0,0,0], [0,0,0]]
+      end
+
+      it "should work with a ColorHSL" do
+        @surf.set_palette([Rubygame::Color::ColorHSL.new([0.2,0.2,0.2])])
+        @surf.palette[0..2].should == [[57,61,40], [0,0,0], [0,0,0]]
+      end
+
+      it "should work with a color name symbol" do
+        @surf.set_palette([:red])
+        @surf.palette[0..2].should == [[255,0,0], [0,0,0], [0,0,0]]
+      end
+
+      it "should work with a color name string" do
+        @surf.set_palette(["red"])
+        @surf.palette[0..2].should == [[255,0,0], [0,0,0], [0,0,0]]
+      end
+
+      it "should not work with invalid items" do
+        [nil, true, false, 1, 1.0, [1,2], {}].each do |invalid_item|
+          proc{ @surf.set_palette([invalid]) }.should raise_error
+        end
+      end
+
+    end
+
+  end
+
+
+  describe "depth >8" do
+    it "should raise SDLError" do
+      (9..32).each { |i|
+        lambda { 
+          Surface.new([1,1], :depth => i).set_palette([:black])
+        }.should raise_error(Rubygame::SDLError)
+      }
+    end
+  end
+
+
+end

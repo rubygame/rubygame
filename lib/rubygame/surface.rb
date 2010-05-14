@@ -406,6 +406,117 @@ class Rubygame::Surface
   alias :colorkey= :set_colorkey
 
 
+  # Returns the palette of the Surface, as an array of [r,g,b] arrays
+  # (each component ranges from 0-255). See #set_palette for more
+  # information about Surface palettes.
+  # 
+  # Only Surfaces with 8-bit color depth or less can have a palette.
+  # If the Surface does not have a palette, this method returns nil.
+  # 
+  # NOTE: Surface palettes are not related to the
+  # Rubygame::Color::Palette class.
+  #
+  # 
+  def palette
+    pal = @struct.format.palette
+    unless pal.pointer.null?
+      return pal.entries.collect { |color|  color.to_ary[0,3]  }
+    end
+  end
+
+
+  # Replaces some or all of the colors in the Surface's palette.
+  # 
+  # NOTE: Surface palettes are not related to the
+  # Rubygame::Color::Palette class.
+  #
+  # Only Surfaces with 8-bit color depth or less can have a palette.
+  # The number of entries in the palette depends on the color depth.
+  # For example:
+  # 
+  # * 1-bit = 2**1 = 2 entries
+  # * 2-bit = 2**2 = 4 entries
+  # * 4-bit = 2**4 = 16 entries
+  # * 8-bit = 2**8 = 256 entries
+  # 
+  # 
+  # This method takes these arguments:
+  #
+  # colors:: An Array of colors to apply to the palette. Each color
+  #          can be [r,g,b] (0-255), a color name, or Rubygame::Color.
+  # 
+  # opts::   An optional Hash of zero or more of the following options:
+  # 
+  #          :offset:: Replace the palette starting at this index.
+  #                    (Integer, default 0)
+  #
+  # Raises SDLError if an error if the Surface does not support a
+  # palette (e.g. because its color depth is greater than 8-bit), or
+  # if something went wrong. (Unfortunately SDL provides no way to
+  # find out what the problem is.)
+  #
+  # 
+  # Example:
+  #
+  #   include Rubygame
+  #   include Rubygame::Color
+  #   
+  #   
+  #   # Create a new 2-bit Surface.
+  #   # It has 4 entries in its palette, all black by default.
+  #   surf = Rubygame::Surface.new( [10,10], :depth => 2 )
+  #   surf.palette
+  #   # => [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+  #   
+  #   
+  #   # Replace entry 3:
+  #   surf.set_palette( [[255,0,255]], :offset => 3 )
+  #   surf.palette
+  #   # => [[0, 0, 0], [0, 0, 0], [0, 0, 0], [255, 0, 255]]
+  #   
+  #   
+  #   # Replace entries 1 and 2:
+  #   surf.set_palette( [ColorRGB.new([1,0,0]), :blue], :offset => 1 )
+  #   surf.palette
+  #   # => [[0, 0, 0], [255, 0, 0], [0, 0, 255], [255, 0, 255]]
+  #   
+  #   
+  #   # Reverse the palette order (palette= is an alias for set_palette):
+  #   surf.palette = surf.palette.reverse
+  #   # => [[255, 0, 255], [0, 0, 255], [255, 0, 0], [255, 255, 255]]
+  #   
+  #   
+  #   # Change the palette to all red:
+  #   surf.palette = [:red]*4
+  #   # => [[255, 0, 0], [255, 0, 0], [255, 0, 0], [255, 0, 0]]
+  #   
+  #
+  def set_palette( colors, opts={} )
+    if @struct.format.palette.pointer.null?
+      raise Rubygame::SDLError, "#{depth}-bit Surface has no palette."
+    end
+
+    offset = (opts[:offset] || 0).to_i
+
+    ncolors = colors.length
+    buf = FFI::Buffer.new( SDL::Color, ncolors )
+    colors.each_with_index do |color,i|
+      color = SDL::Color.new( Rubygame::Color.make_sdl_rgba(color) )
+      buf[i].put_bytes( 0, color.to_bytes )
+    end
+
+    result = SDL::SetPalette( @struct, SDL::LOGPAL, buf, offset, ncolors )
+    unless result == 1
+      raise Rubygame::SDLError, "Palette failed (reason unknown)"
+    end
+
+    return self
+  end
+
+  alias :palette= :set_palette
+
+
+
   # Blit (copy) all or part of the surface's image to another surface,
   # at a given position. Returns a Rect representing the area of
   # +target+ which was affected by the blit.
