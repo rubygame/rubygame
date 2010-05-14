@@ -474,6 +474,57 @@ end
 
 
 # 
+# JoystickHatMoveTrigger is an event trigger which fires when
+# a joystick hat switch is moved (i.e. JoystickHatMoved).
+# 
+class JoystickHatMoveTrigger
+
+	# Initialize a new instance of JoystickHatMoveTrigger with the
+	# given hat, direction, and joystick.
+	# 
+	# joystick::  The Rubygame::Joystick or integer ID of a joystick to
+	#             detect, or :any to detect events for any joystick.
+	# hat::       The hat switch number to detect, or :any to detect
+	#             events for any hat switch.
+	# direction:: The hat direction to detect, or :any to detect events
+	#             for any direction. Valid directions are :up, :up_left,
+	#             :up_right, :left, :right, :down, :down_left,
+	#             :down_right, or nil (meaning the center).
+	# 
+	def initialize( joystick=:any, hat=:any, direction=:any )
+		@hat = hat
+		@dir = direction
+		@id = case joystick
+					when Rubygame::Joystick
+						joystick.id
+					when Fixnum, :any
+						joystick
+					else
+						raise ArgumentError, "Invalid joystick: #{joystick.inspect}"
+					end
+	end
+
+	# Returns true if all of the following are true:
+	# 
+	# * The event is a JoystickHatMoved event.
+	# * The event's hat is the same as the trigger's hat, or the
+	#   trigger's hat is :any.
+	# * The event's direction is the same as the trigger's direction, or
+	#   the trigger's direction is :any.
+	# * The event's joystick ID is the same as the trigger's ID, or the
+	#   trigger's ID is :any.
+	# 
+	def match?( event )
+		event.kind_of?( Rubygame::Events::JoystickHatMoved ) and
+			((@hat == :any) or (@hat == event.hat)) and
+			((@dir == :any) or (@dir == event.direction)) and
+			((@id  == :any) or (@id  == event.joystick_id))
+	end
+end
+
+
+
+# 
 # KeyPressTrigger is an event trigger which fires when
 # a key on the keyboard is pressed down (i.e. KeyPressed).
 # See also KeyReleaseTrigger.

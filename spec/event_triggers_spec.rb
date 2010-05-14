@@ -430,6 +430,98 @@ end
 
 
 
+describe JoystickHatMoveTrigger do
+
+	before :each do 
+		@event_class   = JoystickHatMoved
+		@trigger_class = JoystickHatMoveTrigger
+		@trigger       = @trigger_class.new
+	end
+
+	it_should_behave_like "an event trigger"
+
+	it "should match any JoystickHatMoved by default" do
+		@trigger = @trigger_class.new()
+		event = @event_class.new( 0, 0, :up )
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should match if trigger joystick, hat, and dir are :any" do
+		@trigger = @trigger_class.new( :any, :any, :any )
+		event = @event_class.new( 0, 0, :up )
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should match if joystick matches" do
+		@trigger = @trigger_class.new( 1, :any, :any )
+		event = @event_class.new( 1, 0, :up )
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should not match if joystick does not match" do
+		@trigger = @trigger_class.new( 2, :any, :any )
+		event = @event_class.new( 1, 0, :up )
+		@trigger.match?( event ).should be_false
+	end
+
+	it "should match if hat matches" do
+		@trigger = @trigger_class.new( :any, 1, :any )
+		event = @event_class.new( 0, 1, :up )
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should not match if hat does not match" do
+		@trigger = @trigger_class.new( :any, 2, :any )
+		event = @event_class.new( 0, 1, :up )
+		@trigger.match?( event ).should be_false
+	end
+
+	it "should match if dir matches" do
+		@trigger = @trigger_class.new( :any, :any, :up )
+		event = @event_class.new( 0, 0, :up )
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should not match if dir does not match" do
+		@trigger = @trigger_class.new( :any, :any, :down )
+		event = @event_class.new( 0, 0, :up )
+		@trigger.match?( event ).should be_false
+	end
+
+	it "should match if both joystick and hat match" do
+		@trigger = @trigger_class.new( 1, 2, :any )
+		event = @event_class.new( 1, 2, :up )
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should match if both joystick and dir match" do
+		@trigger = @trigger_class.new( 1, :any, :up )
+		event = @event_class.new( 1, 0, :up )
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should not match if neither joystick and hat matches" do
+		@trigger = @trigger_class.new( 3, :any, :down )
+		event = @event_class.new( 1, 0, :up )
+		@trigger.match?( event ).should be_false
+	end
+
+	it "should match if joystick, hat, and dir all match" do
+		@trigger = @trigger_class.new( 1, 2, :up )
+		event = @event_class.new( 1, 2, :up )
+		@trigger.match?( event ).should be_true
+	end
+
+	it "should not match if joystick, hat, and dir don't match" do
+		@trigger = @trigger_class.new( 3, 4, :down )
+		event = @event_class.new( 1, 2, :up )
+		@trigger.match?( event ).should be_false
+	end
+
+end
+
+
+
 describe "a keyboard event trigger", :shared => true do
 
 	it_should_behave_like "an event trigger"
