@@ -302,6 +302,49 @@ end
 
 
 # 
+# JoystickAxisMoveTrigger is an event trigger which fires when
+# a joystick axis is moved (i.e. JoystickAxisMoved).
+# 
+class JoystickAxisMoveTrigger
+
+	# Initialize a new instance of JoystickAxisMoveTrigger with the
+	# given axis and joystick.
+	# 
+	# joystick:: The Rubygame::Joystick or integer ID of a joystick to
+	#            detect, or :any to detect events for any joystick.
+	# axis::     The axis number to detect, or :any to detect events
+	#            for any axis.
+	# 
+	def initialize( joystick=:any, axis=:any )
+		@axis = axis
+		@id = case joystick
+					when Rubygame::Joystick
+						joystick.id
+					when Fixnum, :any
+						joystick
+					else
+						raise ArgumentError, "Invalid joystick: #{joystick.inspect}"
+					end
+	end
+
+	# Returns true if all of the following are true:
+	# 
+	# * The event is a JoystickAxisMoved event.
+	# * The event's axis is the same as the trigger's axis, or the
+	#   trigger's axis is :any.
+	# * The event's joystick ID is the same as the trigger's ID, or the
+	#   trigger's ID is :any.
+	# 
+	def match?( event )
+		event.kind_of?( Rubygame::Events::JoystickAxisMoved ) and
+			((@axis == :any) or (event.axis == @axis)) and
+			((@id == :any) or (event.joystick_id == @id))
+	end
+end
+
+
+
+# 
 # KeyPressTrigger is an event trigger which fires when
 # a key on the keyboard is pressed down (i.e. KeyPressed).
 # See also KeyReleaseTrigger.
