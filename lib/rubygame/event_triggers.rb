@@ -42,42 +42,64 @@
 # impact on your game's framerate.
 # 
 # Here is an overview of the event trigger classes that
-# come with Rubygame as of version 2.5:
+# come with Rubygame as of version 2.7:
 # 
 # 
-# AndTrigger::          Holds multiple other triggers, and
-#                       matches if ALL of the triggers
-#                       match the event.
+# AndTrigger::
+#   Holds multiple other triggers, and matches if ALL of the triggers
+#   match the event.
 # 
-# OrTrigger::           Holds multiple other triggers, and
-#                       matches if ONE OR MORE of the
-#                       triggers match the event.
+# OrTrigger::
+#   Holds multiple other triggers, and matches if ONE OR MORE of the
+#   triggers match the event.
 # 
-# AttrTrigger::         Matches if the event's attributes
-#                       have the expected values.
+# AttrTrigger::
+#   Matches if the event's attributes have the expected values.
 # 
-# BlockTrigger::        Passes the event to a custom code
-#                       block to check whether it matches.
+# BlockTrigger::
+#   Passes the event to a custom code block to check whether it matches.
 # 
-# InstanceOfTrigger::   Matches if the event is an
-#                       instance of a particular class.
+# InstanceOfTrigger::
+#   Matches if the event is an instance of a particular class.
 # 
-# KeyPressTrigger::     Matches certain KeyPressed events.
+# JoystickAxisMoveTrigger::       
+#   Matches Events::JoystickAxisMoved events.
 # 
-# KeyReleaseTrigger::   Matches certain KeyReleased events.
+# JoystickBallMoveTrigger::       
+#   Matches Events::JoystickBallMoved events.
 # 
-# KindOfTrigger::       Matches if the event is #kind_of? a
-#                       particular class or module.
+# JoystickButtonPressTrigger::    
+#   Matches Events::JoystickButtonPressed events.
 # 
-# MousePressTrigger::   Matches certain MousePressed events.
+# JoystickButtonReleaseTrigger::  
+#   Matches Events::JoystickButtonReleased events.
 # 
-# MouseMoveTrigger::    Matches certain MouseMoved events.
+# JoystickHatMoveTrigger::        
+#   Matches Events::JoystickHatMoved events.
 # 
-# MouseReleaseTrigger:: Matches certain MouseReleased events.
+# KeyPressTrigger::
+#   Matches Events::KeyPressed events.
 # 
-# TickTrigger::         Matches ClockTicked events.
+# KeyReleaseTrigger::
+#   Matches Events::KeyReleased events.
 # 
-# YesTrigger::          Matches every event, no matter what.
+# KindOfTrigger::
+#   Matches if the event is #kind_of? a particular class or module.
+# 
+# MousePressTrigger::
+#   Matches Events::MousePressed events.
+# 
+# MouseMoveTrigger::
+#   Matches Events::MouseMoved events.
+# 
+# MouseReleaseTrigger::           
+#   Matches Events::MouseReleased events.
+# 
+# TickTrigger::                   
+#   Matches Events::ClockTicked events.
+# 
+# YesTrigger::                    
+#   Matches every event, no matter what.
 # 
 module Rubygame::EventTriggers
 
