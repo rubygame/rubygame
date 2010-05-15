@@ -1,7 +1,6 @@
 
 # Prefer local library over installed version.
 $:.unshift( File.join( File.dirname(__FILE__), "..", "lib" ) )
-$:.unshift( File.join( File.dirname(__FILE__), "..", "ext", "rubygame" ) )
 
 require 'rubygame/color'
 include Rubygame::Color
@@ -9,12 +8,26 @@ include Rubygame::Color
 
 DELTA = 0.01
 
-# Some sample colors in RGB, HSV, and HSL forms
+# Some sample colors in all color models.
 $colors = {
-	:ruby      =>  { :rgb => [0.44, 0.0625, 0.0625], :hsv => [   0, 0.86, 0.44], :hsl => [   0, 0.75, 0.25] },
-	:skyblue   =>  { :rgb => [0.50, 0.7500, 1.0000], :hsv => [0.56, 0.50, 1.00], :hsl => [0.56, 1.00, 0.75] },
-	:chocolate =>  { :rgb => [0.38, 0.2500, 0.1300], :hsv => [0.08, 0.67, 0.38], :hsl => [0.83, 0.50, 0.25] }
+	:ruby => {
+		:rgb    => [0.44, 0.0625, 0.0625],
+		:hsv    => [0.00, 0.8600, 0.4400],
+		:hsl    => [0.00, 0.7500, 0.2500],
+	},
+	:skyblue => {
+		:rgb    => [0.50, 0.75, 1.00],
+		:hsv    => [0.56, 0.50, 1.00],
+		:hsl    => [0.56, 1.00, 0.75],
+	},
+	:chocolate => {
+		:rgb    => [0.38, 0.25, 0.13],
+		:hsv    => [0.08, 0.67, 0.38],
+		:hsl    => [0.83, 0.50, 0.25],
+	},
 }
+
+
 
 ##############################
 ##      SHARED  SPECS       ##
@@ -43,6 +56,8 @@ describe "Color with RGBA array (shared)", :shared => true do
 		@color.to_rgba_ary.at(3).should be_close( @a.to_f, DELTA )
 	end
 end
+
+
 
 ##############################
 ##    RGB  SHARED  SPECS    ##
@@ -86,6 +101,7 @@ describe "ColorRGB (shared)", :shared => true do
 	end
 	
 end
+
 
 ##############################
 ##   RGB  INITIALIZATION    ##
@@ -170,6 +186,7 @@ describe "ColorRGB initialized from a ColorHSL" do
 	it_should_behave_like "Color with RGBA array (shared)"
 	
 end
+
 
 ##############################
 #         RGB MATHS          #
@@ -281,6 +298,7 @@ describe "ColorRGB weighted-averaged with another ColorRGB" do
 end
 
 
+
 ##############################
 ##    HSV  SHARED  SPECS    ##
 ##############################
@@ -323,6 +341,7 @@ describe "ColorHSV (shared)", :shared => true do
 	end
 end
 
+
 ##############################
 ##   HSV  INITIALIZATION    ##
 ##############################
@@ -356,18 +375,6 @@ describe "ColorHSV initialized from a 4-Array" do
 	it_should_behave_like "Color with RGBA array (shared)"
 	
 end
-
-# describe "ColorHSV initialized from an Array of integers" do 
-# 	before(:each) do
-# 		@h, @s, @v = $colors[:ruby][:hsv]
-# 		@a = 1.0
-# 		@color = ColorHSV.new( [@h, @s, @v, @a] )
-# 	end
-#	
-# 	it_should_behave_like "ColorHSV (shared)"
-# 	it_should_behave_like "Color with RGBA array (shared)"
-#	
-# end
 
 describe "ColorHSV initialized from a ColorRGB" do 
 	before(:each) do
@@ -415,8 +422,10 @@ describe "ColorHSV initialized from a ColorHSL" do
 	
 end
 
+
+
 ##############################
-##    HSV  SHARED  SPECS    ##
+##    HSL  SHARED  SPECS    ##
 ##############################
 
 describe "ColorHSL (shared)", :shared => true do 
@@ -457,6 +466,7 @@ describe "ColorHSL (shared)", :shared => true do
 	end
 end
 
+
 ##############################
 ##   HSL  INITIALIZATION    ##
 ##############################
@@ -490,18 +500,6 @@ describe "ColorHSL initialized from a 4-Array" do
 	it_should_behave_like "Color with RGBA array (shared)"
 	
 end
-
-# describe "ColorHSL initialized from an Array of integers" do 
-# 	before(:each) do
-# 		@h, @s, @l = $colors[:ruby][:hsl]
-# 		@a = 1.0
-# 		@color = ColorHSL.new( [@h, @s, @l, @a] )
-# 	end
-#	
-# 	it_should_behave_like "ColorHSL (shared)"
-# 	it_should_behave_like "Color with RGBA array (shared)"
-#	
-# end
 
 describe "ColorHSL initialized from a ColorRGB" do 
 	before(:each) do
