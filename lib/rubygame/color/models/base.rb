@@ -48,7 +48,7 @@ module ColorBase
 	# The alpha of the new color will be equal to the alpha
 	# of the receiver.
 	def /(other)
-		wrap( simple_op(other)  { |a,b|  a / b } )
+		wrap( simple_op(other)  { |a,b| (a == 0) ? 0.0 : (a / b.to_f) } )
 	end
 	
 	# Layer this color over another color.
