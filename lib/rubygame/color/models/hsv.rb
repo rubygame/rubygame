@@ -40,11 +40,13 @@ module Rubygame
 			# All color components range from 0.0 to 1.0.
 			# 
 			def initialize( color )
-				if color.kind_of?(Array)
+				if color.kind_of?(Array) and color.size >= 3
 					@h, @s, @v, @a = color.collect { |i| i.to_f }
 					@a = 1.0 unless @a
 				elsif color.respond_to?(:to_rgba_ary)
 					@h, @s, @v, @a = self.class.rgba_to_hsva( *color.to_rgba_ary )
+				else
+					raise ArgumentError, "Invalid color: #{color.inspect}"
 				end
 			end
 

@@ -57,12 +57,26 @@ describe "Color with RGBA array (shared)", :shared => true do
   it "should have the expected alpha compenent" do
     @color.to_rgba_ary.at(3).should be_close( @a.to_f, DELTA )
   end
+
+
+  INVALID = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
+
+  INVALID.each do |inv|
+    it ".new should raise ArgumentError from #{inv.inspect}" do
+      lambda{ @klass.new(inv) }.should raise_error(ArgumentError)
+    end
+  end
+
 end
 
 
 
 
 describe "ColorRGB" do
+
+  before :each do
+    @klass = ColorRGB
+  end
 
   ##############################
   ##    RGB  SHARED  SPECS    ##
@@ -308,6 +322,10 @@ end
 
 describe "ColorHSV" do
 
+  before :each do
+    @klass = ColorHSV
+  end
+
   ##############################
   ##    HSV  SHARED  SPECS    ##
   ##############################
@@ -437,6 +455,10 @@ end
 
 
 describe "ColorHSL" do
+
+  before :each do
+    @klass = ColorHSL
+  end
 
   ##############################
   ##    HSL  SHARED  SPECS    ##
