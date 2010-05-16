@@ -47,34 +47,26 @@ module Rubygame
 					@h, @s, @v, @a = self.class.rgba_to_hsva( *color.to_rgba_ary )
 				end
 			end
-			
-			# Return an Array with the red, green, blue, and alpha components
-			# of the color (converting the color to the RGBA model first).
+
+			# Returns the color as an RGBA array of floats ranging from 0.0
+			# to 1.0.
 			def to_rgba_ary
 				return self.class.hsva_to_rgba( @h, @s, @v, @a )
 			end
-			
-			def to_s
-				"#<#{self.class} [#{@h}, #{@s}, #{@v}, #{@a}]>"
+
+			# Returns the color as an HSVA array of floats ranging from 0.0
+			# to 1.0.
+			def to_ary
+				[@h, @s, @v, @a]
 			end
-			alias :inspect :to_s
-			
-			def hash
-				@hash ||= ((@h.hash << 4) +
-				           (@s.hash << 3) +
-				           (@v.hash << 2) +
-				           (@a.hash << 1) +
-				           self.class.hash)
-			end
+
 
 			class << self
 				
+				# Creates a new instance from an RGBA array of floats ranging
+				# from 0.0 to 1.0.
 				def new_from_rgba( rgba )
 					new( rgba_to_hsva(*rgba) )
-				end
-				
-				def new_from_sdl_rgba( rgba )
-					new_from_rgba( rgba.collect { |i| i / 255.0 } )
 				end
 				
 				# Convert the red, green, blue, and alpha to the

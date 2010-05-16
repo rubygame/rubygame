@@ -47,40 +47,24 @@ module Rubygame
 					@r, @g, @b, @a = color.to_rgba_ary
 				end
 			end
-			
-			# Converts the color to an RGBA array of integers 
-			# ranging from 0 to 255, as SDL wants.
-			def to_sdl_rgba_ary
-				self.to_rgba_ary.collect { |i| (i * 255).to_i }
+
+			# Creates a new instance from an RGBA array of floats ranging
+			# from 0.0 to 1.0.
+			def self.new_from_rgba( rgba )
+				new( rgba )
 			end
-			
+
+			# Returns the color as an RGBA array of floats ranging from 0.0
+			# to 1.0.
 			def to_rgba_ary
 				return [@r, @g, @b, @a]
 			end
-			
-			def to_s
-				"#<#{self.class} [#{@r}, #{@g}, #{@b}, #{@a}]>"
-			end
-			alias :inspect :to_s
-			
-			def hash
-				@hash ||= ((@r.hash << 4) +
-				           (@g.hash << 3) +
-				           (@b.hash << 2) +
-				           (@a.hash << 1) +
-				           self.class.hash)
+
+			# Same as #to_rgba_ary
+			def to_ary
+				return [@r, @g, @b, @a]
 			end
 
-			class << self
-				def new_from_rgba( rgba )
-					new( rgba )
-				end
-
-				def new_from_sdl_rgba( rgba )
-					new_from_rgba( rgba.collect { |i| i / 255.0 } )
-				end
-			end
-			
 		end
 	end
 end

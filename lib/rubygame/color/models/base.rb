@@ -20,9 +20,73 @@
 module Rubygame
 module Color
 
-# A mix-in module defining color arithmetic operations.
+# A mix-in module defining methods shared by all Color classes.
 module ColorBase
 
+	# Class methods shared by all Color classes.
+	module ClassMethods
+
+		# Returns the class basename. E.g. the basename of
+		# Rubygame::Color::ColorRGB is "ColorRGB".
+		def basename
+			n = name
+			i = n.rindex(':')
+			i ? n[i+1, n.length] : n
+		end
+
+		# Creates a new instance from an RGBA array of integers
+		# ranging from 0 to 255.
+		def new_from_sdl_rgba( rgba )
+			new_from_rgba( rgba.collect { |i| i / 255.0 } )
+		end
+
+	end
+
+	def self.included( other )
+		class << other; include ClassMethods; end
+	end
+
+
+	# Override this in the class
+	def to_ary  # :nodoc:
+		raise "Cannot convert #{self.class.basename} to array"
+	end
+	def to_a  # :nodoc:
+		to_ary
+	end
+
+
+	# Override this in the class
+	def to_rgba_ary  # :nodoc:
+		raise "Cannot convert #{self.class.basename} to RGBA"
+	end
+
+	# Converts the color to an RGBA array of integers 
+	# ranging from 0 to 255, like SDL uses.
+	def to_sdl_rgba_ary
+		self.to_rgba_ary.collect { |i| clamp(i*255, 0, 255).round }
+	end
+
+
+	def to_s  # :nodoc:
+		"#<%s %s>"%[self.class.basename, to_ary.inspect]
+	end
+
+	def inspect  # :nodoc:
+		"#<%s:%#.x %s>"%[self.class.basename, object_id, to_ary.inspect]
+	end
+
+
+	def hash  # :nodoc:
+		ary = to_ary
+		@hash ||= ((ary.at(0).hash << 4) +
+		           (ary.at(1).hash << 3) +
+		           (ary.at(2).hash << 2) +
+		           (ary.at(3).hash << 1) +
+		           self.class.hash)
+	end
+
+  
 	# Perform color addition with another color of any type.
 	# The alpha of the new color will be equal to the alpha
 	# of the receiver.
@@ -82,18 +146,6 @@ module ColorBase
 	end
 
 
-  def to_rgba_ary
-    raise "Cannot convert #{self.class} to RGBA"
-  end
-
-  # Converts the color to an RGBA array of integers 
-  # ranging from 0 to 255, as SDL wants.
-  def to_sdl_rgba_ary
-    self.to_rgba_ary.collect { |i| (i * 255).to_i }
-  end
-
-
-  
 	private
 	
 	def wrap( rgba )

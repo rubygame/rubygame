@@ -48,33 +48,24 @@ module Rubygame
 				end
 			end
 
-			# Return an Array with the red, green, blue, and alpha components
-			# of the color (converting the color to the RGBA model first).
+			# Returns the color as an RGBA array of floats ranging from 0.0 to 1.0.
 			def to_rgba_ary
 				return self.class.hsla_to_rgba( @h, @s, @l, @a )
 			end
-			
-			def to_s
-				"#<#{self.class} [#{@h}, #{@s}, #{@l}, #{@a}]>"
+
+			# Returns the color as an HSLA array of floats ranging from 0.0
+			# to 1.0.
+			def to_ary
+				[@h, @s, @l, @a]
 			end
-			alias :inspect :to_s
-			
-			def hash
-				@hash ||= ((@h.hash << 4) +
-				           (@s.hash << 3) +
-				           (@l.hash << 2) +
-				           (@a.hash << 1) +
-				           self.class.hash)
-			end
+
 
 			class << self
 
+				# Creates a new instance from an RGBA array of floats ranging
+				# from 0.0 to 1.0.
 				def new_from_rgba( rgba )
 					new( rgba_to_hsla(*rgba) )
-				end
-				
-				def new_from_sdl_rgba( rgba )
-					new_from_rgba( rgba.collect { |i| i / 255.0 } )
 				end
 				
 				# Convert the red, green, blue, and alpha to the
@@ -111,14 +102,15 @@ module Rubygame
 					else 
 						raise "Should never happen"
 					end 
-					
+
 					return [h,s,l,a]
 				end
 				
 				# Convert the hue, saturation, luminosity, and alpha
 				# to the equivalent red, green, blue, and alpha.
 				def hsla_to_rgba( h, s, l, a ) # :nodoc:
-					# If the color is achromatic, return already with the lightness value for all components
+					# If the color is achromatic, return already with the
+					# lightness value for all components
 					if s == 0.0
 						return [l, l, l, a]
 					end
