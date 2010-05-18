@@ -86,6 +86,25 @@ module ColorBase
 		           self.class.hash)
 	end
 
+
+	# True if other has the same class and components
+	def eql?( other )
+		self.hash == other.hash
+	end
+
+	def ==( other )
+		return true if eql?(other)
+		c2 = begin
+		       self.class.new(other).to_rgba_ary
+		     rescue ArgumentError
+		       return false
+		     end
+		c1 = to_rgba_ary
+		return c1.enum_for(:each_index).all? { |i|
+			(c1.at(i) - c2.at(i)).abs < Float::EPSILON*2
+		}
+	end
+
   
 	# Perform color addition with another color of any type.
 	# The alpha of the new color will be equal to the alpha

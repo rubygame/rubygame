@@ -207,6 +207,116 @@ describe "ColorRGB" do
 
 
   ##############################
+  #         RGB  EQL?          #
+  ##############################
+
+  describe "(eql?)" do
+
+    before :each do
+      @color1 = ColorRGB.new( $colors[:ruby][:rgb] + [0.5] )
+    end
+
+    it "should eql? itself" do
+      @color1.should eql(@color1)
+    end
+
+    it "should eql? an equivalent ColorRGB" do
+      @color2 = ColorRGB.new( $colors[:ruby][:rgb] + [0.5] )
+      @color1.should eql(@color2)
+    end
+
+    it "should not eql? a different ColorRGB" do
+      @color1.should_not eql( ColorRGB.new([0.1, 0.2, 0.3, 0.4]) )
+    end
+
+    it "should not eql? an Array with same numbers" do
+      @color1.should_not eql( @color1.to_ary )
+    end
+
+    it "should not eql? a Array with different numbers" do
+      @color1.should_not eql( [0.1, 0.2, 0.3, 0.4] )
+    end
+
+    it "should not eql? an equivalent ColorHSV" do
+      @color1.should_not eql( ColorHSV.new(@color1) )
+    end
+
+    it "should not eql? a ColorHSV with same numbers" do
+      @color1.should_not eql( ColorHSV.new(@color1.to_ary) )
+    end
+
+    it "should not eql? an equivalent ColorHSL" do
+      @color1.should_not eql( ColorHSL.new(@color1) )
+    end
+
+    it "should not eql? a ColorHSL with same numbers" do
+      @color1.should_not eql( ColorHSL.new(@color1.to_ary) )
+    end
+
+    INVALID = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
+    INVALID.each do |inv|
+      it "should not eql? #{inv.inspect}" do
+        @color1.should_not eql( inv )
+      end
+    end
+
+  end
+
+  
+  ##############################
+  #           RGB ==           #
+  ##############################
+
+  describe "(==)" do
+
+    before :each do
+      @color1 = ColorRGB.new( $colors[:ruby][:rgb] + [0.5] )
+    end
+
+    it "should == an equivalent ColorRGB" do
+      @color2 = ColorRGB.new( $colors[:ruby][:rgb] + [0.5] )
+      @color1.should == @color2
+    end
+
+    it "should not == a different ColorRGB" do
+      @color1.should_not == ColorRGB.new( [0.1, 0.2, 0.3, 0.4] )
+    end
+
+    it "should == an Array with same numbers" do
+      @color1.should == @color1.to_ary
+    end
+
+    it "should not == a Array with different numbers" do
+      @color1.should_not == [0.1, 0.2, 0.3, 0.4]
+    end
+
+    it "should == an equivalent ColorHSV" do
+      @color1.should == ColorHSV.new( @color1 )
+    end
+
+    it "should not == a ColorHSV with same numbers" do
+      @color1.should_not == ColorHSV.new( @color1.to_ary )
+    end
+
+    it "should == an equivalent ColorHSL" do
+      @color1.should == ColorHSL.new( @color1 )
+    end
+
+    it "should not == a ColorHSL with same numbers" do
+      @color1.should_not == ColorHSL.new( @color1.to_ary )
+    end
+
+    INVALID = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
+    INVALID.each do |inv|
+      it "should not == #{inv.inspect}" do
+        @color1.should_not == inv
+      end
+    end
+
+  end
+
+
+  ##############################
   #         RGB MATHS          #
   ##############################
 
@@ -449,6 +559,116 @@ describe "ColorHSV" do
 
   end
 
+
+  ##############################
+  #         HSV  EQL?          #
+  ##############################
+
+  describe "(eql?)" do
+
+    before :each do
+      @color1 = ColorHSV.new( $colors[:ruby][:hsv] + [0.5] )
+    end
+
+    it "should eql? itself" do
+      @color1.should eql(@color1)
+    end
+
+    it "should eql? an equivalent ColorHSV" do
+      @color2 = ColorHSV.new( $colors[:ruby][:hsv] + [0.5] )
+      @color1.should eql(@color2)
+    end
+
+    it "should not eql? a different ColorHSV" do
+      @color1.should_not eql( ColorHSV.new([0.1, 0.2, 0.3, 0.4]) )
+    end
+
+    it "should not eql? an Array with same numbers" do
+      @color1.should_not eql( @color1.to_ary )
+    end
+
+    it "should not eql? a Array with different numbers" do
+      @color1.should_not eql( [0.1, 0.2, 0.3, 0.4] )
+    end
+
+    it "should not eql? an equivalent ColorRGB" do
+      @color1.should_not eql( ColorRGB.new(@color1) )
+    end
+
+    it "should not eql? a ColorRGB with same numbers" do
+      @color1.should_not eql( ColorRGB.new(@color1.to_ary) )
+    end
+
+    it "should not eql? an equivalent ColorHSL" do
+      @color1.should_not eql( ColorHSL.new(@color1) )
+    end
+
+    it "should not eql? a ColorHSL with same numbers" do
+      @color1.should_not eql( ColorHSL.new(@color1.to_ary) )
+    end
+
+    INVALID = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
+    INVALID.each do |inv|
+      it "should not eql? #{inv.inspect}" do
+        @color1.should_not eql( inv )
+      end
+    end
+
+  end
+
+  
+  ##############################
+  #           HSV ==           #
+  ##############################
+
+  describe "(==)" do
+
+    before :each do
+      @color1 = ColorHSV.new( $colors[:ruby][:hsv] + [0.5] )
+    end
+
+    it "should == an equivalent ColorHSV" do
+      @color2 = ColorHSV.new( $colors[:ruby][:hsv] + [0.5] )
+      @color1.should == @color2
+    end
+
+    it "should not == a different ColorHSV" do
+      @color1.should_not == ColorHSV.new( [0.1, 0.2, 0.3, 0.4] )
+    end
+
+    it "should == an Array with same numbers" do
+      @color1.should == @color1.to_ary
+    end
+
+    it "should not == a Array with different numbers" do
+      @color1.should_not == [0.1, 0.2, 0.3, 0.4]
+    end
+
+    it "should == an equivalent ColorRGB" do
+      @color1.should == ColorRGB.new( @color1 )
+    end
+
+    it "should not == a ColorRGB with same numbers" do
+      @color1.should_not == ColorRGB.new( @color1.to_ary )
+    end
+
+    it "should == an equivalent ColorHSL" do
+      @color1.should == ColorHSL.new( @color1 )
+    end
+
+    it "should not == a ColorHSL with same numbers" do
+      @color1.should_not == ColorHSL.new( @color1.to_ary )
+    end
+
+    INVALID = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
+    INVALID.each do |inv|
+      it "should not == #{inv.inspect}" do
+        @color1.should_not == inv
+      end
+    end
+
+  end
+
 end
 
 
@@ -580,6 +800,116 @@ describe "ColorHSL" do
 
     it_should_behave_like "ColorHSL (shared)"
     it_should_behave_like "Color with RGBA array (shared)"
+
+  end
+
+
+  ##############################
+  #         HSL  EQL?          #
+  ##############################
+
+  describe "(eql?)" do
+
+    before :each do
+      @color1 = ColorHSL.new( $colors[:ruby][:hsl] + [0.5] )
+    end
+
+    it "should eql? itself" do
+      @color1.should eql(@color1)
+    end
+
+    it "should eql? an equivalent ColorHSL" do
+      @color2 = ColorHSL.new( $colors[:ruby][:hsl] + [0.5] )
+      @color1.should eql(@color2)
+    end
+
+    it "should not eql? a different ColorHSL" do
+      @color1.should_not eql( ColorHSL.new([0.1, 0.2, 0.3, 0.4]) )
+    end
+
+    it "should not eql? an Array with same numbers" do
+      @color1.should_not eql( @color1.to_ary )
+    end
+
+    it "should not eql? a Array with different numbers" do
+      @color1.should_not eql( [0.1, 0.2, 0.3, 0.4] )
+    end
+
+    it "should not eql? an equivalent ColorRGB" do
+      @color1.should_not eql( ColorRGB.new(@color1) )
+    end
+
+    it "should not eql? a ColorRGB with same numbers" do
+      @color1.should_not eql( ColorRGB.new(@color1.to_ary) )
+    end
+
+    it "should not eql? an equivalent ColorHSV" do
+      @color1.should_not eql( ColorHSV.new(@color1) )
+    end
+
+    it "should not eql? a ColorHSV with same numbers" do
+      @color1.should_not eql( ColorHSV.new(@color1.to_ary) )
+    end
+
+    INVALID = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
+    INVALID.each do |inv|
+      it "should not eql? #{inv.inspect}" do
+        @color1.should_not eql( inv )
+      end
+    end
+
+  end
+
+  
+  ##############################
+  #           HSL ==           #
+  ##############################
+
+  describe "(==)" do
+
+    before :each do
+      @color1 = ColorHSL.new( $colors[:ruby][:hsl] + [0.5] )
+    end
+
+    it "should == an equivalent ColorHSL" do
+      @color2 = ColorHSL.new( $colors[:ruby][:hsl] + [0.5] )
+      @color1.should == @color2
+    end
+
+    it "should not == a different ColorHSL" do
+      @color1.should_not == ColorHSL.new( [0.1, 0.2, 0.3, 0.4] )
+    end
+
+    it "should == an Array with same numbers" do
+      @color1.should == @color1.to_ary
+    end
+
+    it "should not == a Array with different numbers" do
+      @color1.should_not == [0.1, 0.2, 0.3, 0.4]
+    end
+
+    it "should == an equivalent ColorRGB" do
+      @color1.should == ColorRGB.new( @color1 )
+    end
+
+    it "should not == a ColorRGB with same numbers" do
+      @color1.should_not == ColorRGB.new( @color1.to_ary )
+    end
+
+    it "should == an equivalent ColorHSV" do
+      @color1.should == ColorHSV.new( @color1 )
+    end
+
+    it "should not == a ColorHSV with same numbers" do
+      @color1.should_not == ColorHSV.new( @color1.to_ary )
+    end
+
+    INVALID = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
+    INVALID.each do |inv|
+      it "should not == #{inv.inspect}" do
+        @color1.should_not == inv
+      end
+    end
 
   end
 
