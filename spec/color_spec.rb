@@ -62,9 +62,8 @@ describe "Color with RGBA array (shared)", :shared => true do
   end
 
 
-  INVALID = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
-
-  INVALID.each do |inv|
+  invalid = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
+  invalid.each do |inv|
     it ".new should raise ArgumentError from #{inv.inspect}" do
       lambda{ @klass.new(inv) }.should raise_error(ArgumentError)
     end
@@ -276,8 +275,8 @@ describe "ColorRGB" do
       @color1.should_not eql( ColorHSL.new(@color1.to_ary) )
     end
 
-    INVALID = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
-    INVALID.each do |inv|
+    invalid = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
+    invalid.each do |inv|
       it "should not eql? #{inv.inspect}" do
         @color1.should_not eql( inv )
       end
@@ -338,8 +337,8 @@ describe "ColorRGB" do
       @color1.should_not == ColorHSL.new( @color1.to_ary )
     end
 
-    INVALID = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
-    INVALID.each do |inv|
+    invalid = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
+    invalid.each do |inv|
       it "should not == #{inv.inspect}" do
         @color1.should_not == inv
       end
@@ -661,8 +660,8 @@ describe "ColorHSV" do
       @color1.should_not eql( ColorHSL.new(@color1.to_ary) )
     end
 
-    INVALID = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
-    INVALID.each do |inv|
+    invalid = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
+    invalid.each do |inv|
       it "should not eql? #{inv.inspect}" do
         @color1.should_not eql( inv )
       end
@@ -723,8 +722,8 @@ describe "ColorHSV" do
       @color1.should_not == ColorHSL.new( @color1.to_ary )
     end
 
-    INVALID = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
-    INVALID.each do |inv|
+    invalid = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
+    invalid.each do |inv|
       it "should not == #{inv.inspect}" do
         @color1.should_not == inv
       end
@@ -936,8 +935,8 @@ describe "ColorHSL" do
       @color1.should_not eql( ColorHSV.new(@color1.to_ary) )
     end
 
-    INVALID = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
-    INVALID.each do |inv|
+    invalid = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
+    invalid.each do |inv|
       it "should not eql? #{inv.inspect}" do
         @color1.should_not eql( inv )
       end
@@ -998,8 +997,8 @@ describe "ColorHSL" do
       @color1.should_not == ColorHSV.new( @color1.to_ary )
     end
 
-    INVALID = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
-    INVALID.each do |inv|
+    invalid = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
+    invalid.each do |inv|
       it "should not == #{inv.inspect}" do
         @color1.should_not == inv
       end
@@ -1215,8 +1214,8 @@ describe "ColorRGB255" do
       @color1.should_not eql( ColorHSL.new(@color1.to_ary) )
     end
 
-    INVALID = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
-    INVALID.each do |inv|
+    invalid = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
+    invalid.each do |inv|
       it "should not eql? #{inv.inspect}" do
         @color1.should_not eql( inv )
       end
@@ -1276,8 +1275,8 @@ describe "ColorRGB255" do
       @color1.should_not == ColorHSL.new( @color1.to_ary )
     end
 
-    INVALID = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
-    INVALID.each do |inv|
+    invalid = [ 1, 2.0, [], [1], [1,2], {}, nil, true, false ]
+    invalid.each do |inv|
       it "should not == #{inv.inspect}" do
         @color1.should_not == inv
       end
