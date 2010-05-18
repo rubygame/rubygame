@@ -478,12 +478,12 @@ describe Surface, "(set_palette)" do
 
       it "should work with a ColorHSV" do
         @surf.set_palette([Rubygame::Color::ColorHSV.new([0.2,0.2,0.2])])
-        @surf.palette[0..2].should == [[48,51,40], [0,0,0], [0,0,0]]
+        @surf.palette[0..2].should == [[49,51,41], [0,0,0], [0,0,0]]
       end
 
       it "should work with a ColorHSL" do
         @surf.set_palette([Rubygame::Color::ColorHSL.new([0.2,0.2,0.2])])
-        @surf.palette[0..2].should == [[57,61,40], [0,0,0], [0,0,0]]
+        @surf.palette[0..2].should == [[57,61,41], [0,0,0], [0,0,0]]
       end
 
       it "should work with a color name symbol" do
