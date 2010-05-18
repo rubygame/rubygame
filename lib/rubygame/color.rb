@@ -19,7 +19,7 @@
 
 
 
-%w{  base rgb hsv hsl  }.each do |f|
+%w{  base rgb rgb255 hsv hsl  }.each do |f|
   require( File.join( File.dirname(__FILE__), "color", "models", f ) )
 end
 

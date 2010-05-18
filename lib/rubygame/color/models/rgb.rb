@@ -22,7 +22,11 @@
 module Rubygame
 	module Color
 
-		# Represents color in the RGB (Red, Green, Blue) color space.
+		# Represents color in the RGB (Red, Green, Blue) color space,
+		# with each color component as a float from 0.0 to 1.0.
+		# 
+		# See also ColorRGB255, where components are integers from 0 to 255.
+		# 
 		class ColorRGB
 			include ColorBase
 			

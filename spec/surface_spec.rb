@@ -476,6 +476,11 @@ describe Surface, "(set_palette)" do
         @surf.palette[0..2].should == [[255,0,255], [0,0,0], [0,0,0]]
       end
 
+      it "should work with a ColorRGB255" do
+        @surf.set_palette([Rubygame::Color::ColorRGB255.new([255,0,255])])
+        @surf.palette[0..2].should == [[255,0,255], [0,0,0], [0,0,0]]
+      end
+
       it "should work with a ColorHSV" do
         @surf.set_palette([Rubygame::Color::ColorHSV.new([0.2,0.2,0.2])])
         @surf.palette[0..2].should == [[49,51,41], [0,0,0], [0,0,0]]
