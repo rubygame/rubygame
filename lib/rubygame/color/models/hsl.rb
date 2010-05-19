@@ -43,6 +43,8 @@ module Rubygame
 				if color.kind_of?(Array) and color.size >= 3
 					@h, @s, @l, @a = color.collect { |i| i.to_f }
 					@a = 1.0 unless @a
+				elsif color.instance_of?(self.class)
+					@h, @s, @l, @a = color.to_ary
 				elsif color.respond_to?(:to_rgba_ary)
 					@h, @s, @l, @a = self.class.rgba_to_hsla( *color.to_rgba_ary )
 				else
