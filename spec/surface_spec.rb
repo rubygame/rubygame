@@ -148,6 +148,13 @@ describe Surface, "(marshalling)", do
     surf2.alpha.should == 123
   end
 
+  it "should preserve palette" do
+    surf = Rubygame::Surface.new([10,20], :depth => 2)
+    surf.palette = [[0,1,2], [3,4,5], [6,7,8], [9,10,11]]
+    surf2 = Marshal.load( Marshal.dump(surf) )
+    surf2.palette.should == [[0,1,2], [3,4,5], [6,7,8], [9,10,11]]
+  end
+
   it "should preserve clip" do
     surf2 = Marshal.load( Marshal.dump(@surf) )
     surf2.clip.should == Rubygame::Rect.new(4,3,2,1)

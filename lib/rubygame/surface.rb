@@ -919,15 +919,11 @@ class Rubygame::Surface
       :pixels   => pixels,
       :alpha    => alpha,
       :colorkey => colorkey,
+      :palette  => palette,
       :clip     => SDL.GetClipRect(@struct).to_ary,
       :tainted  => tainted?,
       :frozen   => frozen?,
     }
-
-    # TODO: dump palette if it has one
-    # unless @struct.format[:palette].null?
-    #   ...
-    # end
 
     SDL.UnlockSurface(@struct)
 
@@ -957,10 +953,9 @@ class Rubygame::Surface
       set_alpha( dump[:alpha], dump[:flags] & SDL::SRCALPHA )
     end
 
-    # TODO: load palette if it has one
-    # if dump[:palette]
-    #   ...
-    # end
+    if dump[:palette]
+      set_palette( dump[:palette] )
+    end
 
     self.clip = dump[:clip] if dump[:clip]
 
