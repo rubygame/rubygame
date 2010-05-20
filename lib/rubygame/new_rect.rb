@@ -18,6 +18,9 @@
 #++
 
 
+# Don't override existing Rect class, e.g. from rect.rb.
+unless defined? Rubygame::Rect
+
 
 module Rubygame
 
@@ -755,3 +758,6 @@ class Rect
 end # class Rect
 
 end # module Rubygame
+
+
+end # unless defined? Rubygame::Rect

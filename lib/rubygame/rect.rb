@@ -17,6 +17,11 @@
 #	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #++
 
+
+# Don't override existing Rect class, e.g. from new_rect.rb.
+unless defined? Rubygame::Rect
+
+
 #--
 # Table of Contents:
 #
@@ -610,3 +615,6 @@ class Rect < Array
 end # class Rect
 
 end # module Rubygame
+
+
+end # unless defined? Rubygame::Rect
