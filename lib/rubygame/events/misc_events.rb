@@ -69,7 +69,7 @@ module Rubygame
     # 
     class WindowMinimized; end
 
-    # WindowRestored is an event that occurs when the
+    # WindowUnminimized is an event that occurs when the
     # Rubygame application window is restored after it had been
     # minimized.
     # 
