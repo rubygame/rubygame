@@ -625,8 +625,8 @@ class Rubygame::Surface
   # Your code should check "surface.respond_to?(:flip)" to see if you
   # can use this method, or be prepared to rescue from NameError.
   #
-  # Flips the source surface horizontally (if +horz+ is true), vertically
-  # (if +vert+ is true), or both (if both are true).
+  # Returns a copy of the Surface flipped horizontally (if +horz+ is
+  # true), vertically (if +vert+ is true), or both (if both are true).
   #
   def flip( horz, vert )
     self.zoom( [ (horz ? -1.0 : 1.0), (vert ? -1.0 : 1.0)], false )
