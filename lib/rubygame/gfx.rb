@@ -404,6 +404,9 @@ class Rubygame::Surface
     return self
   end
 
+
+  if defined? SDL::Gfx.bezierRGBA
+
   # *IMPORTANT*: this method only exists if SDL_gfx is available! Your
   # code should check "surface.respond_to?(:draw_curve)" to see if you
   # can use this method, or be prepared to rescue from NameError.
@@ -441,6 +444,8 @@ class Rubygame::Surface
                         steps.to_i, r, g, b, a)
 
     return self
+  end
+
   end
 
 
