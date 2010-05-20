@@ -2,7 +2,7 @@
 #  This file is one part of:
 #  Rubygame -- Ruby code and bindings to SDL to facilitate game creation
 #
-#  Copyright (C) 2008  John Croisant
+#  Copyright (C) 2008-2010  John Croisant
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,62 @@ module Rubygame
 
   module Events
 
+    # FocusEvent is a mixin module that is included in the following
+    # event classes:
+    # 
+    #  * InputFocusGained
+    #  * InputFocusLost
+    #  * MouseFocusGained
+    #  * MouseFocusLost
+    #  * WindowMinimized
+    #  * WindowUnminimized
+    # 
+    # This module provides no functionality. It exists only to make it
+    # easier to detect the above classes in a case statement, etc.
+    # 
+    # Examples:
+    # 
+    #   include Rubygame::Events
+    #   
+    #   case event
+    #   when FocusEvent
+    #     # ...
+    #   end
+    #   
+    #   if event.is_a? FocusEvent
+    #     # ...
+    #   end
+    # 
+    module FocusEvent; end
+
+
+
+    # InputFocusEvent is a mixin module that is included in the
+    # following event classes:
+    # 
+    #  * InputFocusGained
+    #  * InputFocusLost
+    # 
+    # This module provides no functionality. It exists only to make it
+    # easier to detect the above classes in a case statement, etc.
+    # 
+    # Examples:
+    # 
+    #   include Rubygame::Events
+    #   
+    #   case event
+    #   when InputFocusEvent
+    #     # ...
+    #   end
+    #   
+    #   if event.is_a? InputFocusEvent
+    #     # ...
+    #   end
+    # 
+    module InputFocusEvent
+      include FocusEvent
+    end
+
     # InputFocusGained is an event that occurs when
     # the Rubygame application gains input focus.
     # 
@@ -34,16 +90,46 @@ module Rubygame
     # application (the one the user has clicked on or switched to most
     # recently).
     # 
-    class InputFocusGained; end
+    class InputFocusGained
+      include InputFocusEvent
+    end
 
     # InputFocusLost is an event that occurs when
     # the Rubygame application loses input focus.
     # 
     # See InputFocusGained for a description of "input focus".
     # 
-    class InputFocusLost; end
+    class InputFocusLost
+      include InputFocusEvent
+    end
 
 
+
+    # MouseFocusEvent is a mixin module that is included in the
+    # following event classes:
+    # 
+    #  * MouseFocusGained
+    #  * MouseFocusLost
+    # 
+    # This module provides no functionality. It exists only to make it
+    # easier to detect the above classes in a case statement, etc.
+    # 
+    # Examples:
+    # 
+    #   include Rubygame::Events
+    #   
+    #   case event
+    #   when MouseFocusEvent
+    #     # ...
+    #   end
+    #   
+    #   if event.is_a? MouseFocusEvent
+    #     # ...
+    #   end
+    # 
+    module MouseFocusEvent
+      include FocusEvent
+    end
 
     # MouseFocusGained is an event that occurs when
     # the Rubygame application gains mouse focus.
@@ -52,28 +138,62 @@ module Rubygame
     # app window. When the app has mouse focus, it will receive
     # mouse events, particularly MouseMoved.
     # 
-    class MouseFocusGained; end
+    class MouseFocusGained
+      include MouseFocusEvent
+    end
 
     # MouseFocusLost is an event that occurs when
     # the Rubygame application loses mouse focus.
     # 
     # See MouseFocusGained for a description of "mouse focus".
     # 
-    class MouseFocusLost; end
+    class MouseFocusLost
+      include MouseFocusEvent
+    end
 
 
+
+    # MinimizeEvent is a mixin module that is included in the
+    # following event classes:
+    # 
+    #  * WindowMinimized
+    #  * WindowUnminimized
+    # 
+    # This module provides no functionality. It exists only to make it
+    # easier to detect the above classes in a case statement, etc.
+    # 
+    # Examples:
+    # 
+    #   include Rubygame::Events
+    #   
+    #   case event
+    #   when MinimizeEvent
+    #     # ...
+    #   end
+    #   
+    #   if event.is_a? MinimizeEvent
+    #     # ...
+    #   end
+    # 
+    module MinimizeEvent
+      include FocusEvent
+    end
 
     # WindowMinimized is an event that occurs when
     # the Rubygame application window becomes minimized (also
     # called 'iconified').
     # 
-    class WindowMinimized; end
+    class WindowMinimized
+      include MinimizeEvent
+    end
 
     # WindowUnminimized is an event that occurs when the
     # Rubygame application window is restored after it had been
     # minimized.
     # 
-    class WindowUnminimized; end
+    class WindowUnminimized
+      include MinimizeEvent
+    end
 
 
 
