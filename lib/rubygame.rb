@@ -37,11 +37,20 @@ this_dir = File.expand_path( File.dirname(__FILE__) )
     joystick
     named_resource
     queue
-    rect
     surface
     sprite
 }.each do |f|
   require File.join( this_dir, "rubygame", f )
+end
+
+
+# If RUBYGAME_NEWRECT is set, load the new Rect class. Otherwise load
+# the old Rect class, for backwards compatibility. The old Rect class
+# will be removed in Rubygame 3.0.
+if /^(1|t|true|y|yes)$/i =~ ENV["RUBYGAME_NEWRECT"]
+  require File.join( this_dir, "rubygame", "new_rect" )
+else
+  require File.join( this_dir, "rubygame", "rect" )
 end
 
 
