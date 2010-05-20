@@ -353,6 +353,8 @@ class Rubygame::Surface
   # Returns self.
   #
   def set_alpha( alpha, flags=Rubygame::SRCALPHA )
+    raise "can't modify frozen object" if frozen?
+
     result = SDL.SetAlpha(@struct, flags, alpha.to_i)
     raise Rubygame::SDLError, SDL.GetError() unless result == 0
     return self
@@ -392,6 +394,8 @@ class Rubygame::Surface
   #         docs for the SDL C function, SDL_SetColorkey.
   #
   def set_colorkey( color, flags=Rubygame::SRCCOLORKEY )
+    raise "can't modify frozen object" if frozen?
+
     if color.nil?
       color, flags = 0, 0
     else
@@ -496,6 +500,8 @@ class Rubygame::Surface
       raise Rubygame::SDLError, "#{depth}-bit Surface has no palette."
     end
 
+    raise "can't modify frozen object" if frozen?
+
     offset = (opts[:offset] || 0).to_i
 
     ncolors = colors.length
@@ -532,8 +538,10 @@ class Rubygame::Surface
   #            Can also be an Array of no less than 4 values.
   #
   def blit( target, pos, src_rect=nil )
-    unless target.kind_of? Rubygame::Surface
+    if not target.kind_of? Rubygame::Surface
       raise TypeError, "blit target must be a Surface"
+    elsif target.frozen?
+      raise "can't blit to a frozen Surface"
     end
 
     src_x, src_y, src_w, src_h =
@@ -565,6 +573,8 @@ class Rubygame::Surface
   #         with color. Omit to fill the entire surface.
   #
   def fill( color, rect=nil )
+    raise "can't modify frozen object" if frozen?
+
     unless rect.nil? or rect.kind_of? Array
       raise TypeError, "invalid fill Rect: #{rect.inspect}"
     end
@@ -651,6 +661,8 @@ class Rubygame::Surface
   # Raises IndexError if the coordinates are out of bounds.
   #
   def set_at( pos, color )
+    raise "can't modify frozen object" if frozen?
+
     x,y = pos.to_ary.collect { |n| n.round }
 
     if( x < 0 or x >= @struct.w or y < 0 or y >= @struct.h)
@@ -715,6 +727,8 @@ class Rubygame::Surface
   # Surface.
   #
   def pixels=( new_pixels )
+    raise "can't modify frozen object" if frozen?
+
     expected = @struct.pitch * @struct.h
     unless new_pixels.length == expected
       raise "Invalid data length (got %d, expected %d)"%[new_pixels.length,
@@ -749,6 +763,8 @@ class Rubygame::Surface
   # cover the entire Surface.
   #
   def clip=( newclip )
+    raise "can't modify frozen object" if frozen?
+
     newclip = case newclip
               when nil, SDL::Rect
                 newclip         # no change

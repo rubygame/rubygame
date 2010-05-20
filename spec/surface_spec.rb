@@ -524,3 +524,279 @@ describe Surface, "(set_palette)" do
 
 
 end
+
+
+
+describe "A frozen", Surface do
+
+  before :each do
+    @surface = Surface.new([10,10])
+    @surface.freeze
+  end
+
+
+  it "should be frozen" do
+    @surface.should be_frozen
+  end
+
+
+  it "alpha should NOT raise error" do
+    lambda{ @surface.alpha }.should_not raise_error
+  end
+
+  it "set_alpha should raise error" do
+    lambda{ @surface.set_alpha(0) }.should raise_error
+  end
+
+  it "alpha= should raise error" do
+    lambda{ @surface.alpha = 0 }.should raise_error
+  end
+
+ 
+  it "colorkey should NOT raise error" do
+    lambda{ @surface.colorkey }.should_not raise_error
+  end
+
+  it "set_colorkey should raise error" do
+    lambda{ @surface.set_colorkey(:blue) }.should raise_error
+  end
+
+  it "colorkey= should raise error" do
+    lambda{ @surface.colorkey = :blue }.should raise_error
+  end
+
+ 
+  it "palette should NOT raise error" do
+    lambda{ @surface.palette }.should_not raise_error
+  end
+
+  it "set_palette should raise error" do
+    @surface = Surface.new([10,10], :depth => 2)
+    @surface.freeze
+    lambda{ @surface.set_palette([:blue]) }.should raise_error
+  end
+
+  it "palette= should raise error" do
+    @surface = Surface.new([10,10], :depth => 2)
+    @surface.freeze
+    lambda{ @surface.palette = [:blue] }.should raise_error
+  end
+
+
+  it "unfrozen-on-frozen blit should raise error" do
+    @surface2 = Surface.new([10,10])
+    lambda{ @surface2.blit(@surface,[0,0]) }.should raise_error
+  end
+
+  it "frozen-on-frozen blit should raise error" do
+    @surface2 = Surface.new([10,10])
+    @surface2.freeze
+    lambda{ @surface.blit(@surface2,[0,0]) }.should raise_error
+  end
+
+  it "frozen-on-unfrozen blit should NOT raise error" do
+    @surface2 = Surface.new([10,10])
+    lambda{ @surface.blit(@surface2,[0,0]) }.should_not raise_error
+  end
+
+
+  it "fill should raise error" do
+    lambda{ @surface.fill(:blue) }.should raise_error
+  end
+
+
+  it "get_at should NOT raise error" do
+    lambda{ @surface.get_at([0,0]) }.should_not raise_error
+  end
+
+  it "set_at should raise error" do
+    lambda{ @surface.set_at([0,0],:blue) }.should raise_error
+  end
+
+
+  it "pixels should NOT raise error" do
+    lambda{ @surface.pixels }.should_not raise_error
+  end
+
+  it "pixels= should raise error" do
+    lambda{ @surface.pixels = @surface.pixels }.should raise_error
+  end
+
+
+  it "clip should NOT raise error" do
+    lambda{ @surface.clip }.should_not raise_error
+  end
+
+  it "clip= should raise error" do
+    lambda{ @surface.clip = Rect.new(0,0,1,1) }.should raise_error
+  end
+
+
+  it "draw_line should raise error" do
+    if @surface.respond_to? :draw_line
+      lambda{ @surface.draw_line([0,0],[1,1],:white) }.should raise_error
+    else
+      pending "No draw_line support. Is SDL_gfx available?"
+    end
+  end
+
+  it "draw_line_a should raise error" do
+    if @surface.respond_to? :draw_line_a
+      lambda{ @surface.draw_line_a([0,0],[1,1],:white) }.should raise_error
+    else
+      pending "No draw_line_a support. Is SDL_gfx available?"
+    end
+  end
+
+
+  it "draw_box should raise error" do
+    if @surface.respond_to? :draw_box
+      lambda{ @surface.draw_box([0,0],[1,1],:white) }.should raise_error
+    else
+      pending "No draw_box support. Is SDL_gfx available?"
+    end
+  end
+
+  it "draw_box_s should raise error" do
+    if @surface.respond_to? :draw_box_s
+      lambda{ @surface.draw_box_s([0,0],[1,1],:white) }.should raise_error
+    else
+      pending "No draw_box_s support. Is SDL_gfx available?"
+    end
+  end
+
+
+  it "draw_circle should raise error" do
+    if @surface.respond_to? :draw_circle
+      lambda{ @surface.draw_circle([0,0],1,:white) }.should raise_error
+    else
+      pending "No draw_circle support. Is SDL_gfx available?"
+    end
+  end
+
+  it "draw_circle_a should raise error" do
+    if @surface.respond_to? :draw_circle_a
+      lambda{ @surface.draw_circle_a([0,0],1,:white) }.should raise_error
+    else
+      pending "No draw_circle_a support. Is SDL_gfx available?"
+    end
+  end
+
+  it "draw_circle_s should raise error" do
+    if @surface.respond_to? :draw_circle_s
+      lambda{ @surface.draw_circle_s([0,0],1,:white) }.should raise_error
+    else
+      pending "No draw_circle_s support. Is SDL_gfx available?"
+    end
+  end
+
+
+  it "draw_ellipse should raise error" do
+    if @surface.respond_to? :draw_ellipse
+      lambda{ @surface.draw_ellipse([0,0],[1,1],:white) }.should raise_error
+    else
+      pending "No draw_ellipse support. Is SDL_gfx available?"
+    end
+  end
+
+  it "draw_ellipse_a should raise error" do
+    if @surface.respond_to? :draw_ellipse_a
+      lambda{ @surface.draw_ellipse_a([0,0],[1,1],:white) }.should raise_error
+    else
+      pending "No draw_ellipse_a support. Is SDL_gfx available?"
+    end
+  end
+
+  it "draw_ellipse_s should raise error" do
+    if @surface.respond_to? :draw_ellipse_s
+      lambda{ @surface.draw_ellipse_s([0,0],[1,1],:white) }.should raise_error
+    else
+      pending "No draw_ellipse_s support. Is SDL_gfx available?"
+    end
+  end
+
+
+  it "draw_arc should raise error" do
+    if @surface.respond_to? :draw_arc
+      lambda{ @surface.draw_arc([0,0],1,[0,1],:white) }.should raise_error
+    else
+      pending "No draw_arc support. Is SDL_gfx available?"
+    end
+  end
+
+  it "draw_arc_s should raise error" do
+    if @surface.respond_to? :draw_arc_s
+      lambda{ @surface.draw_arc_s([0,0],1,[0,1],:white) }.should raise_error
+    else
+      pending "No draw_arc_s support. Is SDL_gfx available?"
+    end
+  end
+
+
+  it "draw_polygon should raise error" do
+    if @surface.respond_to? :draw_polygon
+      lambda{ @surface.draw_polygon([[0,0],[1,1]],:white) }.should raise_error
+    else
+      pending "No draw_polygon support. Is SDL_gfx available?"
+    end
+  end
+
+  it "draw_polygon_a should raise error" do
+    if @surface.respond_to? :draw_polygon_a
+      lambda{ @surface.draw_polygon_a([[0,0],[1,1]],:white) }.should raise_error
+    else
+      pending "No draw_polygon_a support. Is SDL_gfx available?"
+    end
+  end
+
+  it "draw_polygon_s should raise error" do
+    if @surface.respond_to? :draw_polygon_s
+      lambda{ @surface.draw_polygon_s([[0,0],[1,1]],:white) }.should raise_error
+    else
+      pending "No draw_polygon_s support. Is SDL_gfx available?"
+    end
+  end
+
+
+  it "draw_curve should raise error" do
+    if @surface.respond_to? :draw_curve
+      lambda{ @surface.draw_curve([[0,0],[1,1]],:white) }.should raise_error
+    else
+      pending "No draw_curve support. Is SDL_gfx available?"
+    end
+  end
+
+
+  it "rotozoom should NOT raise error" do
+    if @surface.respond_to? :rotozoom
+      lambda{ @surface.rotozoom(1,1) }.should_not raise_error
+    else
+      pending "No rotozoom support. Is SDL_gfx available?"
+    end
+  end
+
+  it "zoom should NOT raise error" do
+    if @surface.respond_to? :zoom
+      lambda{ @surface.zoom(1) }.should_not raise_error
+    else
+      pending "No zoom support. Is SDL_gfx available?"
+    end
+  end
+
+  it "zoom_to should NOT raise error" do
+    if @surface.respond_to? :zoom_to
+      lambda{ @surface.zoom_to(5,5) }.should_not raise_error
+    else
+      pending "No zoom_to support. Is SDL_gfx available?"
+    end
+  end
+
+  it "flip should NOT raise error" do
+    if @surface.respond_to? :flip
+      lambda{ @surface.flip(true,true) }.should_not raise_error
+    else
+      pending "No flip support. Is SDL_gfx available?"
+    end
+  end
+
+end

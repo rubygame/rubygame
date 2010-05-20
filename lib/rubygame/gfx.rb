@@ -64,6 +64,7 @@ class Rubygame::Surface
   #           color name, or Rubygame::Color.
   #
   def draw_line( point1, point2, color )
+    raise "can't modify frozen object" if frozen?
     _draw_line( point1, point2, color, false )
     return self
   end
@@ -76,6 +77,7 @@ class Rubygame::Surface
   # Like #draw_line, but the line will be anti-aliased.
   #
   def draw_line_a( point1, point2, color )
+    raise "can't modify frozen object" if frozen?
     _draw_line( point1, point2, color, true )
     return self
   end
@@ -113,6 +115,7 @@ class Rubygame::Surface
   #           color name, or Rubygame::Color.
   #
   def draw_box( point1, point2, color )
+    raise "can't modify frozen object" if frozen?
     _draw_box( point1, point2, color, false )
     return self
   end
@@ -128,6 +131,7 @@ class Rubygame::Surface
   # than this method.)
   #
   def draw_box_s( point1, point2, color )
+    raise "can't modify frozen object" if frozen?
     _draw_box( point1, point2, color, true )
     return self
   end
@@ -167,6 +171,7 @@ class Rubygame::Surface
   #           color name, or Rubygame::Color.
   #
   def draw_circle( center, radius, color )
+    raise "can't modify frozen object" if frozen?
     _draw_circle( center, radius, color, false, false )
     return self
   end
@@ -179,6 +184,7 @@ class Rubygame::Surface
   # Like #draw_circle, but the outline is anti-aliased.
   #
   def draw_circle_a( center, radius, color )
+    raise "can't modify frozen object" if frozen?
     _draw_circle( center, radius, color, true, false )
     return self
   end
@@ -192,6 +198,7 @@ class Rubygame::Surface
   # Like #draw_circle, but the shape is solid, instead of an outline.
   #
   def draw_circle_s( center, radius, color )
+    raise "can't modify frozen object" if frozen?
     _draw_circle( center, radius, color, false, true )
     return self
   end
@@ -232,6 +239,7 @@ class Rubygame::Surface
   #           color name, or Rubygame::Color.
   #
   def draw_ellipse( center, radii, color )
+    raise "can't modify frozen object" if frozen?
     _draw_ellipse( center, radii, color, false, false )
     return self
   end
@@ -244,6 +252,7 @@ class Rubygame::Surface
   # Like #draw_ellipse, but the ellipse border is anti-aliased.
   #
   def draw_ellipse_a( center, radii, color )
+    raise "can't modify frozen object" if frozen?
     _draw_ellipse( center, radii, color, true, false )
     return self
   end
@@ -257,6 +266,7 @@ class Rubygame::Surface
   # Like #draw_ellipse, but the shape is solid, instead of an outline.
   #
   def draw_ellipse_s( center, radii, color )
+    raise "can't modify frozen object" if frozen?
     _draw_ellipse( center, radii, color, false, true )
     return self
   end
@@ -298,6 +308,7 @@ class Rubygame::Surface
   #           color name, or Rubygame::Color.
   #
   def draw_arc( center, radius, angles, color )
+    raise "can't modify frozen object" if frozen?
     _draw_arc( center, radius, angles, color, false )
     return self
   end
@@ -311,6 +322,7 @@ class Rubygame::Surface
   # Like #draw_arc, but the shape is solid, instead of an outline.
   #
   def draw_arc_s( center, radius, angles, color )
+    raise "can't modify frozen object" if frozen?
     _draw_arc( center, radius, angles, color, true )
     return self
   end
@@ -359,6 +371,7 @@ class Rubygame::Surface
   #           color name, or Rubygame::Color.
   #
   def draw_polygon( points, color )
+    raise "can't modify frozen object" if frozen?
     _draw_polygon( points, color, false, false )
     return self
   end
@@ -372,6 +385,7 @@ class Rubygame::Surface
   # Like #draw_polygon, but the lines are anti-aliased.
   #
   def draw_polygon_a( points, color )
+    raise "can't modify frozen object" if frozen?
     _draw_polygon( points, color, true, false )
     return self
   end
@@ -385,6 +399,7 @@ class Rubygame::Surface
   # Like #draw_polygon, but the shape is solid, instead of an outline.
   #
   def draw_polygon_s( points, color )
+    raise "can't modify frozen object" if frozen?
     _draw_polygon( points, color, false, true )
     return self
   end
@@ -407,6 +422,7 @@ class Rubygame::Surface
   #           (Default: 5; Minimum: 2)
   #
   def draw_curve( points, color, quality = 5 )
+    raise "can't modify frozen object" if frozen?
     if quality < 2
       raise ArgumentError, "quality must be 2 or greater (got #{quality})"
     end
