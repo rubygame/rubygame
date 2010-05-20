@@ -139,6 +139,7 @@ begin
 
   desc "Run all specs"
   Spec::Rake::SpecTask.new do |t|
+    ENV["RUBYGAME_NEWRECT"] = "true"
     t.spec_files = FileList['spec/*_spec.rb']
   end
 
@@ -146,6 +147,7 @@ begin
   namespace :spec do
     desc "Run all specs"
     Spec::Rake::SpecTask.new(:all) do |t|
+      ENV["RUBYGAME_NEWRECT"] = "true"
       t.spec_files = FileList['spec/*_spec.rb']
     end
 
