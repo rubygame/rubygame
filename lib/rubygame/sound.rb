@@ -417,6 +417,41 @@ class Rubygame::Sound
   end
 
 
+  # call-seq:
+  #   fire( options={:volume => nil, :fade_in => 0, :repeats => 0, :stop_after => nil} )
+  # 
+  # Plays the sound on a new mixer channel that is detached from the
+  # sound instance. This method is convenient when you simply want to
+  # play a sound effect, and don't care about controlling it later.
+  # 
+  # You can use this method to play the same sound effect more than
+  # once simultaneously, but you cannot control it once it starts
+  # playing (you can't stop or pause it, etc.).
+  # 
+  # This method takes all the same options as #play, as well as the
+  # following:
+  # 
+  # :volume::  The volume to play the clone at. If omitted or nil,
+  #            uses the current volume of this instance.
+  # 
+  # Unlike #play, the :repeats option must be 0 or greater (it cannot
+  # repeat forever).
+  # 
+  # May raise::
+  #   ArgumentError if any options are invalid, or SDLError if the
+  #   sound could not be played.
+  # 
+  def fire( options={} )
+    if options[:repeats] and options[:repeats] < 0
+      raise ArgumentError, ":repeats must be >= 0 (got #{repeats})"
+    end
+    sound = self.dup
+    sound.volume = options[:volume] if options[:volume]
+    sound.play(options)
+    nil
+  end
+
+
   private
 
 
