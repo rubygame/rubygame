@@ -1,21 +1,33 @@
 #!/usr/bin/env ruby
 
-# This demonstrates the use of ruby-opengl alongside rubygame to produce
+# This demonstrates the use of OpenGL alongside Rubygame to produce
 # hardware-accelerated three-dimensional graphics. Additionally, it
-# demonstrates the use of rubygame Surfaces as OpenGL textures.
+# demonstrates the use of Rubygame Surfaces as OpenGL textures.
 #
-# Please note that rubygame itself does not perform any OpenGL functions,
-# it only allows ruby-opengl to use the Screen as its viewport. You MUST
-# have ruby-opengl installed to run this demo!
+# Please note that Rubygame itself does not perform any OpenGL
+# functions, it only allows OpenGL to use the Screen as its viewport.
+# You MUST have either the ffi-opengl or ruby-opengl libraries
+# installed to run this demo!
 
 require 'rubygame'
 
 begin
-  require 'opengl'
+  require 'ffi-opengl'
+  $gl = :ffi_opengl
 rescue LoadError
-  puts "ATTENTION: This demo requires the opengl extension for ruby."
-  raise
+  begin
+    require 'opengl'
+    $gl = :ruby_opengl
+  rescue LoadError
+    puts "You need ffi-opengl or ruby-opengl to run this demo.
+  gem install ffi-opengl
+  gem install ruby-opengl"
+    raise
+  end
 end
+
+include GL
+include GLU
 
 WIDE = 640
 HIGH = 480
@@ -36,28 +48,28 @@ queue = Rubygame::EventQueue.new()
 clock = Rubygame::Clock.new { |c| c.target_framerate = 60 }
 
 ObjectSpace.garbage_collect
-GL::Viewport( 0, 0, WIDE, HIGH )
+glViewport( 0, 0, WIDE, HIGH )
 
-GL::MatrixMode( GL::PROJECTION )
-GL::LoadIdentity( )
-GLU::Perspective( 35, WIDE/(HIGH.to_f), 3, 10)
+glMatrixMode( GL_PROJECTION )
+glLoadIdentity( )
+gluPerspective( 35, WIDE/(HIGH.to_f), 3, 10)
 
-GL::MatrixMode( GL::MODELVIEW )
-GL::LoadIdentity( )
+glMatrixMode( GL_MODELVIEW )
+glLoadIdentity( )
 
-GL::Enable(GL::DEPTH_TEST)
-GL::DepthFunc(GL::LESS)
+glEnable(GL_DEPTH_TEST)
+glDepthFunc(GL_LESS)
 
-GL::ShadeModel(GL::FLAT)
+glShadeModel(GL_FLAT)
 
 surface = Rubygame::Surface.load_image(TEXTURE)
 
-tex_id = GL::GenTextures(1)
-GL::BindTexture(GL::TEXTURE_2D, tex_id[0])
-GL::TexImage2D(GL::TEXTURE_2D, 0, GL::RGB, surface.w, surface.h, 0, GL::RGB,
-               GL::UNSIGNED_BYTE, surface.pixels)
-GL::TexParameter(GL::TEXTURE_2D,GL::TEXTURE_MIN_FILTER,GL::NEAREST);
-GL::TexParameter(GL::TEXTURE_2D,GL::TEXTURE_MAG_FILTER,GL::LINEAR);
+tex_id = 1
+glBindTexture(GL_TEXTURE_2D, tex_id)
+glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, surface.w, surface.h, 0, GL_RGB,
+             GL_UNSIGNED_BYTE, surface.pixels)
+glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 
 color =
   [[ 1.0,  1.0,  0.0], 
@@ -91,84 +103,84 @@ cube_st =
 
 cube_list = 1
 
-GL::NewList(cube_list,GL::COMPILE_AND_EXECUTE)
-  GL::PushMatrix()
-		GL::Enable(GL::TEXTURE_2D)
-		GL::BindTexture(GL::TEXTURE_2D, tex_id[0])
+glNewList(cube_list,GL_COMPILE_AND_EXECUTE)
+  glPushMatrix()
+    glEnable(GL_TEXTURE_2D)
+    glBindTexture(GL_TEXTURE_2D, tex_id)
 
-		GL::Begin(GL::QUADS) 
+    glBegin(GL_QUADS) 
 
-    GL::TexCoord(cube_st[0][0]);
-    GL::Vertex(cube[0]);
-    GL::TexCoord(cube_st[0][1]);
-    GL::Vertex(cube[1]);
-    GL::TexCoord(cube_st[0][2]);
-    GL::Vertex(cube[2]);
-    GL::TexCoord(cube_st[0][3]);
-    GL::Vertex(cube[3]);
+    glTexCoord2i(*cube_st[0][0]);
+    glVertex3f(*cube[0]);
+    glTexCoord2i(*cube_st[0][1]);
+    glVertex3f(*cube[1]);
+    glTexCoord2i(*cube_st[0][2]);
+    glVertex3f(*cube[2]);
+    glTexCoord2i(*cube_st[0][3]);
+    glVertex3f(*cube[3]);
     
-    GL::TexCoord(cube_st[1][0]);
-    GL::Vertex(cube[3]);
-    GL::TexCoord(cube_st[1][1]);
-    GL::Vertex(cube[4]);
-    GL::TexCoord(cube_st[1][2]);
-    GL::Vertex(cube[7]);
-    GL::TexCoord(cube_st[1][3]);
-    GL::Vertex(cube[2]);
+    glTexCoord2i(*cube_st[1][0]);
+    glVertex3f(*cube[3]);
+    glTexCoord2i(*cube_st[1][1]);
+    glVertex3f(*cube[4]);
+    glTexCoord2i(*cube_st[1][2]);
+    glVertex3f(*cube[7]);
+    glTexCoord2i(*cube_st[1][3]);
+    glVertex3f(*cube[2]);
     
-    GL::TexCoord(cube_st[2][0]);
-    GL::Vertex(cube[0]);
-    GL::TexCoord(cube_st[2][1]);
-    GL::Vertex(cube[5]);
-    GL::TexCoord(cube_st[2][2]);
-    GL::Vertex(cube[6]);
-    GL::TexCoord(cube_st[2][3]);
-    GL::Vertex(cube[1]);
+    glTexCoord2i(*cube_st[2][0]);
+    glVertex3f(*cube[0]);
+    glTexCoord2i(*cube_st[2][1]);
+    glVertex3f(*cube[5]);
+    glTexCoord2i(*cube_st[2][2]);
+    glVertex3f(*cube[6]);
+    glTexCoord2i(*cube_st[2][3]);
+    glVertex3f(*cube[1]);
     
-    GL::TexCoord(cube_st[3][0]);
-    GL::Vertex(cube[5]);
-    GL::TexCoord(cube_st[3][1]);
-    GL::Vertex(cube[4]);
-    GL::TexCoord(cube_st[3][2]);
-    GL::Vertex(cube[7]);
-    GL::TexCoord(cube_st[3][3]);
-    GL::Vertex(cube[6]);
+    glTexCoord2i(*cube_st[3][0]);
+    glVertex3f(*cube[5]);
+    glTexCoord2i(*cube_st[3][1]);
+    glVertex3f(*cube[4]);
+    glTexCoord2i(*cube_st[3][2]);
+    glVertex3f(*cube[7]);
+    glTexCoord2i(*cube_st[3][3]);
+    glVertex3f(*cube[6]);
     
-    GL::TexCoord(cube_st[4][0]);
-    GL::Vertex(cube[5]);
-    GL::TexCoord(cube_st[4][1]);
-    GL::Vertex(cube[0]);
-    GL::TexCoord(cube_st[4][2]);
-    GL::Vertex(cube[3]);
-    GL::TexCoord(cube_st[4][3]);
-    GL::Vertex(cube[4]);
+    glTexCoord2i(*cube_st[4][0]);
+    glVertex3f(*cube[5]);
+    glTexCoord2i(*cube_st[4][1]);
+    glVertex3f(*cube[0]);
+    glTexCoord2i(*cube_st[4][2]);
+    glVertex3f(*cube[3]);
+    glTexCoord2i(*cube_st[4][3]);
+    glVertex3f(*cube[4]);
     
-    GL::TexCoord(cube_st[5][0]);
-    GL::Vertex(cube[6]);
-    GL::TexCoord(cube_st[5][1]);
-    GL::Vertex(cube[1]);
-    GL::TexCoord(cube_st[5][2]);
-    GL::Vertex(cube[2]);
-    GL::TexCoord(cube_st[5][3]);
-    GL::Vertex(cube[7]);
+    glTexCoord2i(*cube_st[5][0]);
+    glVertex3f(*cube[6]);
+    glTexCoord2i(*cube_st[5][1]);
+    glVertex3f(*cube[1]);
+    glTexCoord2i(*cube_st[5][2]);
+    glVertex3f(*cube[2]);
+    glTexCoord2i(*cube_st[5][3]);
+    glVertex3f(*cube[7]);
 
-    GL::End()
+    glEnd()
 
-  GL::PopMatrix()
-GL::EndList()
+  glPopMatrix()
+glEndList()
 
 angle = 0
 
 catch(:rubygame_quit) do
-	loop do
-		queue.each do |event|
-			case event
-			when Rubygame::KeyDownEvent
-				case event.key
-				when Rubygame::K_ESCAPE
-					throw :rubygame_quit 
-				when Rubygame::K_Q
-					throw :rubygame_quit 
+  loop do
+    queue.each do |event|
+      case event
+      when Rubygame::KeyDownEvent
+        case event.key
+        when Rubygame::K_ESCAPE
+          throw :rubygame_quit 
+        when Rubygame::K_Q
+          throw :rubygame_quit 
         end
       when Rubygame::QuitEvent
         throw :rubygame_quit
@@ -176,26 +188,26 @@ catch(:rubygame_quit) do
     end
   
 
-    GL.ClearColor(0.0, 0.0, 0.0, 1.0);
-		GL.Clear(GL::COLOR_BUFFER_BIT|GL::DEPTH_BUFFER_BIT);
+    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-		GL::MatrixMode(GL::MODELVIEW);
-    GL::LoadIdentity( )
-    GL::Translate(0, 0, -4)
-    GL::Rotate(45, 0, 1, 0)
-    GL::Rotate(45, 1, 0, 0)
-    GL::Rotate(angle, 0.0, 0.0, 1.0)
-    GL::Rotate(angle*2, 0.0, 1.0, 0.0)
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity( )
+    glTranslatef(0, 0, -4)
+    glRotatef(45, 0, 1, 0)
+    glRotatef(45, 1, 0, 0)
+    glRotatef(angle, 0.0, 0.0, 1.0)
+    glRotatef(angle*2, 0.0, 1.0, 0.0)
 
-    GL::CallList(cube_list)
+    glCallList(cube_list)
 
-		Rubygame::GL.swap_buffers()
-		ObjectSpace.garbage_collect
+    Rubygame::GL.swap_buffers()
+    ObjectSpace.garbage_collect
 
     angle += clock.tick()/50.0
     angle -= 360 if angle >= 360
 
-	end
+  end
 end
 
 Rubygame.quit

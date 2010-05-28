@@ -1,20 +1,30 @@
 #!/usr/bin/env ruby
 
-# This demonstrates the use of ruby-opengl alongside rubygame to produce
+# This demonstrates the use of OpenGL alongside Rubygame to produce
 # hardware-accelerated three-dimensional graphics. 
 #
-# Please note that rubygame itself does not perform any OpenGL functions,
-# it only allows ruby-opengl to use the Screen as its viewport. You MUST
-# have ruby-opengl installed to run this demo!
+# Please note that Rubygame itself does not perform any OpenGL
+# functions, it only allows OpenGL to use the Screen as its viewport.
+# You MUST have either the ffi-opengl or ruby-opengl libraries
+# installed to run this demo!
 
 require 'rubygame'
 
 begin
-  require 'opengl'
+  require 'ffi-opengl'
 rescue LoadError
-  puts "ATTENTION: This demo requires the opengl extension for ruby."
-  raise
+  begin
+    require 'opengl'
+  rescue LoadError
+    puts "You need ffi-opengl or ruby-opengl to run this demo.
+  gem install ffi-opengl
+  gem install ruby-opengl"
+    raise
+  end
 end
+
+include GL
+include GLU
 
 WIDE = 640
 HIGH = 480
@@ -32,19 +42,20 @@ queue = Rubygame::EventQueue.new()
 clock = Rubygame::Clock.new { |c| c.target_framerate = 60 }
 
 ObjectSpace.garbage_collect
-GL::Viewport( 0, 0, WIDE, HIGH )
 
-GL::MatrixMode( GL::PROJECTION )
-GL::LoadIdentity( )
-GLU::Perspective( 35, WIDE/(HIGH.to_f), 3, 10)
+glViewport( 0, 0, WIDE, HIGH )
 
-GL::MatrixMode( GL::MODELVIEW )
-GL::LoadIdentity( )
+glMatrixMode( GL_PROJECTION )
+glLoadIdentity( )
+gluPerspective( 35, WIDE/(HIGH.to_f), 3, 10)
 
-GL::Enable(GL::DEPTH_TEST)
-GL::DepthFunc(GL::LESS)
+glMatrixMode( GL_MODELVIEW )
+glLoadIdentity( )
 
-GL::ShadeModel(GL::FLAT)
+glEnable(GL_DEPTH_TEST)
+glDepthFunc(GL_LESS)
+
+glShadeModel(GL_FLAT)
 
 color =
   [[ 1.0,  1.0,  0.0], 
@@ -68,86 +79,86 @@ cube =
 
 cube_list = 1
 
-GL::NewList(cube_list,GL::COMPILE_AND_EXECUTE)
-  GL::PushMatrix()
-		GL::Begin(GL::QUADS) 
-			GL::Color(1.0, 0.0, 0.0);
-			GL::Vertex(cube[0]);
-			GL::Vertex(cube[1]);
-			GL::Vertex(cube[2]);
-			GL::Vertex(cube[3]);
-			
-			GL::Color(0.0, 1.0, 0.0);
-			GL::Vertex(cube[3]);
-			GL::Vertex(cube[4]);
-			GL::Vertex(cube[7]);
-			GL::Vertex(cube[2]);
-			
-			GL::Color(0.0, 0.0, 1.0);
-			GL::Vertex(cube[0]);
-			GL::Vertex(cube[5]);
-			GL::Vertex(cube[6]);
-			GL::Vertex(cube[1]);
-			
-			GL::Color(0.0, 1.0, 1.0);
-			GL::Vertex(cube[5]);
-			GL::Vertex(cube[4]);
-			GL::Vertex(cube[7]);
-			GL::Vertex(cube[6]);
-			
-			GL::Color(1.0, 1.0, 0.0);
-			GL::Vertex(cube[5]);
-			GL::Vertex(cube[0]);
-			GL::Vertex(cube[3]);
-			GL::Vertex(cube[4]);
-			
-			GL::Color(1.0, 0.0, 1.0);
-			GL::Vertex(cube[6]);
-			GL::Vertex(cube[1]);
-			GL::Vertex(cube[2]);
-			GL::Vertex(cube[7]);
-    GL::End()
- GL::PopMatrix()
-GL::EndList()
+glNewList(cube_list,GL_COMPILE_AND_EXECUTE)
+  glPushMatrix()
+    glBegin(GL_QUADS) 
+      glColor3f(1.0, 0.0, 0.0)
+      glVertex3f(*cube[0])
+      glVertex3f(*cube[1])
+      glVertex3f(*cube[2])
+      glVertex3f(*cube[3])
+      
+      glColor3f(0.0, 1.0, 0.0)
+      glVertex3f(*cube[3])
+      glVertex3f(*cube[4])
+      glVertex3f(*cube[7])
+      glVertex3f(*cube[2])
+      
+      glColor3f(0.0, 0.0, 1.0)
+      glVertex3f(*cube[0])
+      glVertex3f(*cube[5])
+      glVertex3f(*cube[6])
+      glVertex3f(*cube[1])
+      
+      glColor3f(0.0, 1.0, 1.0)
+      glVertex3f(*cube[5])
+      glVertex3f(*cube[4])
+      glVertex3f(*cube[7])
+      glVertex3f(*cube[6])
+      
+      glColor3f(1.0, 1.0, 0.0)
+      glVertex3f(*cube[5])
+      glVertex3f(*cube[0])
+      glVertex3f(*cube[3])
+      glVertex3f(*cube[4])
+      
+      glColor3f(1.0, 0.0, 1.0)
+      glVertex3f(*cube[6])
+      glVertex3f(*cube[1])
+      glVertex3f(*cube[2])
+      glVertex3f(*cube[7])
+    glEnd()
+ glPopMatrix()
+glEndList()
 
 angle = 0
 
 catch(:rubygame_quit) do
-	loop do
-		queue.each do |event|
-			case event
-			when Rubygame::KeyDownEvent
-				case event.key
-				when Rubygame::K_ESCAPE
-					throw :rubygame_quit 
-				when Rubygame::K_Q
-					throw :rubygame_quit 
+  loop do
+    queue.each do |event|
+      case event
+      when Rubygame::KeyDownEvent
+        case event.key
+        when Rubygame::K_ESCAPE
+          throw :rubygame_quit 
+        when Rubygame::K_Q
+          throw :rubygame_quit 
         end
       when Rubygame::QuitEvent
         throw :rubygame_quit
       end
-		end
+    end
 
-    GL.ClearColor(0.0, 0.0, 0.0, 1.0);
-		GL.Clear(GL::COLOR_BUFFER_BIT|GL::DEPTH_BUFFER_BIT);
+    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-		GL::MatrixMode(GL::MODELVIEW);
-    GL::LoadIdentity( )
-    GL::Translate(0, 0, -4)
-    GL::Rotate(45, 0, 1, 0)
-    GL::Rotate(45, 1, 0, 0)
-    GL::Rotate(angle, 0.0, 0.0, 1.0)
-    GL::Rotate(angle*2, 0.0, 1.0, 0.0)
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity( )
+    glTranslatef(0, 0, -4)
+    glRotatef(45, 0, 1, 0)
+    glRotatef(45, 1, 0, 0)
+    glRotatef(angle, 0.0, 0.0, 1.0)
+    glRotatef(angle*2, 0.0, 1.0, 0.0)
 
-    GL::CallList(cube_list)
+    glCallList(cube_list)
 
-		Rubygame::GL.swap_buffers()
-		ObjectSpace.garbage_collect
+    Rubygame::GL.swap_buffers()
+    ObjectSpace.garbage_collect
 
     angle += clock.tick()/50.0
     angle -= 360 if angle >= 360
 
-	end
+  end
 end
 
 Rubygame.quit
