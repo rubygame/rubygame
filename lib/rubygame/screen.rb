@@ -169,6 +169,188 @@ class Rubygame::Screen < Rubygame::Surface
       false
     end
 
+
+    # Returns the current value of the the OpenGL attribute +attrib+.
+    # 
+    # You must only call this method after you have called #open with
+    # the :opengl option. If the Screen is not open with the :opengl
+    # option, the behavior of this method is undefined. (Currently it
+    # raises SDLError, but that may change in the future.)
+    # 
+    # This method is useful after using #set_opengl_attrib and #open,
+    # to make sure the attribute is the expected value.
+    # 
+    # This method replaces Rubygame::GL.get_attrib, which is
+    # deprecated and will be removed in Rubygame 3.0.
+    # 
+    # *attrs:: Zero or more attribute symbols (see #set_opengl_attrib
+    #          for a list of supported attributes).
+    # 
+    # Returns:: A Hash of attr => value pairs for each attribute requested.
+    # May raise::
+    #  * ArgumentError if an invalid attribute symbol is given.
+    #  * SDLError if getting any of the attributes failed.
+    #  * SDLError if the Screen has not been opened with the :opengl
+    #    option. (This behavior may change in the future.)
+    # 
+    # Example:
+    # 
+    #   require 'rubygame'
+    #   include Rubygame
+    #   
+    #   Screen.open( [640,480], :depth => 24, :opengl => true )
+    # 
+    #   Screen.get_opengl_attributes( :red_size, :green_size :blue_size )
+    #   # => {:red_size=>8, :green_size=>8, :blue_size=>8}
+    # 
+    def get_opengl_attributes( *attrs )
+      # Make sure Screen is open with opengl mode. If it's not,
+      # SDL.GL_GetAttribute may cause a segmentation fault (at least,
+      # it did for me on Linux, SDL 1.2.14, on 2010-06-05).
+      unless opengl?
+        raise( Rubygame::SDLError, "You must open the Screen with " +
+               "the :opengl option first." )
+      end
+
+      hash = {}
+
+      attrs.each do |attr|
+        attr_i = _opengl_attribs[attr]
+        if attr_i.nil?
+          raise ArgumentError, "Unknown attribute #{attr.inspect}"
+        end
+
+        value = SDL.GL_GetAttribute(attr_i)
+        if value.nil?
+          raise( Rubygame::SDLError, "GL get attribute #{attr.inspect} " +
+                 "failed: #{SDL.GetError()}" )
+        end
+
+        if attr == :doublebuffer
+          value = (value == 0) ? false : true
+        end
+
+        hash[attr] = value
+      end
+
+      hash
+    end
+
+
+    # Sets the OpenGL attribute +attrib+ to +value+.
+    #
+    # This only works if it's called *before* calling Screen.open with
+    # the :opengl option. You may wish to use #get_opengl_attribute
+    # after opening the Screen, to confirm that the attribute is set
+    # to the desired value.
+    # 
+    # This method replaces Rubygame::GL.set_attrib, which is
+    # deprecated and will be removed in Rubygame 3.0.
+    # 
+    # attrs:: A Hash with zero or more of the following OpenGL attributes:
+    # 
+    #         :red_size::
+    #           Size of framebuffer red component, in bits.
+    #         :green_size::
+    #           Size of framebuffer green component, in bits.
+    #         :blue_size::
+    #           Size of framebuffer blue component, in bits.
+    #         :alpha_size::
+    #           Size of framebuffer alpha (opacity) component, in bits.
+    #         :buffer_size::
+    #           Size of framebuffer, in bits.
+    #         :doublebuffer::
+    #           Enable (true) or disable (false) double-buffering.
+    #         :depth_size::
+    #           Size of depth buffer, in bits.
+    #         :stencil_size::
+    #           Size of stencil buffer, in bits.
+    #         :accum_red_size::
+    #           Size of accumulation buffer red component, in bits.
+    #         :accum_green_size::
+    #           Size of accumulation buffer green component, in bits.
+    #         :accum_blue_size::
+    #           Size of accumulation buffer blue component, in bits.
+    #         :accum_alpha_size::
+    #           Size of accumulation buffer alpha component, in bits.
+    # 
+    # May raise::
+    #  * ArgumentError if any invalid attribute or value is given.
+    #  * TypeError if any value is the wrong type for that attribute.
+    #  * SDLError if setting any of the attributes failed.
+    # 
+    # 
+    # Example:
+    # 
+    #   require 'rubygame'
+    #   include Rubygame
+    #   
+    #   Screen.set_opengl_attributes( :red_size     => 8,
+    #                                 :green_size   => 8,
+    #                                 :blue_size    => 8,
+    #                                 :doublebuffer => true )
+    #   
+    #   Screen.open( [640,480], :depth => 24, :opengl => true )
+    # 
+    # 
+    def set_opengl_attributes( attrs={} )
+      # Make sure SDL video system is initialized. If it's not,
+      # SDL.GL_SetAttribute may cause a segmentation fault (at least,
+      # it did for me on Linux, SDL 1.2.14, on 2010-06-05).
+      SDL.Init(SDL::INIT_VIDEO)
+
+      attrs.each { |attr, value|
+        attr_i = _opengl_attribs[attr]
+        if attr_i.nil?
+          raise ArgumentError, "Unknown attribute #{attr.inspect}"
+        end
+
+        if attr == :doublebuffer
+          if (value == true) or (value == false)
+            value = value ? 1 : 0
+          else
+            raise( TypeError, "#{attr.inspect} value must be " + 
+                   "true or false (got #{value.inspect})" )
+          end
+        else
+          unless value.is_a?(Integer) and value >= 0
+            raise( TypeError, "#{attr.inspect} value must be " +
+                   "a non-negative integer (got #{value.inspect})" )
+          end
+        end
+
+        result = SDL.GL_SetAttribute( attr_i, value )
+        if result == -1
+          raise( Rubygame::SDLError, "GL set attribute #{attr.inspect} " +
+                 "failed: #{SDL.GetError()}" )
+        end
+      }
+
+      nil
+    end
+
+
+    private
+
+    # Accessor for a hash table to convert an opengl attribute symbol
+    # into an integer value to be passed to SDL.GL_SetAttribute.
+    def _opengl_attribs # :nodoc:
+      @attrib_symbols ||= {
+        :red_size         => SDL::GL_RED_SIZE,
+        :green_size       => SDL::GL_GREEN_SIZE,
+        :blue_size        => SDL::GL_BLUE_SIZE,
+        :alpha_size       => SDL::GL_ALPHA_SIZE,
+        :buffer_size      => SDL::GL_BUFFER_SIZE,
+        :doublebuffer     => SDL::GL_DOUBLEBUFFER,
+        :depth_size       => SDL::GL_DEPTH_SIZE,
+        :stencil_size     => SDL::GL_STENCIL_SIZE,
+        :accum_red_size   => SDL::GL_ACCUM_RED_SIZE,
+        :accum_green_size => SDL::GL_ACCUM_GREEN_SIZE,
+        :accum_blue_size  => SDL::GL_ACCUM_BLUE_SIZE,
+        :accum_alpha_size => SDL::GL_ACCUM_ALPHA_SIZE,
+      }.freeze
+    end
+
   end
 
 
