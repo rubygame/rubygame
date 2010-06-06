@@ -342,7 +342,8 @@ describe Screen do
       it "should return a hash with each symbol as a key" do
         result = Screen.get_opengl_attributes( *attrs )
         result.should be_instance_of(Hash)
-        result.keys.sort.should == attrs.sort
+        attrs.each { |attr|  result.should have_key(attr)  }
+        result.should have(attrs.size).keys
       end
 
       it "should call SDL.GL_GetAttribute for each attribute" do
