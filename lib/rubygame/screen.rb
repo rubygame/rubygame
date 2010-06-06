@@ -158,6 +158,17 @@ class Rubygame::Screen < Rubygame::Surface
       SDL.WM_SetIcon( surface.send(:struct), nil )
     end
 
+
+    # Returns true if the Screen instance is #open? and has the
+    # :opengl option (or the Rubygame::OPENGL flag, which is
+    # deprecated.)
+    # 
+    def opengl?
+      get_surface.opengl?
+    rescue Rubygame::SDLError
+      false
+    end
+
   end
 
 
@@ -555,6 +566,13 @@ class Rubygame::Screen < Rubygame::Surface
   def close
     Screen.close if open?
     nil
+  end
+
+
+  # Returns true if the Screen instance is #open? and has the :opengl
+  # option (or the Rubygame::OPENGL flag, which is deprecated.)
+  def opengl?
+    open? and (@struct.flags & SDL::OPENGL == SDL::OPENGL)
   end
 
 end

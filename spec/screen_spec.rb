@@ -113,4 +113,65 @@ describe Screen do
   end
 
 
+
+  ###########
+  # OPENGL? #
+  ###########
+
+  describe ".opengl?" do
+
+    it "should be true if Screen is open with :opengl" do
+      Screen.open( [10,10], :opengl => true )
+      Screen.opengl?.should be_true
+    end
+
+    it "should be true if Screen is open with OPENGL flag (deprecated)" do
+      Screen.open( [10,10], 0, [Rubygame::OPENGL] )
+      Screen.opengl?.should be_true
+    end
+
+    it "should not be true if Screen has never been opened" do
+      Screen.opengl?.should be_false
+    end
+
+    it "should not be true if Screen has been closed" do
+      Screen.open( [10,10] )
+      Screen.close
+      Screen.opengl?.should be_false
+    end
+
+    it "should not be true if Screen is not OpenGL mode" do
+      Screen.open( [10,10] )
+      Screen.opengl?.should be_false
+    end
+
+  end
+
+
+  describe "#opengl?" do
+
+    it "should be true if Screen is open with :opengl" do
+      screen = Screen.open( [10,10], :opengl => true )
+      screen.opengl?.should be_true
+    end
+
+    it "should be true if Screen is open with OPENGL flag (deprecated)" do
+      screen = Screen.open( [10,10], 0, [Rubygame::OPENGL] )
+      screen.opengl?.should be_true
+    end
+
+    it "should not be true if Screen is not open" do
+      screen = Screen.open( [10,10] )
+      screen.close
+      screen.opengl?.should be_false
+    end
+
+    it "should not be true if Screen is not OpenGL mode" do
+      screen = Screen.open( [10,10] )
+      screen.opengl?.should be_false
+    end
+
+  end
+
+
 end
