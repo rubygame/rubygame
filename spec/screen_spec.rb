@@ -58,4 +58,59 @@ describe Screen do
     Screen.open?.should be_false
   end
 
+
+  describe "instance" do
+
+    it "should be open after opening it" do
+      screen = Screen.open( [10,10] )
+      screen.should be_open
+    end
+
+    it "should have a close method" do
+      screen = Screen.open( [10,10] )
+      lambda{ screen.close }.should_not raise_error
+    end
+
+    it "should not be open after #close" do
+      screen = Screen.open( [10,10] )
+      screen.close
+      screen.should_not be_open
+    end
+
+    it "should not be open after Screen.close" do
+      screen = Screen.open( [10,10] )
+      Screen.close
+      screen.should_not be_open
+    end
+
+    it "should not be open after #close and re-open" do
+      screen = Screen.open( [10,10] )
+      screen.close
+      Screen.open( [10,10] )
+      screen.should_not be_open
+    end
+
+    it "should not be open after Rubygame.quit" do
+      screen = Screen.open( [10,10] )
+      Rubygame.quit
+      screen.should_not be_open
+    end
+
+    it "#close should not raise error when already closed" do
+      screen = Screen.open( [10,10] )
+      screen.close
+      lambda{ screen.close }.should_not raise_error
+    end
+
+    it "#close should not affect other instances" do
+      screen1 = Screen.open( [10,10] )
+      screen1.close
+      screen2 = Screen.open( [10,10] )
+      screen1.close
+      screen2.should be_open
+    end
+
+  end
+
+
 end

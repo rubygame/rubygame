@@ -1,6 +1,6 @@
 #--
 #	Rubygame -- Ruby code and bindings to SDL to facilitate game creation
-#	Copyright (C) 2004-2009  John Croisant
+#	Copyright (C) 2004-2010  John Croisant
 #
 #	This library is free software; you can redistribute it and/or
 #	modify it under the terms of the GNU Lesser General Public
@@ -539,5 +539,22 @@ class Rubygame::Screen < Rubygame::Surface
     SDL.WM_SetCaption( newtitle, newtitle )
   end
 
+
+  # Returns true if this Screen instance is open and bound to the
+  # current Rubygame display window. If false, you should not use this
+  # instance. Instead, use Screen.get_surface to get a fresh instance.
+  #
+  def open?
+    (SDL.GetVideoSurface().pointer == @struct.pointer) and
+      not @struct.pointer.null?
+  end
+
+  # Like Screen.close, but does nothing unless this Screen instance is
+  # open and bound to the current Rubygame display window.
+  # 
+  def close
+    Screen.close if open?
+    nil
+  end
 
 end
