@@ -1,3 +1,6 @@
 *~
-*.o
-*.so
+
+/pkg/
+/html/
+/ri/
+/coverage/
