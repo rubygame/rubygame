@@ -546,16 +546,26 @@ class Rubygame::Surface
 
     src_x, src_y, src_w, src_h =
       case src_rect
-      when SDL::Rect
-        [src_rect.x, src_rect.y, src_rect.w, src_rect.h]
-      when Array
-        src_rect
+      when Rubygame::Rect, SDL::Rect, Array
+        src_rect.to_ary
       when nil
         [0, 0] + self.size
+      else
+        raise( TypeError, "Invalid src_rect (expected Rect or Array, " +
+               "got #{src_rect.inspect})" )
       end
 
     src_rect  = SDL::Rect.new([src_x,  src_y,  src_w, src_h])
-    blit_x, blit_y = pos
+
+    blit_x, blit_y = 
+      case pos
+      when Rubygame::Rect, SDL::Rect, Array
+        pos.to_ary
+      else
+        raise( TypeError, "Invalid pos (expected Array or Rect, " +
+               "got #{pos.inspect})" )
+      end
+
     blit_rect = SDL::Rect.new([blit_x, blit_y, src_w, src_h])
 
     SDL.BlitSurface( @struct, src_rect, target.struct, blit_rect )
