@@ -178,6 +178,55 @@ begin
 
   end
 
+
+  ########
+  # RCOV #
+  ########
+
+  desc "Run all specs with rcov"
+  Spec::Rake::SpecTask.new(:rcov) do |t|
+    ENV["RUBYGAME_NEWRECT"] = "true"
+    t.spec_files = FileList['spec/*_spec.rb']
+    t.rcov = true
+  end
+
+
+  namespace :rcov do
+    desc "Run all specs with rcov"
+    Spec::Rake::SpecTask.new(:all) do |t|
+      ENV["RUBYGAME_NEWRECT"] = "true"
+      t.spec_files = FileList['spec/*_spec.rb']
+      t.rcov = true
+    end
+
+    desc "Run spec/[name]_spec.rb (e.g. 'color') with rcov"
+    task :name do
+      puts( "This is just a stand-in spec.",
+            "Run rake rcov:[name] where [name] is e.g. 'color', 'music'." )
+    end
+  end
+
+
+  rule(/rcov:.+/) do |t|
+    name = t.name.gsub("rcov:","")
+
+    path = File.join( File.dirname(__FILE__),'spec','%s_spec.rb'%name )
+
+    if File.exist? path
+      Spec::Rake::SpecTask.new(name) do |t|
+        t.spec_files = [path]
+        t.rcov = true
+      end
+
+      puts "\nRunning spec/%s_spec.rb"%name
+
+      Rake::Task[name].invoke
+    else
+      puts "File does not exist: %s"%path
+    end
+
+  end
+
 rescue LoadError
 
   error = "ERROR: RSpec is not installed?"
