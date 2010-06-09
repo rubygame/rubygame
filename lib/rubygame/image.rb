@@ -116,7 +116,7 @@ class Rubygame::Surface
     # See Surface.load for a list of possible supported file types.
     # 
     def load_from_string( data, type=nil )
-      raw = FFI::Buffer.new(:char, data.length)
+      raw = FFI::MemoryPointer.new(:char, data.length)
       raw.put_bytes(0, data)
 
       rw = SDL.RWFromMem( raw, data.length )
