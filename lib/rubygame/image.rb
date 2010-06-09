@@ -49,7 +49,7 @@ class Rubygame::Surface
     # *IMPORTANT*: this method only exists if SDL_image is available!
     # Your code should check "defined?(Rubygame::Surface.load) != nil"
     # to see if you can use this method, or be prepared to rescue from
-    # NameError.
+    # NoMethodError.
     # 
     # Load an image file from the disk to a Surface. If the image has an alpha
     # channel (e.g. PNG with transparency), the Surface will as well. If the
@@ -98,7 +98,7 @@ class Rubygame::Surface
     # Your code should check
     # "defined?(Rubygame::Surface.load_from_string) != nil" to see if
     # you can use this method, or be prepared to rescue from
-    # NameError.
+    # NoMethodError.
     # 
     # Load an image file from memory (in the form of the given data)
     # to a Surface. If the image has an alpha channel (e.g. PNG with
