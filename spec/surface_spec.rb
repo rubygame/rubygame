@@ -98,7 +98,7 @@ describe Surface, "(loading from string)" do
 end
 
 
-describe Surface, "(marshalling)", do
+describe Surface, "(marshalling)" do
 
   before :each do
     @surf = Rubygame::Surface.new([10,20], :depth => 32, :alpha => true)
