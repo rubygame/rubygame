@@ -39,6 +39,7 @@ this_dir = File.expand_path( File.dirname(__FILE__) )
     queue
     surface
     sprite
+    vector2
 }.each do |f|
   require File.join( this_dir, "rubygame", f )
 end
