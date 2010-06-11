@@ -19,8 +19,14 @@
 #	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #++
 
+
+Rubygame.deprecated("Rubygame::Hotspot", "3.0")
+
+
 module Rubygame
 
+  # *NOTE*: Hotspot is DEPRECATED and will be removed in Rubygame 3.0!
+  # 
   # *NOTE*: you must require 'rubygame/hotspot' manually to gain access to
   # Rubygame::Hotspot. It is not imported with Rubygame by default!
   # 
