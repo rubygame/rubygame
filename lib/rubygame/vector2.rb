@@ -94,6 +94,19 @@ module Rubygame
       self.class.new( @x + vector.at(0), @y + vector.at(1) )
     end
 
+    # Moves the vector by the given x and y amounts.
+    def move!( x, y )
+      raise "can't modify frozen object" if frozen?
+      @x += x
+      @y += y
+      self
+    end
+
+    # Like #move!, but returns a new vector.
+    def move( x, y )
+      self.dup.move!(x, y)
+    end
+
 
     # Subtracts the given vector from this one and return
     # the resulting vector.

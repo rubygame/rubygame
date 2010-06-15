@@ -244,10 +244,60 @@ describe Vector2 do
   end
 
 
+  #######
+  # DOT #
+  #######
+
   it "should have a dot product operator" do
     @v1.dot(@v2).should == (1*3 + 2*(-4))
   end
 
+
+  ########
+  # MOVE #
+  ########
+
+  describe "#move" do
+    it "should perform vector addition" do
+      @v1.move(3,4).should == Vector2.new(4,6)
+    end
+
+    it "should not modify the caller" do
+      v1_orig = @v1.dup
+      @v1.move(3,4)
+      @v1.should == v1_orig
+    end
+
+    it "should return a new object" do
+      @v1.move(3,4).should_not equal(@v1)
+    end
+  end
+
+
+  describe "#move!" do
+    it "should perform vector addition" do
+      @v1.move!(3,4).should == Vector2.new(4,6)
+    end
+
+    it "should modify the caller" do
+      @v1.move!(3,4)
+      @v1.should == Vector2.new(4,6)
+    end
+
+    it "should return the caller" do
+      @v1.move!(3,4).should equal(@v1)
+    end
+
+    it "should raise error if frozen" do
+      @v1.freeze
+      lambda{ @v1.move!(3,4) }.should raise_error
+    end
+  end
+
+
+  ########
+  # PERP #
+  ########
 
   it "should have a perpendicular vector" do
     @v1.perp.should == Vector2.new(-2,1)
