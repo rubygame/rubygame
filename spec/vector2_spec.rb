@@ -254,34 +254,320 @@ describe Vector2 do
   end
 
 
-  it "should be projectable onto another vector" do
-    @v1.projected_onto(@v2).should == Vector2.new(-0.6, 0.8)
+  ################
+  # PROJECT_ONTO #
+  ################
+
+  describe "#projected_onto" do
+    it "should perform vector projection onto another vector" do
+      @v1.projected_onto(@v2).should == Vector2.new(-0.6, 0.8)
+    end
+
+    it "should not modify the caller" do
+      v1_orig = @v1.dup
+      @v1.projected_onto(@v2)
+      @v1.should == v1_orig
+    end
+
+    it "should return a new object" do
+      @v1.projected_onto(@v2).should_not equal(@v1)
+    end
   end
 
 
-  it "should be rotatable (radians)" do
-    expected = Vector2.new_am(@v1.angle + 0.2, @v1.magnitude)
-    @v1.rotate(0.2).should == expected
+  describe "#project_onto!" do
+    it "should perform vector projection onto another vector" do
+      @v1.project_onto!(@v2).should == Vector2.new(-0.6, 0.8)
+    end
+
+    it "should modify the caller" do
+      @v1.project_onto!(@v2)
+      @v1.should == Vector2.new(-0.6, 0.8)
+    end
+
+    it "should return the caller" do
+      @v1.project_onto!(@v2).should equal(@v1)
+    end
+
+    it "should raise error if frozen" do
+      @v1.freeze
+      lambda{ @v1.project_onto!(@v2) }.should raise_error
+    end
   end
 
 
-  it "should be rotatable (degrees)" do
-    expected = Vector2.new_dam(@v1.dangle + 30, @v1.magnitude)
-    @v1.drotate(30).should == expected
+  ###########
+  # REVERSE #
+  ###########
+
+
+  describe "#reverse" do
+    it "should reverse the vector's direction" do
+      @v1.reverse.should == Vector2.new(-1, -2)
+    end
+
+    it "should not modify the caller" do
+      v1_orig = @v1.dup
+      @v1.reverse
+      @v1.should == v1_orig
+    end
+
+    it "should return a new object" do
+      @v1.reverse.should_not equal(@v1)
+    end
   end
 
 
-  it "should be stretchable on both axes" do
-    @v1.stretch(3,-4).should == Vector2.new(3,-8)
+  describe "#reverse!" do
+    it "should reverse the vector's direction" do
+      @v1.reverse!.should == Vector2.new(-1, -2)
+    end
+
+    it "should modify the caller" do
+      @v1.reverse!
+      @v1.should == Vector2.new(-1, -2)
+    end
+
+    it "should return the caller" do
+      @v1.reverse!.should equal(@v1)
+    end
+
+    it "should raise error if frozen" do
+      @v1.freeze
+      lambda{ @v1.reverse! }.should raise_error
+    end
   end
 
 
-  it "should have a unit vector" do
-    u = @v1.unit
-    u.magnitude.should == 1.0
-    u.angle.should == @v1.angle
+  ##########
+  # ROTATE #
+  ##########
+
+  describe "#rotate" do
+    it "should perform rotation (in radians)" do
+      expected = Vector2.new_am(@v1.angle + 0.2, @v1.magnitude)
+      @v1.rotate(0.2).should == expected
+    end
+
+    it "should not modify the caller" do
+      v1_orig = @v1.dup
+      @v1.rotate(0.2)
+      @v1.should == v1_orig
+    end
+
+    it "should return a new object" do
+      @v1.rotate(0.2).should_not equal(@v1)
+    end
   end
 
+
+  describe "#rotate!" do
+    it "should perform rotation (in radians)" do
+      expected = Vector2.new_am(@v1.angle + 0.2, @v1.magnitude)
+      @v1.rotate!(0.2).should == expected
+    end
+
+    it "should modify the caller" do
+      expected = Vector2.new_am(@v1.angle + 0.2, @v1.magnitude)
+      @v1.rotate!(0.2)
+      @v1.should == expected
+    end
+
+    it "should return the caller" do
+      @v1.rotate!(0.2).should equal(@v1)
+    end
+
+    it "should raise error if frozen" do
+      @v1.freeze
+      lambda{ @v1.rotate!(0.2) }.should raise_error
+    end
+  end
+
+
+  ###########
+  # DROTATE #
+  ###########
+
+  describe "#drotate" do
+    it "should perform rotation (in degrees)" do
+      expected = Vector2.new_dam(@v1.dangle + 30, @v1.magnitude)
+      @v1.drotate(30).should == expected
+    end
+
+    it "should not modify the caller" do
+      v1_orig = @v1.dup
+      @v1.drotate(30)
+      @v1.should == v1_orig
+    end
+
+    it "should return a new object" do
+      @v1.drotate(30).should_not equal(@v1)
+    end
+  end
+
+
+  describe "#drotate!" do
+    it "should perform rotation (in degrees)" do
+      expected = Vector2.new_dam(@v1.dangle + 30, @v1.magnitude)
+      @v1.drotate!(30).should == expected
+    end
+
+    it "should modify the caller" do
+      expected = Vector2.new_dam(@v1.dangle + 30, @v1.magnitude)
+      @v1.drotate!(30)
+      @v1.should == expected
+    end
+
+    it "should return the caller" do
+      @v1.drotate!(30).should equal(@v1)
+    end
+
+    it "should raise error if frozen" do
+      @v1.freeze
+      lambda{ @v1.drotate!(30) }.should raise_error
+    end
+  end
+
+
+  ###########
+  # STRETCH #
+  ###########
+
+  describe "#stretch" do
+    it "should perform non-uniform scaling" do
+      @v1.stretch(3,-4).should == Vector2.new(3,-8)
+    end
+
+    it "should not modify the caller" do
+      v1_orig = @v1.dup
+      @v1.stretch(3,-4)
+      @v1.should == v1_orig
+    end
+
+    it "should return a new object" do
+      @v1.stretch(3,-4).should_not equal(@v1)
+    end
+  end
+
+
+  describe "#stretch!" do
+    it "should perform non-uniform scaling" do
+      @v1.stretch!(3,-4).should == Vector2.new(3,-8)
+    end
+
+    it "should modify the caller" do
+      @v1.stretch!(3,-4)
+      @v1.should == Vector2.new(3,-8)
+    end
+
+    it "should return the caller" do
+      @v1.stretch!(3,-4).should equal(@v1)
+    end
+
+    it "should raise error if frozen" do
+      @v1.freeze
+      lambda{ @v1.stretch!(3,-4) }.should raise_error
+    end
+  end
+
+
+  ########
+  # UNIT #
+  ########
+
+  describe "#unit" do
+    it "should calculate a unit vector" do
+      u = @v1.unit
+      u.magnitude.should == 1.0
+      u.angle.should == @v1.angle
+    end
+
+    it "should not modify the caller" do
+      v1_orig = @v1.dup
+      @v1.unit
+      @v1.should == v1_orig
+    end
+
+    it "should return a new object" do
+      @v1.unit.should_not equal(@v1)
+    end
+  end
+
+
+  # Alias for #unit
+  describe "#normalized" do
+    it "should calculate a unit vector" do
+      u = @v1.normalized
+      u.magnitude.should == 1.0
+      u.angle.should == @v1.angle
+    end
+
+    it "should not modify the caller" do
+      v1_orig = @v1.dup
+      @v1.normalized
+      @v1.should == v1_orig
+    end
+
+    it "should return a new object" do
+      @v1.normalized.should_not equal(@v1)
+    end
+  end
+
+
+  describe "#unit!" do
+    it "should calculate a unit vector" do
+      u = @v1.unit!
+      u.magnitude.should == 1.0
+      u.angle.should == @v1.angle
+    end
+
+    it "should not modify the caller" do
+      orig_angle = @v1.angle
+      @v1.unit!
+      @v1.magnitude.should == 1.0
+      @v1.angle.should == orig_angle
+    end
+
+    it "should return the caller" do
+      @v1.unit!.should equal(@v1)
+    end
+
+    it "should raise error if frozen" do
+      @v1.freeze
+      lambda{ @v1.unit! }.should raise_error
+    end
+  end
+
+
+  # Alias for #unit!
+  describe "#normalize!" do
+    it "should calculate a unit vector" do
+      u = @v1.normalize!
+      u.magnitude.should == 1.0
+      u.angle.should == @v1.angle
+    end
+
+    it "should not modify the caller" do
+      orig_angle = @v1.angle
+      @v1.normalize!
+      @v1.magnitude.should == 1.0
+      @v1.angle.should == orig_angle
+    end
+
+    it "should return the caller" do
+      @v1.normalize!.should equal(@v1)
+    end
+
+    it "should raise error if frozen" do
+      @v1.freeze
+      lambda{ @v1.normalize! }.should raise_error
+    end
+  end
+
+
+  ########
+  # UDOT #
+  ########
 
   it "should have a unit dot product operator" do
     @v1.udot(@v2).should == @v1.unit.dot(@v2.unit)

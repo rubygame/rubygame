@@ -108,6 +108,18 @@ module Rubygame
       self.class.new( -@x, -@y )
     end
 
+    # Reverses the vector's direction, i.e. Vector2[-x, -y].
+    def reverse!
+      raise "can't modify frozen object" if frozen?
+      @x, @y = -@x, -@y
+      self
+    end
+
+    # Like #reverse!, but returns a new vector.
+    def reverse
+      self.dup.reverse!
+    end
+
 
     # Multiplies this vector by the given scalar (Numeric),
     # and return the resulting vector.
@@ -228,35 +240,62 @@ module Rubygame
     end
 
 
-    # Returns a new vector which is this vector projected onto
-    # the other vector.
+    # Sets this vector to the vector projection (aka vector resolute)
+    # of this vector onto the other vector. See also #projected_onto.
     # 
-    def projected_onto( v )
-      self.class.new(  *(v * v.dot(self) * (1/v.magnitude**2) )  )
+    def project_onto!( vector )
+      raise "can't modify frozen object" if frozen?
+      @x, @y = *(vector * vector.dot(self) * (1/vector.magnitude**2))
+      self
     end
 
 
-    # Returns a copy of this vector, but with angle increased by
-    # the given amount, in radians. Use #drotate for degrees.
+    # Like #project_onto!, but returns a new vector.
+    def projected_onto( vector )
+      dup.project_onto!( vector )
+    end
+
+
+    # Rotates the vector the given number of radians.
+    # Use #drotate! for degrees.
     # 
+    def rotate!( angle_rad )
+      self.angle += angle_rad
+      self
+    end
+
+    # Like #rotate!, but returns a new vector.
     def rotate( angle_rad )
-      self.class.new_am( angle + angle_rad, magnitude )
+      dup.rotate!( angle_rad )
     end
 
 
-    # Returns a copy of this vector, but with angle increased by
-    # the given amount, in degrees. Use #rotate for radians.
+    # Rotates the vector the given number of degrees.
+    # Use #rotate for radians.
     # 
+    def drotate!( angle_deg )
+      self.dangle += angle_deg
+      self
+    end
+
+    # Like #drotate!, but returns a new vector.
     def drotate( angle_deg )
-      self.class.new_dam( dangle + angle_deg, magnitude )
+      dup.drotate!( angle_deg )
     end
 
 
-    # Returns a copy of this vector, but scaled separately on each axis.
-    # The new vector will be Vector2[ x*scale_x, y*scale_y ].
+    # Scales this vector separately on each axis. The vector will be
+    # equal to Vector2[ x*scale_x, y*scale_y ].
     # 
+    def stretch!( scale_x, scale_y )
+      raise "can't modify frozen object" if frozen?
+      @x, @y = @x * scale_x, @y * scale_y
+      self
+    end
+
+    # Like #stretch!, but returns a new vector.
     def stretch( scale_x, scale_y )
-      self.class.new( @x * scale_x, @y * scale_y )
+      dup.stretch!(scale_x, scale_y)
     end
 
 
@@ -283,10 +322,22 @@ module Rubygame
     end
 
 
-    # Returns a copy of this vector, but with a magnitude of 1.
-    def unit
-      self * (1/magnitude())
+    # Sets this vector's magnitude to 1.
+    def unit!
+      raise "can't modify frozen object" if frozen?
+      scale = 1/magnitude
+      @x, @y = @x * scale, @y * scale
+      self
     end
+
+    alias :normalize! :unit!
+
+    # Like #unit!, but returns a new vector.
+    def unit
+      self.dup.unit!
+    end
+
+    alias :normalized :unit
 
 
     private
