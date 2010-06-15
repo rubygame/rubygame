@@ -36,6 +36,26 @@ describe Vector2 do
       @v1.x.should be_instance_of(Float)
     end
 
+    it "x should be writable" do
+      @v1.x = 2
+      @v1.x.should == 2
+    end
+
+    it "x should not be writable if frozen" do
+      @v1.freeze
+      lambda{ @v1.x = 2 }.should raise_error
+    end
+
+    it "y should be writable" do
+      @v1.y = 3
+      @v1.y.should == 3
+    end
+
+    it "y should not be writable if frozen" do
+      @v1.freeze
+      lambda{ @v1.y = 3 }.should raise_error
+    end
+
   end
 
 
@@ -141,30 +161,86 @@ describe Vector2 do
   end
 
 
-  describe "(angles)" do
+  describe "#angle" do
 
-    it "should have an angle (radians)" do
+    it "should return the vector's angle in radians" do
       Vector2.new(1,1).angle.should be_nearly_equal(Math::PI*0.25)
     end
 
-    it "should have an angle (degrees)" do
+    it "should be writable" do
+      @v1.angle = 1.234
+      @v1.angle.should be_nearly_equal(1.234)
+    end
+
+    it "should not be writable when frozen" do
+      @v1.freeze
+      lambda{ @v1.angle = 1.234 }.should raise_error
+    end
+
+    it "should retain magnitude when changing angle" do
+      orig_mag = @v1.magnitude
+      @v1.angle = 1.234
+      @v1.magnitude.should be_nearly_equal(orig_mag)
+    end
+
+  end
+
+  describe "#dangle" do
+
+    it "should return the vector's angle in degrees" do
       Vector2.new(1,1).dangle.should == 45
     end
 
-
-    it "should have an angle with another vector (radians)" do
-      @v1.angle_with(@v2).should be_nearly_equal(2.0344439357957)
+    it "should be writable" do
+      @v1.dangle = 1.234
+      @v1.dangle.should be_nearly_equal(1.234)
     end
 
-    it "should have an angle with another vector (degrees)" do
-      @v1.dangle_with(@v2).should be_nearly_equal(116.565051177078)
+    it "should not be writable when frozen" do
+      @v1.freeze
+      lambda{ @v1.dangle = 1.234 }.should raise_error
+    end
+
+    it "should retain magnitude when changing angle" do
+      orig_mag = @v1.magnitude
+      @v1.dangle = 1.234
+      @v1.magnitude.should be_nearly_equal(orig_mag)
     end
 
   end
 
 
-  it "should have a magnitude" do
-    @v2.magnitude.should == 5
+  it "should have an angle with another vector (radians)" do
+    @v1.angle_with(@v2).should be_nearly_equal(2.0344439357957)
+  end
+
+  it "should have an angle with another vector (degrees)" do
+    @v1.dangle_with(@v2).should be_nearly_equal(116.565051177078)
+  end
+
+
+  describe "#magnitude" do
+
+    it "should return the vector's magnitude" do
+      @v2.magnitude.should be_nearly_equal(5)
+    end
+
+    it "should be writable" do
+      @v1.magnitude = 1.234
+      @v1.magnitude.should be_nearly_equal(1.234)
+    end
+
+    it "should not be writable when frozen" do
+      @v1.freeze
+      lambda{ @v1.magnitude = 1.234 }.should raise_error(RuntimeError)
+    end
+
+    it "should retain angle when changing magnitude" do
+      orig_angle = @v1.angle
+      @v1.magnitude = 1.234
+      @v1.angle.should be_nearly_equal(orig_angle)
+    end
+
   end
 
 

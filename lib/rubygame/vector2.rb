@@ -74,6 +74,18 @@ module Rubygame
 
     attr_reader :x, :y
 
+    def x=( value )
+      raise "can't modify frozen object" if frozen?
+      @x = value.to_f
+      self
+    end
+
+    def y=( value )
+      raise "can't modify frozen object" if frozen?
+      @y = value.to_f
+      self
+    end
+
 
     # Adds the given vector to this one and return the
     # resulting vector.
@@ -139,6 +151,18 @@ module Rubygame
     end
 
 
+    # Sets the vector's angle in radians. The vector keeps the same
+    # magnitude as before.
+    # 
+    def angle=( angle_rad )
+      raise "can't modify frozen object" if frozen?
+      m = magnitude
+      @x = Math::cos(angle_rad) * m
+      @y = Math::sin(angle_rad) * m
+      self
+    end
+
+
     # Returns the angle of this vector relative to the other vector,
     # in radians. Use #dangle_with for degrees.
     # 
@@ -152,6 +176,15 @@ module Rubygame
     # 
     def dangle
       angle * RAD_TO_DEG
+    end
+
+
+    # Sets the vector's angle in degrees. The vector keeps the same
+    # magnitude as before.
+    # 
+    def dangle=( angle_deg )
+      self.angle = angle_deg * DEG_TO_RAD
+      self
     end
 
 
@@ -172,6 +205,18 @@ module Rubygame
     # Returns the magnitude (distance) of this vector.
     def magnitude
       Math.hypot( @x, @y )
+    end
+
+
+    # Sets the vector's magnitude (distance). The vector keeps the
+    # same angle as before.
+    # 
+    def magnitude=( mag )
+      raise "can't modify frozen object" if frozen?
+      angle_rad = angle
+      @x = Math::cos(angle_rad) * mag
+      @y = Math::sin(angle_rad) * mag
+      self
     end
 
 
