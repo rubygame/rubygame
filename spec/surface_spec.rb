@@ -807,3 +807,204 @@ describe "A frozen", Surface do
   end
 
 end
+
+
+
+describe Surface, "(vector support)" do
+
+  before(:each) do
+    Rubygame.init()
+    @surface = Surface.new([100,100])
+  end
+
+  after(:each) do
+    Rubygame.quit
+  end
+
+  it "#blit should accept a Vector2 for dest" do
+    lambda {
+      @surface.blit(Surface.new([100,100]), Vector2[0,0])
+    }.should_not raise_error
+  end
+
+  it "#get_at should accept a Vector2 for position" do
+    @surface.get_at(Vector2[0,0]).should == [0,0,0,255]
+  end
+
+  it "#set_at should accept a Vector2 for position" do
+    @surface.set_at(Vector2[0,0], :blue)
+    @surface.get_at(0,0).should == [0,0,255,255]
+  end
+
+
+  it "draw_line should accept Vector2s" do
+    if @surface.respond_to? :draw_line
+      lambda{
+        @surface.draw_line( Vector2[0,0], Vector2[1,1], :white )
+      }.should_not raise_error
+    else
+      pending "No draw_line support. Is SDL_gfx available?"
+    end
+  end
+
+  it "draw_line_a should accept Vector2s" do
+    if @surface.respond_to? :draw_line_a
+      lambda{
+        @surface.draw_line_a( Vector2[0,0], Vector2[1,1], :white )
+      }.should_not raise_error
+    else
+      pending "No draw_line_a support. Is SDL_gfx available?"
+    end
+  end
+
+
+  it "draw_box should accept Vector2s" do
+    if @surface.respond_to? :draw_box
+      lambda{
+        @surface.draw_box( Vector2[0,0], Vector2[1,1], :white )
+      }.should_not raise_error
+    else
+      pending "No draw_box support. Is SDL_gfx available?"
+    end
+  end
+
+  it "draw_box_s should accept Vector2s" do
+    if @surface.respond_to? :draw_box_s
+      lambda{
+        @surface.draw_box_s( Vector2[0,0], Vector2[1,1], :white )
+      }.should_not raise_error
+    else
+      pending "No draw_box_s support. Is SDL_gfx available?"
+    end
+  end
+
+
+  it "draw_circle should accept a Vector2" do
+    if @surface.respond_to? :draw_circle
+      lambda{
+        @surface.draw_circle( Vector2[1,1], 1, :white )
+      }.should_not raise_error
+    else
+      pending "No draw_circle support. Is SDL_gfx available?"
+    end
+  end
+
+  it "draw_circle_a should accept a Vector2" do
+    if @surface.respond_to? :draw_circle_a
+      lambda{
+        @surface.draw_circle_a( Vector2[1,1], 1, :white )
+      }.should_not raise_error
+    else
+      pending "No draw_circle_a support. Is SDL_gfx available?"
+    end
+  end
+
+  it "draw_circle_s should accept a Vector2" do
+    if @surface.respond_to? :draw_circle_s
+      lambda{
+        @surface.draw_circle_s( Vector2[1,1], 1, :white )
+      }.should_not raise_error
+    else
+      pending "No draw_circle_s support. Is SDL_gfx available?"
+    end
+  end
+
+
+  it "draw_ellipse should accept a Vector2" do
+    if @surface.respond_to? :draw_ellipse
+      lambda{
+        @surface.draw_ellipse( Vector2[1,1], [1,2], :white )
+      }.should_not raise_error
+    else
+      pending "No draw_ellipse support. Is SDL_gfx available?"
+    end
+  end
+
+  it "draw_ellipse_a should accept a Vector2" do
+    if @surface.respond_to? :draw_ellipse_a
+      lambda{
+        @surface.draw_ellipse_a( Vector2[1,1], [1,2], :white )
+      }.should_not raise_error
+    else
+      pending "No draw_ellipse_a support. Is SDL_gfx available?"
+    end
+  end
+
+  it "draw_ellipse_s should accept a Vector2" do
+    if @surface.respond_to? :draw_ellipse_s
+      lambda{
+        @surface.draw_ellipse_s( Vector2[1,1], [1,2], :white )
+      }.should_not raise_error
+    else
+      pending "No draw_ellipse_s support. Is SDL_gfx available?"
+    end
+  end
+
+
+  it "draw_arc should accept a Vector2" do
+    if @surface.respond_to? :draw_arc
+      lambda{
+        @surface.draw_arc( Vector2[1,1], 1, [0,1], :white )
+      }.should_not raise_error
+    else
+      pending "No draw_arc support. Is SDL_gfx available?"
+    end
+  end
+
+  it "draw_arc_s should accept a Vector2" do
+    if @surface.respond_to? :draw_arc_s
+      lambda{
+        @surface.draw_arc_s( Vector2[1,1], 1, [0,1], :white )
+      }.should_not raise_error
+    else
+      pending "No draw_arc_s support. Is SDL_gfx available?"
+    end
+  end
+
+
+  it "draw_polygon should accept Vector2s" do
+    if @surface.respond_to? :draw_polygon
+      lambda{
+        points = [Vector2[1,1], Vector2[1,2], Vector2[2,2]]
+        @surface.draw_polygon( points, :white )
+      }.should_not raise_error
+    else
+      pending "No draw_polygon support. Is SDL_gfx available?"
+    end
+  end
+
+  it "draw_polygon_a should accept Vector2s" do
+    if @surface.respond_to? :draw_polygon_a
+      lambda{
+        points = [Vector2[1,1], Vector2[1,2], Vector2[2,2]]
+        @surface.draw_polygon_a( points, :white )
+      }.should_not raise_error
+    else
+      pending "No draw_polygon_a support. Is SDL_gfx available?"
+    end
+  end
+
+  it "draw_polygon_s should accept Vector2s" do
+    if @surface.respond_to? :draw_polygon_s
+      lambda{
+        points = [Vector2[1,1], Vector2[1,2], Vector2[2,2]]
+        @surface.draw_polygon_s( points, :white )
+      }.should_not raise_error
+    else
+      pending "No draw_polygon_s support. Is SDL_gfx available?"
+    end
+  end
+
+
+  it "draw_curve should accept Vector2s" do
+    if @surface.respond_to? :draw_curve
+      lambda{
+        points = [Vector2[1,1], Vector2[1,2], Vector2[2,2]]
+        @surface.draw_curve( points, :white )
+      }.should_not raise_error
+    else
+      pending "No draw_curve support. Is SDL_gfx available?"
+    end
+  end
+
+end

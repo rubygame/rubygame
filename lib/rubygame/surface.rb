@@ -559,7 +559,7 @@ class Rubygame::Surface
 
     blit_x, blit_y = 
       case pos
-      when Rubygame::Rect, SDL::Rect, Array
+      when Rubygame::Rect, SDL::Rect, Array, Vector2
         pos.to_ary
       else
         raise( TypeError, "Invalid pos (expected Array or Rect, " +
