@@ -479,6 +479,81 @@ describe Vector2 do
   end
 
 
+  #######
+  # SET #
+  #######
+
+  describe "#set!" do
+    it "should set the vector's x and y components" do
+      @v1.set!(9,10).should == Vector2.new(9,10)
+    end
+
+    it "should modify the caller" do
+      @v1.set!(9,10)
+      @v1.should == Vector2.new(9,10)
+    end
+
+    it "should return the caller" do
+      @v1.set!(9,10).should equal(@v1)
+    end
+
+    it "should raise error if frozen" do
+      @v1.freeze
+      lambda{ @v1.set!(9,10) }.should raise_error
+    end
+  end
+
+
+  ##########
+  # SET_AM #
+  ##########
+
+  describe "#set_am!" do
+    it "should set the vector's angle in radians and magnitude" do
+      @v1.set_am!(9,10).should == Vector2.new_am(9,10)
+    end
+
+    it "should modify the caller" do
+      @v1.set_am!(9,10)
+      @v1.should == Vector2.new_am(9,10)
+    end
+
+    it "should return the caller" do
+      @v1.set_am!(9,10).should equal(@v1)
+    end
+
+    it "should raise error if frozen" do
+      @v1.freeze
+      lambda{ @v1.set_am!(9,10) }.should raise_error
+    end
+  end
+
+
+  ###########
+  # SET_DAM #
+  ###########
+
+  describe "#set_dam!" do
+    it "should set the vector's angle in degrees and magnitude" do
+      @v1.set_dam!(9,10).should == Vector2.new_dam(9,10)
+    end
+
+    it "should modify the caller" do
+      @v1.set_dam!(9,10)
+      @v1.should == Vector2.new_dam(9,10)
+    end
+
+    it "should return the caller" do
+      @v1.set_dam!(9,10).should equal(@v1)
+    end
+
+    it "should raise error if frozen" do
+      @v1.freeze
+      lambda{ @v1.set_dam!(9,10) }.should raise_error
+    end
+  end
+
+
   ###########
   # STRETCH #
   ###########

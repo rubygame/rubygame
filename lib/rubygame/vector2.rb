@@ -87,6 +87,35 @@ module Rubygame
     end
 
 
+    # Sets this vector's x and y components.
+    def set!( x, y )
+      raise "can't modify frozen object" if frozen?
+      @x = x.to_f
+      @y = y.to_f
+      self
+    end
+
+
+    # Sets this vector's angle (in radians) and magnitude.
+    # Use #set_dam! for degrees.
+    # 
+    def set_am!( angle_rad, mag )
+      raise "can't modify frozen object" if frozen?
+      @x = Math::cos(angle_rad) * mag
+      @y = Math::sin(angle_rad) * mag
+      self
+    end
+
+
+    # Sets this vector's angle (in degrees) and magnitude.
+    # Use #set_am! for radians.
+    # 
+    def set_dam!( angle_deg, mag )
+      set_am!( angle_deg * DEG_TO_RAD, mag )
+      self
+    end
+
+
     # Adds the given vector to this one and return the
     # resulting vector.
     # 
