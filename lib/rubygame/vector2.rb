@@ -77,12 +77,14 @@ module Rubygame
     def x=( value )
       raise "can't modify frozen object" if frozen?
       @x = value.to_f
+      @hash = nil
       self
     end
 
     def y=( value )
       raise "can't modify frozen object" if frozen?
       @y = value.to_f
+      @hash = nil
       self
     end
 
@@ -92,6 +94,7 @@ module Rubygame
       raise "can't modify frozen object" if frozen?
       @x = x.to_f
       @y = y.to_f
+      @hash = nil
       self
     end
 
@@ -103,6 +106,7 @@ module Rubygame
       raise "can't modify frozen object" if frozen?
       @x = Math::cos(angle_rad) * mag
       @y = Math::sin(angle_rad) * mag
+      @hash = nil
       self
     end
 
@@ -128,6 +132,7 @@ module Rubygame
       raise "can't modify frozen object" if frozen?
       @x += x
       @y += y
+      @hash = nil
       self
     end
 
@@ -154,6 +159,7 @@ module Rubygame
     def reverse!
       raise "can't modify frozen object" if frozen?
       @x, @y = -@x, -@y
+      @hash = nil
       self
     end
 
@@ -190,6 +196,13 @@ module Rubygame
     alias :at :[]
 
 
+    def hash # :nodoc:
+      @hash ||= (((@x - @x.modulo(1E-10)).hash << 2) +
+                 ((@y - @y.modulo(1E-10)).hash << 1) +
+                 self.class.hash)
+    end
+
+
     # Iterates over this vector as if it were an [x,y] Array.
     # 
     def each( &block )
@@ -213,6 +226,7 @@ module Rubygame
       m = magnitude
       @x = Math::cos(angle_rad) * m
       @y = Math::sin(angle_rad) * m
+      @hash = nil
       self
     end
 
@@ -270,6 +284,7 @@ module Rubygame
       angle_rad = angle
       @x = Math::cos(angle_rad) * mag
       @y = Math::sin(angle_rad) * mag
+      @hash = nil
       self
     end
 
@@ -288,6 +303,7 @@ module Rubygame
     def project_onto!( vector )
       raise "can't modify frozen object" if frozen?
       @x, @y = *(vector * vector.dot(self) * (1/vector.magnitude**2))
+      @hash = nil
       self
     end
 
@@ -332,6 +348,7 @@ module Rubygame
     def stretch!( scale_x, scale_y = scale_x )
       raise "can't modify frozen object" if frozen?
       @x, @y = @x * scale_x, @y * scale_y
+      @hash = nil
       self
     end
 
@@ -369,6 +386,7 @@ module Rubygame
       raise "can't modify frozen object" if frozen?
       scale = 1/magnitude
       @x, @y = @x * scale, @y * scale
+      @hash = nil
       self
     end
 

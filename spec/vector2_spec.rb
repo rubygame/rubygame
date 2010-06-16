@@ -244,6 +244,110 @@ describe Vector2 do
   end
 
 
+  ########
+  # HASH #
+  ########
+
+  describe "#hash" do
+    it "should return an integer" do
+      @v1.hash.should be_an(Integer)
+    end
+
+    it "should be the same for two equivalent vectors" do
+      v1 = Vector2.new(3.141,2.718)
+      v2 = Vector2.new(3.141,2.718)
+      v1.hash.should == v2.hash
+    end
+
+    it "should be different for two different vectors" do
+      v1 = Vector2.new(3.141,2.718)
+      v2 = Vector2.new(2.718,3.141)
+      v1.hash.should_not == v2.hash
+    end
+
+    it "should be the same for two very-near vectors" do
+      x1 = 0.12345678901
+      y1 = 0.12345678902
+      x2 = 0.12345678903
+      y2 = 0.12345678904
+      Vector2.new(x1,y1).hash.should == Vector2.new(x2,y2).hash
+    end
+
+    it "should change when x changes" do
+      orig_hash = @v1.hash
+      @v1.x = 10
+      @v1.hash.should_not == orig_hash
+    end
+
+    it "should change when y changes" do
+      orig_hash = @v1.hash
+      @v1.y = 10
+      @v1.hash.should_not == orig_hash
+    end
+
+    it "should change when vector x/y is set" do
+      orig_hash = @v1.hash
+      @v1.set!(3,10)
+      @v1.hash.should_not == orig_hash
+    end
+
+    it "should change when vector angle (radians)/magnitude is set" do
+      orig_hash = @v1.hash
+      @v1.set_am!(3,10)
+      @v1.hash.should_not == orig_hash
+    end
+
+    it "should change when vector angle (degrees)/magnitude is set" do
+      orig_hash = @v1.hash
+      @v1.set_dam!(3,10)
+      @v1.hash.should_not == orig_hash
+    end
+
+    it "should change when vector is moved" do
+      orig_hash = @v1.hash
+      @v1.move!(3,10)
+      @v1.hash.should_not == orig_hash
+    end
+
+    it "should change when vector is reversed" do
+      orig_hash = @v1.hash
+      @v1.reverse!
+      @v1.hash.should_not == orig_hash
+    end
+
+    it "should change when angle (radians) changes" do
+      orig_hash = @v1.hash
+      @v1.angle = 10
+      @v1.hash.should_not == orig_hash
+    end
+
+    it "should change when angle (degrees) changes" do
+      orig_hash = @v1.hash
+      @v1.dangle = 10
+      @v1.hash.should_not == orig_hash
+    end
+
+    it "should change when vector is projected onto another" do
+      orig_hash = @v1.hash
+      @v1.project_onto!(@v2)
+      @v1.hash.should_not == orig_hash
+    end
+
+    it "should change when vector is stretched" do
+      orig_hash = @v1.hash
+      @v1.stretch!(3,10)
+      @v1.hash.should_not == orig_hash
+    end
+
+    it "should change when vector is normalized" do
+      orig_hash = @v1.hash
+      @v1.unit!
+      @v1.hash.should_not == orig_hash
+    end
+
+  end
+
+
   #######
   # DOT #
   #######
