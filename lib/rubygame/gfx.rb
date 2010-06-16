@@ -412,7 +412,7 @@ class Rubygame::Surface
   # can use this method, or be prepared to rescue from NameError.
   #
   # Draws a Bézier curve with the given control points, color and
-  # number of steps.
+  # quality.
   #
   # This method takes these arguments:
   # points::  an Array containing the coordinates for each control
@@ -441,7 +441,7 @@ class Rubygame::Surface
     
     r,g,b,a = Rubygame::Color.make_sdl_rgba(color)
     SDL::Gfx.bezierRGBA(@struct, xpts, ypts, len,
-                        steps.to_i, r, g, b, a)
+                        quality.to_i, r, g, b, a)
 
     return self
   end
