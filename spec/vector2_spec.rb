@@ -563,6 +563,10 @@ describe Vector2 do
       @v1.stretch(3,-4).should == Vector2.new(3,-8)
     end
 
+    it "should perform uniform scaling if one value is given" do
+      @v1.stretch(3).should == Vector2.new(3,6)
+    end
+
     it "should not modify the caller" do
       v1_orig = @v1.dup
       @v1.stretch(3,-4)
@@ -578,6 +582,10 @@ describe Vector2 do
   describe "#stretch!" do
     it "should perform non-uniform scaling" do
       @v1.stretch!(3,-4).should == Vector2.new(3,-8)
+    end
+
+    it "should perform uniform scaling if one value is given" do
+      @v1.stretch!(3).should == Vector2.new(3,6)
     end
 
     it "should modify the caller" do

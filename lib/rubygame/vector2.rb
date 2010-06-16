@@ -329,14 +329,14 @@ module Rubygame
     # Scales this vector separately on each axis. The vector will be
     # equal to Vector2[ x*scale_x, y*scale_y ].
     # 
-    def stretch!( scale_x, scale_y )
+    def stretch!( scale_x, scale_y = scale_x )
       raise "can't modify frozen object" if frozen?
       @x, @y = @x * scale_x, @y * scale_y
       self
     end
 
     # Like #stretch!, but returns a new vector.
-    def stretch( scale_x, scale_y )
+    def stretch( scale_x, scale_y = scale_x )
       dup.stretch!(scale_x, scale_y)
     end
 
