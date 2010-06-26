@@ -223,6 +223,129 @@ class Rect
   end
 
 
+  # call-seq:
+  #   align!( symbol => value, ... )
+  #   align!( symbol, value, ... )
+  # 
+  # Aligns the Rect so that the given edge or point is at the new
+  # value. Moves the Rect, but does not change its size.
+  # Returns self.
+  # 
+  # This method accepts a hash of zero or more {symbol => value} pairs
+  # of edges/points to align. Alternatively, you can provide the
+  # symbols and values as ordered arguments to this method.
+  #
+  # NOTE: The changes are applied in the order received, but hashes
+  # have no defined order in Ruby 1.8 and earlier. If the order of
+  # changes is important to you, you should use the non-hash form.
+  # 
+  # symbol:: the name of a edge or point.
+  #          Valid edge names are :left, :top, :right, :bottom,
+  #          :centerx, :centery.
+  #          Valid points are :center, :topleft, :topright,
+  #          :bottomleft, :bottomright, :midleft, :midright, :midtop,
+  #          :midbottom.
+  #          See the methods of the same name for their meanings.
+  # 
+  # value::  the new position of the edge or point.
+  #          If +symbol+ is an edge name, +value+ must be a single
+  #          Numeric. If +symbol+ is a point name, +value+ must be a
+  #          Vector2 or array-like of two Numerics, [x,y].
+  # 
+  # 
+  # May raise:
+  # * ArgumentError if an invalid edge or point name is given,
+  # * TypeError if an invalid value is given.
+  # 
+  # Example:
+  # 
+  #   rect = Rubygame::Rect.new( 1, 2, 20, 30 )
+  #   
+  #   rect.left                              # => 1
+  #   rect.top                               # => 2
+  #   rect.align!( :left => 5, :top => 4 )   # => #<Rect [5,4,20,30]>
+  #   rect.left                              # => 5
+  #   rect.top                               # => 4
+  #   
+  #   rect.center                            # => [15, 19]
+  #   rect.align!( :center => [30,30] )      # => #<Rect [20,15,20,30]>
+  #   rect.center                            # => [30, 30]
+  #   
+  #   # Using Ruby 1.9 keyword-style syntax:
+  #   rect.bottom                            # => 45
+  #   rect.align!( bottom: 5 )               # => #<Rect [20,-25,20,30]>
+  #   rect.bottom                            # => 5
+  #   
+  #   # Non-hash form:
+  #   rect.align!( :left, 10, :top, 5 )      # => #<Rect [10,5,20,30]>
+  #   rect.left                              # => 10
+  #   rect.top                               # => 5
+  # 
+  def align!( *opts )
+    if opts[0].is_a? Hash
+      # Turn {:left => 1, :top => 2} into [:left, 1, :top, 2]
+      temp = []
+      opts[0].to_a.each{ |k,v| temp << k << v }
+      opts = temp
+    end
+
+    opts.each_slice(2) do |sym,val|
+      # Argument check:
+      case sym
+      when :left, :top, :right, :bottom, :centerx, :centery
+        # These accept a single numeric value
+        unless val.is_a? Numeric
+          raise( TypeError, "invalid value for #{sym.inspect} " +
+                 "(expected Numeric, got #{val.inspect})")
+        end
+      when :center, :topleft, :topright, :bottomleft, :bottomright,
+           :midleft, :midright, :midtop, :midbottom
+        # These accept an array of 2 numerics
+        begin
+          val = val.to_ary
+          unless val.size == 2 and val.all?{ |v| v.is_a? Numeric }
+            raise( TypeError, "invalid value for #{sym.inspect} " +
+                   "(expected [x,y], got #{val.inspect})")
+          end
+        rescue NoMethodError
+          raise( TypeError, "invalid value for #{sym.inspect} " +
+                 "(expected [x,y], got #{val.inspect})")
+        end
+      else
+        raise ArgumentError, "invalid point #{sym.inspect}"
+      end
+
+      case sym
+      when :left;          @x = val
+      when :top;           @y = val
+      when :right;         @x = val - @w
+      when :bottom;        @y = val - @h
+      when :centerx;       @x = val - @w/2.0
+      when :centery;       @y = val - @h/2.0
+      when :center;        @x = val[0] - @w/2.0;    @y = val[1] - @h/2.0
+      when :topleft;       @x = val[0];             @y = val[1]
+      when :topright;      @x = val[0] - @w;        @y = val[1]
+      when :bottomleft;    @x = val[0];             @y = val[1] - @h
+      when :bottomright;   @x = val[0] - @w;        @y = val[1] - @h
+      when :midleft;       @x = val[0];             @y = val[1] - @h/2.0
+      when :midright;      @x = val[0] - @w;        @y = val[1] - @h/2.0
+      when :midtop;        @x = val[0] - @w/2.0;    @y = val[1]
+      when :midbottom;     @x = val[0] - @w/2.0;    @y = val[1] - @h
+      end
+    end
+
+    self
+  end
+
+  # call-seq:
+  #   align( symbol => value, ... )
+  #   align( symbol, value, ... )
+  # 
+  # Like #align!, but makes a new Rect instead of changing this Rect.
+  def align( *opts )
+    dup.align!( *opts )
+  end
+
 
   # Return the x coordinate of the right side of the Rect.
   def right
