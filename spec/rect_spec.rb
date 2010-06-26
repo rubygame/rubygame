@@ -328,240 +328,23 @@ describe Rect do
 
 
 
-  describe "left" do
+  it "left should be the same as x" do
+    Rect.new(1,2,3,4).left.should == 1
+  end
 
-    it "should be the same as x" do
-      Rect.new(1,2,3,4).left.should == 1
-    end
+  it "top should be the same as y" do
+    Rect.new(1,2,3,4).top.should == 2
+  end
 
-    it "should be writable" do
-      r = Rect.new(1,2,3,4)
-      r.left = 9
-      r.left.should == 9
-    end
+  it "right should be the same as x+w" do
+    Rect.new(1,2,10,4).right.should == 11
+  end
 
-    it "should not be writable if frozen" do
-      r = Rect.new(1,2,3,4).freeze
-      proc{ r.left = 9 }.should raise_error
-    end
-
-    it "should change x when set" do
-      r = Rect.new(1,2,3,4)
-      r.left = 9
-      r.x.should == 9
-    end
-
-    it "should not change w when set" do
-      r = Rect.new(1,2,3,4)
-      r.left = 9
-      r.w.should == 3
-    end
-
-    it "should have an alias l" do
-      Rect.new(1,2,3,4).l.should == 1
-    end
-
-    it "l should be writable" do
-      r = Rect.new(1,2,3,4)
-      r.l = 9
-      r.l.should == 9
-    end
-
-    it "l should not be writable if frozen" do
-      r = Rect.new(1,2,3,4).freeze
-      proc{ r.l = 9 }.should raise_error
-    end
-
-    it "l should change x when set" do
-      r = Rect.new(1,2,3,4)
-      r.l = 9
-      r.x.should == 9
-    end
-
-    it "l should not change w when set" do
-      r = Rect.new(1,2,3,4)
-      r.l = 9
-      r.w.should == 3
-    end
-
+  it "bottom should be the same as y+h" do
+    Rect.new(1,2,3,10).bottom.should == 12
   end
 
 
-  describe "top" do
-
-    it "should be the same as y" do
-      Rect.new(1,2,3,4).top.should == 2
-    end
-
-    it "should be writable" do
-      r = Rect.new(1,2,3,4)
-      r.top = 9
-      r.top.should == 9
-    end
-
-    it "should not be writable if frozen" do
-      r = Rect.new(1,2,3,4).freeze
-      proc{ r.top = 9 }.should raise_error
-    end
-
-    it "should change y when set" do
-      r = Rect.new(1,2,3,4)
-      r.top = 9
-      r.y.should == 9
-    end
-
-    it "should not change h when set" do
-      r = Rect.new(1,2,3,4)
-      r.top = 9
-      r.h.should == 4
-    end
-
-    it "should have an alias t" do
-      Rect.new(1,2,3,4).t.should == 2
-    end
-
-    it "t should be writable" do
-      r = Rect.new(1,2,3,4)
-      r.t = 9
-      r.t.should == 9
-    end
-
-    it "t should not be writable if frozen" do
-      r = Rect.new(1,2,3,4).freeze
-      proc{ r.t = 9 }.should raise_error
-    end
-
-    it "t should change y when set" do
-      r = Rect.new(1,2,3,4)
-      r.t = 9
-      r.y.should == 9
-    end
-
-    it "should not change h when set" do
-      r = Rect.new(1,2,3,4)
-      r.t = 9
-      r.h.should == 4
-    end
-
-  end
-
-
-  describe "right" do
-
-    it "should be the same as x+w" do
-      Rect.new(1,2,10,4).right.should == 11
-    end
-
-    it "should be writable" do
-      r = Rect.new(1,2,3,4)
-      r.right = 9
-      r.right.should == 9
-    end
-
-    it "should not be writable if frozen" do
-      r = Rect.new(1,2,3,4).freeze
-      proc{ r.right = 9 }.should raise_error
-    end
-
-    it "should change x when set" do
-      r = Rect.new(1,2,3,4)
-      r.right = 9
-      r.x.should == 6
-    end
-
-    it "should not change w when set" do
-      r = Rect.new(1,2,3,4)
-      r.right = 9
-      r.w.should == 3
-    end
-
-    it "should have an alias r" do
-      Rect.new(1,2,10,4).r.should == 11
-    end
-
-    it "r should be writable" do
-      r = Rect.new(1,2,3,4)
-      r.r = 9
-      r.r.should == 9
-    end
-
-    it "r should not be writable if frozen" do
-      r = Rect.new(1,2,3,4).freeze
-      proc{ r.r = 9 }.should raise_error
-    end
-
-    it "r should change x when set" do
-      r = Rect.new(1,2,3,4)
-      r.r = 9
-      r.x.should == 6
-    end
-
-    it "r should not change w when set" do
-      r = Rect.new(1,2,3,4)
-      r.r = 9
-      r.w.should == 3
-    end
-
-  end
-
-
-  describe "bottom" do
-
-    it "should be the same as y+h" do
-      Rect.new(1,2,3,10).bottom.should == 12
-    end
-
-    it "should be writable" do
-      r = Rect.new(1,2,3,4)
-      r.bottom = 9
-      r.bottom.should == 9
-    end
-
-    it "should not be writable if frozen" do
-      r = Rect.new(1,2,3,4).freeze
-      proc{ r.bottom = 9 }.should raise_error
-    end
-
-    it "should change y when set" do
-      r = Rect.new(1,2,3,4)
-      r.bottom = 9
-      r.y.should == 5
-    end
-
-    it "should not change h when set" do
-      r = Rect.new(1,2,3,4)
-      r.right = 9
-      r.h.should == 4
-    end
-
-    it "should have an alias b" do
-      Rect.new(1,2,3,10).b.should == 12
-    end
-
-    it "b should be writable" do
-      r = Rect.new(1,2,3,4)
-      r.b = 9
-      r.b.should == 9
-    end
-
-    it "b should not be writable if frozen" do
-      r = Rect.new(1,2,3,4).freeze
-      proc{ r.b = 9 }.should raise_error
-    end
-
-    it "b should change x when set" do
-      r = Rect.new(1,2,3,4)
-      r.b = 9
-      r.y.should == 5
-    end
-
-    it "b should not change h when set" do
-      r = Rect.new(1,2,3,4)
-      r.b = 9
-      r.h.should == 4
-    end
-
-  end
 
 
   describe "align (shared)", :shared => true do
@@ -1308,80 +1091,80 @@ describe Rect do
       r1 = Rect.new(20,40,10,30)
       r2 = Rect.new(70,40,20,30)
       r3 = r1.union(r2)
-      r3.l.should == 20
-      r3.t.should == 40
-      r3.r.should == 90
-      r3.b.should == 70
+      r3.left.should == 20
+      r3.top.should == 40
+      r3.right.should == 90
+      r3.bottom.should == 70
     end
 
     it "should expand left to contain the other rect" do
       r1 = Rect.new(90,40,10,30)
       r2 = Rect.new(70,40,20,30)
       r3 = r1.union(r2)
-      r3.l.should == 70
-      r3.t.should == 40
-      r3.r.should == 100
-      r3.b.should == 70
+      r3.left.should == 70
+      r3.top.should == 40
+      r3.right.should == 100
+      r3.bottom.should == 70
     end
 
     it "should expand down to contain the other rect" do
       r1 = Rect.new(70,10,20,10)
       r2 = Rect.new(70,40,20,30)
       r3 = r1.union(r2)
-      r3.l.should == 70
-      r3.t.should == 10
-      r3.r.should == 90
-      r3.b.should == 70
+      r3.left.should == 70
+      r3.top.should == 10
+      r3.right.should == 90
+      r3.bottom.should == 70
     end
 
     it "should expand up to contain the other rect" do
       r1 = Rect.new(70,90,20,10)
       r2 = Rect.new(70,40,20,30)
       r3 = r1.union(r2)
-      r3.l.should == 70
-      r3.t.should == 40
-      r3.r.should == 90
-      r3.b.should == 100
+      r3.left.should == 70
+      r3.top.should == 40
+      r3.right.should == 90
+      r3.bottom.should == 100
     end
 
     it "should expand right-down to contain the other rect" do
       r1 = Rect.new(20,10,10,10)
       r2 = Rect.new(70,40,20,30)
       r3 = r1.union(r2)
-      r3.l.should == 20
-      r3.t.should == 10
-      r3.r.should == 90
-      r3.b.should == 70
+      r3.left.should == 20
+      r3.top.should == 10
+      r3.right.should == 90
+      r3.bottom.should == 70
     end
 
     it "should expand left-down to contain the other rect" do
       r1 = Rect.new(90,10,10,10)
       r2 = Rect.new(70,40,20,30)
       r3 = r1.union(r2)
-      r3.l.should == 70
-      r3.t.should == 10
-      r3.r.should == 100
-      r3.b.should == 70
+      r3.left.should == 70
+      r3.top.should == 10
+      r3.right.should == 100
+      r3.bottom.should == 70
     end
 
     it "should expand right-up to contain the other rect" do
       r1 = Rect.new(20,90,10,10)
       r2 = Rect.new(70,40,20,30)
       r3 = r1.union(r2)
-      r3.l.should == 20
-      r3.t.should == 40
-      r3.r.should == 90
-      r3.b.should == 100
+      r3.left.should == 20
+      r3.top.should == 40
+      r3.right.should == 90
+      r3.bottom.should == 100
     end
 
     it "should expand left-up to contain the other rect" do
       r1 = Rect.new(90,90,10,10)
       r2 = Rect.new(70,40,20,30)
       r3 = r1.union(r2)
-      r3.l.should == 70
-      r3.t.should == 40
-      r3.r.should == 100
-      r3.b.should == 100
+      r3.left.should == 70
+      r3.top.should == 40
+      r3.right.should == 100
+      r3.bottom.should == 100
     end
 
     it "should expand to the other rect if it contains this rect" do

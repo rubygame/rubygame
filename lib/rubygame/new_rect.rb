@@ -192,16 +192,6 @@ class Rect
 
   attr_accessor :x, :y, :w, :h
 
-  alias :left     :x
-  alias :left=    :x=
-  alias :l        :x
-  alias :l=       :x=
-
-  alias :top      :y
-  alias :top=     :y=
-  alias :t        :y
-  alias :t=       :y=
-
   alias :width    :w
   alias :width=   :w=
 
@@ -347,243 +337,84 @@ class Rect
   end
 
 
-  # Return the x coordinate of the right side of the Rect.
+  # Returns the x coordinate of the left side of the Rect.
+  def left
+    @x
+  end
+
+  # Returns the y coordinate of the top side of the Rect.
+  def top
+    @y
+  end
+
+  # Returns the x coordinate of the right side of the Rect.
   def right
     @x + @w
   end
 
-  # Set the x coordinate of the right side of the Rect by translating the
-  # Rect (adjusting the x offset).
-  def right=(r)
-    @x = r - @w
-  end
-
-  alias :r   :right
-  alias :r=  :right=
-
-
-
-  # Return the y coordinate of the bottom side of the Rect.
+  # Returns the y coordinate of the bottom side of the Rect.
   def bottom
     @y + @h
   end
 
-  # Set the y coordinate of the bottom side of the Rect by translating the
-  # Rect (adjusting the y offset).
-  def bottom=(b)
-    @y = b - @h
-  end
-
-  alias :b   :bottom
-  alias :b=  :bottom=
-
-
-
-  # Return the x and y coordinates of the center of the Rect.
-  def center
-    [self.centerx, self.centery]
-  end
-
-  # Set the x and y coordinates of the center of the Rect by translating the
-  # Rect (adjusting the x and y offsets).
-  def center=(center)
-    if center.size != 2
-      raise ArgumentError, "Expected [x, y], got #{center.inspect}."
-    end
-    self.centerx, self.centery = center
-  end
-
-  alias :c   :center
-  alias :c=  :center=
-
-
-
-  # Return the x coordinate of the center of the Rect
+  # Returns the x coordinate of the center of the Rect
   def centerx
     @x + @w.div(2)
   end
 
-  # Set the x coordinate of the center of the Rect by translating the
-  # Rect (adjusting the x offset).
-  def centerx=(x)
-    @x = x - @w.div(2)
-  end
-
-  alias :cx   :centerx
-  alias :cx=  :centerx=
-
-
-
-  # Return the y coordinate of the center of the Rect
+  # Returns the y coordinate of the center of the Rect
   def centery
     @y + @h.div(2)
   end
 
-  # Set the y coordinate of the center of the Rect by translating the
-  # Rect (adjusting the y offset).
-  def centery=(y)
-    @y = y - @h.div(2)
+  # Returns the x and y coordinates of the center of the Rect.
+  def center
+    [self.centerx, self.centery]
   end
 
-  alias :cy   :centery
-  alias :cy=  :centery=
-
-
-
-  # Return the x and y coordinates of the top-left corner of the Rect.
+  # Returns the x and y coordinates of the top-left corner of the Rect.
   def topleft
     [@x, @y]
   end
 
-  # Set the x and y coordinates of the top-left corner of the Rect by
-  # translating the Rect (adjusting the x and y offsets).
-  def topleft=(topleft)
-    if topleft.size != 2
-      raise ArgumentError, "Expected [x, y], got #{topleft.inspect}."
-    end
-    @x, @y = topleft
-  end
-
-  alias :tl   :topleft
-  alias :tl=  :topleft=
-
-
-
-  # Return the x and y coordinates of the top-right corner of the Rect
+  # Returns the x and y coordinates of the top-right corner of the Rect
   def topright
     [right, @y]
   end
 
-  # Set the x and y coordinates of the top-right corner of the Rect by
-  # translating the Rect (adjusting the x and y offsets).
-  def topright=(topright)
-    if topright.size != 2
-      raise ArgumentError, "Expected [x, y], got #{topright.inspect}."
-    end
-    self.right, @y = topright
-  end
-
-  alias :tr   :topright
-  alias :tr=  :topright=
-
-
-
-  # Return the x and y coordinates of the bottom-left corner of the Rect
+  # Returns the x and y coordinates of the bottom-left corner of the Rect
   def bottomleft
     [@x, bottom]
   end
 
-  # Set the x and y coordinates of the bottom-left corner of the Rect by
-  # translating the Rect (adjusting the x and y offsets).
-  def bottomleft=(bottomleft)
-    if bottomleft.size != 2
-      raise ArgumentError, "Expected [x, y], got #{bottomleft.inspect}."
-    end
-    @x, self.bottom = bottomleft
-  end
-
-  alias :bl   :bottomleft
-  alias :bl=  :bottomleft=
-
-
-
-  # Return the x and y coordinates of the bottom-right corner of the Rect
+  # Returns the x and y coordinates of the bottom-right corner of the Rect
   def bottomright
     [right, bottom]
   end
 
-  # Set the x and y coordinates of the bottom-right corner of the Rect by
-  # translating the Rect (adjusting the x and y offsets).
-  def bottomright=(bottomright)
-    if bottomright.size != 2
-      raise ArgumentError, "Expected [x, y], got #{bottomright.inspect}."
-    end
-    self.right, self.bottom = bottomright
-  end
-
-  alias :br   :bottomright
-  alias :br=  :bottomright=
-
-
-
-  # Return the x and y coordinates of the midpoint on the left side of the
-  # Rect.
+  # Returns the x and y coordinates of the midpoint on the left side
+  # of the Rect.
   def midleft
     [@x, centery]
   end
 
-  # Set the x and y coordinates of the midpoint on the left side of the Rect
-  # by translating the Rect (adjusting the x and y offsets).
-  def midleft=(midleft)
-    if midleft.size != 2
-      raise ArgumentError, "Expected [x, y], got #{midleft.inspect}."
-    end
-    @x, self.centery = midleft
-  end
-
-  alias :ml   :midleft
-  alias :ml=  :midleft=
-
-
-
-  # Return the x and y coordinates of the midpoint on the left side of the
-  # Rect.
+  # Returns the x and y coordinates of the midpoint on the left side
+  # of the Rect.
   def midtop
     [centerx, @y]
   end
 
-  # Set the x and y coordinates of the midpoint on the top side of the Rect
-  # by translating the Rect (adjusting the x and y offsets).
-  def midtop=(midtop)
-    if midtop.size != 2
-      raise ArgumentError, "Expected [x, y], got #{midtop.inspect}."
-    end
-    self.centerx, @y = midtop
-  end
-
-  alias :mt   :midtop
-  alias :mt=  :midtop=
-
-
-
-  # Return the x and y coordinates of the midpoint on the left side of the
-  # Rect.
+  # Returns the x and y coordinates of the midpoint on the left side
+  # of the Rect.
   def midright
     [right, centery]
   end
 
-  # Set the x and y coordinates of the midpoint on the right side of the Rect
-  # by translating the Rect (adjusting the x and y offsets).
-  def midright=(midright)
-    if midright.size != 2
-      raise ArgumentError, "Expected [x, y], got #{midright.inspect}."
-    end
-    self.right, self.centery = midright
-  end
-
-  alias :mr   :midright
-  alias :mr=  :midright=
-
-
-
-  # Return the x and y coordinates of the midpoint on the left side of the
-  # Rect.
+  # Returns the x and y coordinates of the midpoint on the left side
+  # of the Rect.
   def midbottom
     [centerx, bottom]
   end
-
-  # Set the x and y coordinates of the midpoint on the bottom side of the
-  # Rect by translating the Rect (adjusting the x and y offsets).
-  def midbottom=(midbottom)
-    if midbottom.size != 2
-      raise ArgumentError, "Expected [x, y], got #{midbottom.inspect}."
-    end
-    self.centerx, self.bottom = midbottom
-  end
-
-  alias :mb   :midbottom
-  alias :mb=  :midbottom=
-
 
 
   #--
@@ -609,7 +440,7 @@ class Rect
 
       #If self is too wide:
       if @w >= other.w
-        self.centerx = other.centerx
+        align!(:centerx, other.centerx)
       #Else self is not too wide
       else
         #If self is to the left of arg
@@ -617,14 +448,14 @@ class Rect
           @x = other.x
         #If self is to the right of arg
         elsif right > other.right
-          self.right = other.right
+          align!(:right, other.right)
         #Otherwise, leave x alone
         end
       end
 
       #If self is too tall:
       if @h >= other.h
-        self.centery = other.centery
+        align!(:centery, other.centery)
       #Else self is not too tall
       else
         #If self is above arg
@@ -632,7 +463,7 @@ class Rect
           @y = other.y
         #If self below arg
         elsif bottom > other.bottom
-          self.bottom = other.bottom
+          align!(:bottom, other.bottom)
         #Otherwise, leave y alone
         end
       end
