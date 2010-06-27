@@ -336,51 +336,51 @@ class Rect
 
   # Returns the x and y coordinates of the center of the Rect.
   def center
-    [self.centerx, self.centery]
+    Rubygame::Vector2.new(self.centerx, self.centery)
   end
 
   # Returns the x and y coordinates of the top-left corner of the Rect.
   def topleft
-    [@x, @y]
+    Rubygame::Vector2.new(@x, @y)
   end
 
   # Returns the x and y coordinates of the top-right corner of the Rect
   def topright
-    [right, @y]
+    Rubygame::Vector2.new(right, @y)
   end
 
   # Returns the x and y coordinates of the bottom-left corner of the Rect
   def bottomleft
-    [@x, bottom]
+    Rubygame::Vector2.new(@x, bottom)
   end
 
   # Returns the x and y coordinates of the bottom-right corner of the Rect
   def bottomright
-    [right, bottom]
+    Rubygame::Vector2.new(right, bottom)
   end
 
   # Returns the x and y coordinates of the midpoint on the left side
   # of the Rect.
   def midleft
-    [@x, centery]
+    Rubygame::Vector2.new(@x, centery)
   end
 
   # Returns the x and y coordinates of the midpoint on the left side
   # of the Rect.
   def midtop
-    [centerx, @y]
+    Rubygame::Vector2.new(centerx, @y)
   end
 
   # Returns the x and y coordinates of the midpoint on the left side
   # of the Rect.
   def midright
-    [right, centery]
+    Rubygame::Vector2.new(right, centery)
   end
 
   # Returns the x and y coordinates of the midpoint on the left side
   # of the Rect.
   def midbottom
-    [centerx, bottom]
+    Rubygame::Vector2.new(centerx, bottom)
   end
 
 

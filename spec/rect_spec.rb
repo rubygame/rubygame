@@ -328,30 +328,75 @@ describe Rect do
 
 
 
-  it "left should be the same as x" do
+  it "left should be x" do
     Rect.new(1,2,3,4).left.should eql(1.0)
   end
 
-  it "top should be the same as y" do
+  it "top should be y" do
     Rect.new(1,2,3,4).top.should eql(2.0)
   end
 
-  it "right should be the same as x+w" do
+  it "right should be x+w" do
     Rect.new(1,2,10,4).right.should eql(11.0)
   end
 
-  it "bottom should be the same as y+h" do
+  it "bottom should be y+h" do
     Rect.new(1,2,3,10).bottom.should eql(12.0)
   end
 
-  it "centerx should be the same as x+w/2" do
+  it "centerx should be x+w/2" do
     Rect.new(1,2,3,4).centerx.should eql(2.5)
   end
 
-  it "centery should be the same as x+w/2" do
+  it "centery should be x+w/2" do
     Rect.new(1,2,3,5).centery.should eql(4.5)
   end
 
+
+  it "center should be Vector2[centerx,centery]" do
+    Rect.new(1,2,4,8).center.should be_a( Vector2 )
+    Rect.new(1,2,4,8).center.should == Vector2[3.0,6.0]
+  end
+
+  it "topleft should be Vector2[left,top]" do
+    Rect.new(1,2,4,8).topleft.should be_a( Vector2 )
+    Rect.new(1,2,4,8).topleft.should == Vector2[1.0,2.0]
+  end
+
+  it "topright should be Vector2[right,top]" do
+    Rect.new(1,2,4,8).topright.should be_a( Vector2 )
+    Rect.new(1,2,4,8).topright.should == Vector2[5.0,2.0]
+  end
+
+  it "bottomleft should be Vector2[left,bottom]" do
+    Rect.new(1,2,4,8).bottomleft.should be_a( Vector2 )
+    Rect.new(1,2,4,8).bottomleft.should == Vector2[1.0,10.0]
+  end
+
+  it "bottomright should be Vector2[right,bottom]" do
+    Rect.new(1,2,4,8).bottomright.should be_a( Vector2 )
+    Rect.new(1,2,4,8).bottomright.should == Vector2[5.0,10.0]
+  end
+
+  it "midleft should be Vector2[left,centery]" do
+    Rect.new(1,2,4,8).midleft.should be_a( Vector2 )
+    Rect.new(1,2,4,8).midleft.should == Vector2[1.0,6.0]
+  end
+
+  it "midright should be Vector2[right,centery]" do
+    Rect.new(1,2,4,8).midright.should be_a( Vector2 )
+    Rect.new(1,2,4,8).midright.should == Vector2[5.0,6.0]
+  end
+
+  it "midtop should be Vector2[centerx,top]" do
+    Rect.new(1,2,4,8).midtop.should be_a( Vector2 )
+    Rect.new(1,2,4,8).midtop.should == Vector2[3.0,2.0]
+  end
+
+  it "midbottom should be Vector2[centerx,bottom]" do
+    Rect.new(1,2,4,8).midbottom.should be_a( Vector2 )
+    Rect.new(1,2,4,8).midbottom.should == Vector2[3.0,10.0]
+  end
 
 
 
