@@ -68,6 +68,11 @@ class Rect
     else
       @x,@y,@w,@h = x, y, w, h
     end
+
+    unless [@x,@y,@w,@h].all?{ |i| i.is_a? Numeric }
+      raise( ArgumentError, "created invalid Rect: " + 
+             "[#{@x.inspect},#{@y.inspect},#{@w.inspect},#{@h.inspect}]")
+    end
   end
 
   # Extract or generate a Rect from the given object, if possible, using the
