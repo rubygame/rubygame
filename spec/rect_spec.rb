@@ -10,10 +10,10 @@ include Rubygame
 describe Rect do
 
 
-  describe "new" do
+  describe "initializer (shared)", :shared => true do
 
     it "should accept 4 integers" do
-      r = Rect.new(1,2,3,4)
+      r = Rect.send(@method,1,2,3,4)
       r.x.should eql( 1.0 )
       r.y.should eql( 2.0 )
       r.w.should eql( 3.0 )
@@ -21,7 +21,7 @@ describe Rect do
     end
 
     it "should accept an array of 4 integers" do
-      r = Rect.new([1,2,3,4])
+      r = Rect.send(@method,[1,2,3,4])
       r.x.should eql( 1.0 )
       r.y.should eql( 2.0 )
       r.w.should eql( 3.0 )
@@ -29,7 +29,7 @@ describe Rect do
     end
 
     it "should accept 4 floats" do
-      r = Rect.new(1.5, 2.5, 3.5, 4.5)
+      r = Rect.send(@method,1.5, 2.5, 3.5, 4.5)
       r.x.should eql( 1.5 )
       r.y.should eql( 2.5 )
       r.w.should eql( 3.5 )
@@ -37,7 +37,7 @@ describe Rect do
     end
 
     it "should accept an array of 4 floats" do
-      r = Rect.new([1.5, 2.5, 3.5, 4.5])
+      r = Rect.send(@method,[1.5, 2.5, 3.5, 4.5])
       r.x.should eql( 1.5 )
       r.y.should eql( 2.5 )
       r.w.should eql( 3.5 )
@@ -45,7 +45,7 @@ describe Rect do
     end
 
     it "should accept 2 arrays of 2 integers" do
-      r = Rect.new([1,2],[3,4])
+      r = Rect.send(@method,[1,2],[3,4])
       r.x.should eql( 1.0 )
       r.y.should eql( 2.0 )
       r.w.should eql( 3.0 )
@@ -53,7 +53,7 @@ describe Rect do
     end
 
     it "should accept 2 arrays of 2 floats" do
-      r = Rect.new([1.5, 2.5], [3.5, 4.5])
+      r = Rect.send(@method,[1.5, 2.5], [3.5, 4.5])
       r.x.should eql( 1.5 )
       r.y.should eql( 2.5 )
       r.w.should eql( 3.5 )
@@ -61,7 +61,7 @@ describe Rect do
     end
 
     it "should accept another Rect" do
-      r = Rect.new( Rect.new([1,2,3,4]) )
+      r = Rect.send(@method, Rect.send(@method,[1,2,3,4]) )
       r.x.should eql( 1.0 )
       r.y.should eql( 2.0 )
       r.w.should eql( 3.0 )
@@ -70,7 +70,7 @@ describe Rect do
 
     it "should accept an object with a rect method" do
       ob = mock(:rect => Rect.new(1,2,3,4))
-      r = Rect.new( ob )
+      r = Rect.send(@method, ob )
       r.x.should eql( 1.0 )
       r.y.should eql( 2.0 )
       r.w.should eql( 3.0 )
@@ -83,9 +83,27 @@ describe Rect do
     end
 
     it "should not accept more than 4 args" do
-      proc{ Rect.new(1,2,3,4,5) }.should raise_error(ArgumentError)
+      proc{ Rect.send(@method,1,2,3,4,5) }.should raise_error(ArgumentError)
     end
 
+  end
+
+
+  describe "new" do
+    before :each do
+      @method = :new
+    end
+
+    it_should_behave_like "initializer (shared)"
+  end
+
+
+  describe "Rect[]" do
+    before :each do
+      @method = :[]
+    end
+
+    it_should_behave_like "initializer (shared)"
   end
 
 

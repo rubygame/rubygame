@@ -45,6 +45,13 @@ class Rect
   # GENERAL
   #++
 
+  class << self
+
+    alias :[] :new
+
+  end
+
+
   # Create a new Rect, attempting to extract its own information from
   # the given arguments. The arguments must fall into one of these cases:
   #
