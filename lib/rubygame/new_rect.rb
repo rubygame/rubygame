@@ -398,7 +398,13 @@ class Rect
     raise "can't modify frozen object" if frozen?
 
     normalize!
-    other = Rect.new(other)
+
+    other = begin 
+              Rect.new(other)
+            rescue ArgumentError
+              raise ArgumentError, "invalid other rect: #{other.inspect}"
+            end
+
     #If self is inside given, there is no need to move self
     unless other.contain?(self)
 
@@ -452,7 +458,13 @@ class Rect
     raise "can't modify frozen object" if frozen?
 
     normalize!
-    other = Rect.new(other).normalize!
+
+    other = begin 
+              Rect.new(other)
+            rescue ArgumentError
+              raise ArgumentError, "invalid other rect: #{other.inspect}"
+            end
+    other.normalize!
 
     if collide_rect?(other)
       x = [left,   other.left  ].max
@@ -527,7 +539,13 @@ class Rect
   # True if this Rect and the other Rect overlap (or touch) at all.
   def collide_rect?(other)
     nself = normalize
-    other = Rect.new(other).normalize!
+
+    other = begin 
+              Rect.new(other)
+            rescue ArgumentError
+              raise ArgumentError, "invalid other rect: #{other.inspect}"
+            end
+    other.normalize!
 
     ( nself.left.between?(other.left, other.right) or
       other.left.between?(nself.left, nself.right) ) and
@@ -542,7 +560,13 @@ class Rect
   # 
   def contain?(other)
     nself = normalize
-    other = Rect.new(other).normalize!
+    
+    other = begin 
+              Rect.new(other)
+            rescue ArgumentError
+              raise ArgumentError, "invalid other rect: #{other.inspect}"
+            end
+    other.normalize!
 
     ( nself.left     <= other.left   ) and
       ( other.right  <= nself.right  ) and
@@ -644,7 +668,13 @@ class Rect
     raise "can't modify frozen object" if frozen?
 
     normalize!
-    other = Rect.new(other).normalize!
+    
+    other = begin 
+              Rect.new(other)
+            rescue ArgumentError
+              raise ArgumentError, "invalid other rect: #{other.inspect}"
+            end
+    other.normalize!
 
     l = [left,   other.left  ].min
     t = [top,    other.top   ].min

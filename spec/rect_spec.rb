@@ -522,41 +522,41 @@ describe Rect do
     it "should not raise when given a valid rect" do
       r1 = Rect.new(1,2,3,4)
       r2 = Rect.new(5,6,7,8)
-      proc{ r1.send(@method, r2) }.should_not raise_error(TypeError)
+      proc{ r1.send(@method, r2) }.should_not raise_error
     end
 
     it "should not raise when given a valid Array" do
       r = Rect.new(1,2,3,4)
       a = [5,6,7,8]
-      proc{ r.send(@method, a) }.should_not raise_error(TypeError)
+      proc{ r.send(@method, a) }.should_not raise_error
     end
 
     it "should not raise when given an non-normal rect" do
       r1 = Rect.new(1,2,3,4)
       r2 = Rect.new(5,6,-7,-8)
-      proc{ r1.send(@method, r2) }.should_not raise_error(TypeError)
+      proc{ r1.send(@method, r2) }.should_not raise_error
     end
 
     it "should not raise when given an object with a valid rect" do
       r = Rect.new(1,2,3,4)
       o = mock(:rect => Rect.new(5,6,7,8))
-      proc{ r.send(@method, o) }.should_not raise_error(TypeError)
+      proc{ r.send(@method, o) }.should_not raise_error
     end
 
     it "should not raise when given an object with a valid Array" do
       r = Rect.new(1,2,3,4)
       o = mock(:rect => [5,6,7,8])
-      proc{ r.send(@method, o) }.should_not raise_error(TypeError)
+      proc{ r.send(@method, o) }.should_not raise_error
     end
 
     it "should raise TypeError when given a bad type" do
       r = Rect.new(1,2,3,4)
-      proc{ r.send(@method, nil  ) }.should raise_error(TypeError)
-      proc{ r.send(@method, true ) }.should raise_error(TypeError)
-      proc{ r.send(@method, false) }.should raise_error(TypeError)
-      proc{ r.send(@method, "a"  ) }.should raise_error(TypeError)
-      proc{ r.send(@method, :a   ) }.should raise_error(TypeError)
-      proc{ r.send(@method, {}   ) }.should raise_error(TypeError)
+      proc{ r.send(@method, nil  ) }.should raise_error(ArgumentError)
+      proc{ r.send(@method, true ) }.should raise_error(ArgumentError)
+      proc{ r.send(@method, false) }.should raise_error(ArgumentError)
+      proc{ r.send(@method, "a"  ) }.should raise_error(ArgumentError)
+      proc{ r.send(@method, :a   ) }.should raise_error(ArgumentError)
+      proc{ r.send(@method, {}   ) }.should raise_error(ArgumentError)
     end
 
     it "should raise ArgumentError when given a bad Array" do
