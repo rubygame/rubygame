@@ -73,11 +73,13 @@ class Rect
       raise( ArgumentError, "created invalid Rect: " + 
              "[#{@x.inspect},#{@y.inspect},#{@w.inspect},#{@h.inspect}]")
     end
+
+    @x,@y,@w,@h = [@x,@y,@w,@h].collect{ |i| i.to_f }
   end
 
 
   def to_s
-    "#<Rect [%d,%d,%d,%d]>"%[@x,@y,@w,@h]
+    "#<Rect [%.3f,%.3f,%.3f,%.3f]>"%[@x,@y,@w,@h]
   end
 
   def inspect
@@ -113,7 +115,7 @@ class Rect
   def []=(*args)
     r = to_ary
     r.[]=(*args)
-    @x, @y, @w, @h = r.slice(0,4)
+    @x, @y, @w, @h = r.slice(0,4).collect{ |i| i.to_f }
   end
 
   # Iterate over [x,y,w,h], yielding each to the block.
@@ -131,7 +133,7 @@ class Rect
       unless result.is_a? Numeric
         raise TypeError, "Block returned a non-numeric result: #{i.inspect}"
       end
-      result
+      result.to_f
     }.slice(0,4)
   end
   alias :map!  :collect!
@@ -146,7 +148,12 @@ class Rect
   # ATTRIBUTES
   #++
 
-  attr_accessor :x, :y, :w, :h
+  attr_reader :x, :y, :w, :h
+
+  def x=( x );  @x = x.to_f;  end
+  def y=( y );  @y = y.to_f;  end
+  def w=( w );  @w = w.to_f;  end
+  def h=( h );  @h = h.to_f;  end
 
   alias :width    :w
   alias :width=   :w=
@@ -165,7 +172,7 @@ class Rect
     if size.size != 2
       raise ArgumentError, "Expected [width, height], got #{size.inspect}."
     end
-    @w, @h = size
+    @w, @h = size.collect{ |i| i.to_f }
   end
 
 
@@ -240,7 +247,9 @@ class Rect
       case sym
       when :left, :top, :right, :bottom, :centerx, :centery
         # These accept a single numeric value
-        unless val.is_a? Numeric
+        if val.is_a? Numeric
+          val = val.to_f
+        else
           raise( TypeError, "invalid value for #{sym.inspect} " +
                  "(expected Numeric, got #{val.inspect})")
         end
@@ -249,7 +258,9 @@ class Rect
         # These accept an array of 2 numerics
         begin
           val = val.to_ary
-          unless val.size == 2 and val.all?{ |v| v.is_a? Numeric }
+          if val.size == 2 and val.all?{ |v| v.is_a? Numeric }
+            val = val.collect{ |i| i.to_f }
+          else
             raise( TypeError, "invalid value for #{sym.inspect} " +
                    "(expected [x,y], got #{val.inspect})")
           end
@@ -315,12 +326,12 @@ class Rect
 
   # Returns the x coordinate of the center of the Rect
   def centerx
-    @x + @w.div(2)
+    @x + @w/2.0
   end
 
   # Returns the y coordinate of the center of the Rect
   def centery
-    @y + @h.div(2)
+    @y + @h/2.0
   end
 
   # Returns the x and y coordinates of the center of the Rect.
@@ -466,7 +477,7 @@ class Rect
       @x,@y,@w,@h = x,y,w,h
     else
       #if they do not intersect at all, make size 0
-      @w, @h = 0, 0
+      @w, @h = 0.0, 0.0
     end
 
     self
@@ -593,8 +604,9 @@ class Rect
   def inflate!(w,h)
     raise "can't modify frozen object" if frozen?
 
-    @x -= w.div(2)
-    @y -= h.div(2)
+    w, h = w.to_f, h.to_f
+    @x -= w/2.0
+    @y -= h/2.0
     @w += w
     @h += h
 
@@ -615,8 +627,8 @@ class Rect
   def move!(x,y)
     raise "can't modify frozen object" if frozen?
 
-    @x += x
-    @y += y
+    @x += x.to_f
+    @y += y.to_f
 
     self
   end

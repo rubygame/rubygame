@@ -14,67 +14,67 @@ describe Rect do
 
     it "should accept 4 integers" do
       r = Rect.new(1,2,3,4)
-      r.x.should.eql?( 1 )
-      r.y.should.eql?( 2 )
-      r.w.should.eql?( 3 )
-      r.h.should.eql?( 4 )
+      r.x.should eql( 1.0 )
+      r.y.should eql( 2.0 )
+      r.w.should eql( 3.0 )
+      r.h.should eql( 4.0 )
     end
 
     it "should accept an array of 4 integers" do
       r = Rect.new([1,2,3,4])
-      r.x.should.eql?( 1 )
-      r.y.should.eql?( 2 )
-      r.w.should.eql?( 3 )
-      r.h.should.eql?( 4 )
+      r.x.should eql( 1.0 )
+      r.y.should eql( 2.0 )
+      r.w.should eql( 3.0 )
+      r.h.should eql( 4.0 )
     end
 
     it "should accept 4 floats" do
       r = Rect.new(1.5, 2.5, 3.5, 4.5)
-      r.x.should.eql?( 1.5 )
-      r.y.should.eql?( 2.5 )
-      r.w.should.eql?( 3.5 )
-      r.h.should.eql?( 4.5 ) 
+      r.x.should eql( 1.5 )
+      r.y.should eql( 2.5 )
+      r.w.should eql( 3.5 )
+      r.h.should eql( 4.5 ) 
     end
 
     it "should accept an array of 4 floats" do
       r = Rect.new([1.5, 2.5, 3.5, 4.5])
-      r.x.should.eql?( 1.5 )
-      r.y.should.eql?( 2.5 )
-      r.w.should.eql?( 3.5 )
-      r.h.should.eql?( 4.5 ) 
+      r.x.should eql( 1.5 )
+      r.y.should eql( 2.5 )
+      r.w.should eql( 3.5 )
+      r.h.should eql( 4.5 ) 
     end
 
     it "should accept 2 arrays of 2 integers" do
       r = Rect.new([1,2],[3,4])
-      r.x.should.eql?( 1 )
-      r.y.should.eql?( 2 )
-      r.w.should.eql?( 3 )
-      r.h.should.eql?( 4 )
+      r.x.should eql( 1.0 )
+      r.y.should eql( 2.0 )
+      r.w.should eql( 3.0 )
+      r.h.should eql( 4.0 )
     end
 
     it "should accept 2 arrays of 2 floats" do
       r = Rect.new([1.5, 2.5], [3.5, 4.5])
-      r.x.should.eql?( 1.5 )
-      r.y.should.eql?( 2.5 )
-      r.w.should.eql?( 3.5 )
-      r.h.should.eql?( 4.5 ) 
+      r.x.should eql( 1.5 )
+      r.y.should eql( 2.5 )
+      r.w.should eql( 3.5 )
+      r.h.should eql( 4.5 ) 
     end
 
     it "should accept another Rect" do
       r = Rect.new( Rect.new([1,2,3,4]) )
-      r.x.should.eql?( 1 )
-      r.y.should.eql?( 2 )
-      r.w.should.eql?( 3 )
-      r.h.should.eql?( 4 )
+      r.x.should eql( 1.0 )
+      r.y.should eql( 2.0 )
+      r.w.should eql( 3.0 )
+      r.h.should eql( 4.0 )
     end
 
     it "should accept an object with a rect method" do
       ob = mock(:rect => Rect.new(1,2,3,4))
       r = Rect.new( ob )
-      r.x.should.eql?( 1 )
-      r.y.should.eql?( 2 )
-      r.w.should.eql?( 3 )
-      r.h.should.eql?( 4 )
+      r.x.should eql( 1.0 )
+      r.y.should eql( 2.0 )
+      r.w.should eql( 3.0 )
+      r.h.should eql( 4.0 )
     end
 
 
@@ -91,11 +91,11 @@ describe Rect do
 
 
   it "to_ary should return [x,y,w,h]" do
-    Rect.new(1,2,3,4).to_ary.should == [1,2,3,4]
+    Rect.new(1,2,3,4).to_ary.should eql([1.0,2.0,3.0,4.0])
   end
 
   it "to_a should return [x,y,w,h]" do
-    Rect.new(1,2,3,4).to_a.should == [1,2,3,4]
+    Rect.new(1,2,3,4).to_a.should eql([1.0,2.0,3.0,4.0])
   end
 
 
@@ -103,19 +103,19 @@ describe Rect do
   describe "at" do
 
     it "0 should return x" do
-      Rect.new(1,2,3,4).at(0).should == 1
+      Rect.new(1,2,3,4).at(0).should eql(1.0)
     end
 
     it "1 should return y" do
-      Rect.new(1,2,3,4).at(1).should == 2
+      Rect.new(1,2,3,4).at(1).should eql(2.0)
     end
 
     it "2 should return w" do
-      Rect.new(1,2,3,4).at(2).should == 3
+      Rect.new(1,2,3,4).at(2).should eql(3.0)
     end
 
     it "3 should return h" do
-      Rect.new(1,2,3,4).at(3).should == 4
+      Rect.new(1,2,3,4).at(3).should eql(4.0)
     end
 
   end
@@ -124,19 +124,19 @@ describe Rect do
   describe "[]" do
 
     it "0 should return x" do
-      Rect.new(1,2,3,4)[0].should == 1
+      Rect.new(1,2,3,4)[0].should eql(1.0)
     end
 
     it "1 should return y" do
-      Rect.new(1,2,3,4)[1].should == 2
+      Rect.new(1,2,3,4)[1].should eql(2.0)
     end
 
     it "2 should return w" do
-      Rect.new(1,2,3,4)[2].should == 3
+      Rect.new(1,2,3,4)[2].should eql(3.0)
     end
 
     it "3 should return h" do
-      Rect.new(1,2,3,4)[3].should == 4
+      Rect.new(1,2,3,4)[3].should eql(4.0)
     end
 
   end
@@ -147,25 +147,25 @@ describe Rect do
     it "0 should set x" do
       r = Rect.new(1,2,3,4)
       r[0] = 9
-      r.x.should == 9
+      r.x.should eql(9.0)
     end
 
     it "1 should set y" do
       r = Rect.new(1,2,3,4)
       r[1] = 9
-      r.y.should == 9
+      r.y.should eql(9.0)
     end
 
     it "2 should set w" do
       r = Rect.new(1,2,3,4)
       r[2] = 9
-      r.w.should == 9
+      r.w.should eql(9.0)
     end
 
     it "3 should set h" do
       r = Rect.new(1,2,3,4)
       r[3] = 9
-      r.h.should == 9
+      r.h.should eql(9.0)
     end
 
   end
@@ -182,13 +182,13 @@ describe Rect do
     it "should iterate over [x,y,w,h]" do
       a = []
       Rect.new(1,2,3,4).each{ |i| a << i }
-      a.should == [1,2,3,4]
+      a.should eql([1.0,2.0,3.0,4.0])
     end
   end
 
   describe "collect" do
     it "should iterate over [x,y,w,h]" do
-      Rect.new(1,2,3,4).collect{|i| -i}.should == [-1,-2,-3,-4]
+      Rect.new(1,2,3,4).collect{|i| -i}.should eql([-1.0,-2.0,-3.0,-4.0])
     end
 
     it "should return an Array" do
@@ -200,7 +200,7 @@ describe Rect do
     it "collect! should modify the caller" do
       r = Rect.new(1,2,3,4)
       r.collect!{|i| -i}
-      r.to_ary.should == [-1,-2,-3,-4]
+      r.to_ary.should eql([-1.0,-2.0,-3.0,-4.0])
     end
   end
 
@@ -209,7 +209,7 @@ describe Rect do
     it "map! should modify the caller" do
       r = Rect.new(1,2,3,4)
       r.collect!{|i| -i}
-      r.to_ary.should == [-1,-2,-3,-4]
+      r.to_ary.should eql([-1.0,-2.0,-3.0,-4.0])
     end
   end
 
@@ -219,13 +219,13 @@ describe Rect do
   describe "x" do
 
     it "should be the first number" do
-      Rect.new(1,2,3,4).x.should == 1
+      Rect.new(1,2,3,4).x.should eql(1.0)
     end
 
     it "should be writable" do
       r = Rect.new(1,2,3,4)
       r.x = 9
-      r.x.should == 9
+      r.x.should eql(9.0)
     end
 
     it "should not be writable if frozen" do
@@ -239,13 +239,13 @@ describe Rect do
   describe "y" do
 
     it "should be the second number" do
-      Rect.new(1,2,3,4).y.should == 2
+      Rect.new(1,2,3,4).y.should eql(2.0)
     end
 
     it "should be writable" do
       r = Rect.new(1,2,3,4)
       r.y = 9
-      r.y.should == 9
+      r.y.should eql(9.0)
     end
 
     it "should not be writable if frozen" do
@@ -259,13 +259,13 @@ describe Rect do
   describe "w" do
 
     it "should be the third number" do
-      Rect.new(1,2,3,4).w.should == 3
+      Rect.new(1,2,3,4).w.should eql(3.0)
     end
 
     it "should be writable" do
       r = Rect.new(1,2,3,4)
       r.w = 9
-      r.w.should == 9
+      r.w.should eql(9.0)
     end
 
     it "should not be writable if frozen" do
@@ -274,13 +274,13 @@ describe Rect do
     end
 
     it "should have a width alias" do
-      Rect.new(1,2,3,4).width.should == 3
+      Rect.new(1,2,3,4).width.should eql(3.0)
     end
 
     it "should have a width writer" do
       r = Rect.new(1,2,3,4)
       r.width = 9
-      r.w.should == 9
+      r.w.should eql(9.0)
     end
 
     it "width write should not be writable if frozen" do
@@ -294,13 +294,13 @@ describe Rect do
   describe "h" do
 
     it "should be the fourth number" do
-      Rect.new(1,2,3,4).h.should == 4
+      Rect.new(1,2,3,4).h.should eql(4.0)
     end
 
     it "should be writable" do
       r = Rect.new(1,2,3,4)
       r.h = 9
-      r.h.should == 9
+      r.h.should eql(9.0)
     end
 
     it "should not be writable if frozen" do
@@ -309,13 +309,13 @@ describe Rect do
     end
 
     it "should have a height alias" do
-      Rect.new(1,2,3,4).height.should == 4
+      Rect.new(1,2,3,4).height.should eql(4.0)
     end
 
     it "should have a height writer" do
       r = Rect.new(1,2,3,4)
       r.height = 9
-      r.h.should == 9
+      r.h.should eql(9.0)
     end
 
     it "height writer should not be writable if frozen" do
@@ -329,19 +329,27 @@ describe Rect do
 
 
   it "left should be the same as x" do
-    Rect.new(1,2,3,4).left.should == 1
+    Rect.new(1,2,3,4).left.should eql(1.0)
   end
 
   it "top should be the same as y" do
-    Rect.new(1,2,3,4).top.should == 2
+    Rect.new(1,2,3,4).top.should eql(2.0)
   end
 
   it "right should be the same as x+w" do
-    Rect.new(1,2,10,4).right.should == 11
+    Rect.new(1,2,10,4).right.should eql(11.0)
   end
 
   it "bottom should be the same as y+h" do
-    Rect.new(1,2,3,10).bottom.should == 12
+    Rect.new(1,2,3,10).bottom.should eql(12.0)
+  end
+
+  it "centerx should be the same as x+w/2" do
+    Rect.new(1,2,3,4).centerx.should eql(2.5)
+  end
+
+  it "centery should be the same as x+w/2" do
+    Rect.new(1,2,3,5).centery.should eql(4.5)
   end
 
 
@@ -594,7 +602,7 @@ describe Rect do
       r1 = Rect.new(0,1,10,15)
       r2 = Rect.new(70,40,20,30)
       r1.clamp(r2)
-      r1.to_ary.should == [0,1,10,15]
+      r1.to_ary.should eql([0.0, 1.0, 10.0, 15.0])
     end
 
     it "should not change the size" do
@@ -606,67 +614,67 @@ describe Rect do
     it "should move right to be inside the other rect" do
       r1 = Rect.new(0,42,10,15)
       r2 = Rect.new(70,40,20,30)
-      r1.clamp(r2).to_ary.should == [70,42,10,15]
+      r1.clamp(r2).to_ary.should eql([70.0, 42.0, 10.0, 15.0])
     end
 
     it "should move left to be inside the other rect" do
       r1 = Rect.new(100,42,10,15)
       r2 = Rect.new(70,40,20,30)
-      r1.clamp(r2).to_ary.should == [80,42,10,15]
+      r1.clamp(r2).to_ary.should eql([80.0, 42.0, 10.0, 15.0])
     end
 
     it "should move down to be inside the other rect" do
       r1 = Rect.new(72,1,10,15)
       r2 = Rect.new(70,40,20,30)
-      r1.clamp(r2).to_ary.should == [72,40,10,15]
+      r1.clamp(r2).to_ary.should eql([72.0, 40.0, 10.0, 15.0])
     end
 
     it "should move up to be inside the other rect" do
       r1 = Rect.new(72,100,10,15)
       r2 = Rect.new(70,40,20,30)
-      r1.clamp(r2).to_ary.should == [72,55,10,15]
+      r1.clamp(r2).to_ary.should eql([72.0, 55.0, 10.0, 15.0])
     end
 
     it "should move right-down to be inside the other rect" do
       r1 = Rect.new(0,1,10,15)
       r2 = Rect.new(70,40,20,30)
-      r1.clamp(r2).to_ary.should == [70,40,10,15]
+      r1.clamp(r2).to_ary.should eql([70.0, 40.0, 10.0, 15.0])
     end
 
     it "should move left-down to be inside the other rect" do
       r1 = Rect.new(100,1,10,15)
       r2 = Rect.new(70,40,20,30)
-      r1.clamp(r2).to_ary.should == [80,40,10,15]
+      r1.clamp(r2).to_ary.should eql([80.0, 40.0, 10.0, 15.0])
     end
 
     it "should move right-up to be inside the other rect" do
       r1 = Rect.new(0,100,10,15)
       r2 = Rect.new(70,40,20,30)
-      r1.clamp(r2).to_ary.should == [70,55,10,15]
+      r1.clamp(r2).to_ary.should eql([70.0, 55.0, 10.0, 15.0])
     end
 
     it "should move left-up to be inside the other rect" do
       r1 = Rect.new(100,100,10,15)
       r2 = Rect.new(70,40,20,30)
-      r1.clamp(r2).to_ary.should == [80,55,10,15]
+      r1.clamp(r2).to_ary.should eql([80.0, 55.0, 10.0, 15.0])
     end
 
     it "should be centered on X if too wide" do
       r1 = Rect.new(0,1,30,15)
       r2 = Rect.new(70,40,20,30)
-      r1.clamp(r2).to_ary.should == [65,40,30,15]
+      r1.clamp(r2).to_ary.should eql([65.0, 40.0, 30.0, 15.0])
     end
 
     it "should be centered on Y if too tall" do
       r1 = Rect.new(0,1,10,40)
       r2 = Rect.new(70,40,20,30)
-      r1.clamp(r2).to_ary.should == [70,35,10,40]
+      r1.clamp(r2).to_ary.should eql([70.0, 35.0, 10.0, 40.0])
     end
 
     it "should be centered on X and Y if too wide and tall" do
       r1 = Rect.new(0,1,30,40)
       r2 = Rect.new(70,40,20,30)
-      r1.clamp(r2).to_ary.should == [65,35,30,40]
+      r1.clamp(r2).to_ary.should eql([65.0, 35.0, 30.0, 40.0])
     end
 
     it "should have no effect if already inside the other rect" do
@@ -690,20 +698,20 @@ describe Rect do
       r1 = Rect.new(0,1,10,15)
       r2 = Rect.new(70,40,20,30)
       r1.clamp!(r2)
-      r1.to_ary.should == [70,40,10,15]
+      r1.to_ary.should eql([70.0, 40.0, 10.0, 15.0])
     end
 
     it "should return self" do
       r1 = Rect.new(0,1,10,15)
       r2 = Rect.new(70,40,20,30)
-      r1.clamp!(r2).should.eql?(r1)
+      r1.clamp!(r2).should equal(r1)
     end
 
     it "should raise an error and fail if frozen" do
       r1 = Rect.new(1,2,3,4).freeze
       r2 = Rect.new(5,6,7,8)
       proc{ r1.clamp!(r2) }.should raise_error
-      r1.to_ary.should == [1,2,3,4]
+      r1.to_ary.should eql([1.0, 2.0, 3.0, 4.0])
     end
 
   end
@@ -723,19 +731,19 @@ describe Rect do
       r1 = Rect.new(65,35,10,15)
       r2 = Rect.new(70,40,20,30)
       r1.clip(r2)
-      r1.to_ary.should == [65,35,10,15]
+      r1.to_ary.should eql([65.0, 35.0, 10.0, 15.0])
     end
 
     it "should clip this rect to only the part inside the other rect" do
       r1 = Rect.new(65,35,10,15)
       r2 = Rect.new(70,40,20,30)
-      r1.clip(r2).to_ary.should == [70,40,5,10]
+      r1.clip(r2).to_ary.should eql([70.0, 40.0, 5.0, 10.0])
     end
 
     it "should be clipped to the other rect if contained by this rect" do
       r1 = Rect.new(65,35,30,40)
       r2 = Rect.new(70,40,20,30)
-      r1.clip(r2).to_ary.should == [70,40,20,30]
+      r1.clip(r2).to_ary.should eql([70.0, 40.0, 20.0, 30.0])
     end
 
     it "should have no effect if contained by the other rect" do
@@ -747,13 +755,13 @@ describe Rect do
     it "should set size to zero if they don't overlap" do
       r1 = Rect.new(0,1,10,15)
       r2 = Rect.new(70,40,20,30)
-      r1.clip(r2).to_ary.should == [0,1,0,0]
+      r1.clip(r2).to_ary.should eql([0.0, 1.0, 0.0, 0.0])
     end
 
     it "should normalize the rect" do
       r1 = Rect.new(80,55,-10,-15)
       r2 = Rect.new(70,40,20,30)
-      r1.clip(r2).to_ary.should == [70,40,10,15]
+      r1.clip(r2).to_ary.should eql([70.0, 40.0, 10.0, 15.0])
     end
 
   end
@@ -771,20 +779,20 @@ describe Rect do
       r1 = Rect.new(65,35,10,15)
       r2 = Rect.new(70,40,20,30)
       r1.clip!(r2)
-      r1.to_ary.should == [70,40,5,10]
+      r1.to_ary.should eql([70.0, 40.0, 5.0, 10.0])
     end
 
     it "should return self" do
       r1 = Rect.new(65,35,10,15)
       r2 = Rect.new(70,40,20,30)
-      r1.clip!(r2).should.eql?(r1)
+      r1.clip!(r2).should equal(r1)
     end
 
     it "should raise an error and fail if frozen" do
       r1 = Rect.new(1,2,3,4).freeze
       r2 = Rect.new(5,6,7,8)
       proc{ r1.clip!(r2) }.should raise_error
-      r1.to_ary.should == [1,2,3,4]
+      r1.to_ary.should eql([1.0, 2.0, 3.0, 4.0])
     end
 
   end
@@ -953,32 +961,32 @@ describe Rect do
     it "should not modify the caller" do
       r = Rect.new(65,35,10,15)
       r.move(1,2)
-      r.to_ary.should == [65,35,10,15]
+      r.to_ary.should eql([65.0, 35.0, 10.0, 15.0])
     end
 
     it "should change x" do
       r = Rect.new(65,35,10,15)
-      r.move(5,0).to_ary.should == [70,35,10,15]
+      r.move(5,0).to_ary.should eql([70.0, 35.0, 10.0, 15.0])
     end
 
     it "should change y" do
       r = Rect.new(65,35,10,15)
-      r.move(0,10).to_ary.should == [65,45,10,15]
+      r.move(0,10).to_ary.should eql([65.0, 45.0, 10.0, 15.0])
     end
 
     it "should change x and y" do
       r = Rect.new(65,35,10,15)
-      r.move(5,10).to_ary.should == [70,45,10,15]
+      r.move(5,10).to_ary.should eql([70.0, 45.0, 10.0, 15.0])
     end
 
     it "should work with negative numbers" do
       r = Rect.new(65,35,10,15)
-      r.move(-5,-10).to_ary.should == [60,25,10,15]
+      r.move(-5,-10).to_ary.should eql([60.0, 25.0, 10.0, 15.0])
     end
 
     it "should not normalize the result" do
       r = Rect.new(65,35,-10,-15)
-      r.move(-5,-10).to_ary.should == [60,25,-10,-15]
+      r.move(-5,-10).to_ary.should eql([60.0, 25.0, -10.0, -15.0])
     end
 
     it "should raise error if given zero args" do
@@ -1004,12 +1012,12 @@ describe Rect do
     it "should modify the caller" do
       r = Rect.new(65,35,10,15)
       r.move!(1,2)
-      r.to_ary.should == [66,37,10,15]
+      r.to_ary.should eql([66.0, 37.0, 10.0, 15.0])
     end
 
     it "should return self" do
       r = Rect.new(65,35,10,15)
-      r.move!(1,2).should.eql?(r)
+      r.move!(1,2).should equal(r)
     end
 
   end
@@ -1022,22 +1030,22 @@ describe Rect do
     it "should not modify the caller" do
       r = Rect.new(65,35,-10,-15)
       r.normalize
-      r.to_ary.should == [65,35,-10,-15]
+      r.to_ary.should eql([65.0, 35.0, -10.0, -15.0])
     end
 
     it "should correct negative width" do
       r = Rect.new(65,35,-10,15)
-      r.normalize.to_ary.should == [55,35,10,15]
+      r.normalize.to_ary.should eql([55.0, 35.0, 10.0, 15.0])
     end
 
     it "should correct negative height" do
       r = Rect.new(65,35,10,-15)
-      r.normalize.to_ary.should == [65,20,10,15]
+      r.normalize.to_ary.should eql([65.0, 20.0, 10.0, 15.0])
     end
 
     it "should correct negative width and height" do
       r = Rect.new(65,35,-10,-15)
-      r.normalize.to_ary.should == [55,20,10,15]
+      r.normalize.to_ary.should eql([55.0, 20.0, 10.0, 15.0])
     end
 
     it "should have no effect if width and height are not negative" do
@@ -1053,18 +1061,18 @@ describe Rect do
     it "should modify the caller" do
       r = Rect.new(65,35,-10,-15)
       r.normalize!
-      r.to_ary.should == [55,20,10,15]
+      r.to_ary.should eql([55.0, 20.0, 10.0, 15.0])
     end
 
     it "should return self" do
       r1 = Rect.new(65,35,10,15)
-      r1.normalize!.should.eql? r1
+      r1.normalize!.should equal(r1)
     end
 
     it "should raise an error and fail if frozen" do
       r = Rect.new(1,2,-3,-4).freeze
       proc{ r.normalize! }.should raise_error
-      r.to_ary.should == [1,2,-3,-4]
+      r.to_ary.should eql([1.0, 2.0, -3.0, -4.0])
     end
 
   end
@@ -1084,87 +1092,87 @@ describe Rect do
       r1 = Rect.new(0,1,10,15)
       r2 = Rect.new(70,40,20,30)
       r1.union(r2)
-      r1.to_ary.should == [0,1,10,15]
+      r1.to_ary.should eql([0.0, 1.0, 10.0, 15.0])
     end
 
     it "should expand right to contain the other rect" do
       r1 = Rect.new(20,40,10,30)
       r2 = Rect.new(70,40,20,30)
       r3 = r1.union(r2)
-      r3.left.should == 20
-      r3.top.should == 40
-      r3.right.should == 90
-      r3.bottom.should == 70
+      r3.left.should eql(20.0)
+      r3.top.should eql(40.0)
+      r3.right.should eql(90.0)
+      r3.bottom.should eql(70.0)
     end
 
     it "should expand left to contain the other rect" do
       r1 = Rect.new(90,40,10,30)
       r2 = Rect.new(70,40,20,30)
       r3 = r1.union(r2)
-      r3.left.should == 70
-      r3.top.should == 40
-      r3.right.should == 100
-      r3.bottom.should == 70
+      r3.left.should eql(70.0)
+      r3.top.should eql(40.0)
+      r3.right.should eql(100.0)
+      r3.bottom.should eql(70.0)
     end
 
     it "should expand down to contain the other rect" do
       r1 = Rect.new(70,10,20,10)
       r2 = Rect.new(70,40,20,30)
       r3 = r1.union(r2)
-      r3.left.should == 70
-      r3.top.should == 10
-      r3.right.should == 90
-      r3.bottom.should == 70
+      r3.left.should eql(70.0)
+      r3.top.should eql(10.0)
+      r3.right.should eql(90.0)
+      r3.bottom.should eql(70.0)
     end
 
     it "should expand up to contain the other rect" do
       r1 = Rect.new(70,90,20,10)
       r2 = Rect.new(70,40,20,30)
       r3 = r1.union(r2)
-      r3.left.should == 70
-      r3.top.should == 40
-      r3.right.should == 90
-      r3.bottom.should == 100
+      r3.left.should eql(70.0)
+      r3.top.should eql(40.0)
+      r3.right.should eql(90.0)
+      r3.bottom.should eql(100.0)
     end
 
     it "should expand right-down to contain the other rect" do
       r1 = Rect.new(20,10,10,10)
       r2 = Rect.new(70,40,20,30)
       r3 = r1.union(r2)
-      r3.left.should == 20
-      r3.top.should == 10
-      r3.right.should == 90
-      r3.bottom.should == 70
+      r3.left.should eql(20.0)
+      r3.top.should eql(10.0)
+      r3.right.should eql(90.0)
+      r3.bottom.should eql(70.0)
     end
 
     it "should expand left-down to contain the other rect" do
       r1 = Rect.new(90,10,10,10)
       r2 = Rect.new(70,40,20,30)
       r3 = r1.union(r2)
-      r3.left.should == 70
-      r3.top.should == 10
-      r3.right.should == 100
-      r3.bottom.should == 70
+      r3.left.should eql(70.0)
+      r3.top.should eql(10.0)
+      r3.right.should eql(100.0)
+      r3.bottom.should eql(70.0)
     end
 
     it "should expand right-up to contain the other rect" do
       r1 = Rect.new(20,90,10,10)
       r2 = Rect.new(70,40,20,30)
       r3 = r1.union(r2)
-      r3.left.should == 20
-      r3.top.should == 40
-      r3.right.should == 90
-      r3.bottom.should == 100
+      r3.left.should eql(20.0)
+      r3.top.should eql(40.0)
+      r3.right.should eql(90.0)
+      r3.bottom.should eql(100.0)
     end
 
     it "should expand left-up to contain the other rect" do
       r1 = Rect.new(90,90,10,10)
       r2 = Rect.new(70,40,20,30)
       r3 = r1.union(r2)
-      r3.left.should == 70
-      r3.top.should == 40
-      r3.right.should == 100
-      r3.bottom.should == 100
+      r3.left.should eql(70.0)
+      r3.top.should eql(40.0)
+      r3.right.should eql(100.0)
+      r3.bottom.should eql(100.0)
     end
 
     it "should expand to the other rect if it contains this rect" do
@@ -1182,7 +1190,7 @@ describe Rect do
     it "should normalize the rect" do
       r1 = Rect.new(80,55,-20,-25)
       r2 = Rect.new(70,40,20,30)
-      r1.union(r2).to_ary.should == [60,30,30,40]
+      r1.union(r2).to_ary.should eql([60.0, 30.0, 30.0, 40.0])
     end
 
   end
@@ -1200,20 +1208,20 @@ describe Rect do
       r1 = Rect.new(0,1,10,15)
       r2 = Rect.new(70,40,20,30)
       r1.union!(r2)
-      r1.to_ary.should == [0,1,90,69]
+      r1.to_ary.should eql([0.0, 1.0, 90.0, 69.0])
     end
 
     it "should return self" do
       r1 = Rect.new(0,1,10,15)
       r2 = Rect.new(70,40,20,30)
-      r1.union!(r2).should.eql?(r1)
+      r1.union!(r2).should equal(r1)
     end
 
     it "should raise an error and fail if frozen" do
       r1 = Rect.new(1,2,3,4).freeze
       r2 = Rect.new(5,6,7,8)
       proc{ r1.union!(r2) }.should raise_error
-      r1.to_ary.should == [1,2,3,4]
+      r1.to_ary.should eql([1.0, 2.0, 3.0, 4.0])
     end
 
   end
