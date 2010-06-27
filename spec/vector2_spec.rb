@@ -80,14 +80,14 @@ describe Vector2 do
 
     it "should have a polar constructor (radians)" do
       n = 0.707106781186548
-      @v = Vector2.new_am(Math::PI * 0.25, 1.0)
+      @v = Vector2.new_polar(Math::PI * 0.25, 1.0)
       @v.x.should be_nearly_equal(n)
       @v.y.should be_nearly_equal(n)
     end
 
     it "should have a polar constructor (degrees)" do
       n = 0.707106781186548
-      @v = Vector2.new_dam(45, 1.0)
+      @v = Vector2.new_polar_deg(45, 1.0)
       @v.x.should be_nearly_equal(n)
       @v.y.should be_nearly_equal(n)
     end
@@ -185,25 +185,25 @@ describe Vector2 do
 
   end
 
-  describe "#dangle" do
+  describe "#angle_deg" do
 
     it "should return the vector's angle in degrees" do
-      Vector2.new(1,1).dangle.should == 45
+      Vector2.new(1,1).angle_deg.should == 45
     end
 
     it "should be writable" do
-      @v1.dangle = 1.234
-      @v1.dangle.should be_nearly_equal(1.234)
+      @v1.angle_deg = 1.234
+      @v1.angle_deg.should be_nearly_equal(1.234)
     end
 
     it "should not be writable when frozen" do
       @v1.freeze
-      lambda{ @v1.dangle = 1.234 }.should raise_error
+      lambda{ @v1.angle_deg = 1.234 }.should raise_error
     end
 
     it "should retain magnitude when changing angle" do
       orig_mag = @v1.magnitude
-      @v1.dangle = 1.234
+      @v1.angle_deg = 1.234
       @v1.magnitude.should be_nearly_equal(orig_mag)
     end
 
@@ -215,7 +215,7 @@ describe Vector2 do
   end
 
   it "should have an angle with another vector (degrees)" do
-    @v1.dangle_with(@v2).should be_nearly_equal(116.565051177078)
+    @v1.angle_deg_with(@v2).should be_nearly_equal(116.565051177078)
   end
 
 
@@ -293,13 +293,13 @@ describe Vector2 do
 
     it "should change when vector angle (radians)/magnitude is set" do
       orig_hash = @v1.hash
-      @v1.set_am!(3,10)
+      @v1.set_polar!(3,10)
       @v1.hash.should_not == orig_hash
     end
 
     it "should change when vector angle (degrees)/magnitude is set" do
       orig_hash = @v1.hash
-      @v1.set_dam!(3,10)
+      @v1.set_polar_deg!(3,10)
       @v1.hash.should_not == orig_hash
     end
 
@@ -323,7 +323,7 @@ describe Vector2 do
 
     it "should change when angle (degrees) changes" do
       orig_hash = @v1.hash
-      @v1.dangle = 10
+      @v1.angle_deg = 10
       @v1.hash.should_not == orig_hash
     end
 
@@ -499,7 +499,7 @@ describe Vector2 do
 
   describe "#rotate" do
     it "should perform rotation (in radians)" do
-      expected = Vector2.new_am(@v1.angle + 0.2, @v1.magnitude)
+      expected = Vector2.new_polar(@v1.angle + 0.2, @v1.magnitude)
       @v1.rotate(0.2).should == expected
     end
 
@@ -517,12 +517,12 @@ describe Vector2 do
 
   describe "#rotate!" do
     it "should perform rotation (in radians)" do
-      expected = Vector2.new_am(@v1.angle + 0.2, @v1.magnitude)
+      expected = Vector2.new_polar(@v1.angle + 0.2, @v1.magnitude)
       @v1.rotate!(0.2).should == expected
     end
 
     it "should modify the caller" do
-      expected = Vector2.new_am(@v1.angle + 0.2, @v1.magnitude)
+      expected = Vector2.new_polar(@v1.angle + 0.2, @v1.magnitude)
       @v1.rotate!(0.2)
       @v1.should == expected
     end
@@ -538,47 +538,47 @@ describe Vector2 do
   end
 
 
-  ###########
-  # DROTATE #
-  ###########
+  ##############
+  # ROTATE_DEG #
+  ##############
 
-  describe "#drotate" do
+  describe "#rotate_deg" do
     it "should perform rotation (in degrees)" do
-      expected = Vector2.new_dam(@v1.dangle + 30, @v1.magnitude)
-      @v1.drotate(30).should == expected
+      expected = Vector2.new_polar_deg(@v1.angle_deg + 30, @v1.magnitude)
+      @v1.rotate_deg(30).should == expected
     end
 
     it "should not modify the caller" do
       v1_orig = @v1.dup
-      @v1.drotate(30)
+      @v1.rotate_deg(30)
       @v1.should == v1_orig
     end
 
     it "should return a new object" do
-      @v1.drotate(30).should_not equal(@v1)
+      @v1.rotate_deg(30).should_not equal(@v1)
     end
   end
 
 
-  describe "#drotate!" do
+  describe "#rotate_deg!" do
     it "should perform rotation (in degrees)" do
-      expected = Vector2.new_dam(@v1.dangle + 30, @v1.magnitude)
-      @v1.drotate!(30).should == expected
+      expected = Vector2.new_polar_deg(@v1.angle_deg + 30, @v1.magnitude)
+      @v1.rotate_deg!(30).should == expected
     end
 
     it "should modify the caller" do
-      expected = Vector2.new_dam(@v1.dangle + 30, @v1.magnitude)
-      @v1.drotate!(30)
+      expected = Vector2.new_polar_deg(@v1.angle_deg + 30, @v1.magnitude)
+      @v1.rotate_deg!(30)
       @v1.should == expected
     end
 
     it "should return the caller" do
-      @v1.drotate!(30).should equal(@v1)
+      @v1.rotate_deg!(30).should equal(@v1)
     end
 
     it "should raise error if frozen" do
       @v1.freeze
-      lambda{ @v1.drotate!(30) }.should raise_error
+      lambda{ @v1.rotate_deg!(30) }.should raise_error
     end
   end
 
@@ -608,52 +608,52 @@ describe Vector2 do
   end
 
 
-  ##########
-  # SET_AM #
-  ##########
+  #############
+  # SET_POLAR #
+  #############
 
-  describe "#set_am!" do
+  describe "#set_polar!" do
     it "should set the vector's angle in radians and magnitude" do
-      @v1.set_am!(9,10).should == Vector2.new_am(9,10)
+      @v1.set_polar!(9,10).should == Vector2.new_polar(9,10)
     end
 
     it "should modify the caller" do
-      @v1.set_am!(9,10)
-      @v1.should == Vector2.new_am(9,10)
+      @v1.set_polar!(9,10)
+      @v1.should == Vector2.new_polar(9,10)
     end
 
     it "should return the caller" do
-      @v1.set_am!(9,10).should equal(@v1)
+      @v1.set_polar!(9,10).should equal(@v1)
     end
 
     it "should raise error if frozen" do
       @v1.freeze
-      lambda{ @v1.set_am!(9,10) }.should raise_error
+      lambda{ @v1.set_polar!(9,10) }.should raise_error
     end
   end
 
 
-  ###########
-  # SET_DAM #
-  ###########
+  #################
+  # SET_POLAR_DEG #
+  #################
 
-  describe "#set_dam!" do
+  describe "#set_polar_deg!" do
     it "should set the vector's angle in degrees and magnitude" do
-      @v1.set_dam!(9,10).should == Vector2.new_dam(9,10)
+      @v1.set_polar_deg!(9,10).should == Vector2.new_polar_deg(9,10)
     end
 
     it "should modify the caller" do
-      @v1.set_dam!(9,10)
-      @v1.should == Vector2.new_dam(9,10)
+      @v1.set_polar_deg!(9,10)
+      @v1.should == Vector2.new_polar_deg(9,10)
     end
 
     it "should return the caller" do
-      @v1.set_dam!(9,10).should equal(@v1)
+      @v1.set_polar_deg!(9,10).should equal(@v1)
     end
 
     it "should raise error if frozen" do
       @v1.freeze
-      lambda{ @v1.set_dam!(9,10) }.should raise_error
+      lambda{ @v1.set_polar_deg!(9,10) }.should raise_error
     end
   end
 

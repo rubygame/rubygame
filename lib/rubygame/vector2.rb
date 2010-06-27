@@ -38,19 +38,19 @@ module Rubygame
 
 
       # Creates a new Vector2 from an angle in radians and a
-      # magnitude. Use #new_dam for degrees.
+      # magnitude. Use #new_polar_deg for degrees.
       # 
-      def new_am( angle_rad, magnitude )
+      def new_polar( angle_rad, magnitude )
         self.new( Math::cos(angle_rad)*magnitude,
                   Math::sin(angle_rad)*magnitude )
       end
 
 
       # Creates a new Vector2 from an angle in degrees and a
-      # magnitude. Use #new_am for radians.
+      # magnitude. Use #new_polar for radians.
       # 
-      def new_dam( angle_deg, magnitude )
-        self.new_am( angle_deg * DEG_TO_RAD, magnitude )
+      def new_polar_deg( angle_deg, magnitude )
+        self.new_polar( angle_deg * DEG_TO_RAD, magnitude )
       end
 
 
@@ -100,9 +100,9 @@ module Rubygame
 
 
     # Sets this vector's angle (in radians) and magnitude.
-    # Use #set_dam! for degrees.
+    # Use #set_polar_deg! for degrees.
     # 
-    def set_am!( angle_rad, mag )
+    def set_polar!( angle_rad, mag )
       raise "can't modify frozen object" if frozen?
       @x = Math::cos(angle_rad) * mag
       @y = Math::sin(angle_rad) * mag
@@ -112,10 +112,10 @@ module Rubygame
 
 
     # Sets this vector's angle (in degrees) and magnitude.
-    # Use #set_am! for radians.
+    # Use #set_polar! for radians.
     # 
-    def set_dam!( angle_deg, mag )
-      set_am!( angle_deg * DEG_TO_RAD, mag )
+    def set_polar_deg!( angle_deg, mag )
+      set_polar!( angle_deg * DEG_TO_RAD, mag )
       self
     end
 
@@ -211,7 +211,7 @@ module Rubygame
 
 
     # Returns the angle of this vector, relative to the positive
-    # X axis, in radians. Use #dangle for degrees.
+    # X axis, in radians. Use #angle_deg for degrees.
     # 
     def angle
       Math.atan2( @y, @x )
@@ -232,7 +232,7 @@ module Rubygame
 
 
     # Returns the angle of this vector relative to the other vector,
-    # in radians. Use #dangle_with for degrees.
+    # in radians. Use #angle_deg_with for degrees.
     # 
     def angle_with( vector )
       Math.acos( udot(vector) )
@@ -242,7 +242,7 @@ module Rubygame
     # Returns the angle of this vector, relative to the positive
     # X axis, in degrees. Use #angle for radians.
     # 
-    def dangle
+    def angle_deg
       angle * RAD_TO_DEG
     end
 
@@ -250,7 +250,7 @@ module Rubygame
     # Sets the vector's angle in degrees. The vector keeps the same
     # magnitude as before.
     # 
-    def dangle=( angle_deg )
+    def angle_deg=( angle_deg )
       self.angle = angle_deg * DEG_TO_RAD
       self
     end
@@ -259,7 +259,7 @@ module Rubygame
     # Returns the angle of this vector relative to the other vector,
     # in degrees. Use #angle_with for radians.
     # 
-    def dangle_with( vector )
+    def angle_deg_with( vector )
       angle_with(vector) * RAD_TO_DEG
     end
 
@@ -307,7 +307,6 @@ module Rubygame
       self
     end
 
-
     # Like #project_onto!, but returns a new vector.
     def projected_onto( vector )
       dup.project_onto!( vector )
@@ -315,7 +314,7 @@ module Rubygame
 
 
     # Rotates the vector the given number of radians.
-    # Use #drotate! for degrees.
+    # Use #rotate_deg! for degrees.
     # 
     def rotate!( angle_rad )
       self.angle += angle_rad
@@ -331,14 +330,14 @@ module Rubygame
     # Rotates the vector the given number of degrees.
     # Use #rotate for radians.
     # 
-    def drotate!( angle_deg )
-      self.dangle += angle_deg
+    def rotate_deg!( angle_deg )
+      self.angle_deg += angle_deg
       self
     end
 
-    # Like #drotate!, but returns a new vector.
-    def drotate( angle_deg )
-      dup.drotate!( angle_deg )
+    # Like #rotate_deg!, but returns a new vector.
+    def rotate_deg( angle_deg )
+      dup.rotate_deg!( angle_deg )
     end
 
 
