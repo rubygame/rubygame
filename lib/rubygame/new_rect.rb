@@ -75,47 +75,6 @@ class Rect
     end
   end
 
-  # Extract or generate a Rect from the given object, if possible, using the
-  # following process:
-  #
-  #  1. If it's a Rect already, return a duplicate Rect.
-  #  2. Elsif it's an Array with at least 4 values, make a Rect from it.
-  #  3. Elsif it has a +rect+ attribute., perform (1) and (2) on that.
-  #  4. Otherwise, raise TypeError.
-  #
-  # See also Surface#make_rect()
-  # 
-  def Rect.new_from_object(object)
-    case(object)
-    when Rect
-      return object.dup
-    when Array
-      if object.length >= 4
-        return Rect.new(object)
-      else
-        raise( ArgumentError,
-               "Array is too short to create a Rect: #{object.inspect}" )
-      end
-    else
-      begin
-        case(object.rect)
-        when Rect
-          return object.rect.dup
-        when Array
-          if object.rect.length >= 4
-            return Rect.new(object.rect)
-          else
-            raise( ArgumentError, "#{object.inspect} .rect is too short " +
-                   "to create a Rect: #{object.rect.inspect}" )
-          end
-        end
-      rescue NoMethodError
-        raise( TypeError, "Object must be a Rect or Array [x,y,w,h], " +
-               "or have an attribute called 'rect'. (Got #{object.inspect})" )
-      end
-    end
-  end
-
 
   def to_s
     "#<Rect [%d,%d,%d,%d]>"%[@x,@y,@w,@h]
@@ -439,7 +398,7 @@ class Rect
     raise "can't modify frozen object" if frozen?
 
     normalize!
-    other = Rect.new_from_object(other)
+    other = Rect.new(other)
     #If self is inside given, there is no need to move self
     unless other.contain?(self)
 
@@ -493,7 +452,7 @@ class Rect
     raise "can't modify frozen object" if frozen?
 
     normalize!
-    other = Rect.new_from_object(other).normalize!
+    other = Rect.new(other).normalize!
 
     if collide_rect?(other)
       x = [left,   other.left  ].max
@@ -568,7 +527,7 @@ class Rect
   # True if this Rect and the other Rect overlap (or touch) at all.
   def collide_rect?(other)
     nself = normalize
-    other = Rect.new_from_object(other).normalize!
+    other = Rect.new(other).normalize!
 
     ( nself.left.between?(other.left, other.right) or
       other.left.between?(nself.left, nself.right) ) and
@@ -583,7 +542,7 @@ class Rect
   # 
   def contain?(other)
     nself = normalize
-    other = Rect.new_from_object(other).normalize!
+    other = Rect.new(other).normalize!
 
     ( nself.left     <= other.left   ) and
       ( other.right  <= nself.right  ) and
@@ -685,7 +644,7 @@ class Rect
     raise "can't modify frozen object" if frozen?
 
     normalize!
-    other = Rect.new_from_object(other).normalize!
+    other = Rect.new(other).normalize!
 
     l = [left,   other.left  ].min
     t = [top,    other.top   ].min
