@@ -86,12 +86,9 @@ class Rect
 
 
   def to_s
-    "#<Rect [%.3f,%.3f,%.3f,%.3f]>"%[@x,@y,@w,@h]
+    "Rect[%s,%s,%s,%s]"%[@x,@y,@w,@h]
   end
-
-  def inspect
-    "#<Rect:%#.x [%s,%s,%s,%s]>"%[object_id,@x,@y,@w,@h]
-  end
+  alias :inspect :to_s
 
 
   # Returns an SDL::Rect version of this Rect. Float values are
@@ -223,21 +220,21 @@ class Rect
   #   
   #   rect.left                              # => 1
   #   rect.top                               # => 2
-  #   rect.align!( :left => 5, :top => 4 )   # => #<Rect [5,4,20,30]>
+  #   rect.align!( :left => 5, :top => 4 )   # => Rect[5,4,20,30]
   #   rect.left                              # => 5
   #   rect.top                               # => 4
   #   
   #   rect.center                            # => [15, 19]
-  #   rect.align!( :center => [30,30] )      # => #<Rect [20,15,20,30]>
+  #   rect.align!( :center => [30,30] )      # => Rect[20,15,20,30]
   #   rect.center                            # => [30, 30]
   #   
   #   # Using Ruby 1.9 keyword-style syntax:
   #   rect.bottom                            # => 45
-  #   rect.align!( bottom: 5 )               # => #<Rect [20,-25,20,30]>
+  #   rect.align!( bottom: 5 )               # => Rect[20,-25,20,30]
   #   rect.bottom                            # => 5
   #   
   #   # Non-hash form:
-  #   rect.align!( :left, 10, :top, 5 )      # => #<Rect [10,5,20,30]>
+  #   rect.align!( :left, 10, :top, 5 )      # => Rect[10,5,20,30]
   #   rect.left                              # => 10
   #   rect.top                               # => 5
   # 
@@ -604,7 +601,7 @@ class Rect
   #   r.center             # => [17, 45]
   #   r.size               # => [15, 50]
   # 
-  #   r.inflate!(10, -8)   # => #<Rect [5,23,25,42]>
+  #   r.inflate!(10, -8)   # => Rect[5,23,25,42]
   #   r.center             # => [17, 45]
   #   r.size               # => [25, 42]
   # 
