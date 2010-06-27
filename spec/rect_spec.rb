@@ -69,7 +69,7 @@ describe Rect do
     end
 
     it "should accept an object with a rect method" do
-      ob = mock(:rect => Rect.new(1,2,3,4))
+      ob = mock(:rect => Rect.send(@method,1,2,3,4))
       r = Rect.send(@method, ob )
       r.x.should eql( 1.0 )
       r.y.should eql( 2.0 )
@@ -1138,6 +1138,187 @@ describe Rect do
       r.to_ary.should eql([1.0, 2.0, -3.0, -4.0])
     end
 
+  end
+
+
+
+
+  describe "stretch (shared)", :shared => true do
+
+    before :each do
+      @r = Rect.new(1,2,3,4)
+    end
+
+    [:left, :top, :right, :bottom].each do |edge|
+      it "#{edge.inspect} should accept an integer" do
+        lambda{ @r.send(@method, edge => 1) }.should_not raise_error
+      end
+
+      it "#{edge.inspect} should accept a float" do
+        lambda{ @r.send(@method, edge => 1.0) }.should_not raise_error
+      end
+
+      it "#{edge.inspect} should not accept an array of integers" do
+        lambda{
+          @r.send(@method, edge => [1,2])
+        }.should raise_error(TypeError)
+      end
+
+      it "#{edge.inspect} should not accept an array of floats" do
+        lambda{
+          @r.send(@method, edge => [1.0,2.0])
+        }.should raise_error(TypeError)
+      end
+
+      it "#{edge.inspect} should not accept a Vector2" do
+        lambda{
+          @r.send(@method, edge => Vector2[1,2])
+        }.should raise_error(TypeError)
+      end
+    end
+
+    [:topleft, :topright, :bottomleft, :bottomright].each do |point|
+      it "#{point.inspect} not should accept an integer" do
+        lambda{ @r.send(@method, point => 1) }.should raise_error(TypeError)
+      end
+
+      it "#{point.inspect} not should accept a float" do
+        lambda{ @r.send(@method, point => 1.0) }.should raise_error(TypeError)
+      end
+
+      it "#{point.inspect} should accept an array of integers" do
+        lambda{ @r.send(@method, point => [1,2]) }.should_not raise_error
+      end
+
+      it "#{point.inspect} should accept an array of floats" do
+        lambda{ @r.send(@method, point => [1.0,2.0]) }.should_not raise_error
+      end
+
+      it "#{point.inspect} should accept a Vector2" do
+        lambda{
+          @r.send(@method, point => Vector2[1,2])
+        }.should_not raise_error
+      end
+    end
+
+
+    [:centerx, :centery].each do |edge|
+      it "should raise ArgumentError for #{edge.inspect}" do
+        lambda{
+          @r.send(@method, edge => 1)
+        }.should raise_error(ArgumentError)
+      end
+    end
+
+    [:center, :midleft, :midright, :midtop, :midbottom].each do |point|
+      it "should raise ArgumentError for #{point.inspect}" do
+        lambda{
+          @r.send(@method, point => [1,2])
+        }.should raise_error(ArgumentError)
+      end
+    end
+
+    it "should raise ArgumentError for unknown points" do
+      lambda{ @r.send(@method, :a => 1) }.should raise_error(ArgumentError)
+    end
+
+    it "should raise TypeError for invalid values" do
+      ["foo", :foo, [], [1], {}, nil, true, Object.new].each do |val|
+        lambda{
+          @r.send(@method, :left => val)
+        }.should raise_error(TypeError)
+      end
+    end
+
+
+    [[:left,        -10,        Rect.new(-10,2,14,4)   ],
+     [:top,         -10,        Rect.new(1,-10,3,16)   ],
+     [:right,       10,         Rect.new(1,2,9,4)      ],
+     [:bottom,      10,         Rect.new(1,2,3,8)      ],
+     [:topleft,     [-10,-20],  Rect.new(-10,-20,14,26)],
+     [:topright,    [ 10,-20],  Rect.new(1,-20,9,26)   ],
+     [:bottomleft,  [-10, 20],  Rect.new(-10,2,14,18)  ],
+     [:bottomright, [ 10, 20],  Rect.new(1,2,9,18)     ],
+    ].each do |sym, val, expected|
+      it "should be able to stretch #{sym.inspect}" do
+        @r.send(@method, sym => val).should == expected
+      end
+
+      if val.is_a? Array
+        it "should accept a Vector2 for #{sym.inspect}" do
+          @r.send(@method, sym => Vector2[*val]).should == expected
+        end
+      end
+    end
+
+
+    it "should work with zero args" do
+      lambda{
+        @r.send(@method).should == Rect.new(1,2,3,4)
+      }.should_not raise_error
+    end
+
+    it "should work with a single Hash entry" do
+      lambda{
+        @r.send(@method, :left => -10).should == Rect.new(-10,2,14,4)
+      }.should_not raise_error
+    end
+
+    it "should work with multiple Hash entries" do
+      lambda{
+        @r.send(@method, :left => -10, :top => -20).
+          should == Rect.new(-10,-20,14,26)
+      }.should_not raise_error
+    end
+
+    it "should work with a single arg pair" do
+      lambda{
+        @r.send(@method, :left, -10).should == Rect.new(-10,2,14,4)
+      }.should_not raise_error
+    end
+
+    it "should work with multiple arg pairs" do
+      lambda{
+        @r.send(@method, :left, -10, :top, -20).
+          should == Rect.new(-10,-20,14,26)
+      }.should_not raise_error
+    end
+
+    it "should apply multiple arg pairs in order" do
+      lambda{
+        @r.send(@method, :left, -10, :topleft, [-20,-10]).
+          should == Rect.new(-20,-10,24,16)
+      }.should_not raise_error
+    end
+
+  end
+
+
+  describe "stretch" do
+    before :each do
+      @method = :stretch
+    end
+
+    it_should_behave_like "stretch (shared)"
+
+    it "should not modify self" do
+      @r.stretch(:left => 5)
+      @r.should == Rect.new(1,2,3,4)
+    end
+  end
+
+
+  describe "stretch!" do
+    before :each do
+      @method = :stretch!
+    end
+
+    it_should_behave_like "stretch (shared)"
+
+    it "should modify self" do
+      @r.stretch!(:left => -10)
+      @r.should == Rect.new(-10,2,14,4)
+    end
   end
 
 

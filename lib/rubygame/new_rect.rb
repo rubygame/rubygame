@@ -663,6 +663,144 @@ class Rect
 
 
 
+  # call-seq:
+  #   stretch!( symbol => value, ... )
+  #   stretch!( symbol, value, ... )
+  # 
+  # Stretches the Rect so that the given edge or point is at the new
+  # value. The opposite edge or point will remain stationary. For
+  # example, if you stretch :topleft, :bottomright will not change.
+  # Returns self.
+  # 
+  # This method accepts a hash of zero or more {symbol => value} pairs
+  # of edges/points to stretch. Alternatively, you can provide the
+  # symbols and values as ordered arguments to this method.
+  #
+  # NOTE: The changes are applied in the order received, but hashes
+  # have no defined order in Ruby 1.8 and earlier. If the order of
+  # changes is important to you, you should use the non-hash form.
+  # 
+  # symbol:: the name of a edge or point.
+  #          Valid edge names are :left, :top, :right, :bottom.
+  #          Valid points are :topleft, :topright, :bottomleft,
+  #          :bottomright.
+  #          See the methods of the same name for their meanings.
+  # 
+  # value::  the new position of the edge or point.
+  #          If +symbol+ is an edge name, +value+ must be a single
+  #          Numeric. If +symbol+ is a point name, +value+ must be a
+  #          Vector2 or array-like of two Numerics, [x,y].
+  # 
+  # 
+  # May raise:
+  # * ArgumentError if an invalid edge or point name is given,
+  # * TypeError if an invalid value is given.
+  # 
+  # Example:
+  # 
+  #   rect = Rubygame::Rect.new( 1, 2, 20, 30 )
+  #   
+  #   rect.topleft                           # => Vector2[1,2]
+  #   rect.bottomright                       # => Vector2[21,32]
+  #   rect.stretch!( :left => 5, :top => 4 ) # => Rect[5,4,16,28]
+  #   rect.topleft                           # => Vector2[5,4]
+  #   rect.bottomright                       # => Vector2[21,32]
+  #   
+  #   rect.topright                          # => Vector2[21, 4]
+  #   rect.bottomleft                        # => Vector2[5,32]
+  #   rect.stretch!( :topright => [20,10] )  # => Rect[5,10,15,22]
+  #   rect.topright                          # => Vector2[30, 30]
+  #   rect.bottomleft                        # => Vector2[5,32]
+  #   
+  #   # Using Ruby 1.9 keyword-style syntax:
+  #   rect.stretch!( bottom: 12 )            # => Rect[5,10,15,2]
+  #   rect.bottom                            # => 12
+  #   
+  #   # Non-hash form:
+  #   rect.stretch!( :left, 10, :top, 5 )    # => Rect[10,5,10,7]
+  #   rect.topleft                           # => Vector2[10,5]
+  # 
+  def stretch!( *opts )
+    if opts[0].is_a? Hash
+      # Turn {:left => 1, :top => 2} into [:left, 1, :top, 2]
+      temp = []
+      opts[0].to_a.each{ |k,v| temp << k << v }
+      opts = temp
+    end
+
+    opts.each_slice(2) do |sym,val|
+      # Argument check:
+      case sym
+      when :left, :top, :right, :bottom
+        # These accept a single numeric value
+        if val.is_a? Numeric
+          val = val.to_f
+        else
+          raise( TypeError, "invalid value for #{sym.inspect} " +
+                 "(expected Numeric, got #{val.inspect})")
+        end
+      when :topleft, :topright, :bottomleft, :bottomright
+        # These accept an array of 2 numerics
+        begin
+          val = val.to_ary
+          if val.size == 2 and val.all?{ |v| v.is_a? Numeric }
+            val = val.collect{ |i| i.to_f }
+          else
+            raise( TypeError, "invalid value for #{sym.inspect} " +
+                   "(expected [x,y], got #{val.inspect})")
+          end
+        rescue NoMethodError
+          raise( TypeError, "invalid value for #{sym.inspect} " +
+                 "(expected [x,y], got #{val.inspect})")
+        end
+      else
+        raise ArgumentError, "invalid point #{sym.inspect}"
+      end
+
+      case sym
+      when :left
+        @w += @x - val
+        @x = val
+      when :right
+        @w = val - @x
+      when :top
+        @h += @y - val
+        @y = val
+      when :bottom
+        @h = val - @y
+      when :topleft
+        @w += @x - val[0]
+        @h += @y - val[1]
+        @x, @y = val
+      when :topright
+        @w = val[0] - @x
+        @h += @y - val[1]
+        @y = val[1]
+      when :bottomleft
+        @w += @x - val[0]
+        @x = val[0]
+        @h = val[1] - @y
+      when :bottomright
+        @w = val[0] - @x
+        @h = val[1] - @y
+      end
+    end
+
+    self
+  end
+
+  # call-seq:
+  #   stretch( symbol => value, ... )
+  #   stretch( symbol, value, ... )
+  # 
+  # Like #stretch!, but makes a new Rect instead of changing this Rect.
+  def stretch( *opts )
+    dup.stretch!( *opts )
+  end
+
+
+
+
   # Like #union!, but makes a new Rect instead of changing this Rect.
   def union(other)
     dup.union!(other)
