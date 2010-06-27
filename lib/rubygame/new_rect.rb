@@ -99,14 +99,6 @@ class Rect
   end
   alias :to_a  :to_ary
 
-  # Returns the length of the Rect (which is always 4). This is
-  # useless, but kept for backwards compatibility.
-  # 
-  def length
-    4
-  end
-  alias :size  :length
-
   # Return the value of the Rect at that index, as if it were an
   # [x,y,w,h] array.
   # 
