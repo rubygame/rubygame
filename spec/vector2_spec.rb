@@ -333,9 +333,9 @@ describe Vector2 do
       @v1.hash.should_not == orig_hash
     end
 
-    it "should change when vector is stretched" do
+    it "should change when vector is scaled" do
       orig_hash = @v1.hash
-      @v1.stretch!(3,10)
+      @v1.scale!(3,10)
       @v1.hash.should_not == orig_hash
     end
 
@@ -659,51 +659,51 @@ describe Vector2 do
 
 
   ###########
-  # STRETCH #
+  # SCALE #
   ###########
 
-  describe "#stretch" do
+  describe "#scale" do
     it "should perform non-uniform scaling" do
-      @v1.stretch(3,-4).should == Vector2.new(3,-8)
+      @v1.scale(3,-4).should == Vector2.new(3,-8)
     end
 
     it "should perform uniform scaling if one value is given" do
-      @v1.stretch(3).should == Vector2.new(3,6)
+      @v1.scale(3).should == Vector2.new(3,6)
     end
 
     it "should not modify the caller" do
       v1_orig = @v1.dup
-      @v1.stretch(3,-4)
+      @v1.scale(3,-4)
       @v1.should == v1_orig
     end
 
     it "should return a new object" do
-      @v1.stretch(3,-4).should_not equal(@v1)
+      @v1.scale(3,-4).should_not equal(@v1)
     end
   end
 
 
-  describe "#stretch!" do
+  describe "#scale!" do
     it "should perform non-uniform scaling" do
-      @v1.stretch!(3,-4).should == Vector2.new(3,-8)
+      @v1.scale!(3,-4).should == Vector2.new(3,-8)
     end
 
     it "should perform uniform scaling if one value is given" do
-      @v1.stretch!(3).should == Vector2.new(3,6)
+      @v1.scale!(3).should == Vector2.new(3,6)
     end
 
     it "should modify the caller" do
-      @v1.stretch!(3,-4)
+      @v1.scale!(3,-4)
       @v1.should == Vector2.new(3,-8)
     end
 
     it "should return the caller" do
-      @v1.stretch!(3,-4).should equal(@v1)
+      @v1.scale!(3,-4).should equal(@v1)
     end
 
     it "should raise error if frozen" do
       @v1.freeze
-      lambda{ @v1.stretch!(3,-4) }.should raise_error
+      lambda{ @v1.scale!(3,-4) }.should raise_error
     end
   end
 
