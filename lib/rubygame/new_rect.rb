@@ -619,22 +619,34 @@ class Rect
 
 
 
-  # Like #move!, but makes a new Rect instead of changing this Rect.
-  def move(x,y)
-    dup.move!(x,y)
-  end
-
-  # Move (translate) this Rect by the given amounts (in pixels).
+  # call-seq:
+  #   move!( [x,y] )
+  #   move!( x,y )
+  # 
+  # Moves the Rect by the given x and y amounts.
   # A positive x moves the Rect to the right.
   # A positive y moves the Rect down.
   # 
   def move!(x,y)
     raise "can't modify frozen object" if frozen?
-
-    @x += x.to_f
-    @y += y.to_f
-
+    if y.nil?
+      a = x.to_ary
+      @x += a[0]
+      @y += a[1]
+    else
+      @x += x
+      @y += y
+    end
     self
+  end
+
+  # call-seq:
+  #   move( [x,y] )
+  #   move( x,y )
+  # 
+  # Like #move!, but makes a new Rect instead of changing this Rect.
+  def move(x,y=nil)
+    dup.move!(x,y)
   end
 
 

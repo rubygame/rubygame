@@ -1052,14 +1052,19 @@ describe Rect do
       r.move(-5,-10).to_ary.should eql([60.0, 25.0, -10.0, -15.0])
     end
 
+    it "should accept an array of two numbers" do
+      r = Rect.new(1,2,3,4)
+      proc{ r.move([1,2]) }.should_not raise_error
+    end
+
     it "should raise error if given zero args" do
       r = Rect.new(1,2,3,4)
       proc{ r.move() }.should raise_error
     end
 
-    it "should raise error if given one arg" do
+    it "should raise error if given an array of one number" do
       r = Rect.new(1,2,3,4)
-      proc{ r.move(1) }.should raise_error
+      proc{ r.move([1]) }.should raise_error
     end
 
     it "should raise error if given more than two args" do
