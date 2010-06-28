@@ -366,6 +366,26 @@ describe Vector2 do
       @v1.move(3,4).should == Vector2.new(4,6)
     end
 
+    it "should work with two numbers" do
+      @v1.move(3,4).should == Vector2.new(4,6)
+    end
+
+    it "should work with an array of two numbers" do
+      @v1.move([3,4]).should == Vector2.new(4,6)
+    end
+
+    it "should work with another Vector2" do
+      @v1.move(Vector2[3,4]).should == Vector2.new(4,6)
+    end
+
+    it "should not work with one number" do
+      lambda{ @v1.move(3) }.should raise_error
+    end
+
+    it "should not work with an array of one number" do
+      lambda{ @v1.move([3]) }.should raise_error
+    end
+
     it "should not modify the caller" do
       v1_orig = @v1.dup
       @v1.move(3,4)
@@ -381,6 +401,26 @@ describe Vector2 do
   describe "#move!" do
     it "should perform vector addition" do
       @v1.move!(3,4).should == Vector2.new(4,6)
+    end
+
+    it "should work with two numbers" do
+      @v1.move!(3,4).should == Vector2.new(4,6)
+    end
+
+    it "should work with an array of two numbers" do
+      @v1.move!([3,4]).should == Vector2.new(4,6)
+    end
+
+    it "should work with another Vector2" do
+      @v1.move!(Vector2[3,4]).should == Vector2.new(4,6)
+    end
+
+    it "should not work with one number" do
+      lambda{ @v1.move!(3) }.should raise_error
+    end
+
+    it "should not work with an array of one number" do
+      lambda{ @v1.move!([3]) }.should raise_error
     end
 
     it "should modify the caller" do

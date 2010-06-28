@@ -127,17 +127,31 @@ module Rubygame
       self.class.new( @x + vector.at(0), @y + vector.at(1) )
     end
 
+    # call-seq:
+    #   move!( [x,y] )
+    #   move!( x,y )
+    # 
     # Moves the vector by the given x and y amounts.
-    def move!( x, y )
+    def move!( x, y=nil )
       raise "can't modify frozen object" if frozen?
-      @x += x
-      @y += y
+      if y.nil?
+        a = x.to_ary
+        @x += a[0]
+        @y += a[1]
+      else
+        @x += x
+        @y += y
+      end
       @hash = nil
       self
     end
 
+    # call-seq:
+    #   move( [x,y] )
+    #   move( x,y )
+    # 
     # Like #move!, but returns a new vector.
-    def move( x, y )
+    def move( x, y=nil )
       self.dup.move!(x, y)
     end
 
