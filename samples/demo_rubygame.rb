@@ -209,8 +209,17 @@ end
 ##########
 
 
+# Some platforms require the icon be set *before* opening the window,
+# while others require it be set *after*. So, we'll do both just to be
+# sure.
+
+Screen.icon = Surface["rubygame.png"]
+
 # Create the SDL window
 screen = Screen.open([320,240])
+
+screen.icon = Surface["rubygame.png"]
+
 screen.title = "Rubygame test"
 screen.show_cursor = false;
 
