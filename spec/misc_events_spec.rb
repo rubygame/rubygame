@@ -9,7 +9,7 @@ include Rubygame::Events
 
 
 
-describe "a simple event", :shared => true do
+shared_examples_for "a simple event" do
   
   it "should take zero arguments at creation" do
     lambda { @class.new }.should_not raise_error

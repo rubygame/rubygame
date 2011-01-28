@@ -38,7 +38,7 @@ $colors = {
 ##      SHARED  SPECS       ##
 ##############################
 
-describe "Color with RGBA array (shared)", :shared => true do
+shared_examples_for "Color with RGBA array (shared)" do
   it "should have an RGBA array with 4 components" do
     @color.should respond_to(:to_rgba_ary)
     @color.to_rgba_ary.should be_instance_of( Array )
@@ -46,19 +46,19 @@ describe "Color with RGBA array (shared)", :shared => true do
   end
 
   it "should have the expected red component" do
-    @color.to_rgba_ary.at(0).should be_close( @r.to_f, DELTA )
+    @color.to_rgba_ary.at(0).should be_within(DELTA).of(@r.to_f)
   end
 
   it "should have the expected green component" do
-    @color.to_rgba_ary.at(1).should be_close( @g.to_f, DELTA )
+    @color.to_rgba_ary.at(1).should be_within(DELTA).of(@g.to_f)
   end
 
   it "should have the expected blue component" do
-    @color.to_rgba_ary.at(2).should be_close( @b.to_f, DELTA )
+    @color.to_rgba_ary.at(2).should be_within(DELTA).of(@b.to_f)
   end
 
   it "should have the expected alpha compenent" do
-    @color.to_rgba_ary.at(3).should be_close( @a.to_f, DELTA )
+    @color.to_rgba_ary.at(3).should be_within(DELTA).of(@a.to_f)
   end
 
 
@@ -84,7 +84,7 @@ describe "ColorRGB" do
   ##    RGB  SHARED  SPECS    ##
   ##############################
 
-  describe "ColorRGB (shared)", :shared => true do
+  shared_examples_for "ColorRGB (shared)" do
     it "should have a 'r' (red) component which is a Float" do
       @color.should respond_to(:r)
       @color.r.should be_instance_of( Float )
@@ -106,19 +106,19 @@ describe "ColorRGB" do
     end
 
     it "should have the expected red component" do
-      @color.r.should be_close( @r.to_f, DELTA )
+      @color.r.should be_within(DELTA).of(@r.to_f)
     end
 
     it "should have the expected green component" do
-      @color.g.should be_close( @g.to_f, DELTA )
+      @color.g.should be_within(DELTA).of(@g.to_f)
     end
 
     it "should have the expected blue component" do
-      @color.b.should be_close( @b.to_f, DELTA )
+      @color.b.should be_within(DELTA).of(@b.to_f)
     end
 
     it "should have the expected alpha component" do
-      @color.a.should be_close( @a.to_f, DELTA )
+      @color.a.should be_within(DELTA).of(@a.to_f)
     end
   end
 
@@ -471,7 +471,7 @@ describe "ColorHSV" do
   ##    HSV  SHARED  SPECS    ##
   ##############################
 
-  describe "ColorHSV (shared)", :shared => true do
+  shared_examples_for "ColorHSV (shared)" do
     it "should have a 'h' (hue) component which is a Float" do
       @color.should respond_to(:h)
       @color.h.should be_instance_of( Float )
@@ -493,19 +493,19 @@ describe "ColorHSV" do
     end
 
     it "should have the expected hue component" do
-      @color.h.should be_close( @h.to_f, DELTA )
+      @color.h.should be_within(DELTA).of(@h.to_f)
     end
 
     it "should have the expected saturation component" do
-      @color.s.should be_close( @s.to_f, DELTA )
+      @color.s.should be_within(DELTA).of(@s.to_f)
     end
 
     it "should have the expected value component" do
-      @color.v.should be_close( @v.to_f, DELTA )
+      @color.v.should be_within(DELTA).of(@v.to_f)
     end
 
     it "should have the expected alpha component" do
-      @color.a.should be_close( @a.to_f, DELTA )
+      @color.a.should be_within(DELTA).of(@a.to_f)
     end
   end
 
@@ -746,7 +746,7 @@ describe "ColorHSL" do
   ##    HSL  SHARED  SPECS    ##
   ##############################
 
-  describe "ColorHSL (shared)", :shared => true do
+  shared_examples_for "ColorHSL (shared)" do
     it "should have a 'h' (hue) component which is a Float" do
       @color.should respond_to(:h)
       @color.h.should be_instance_of( Float )
@@ -768,19 +768,19 @@ describe "ColorHSL" do
     end
 
     it "should have the expected hue component" do
-      @color.h.should be_close( @h.to_f, DELTA )
+      @color.h.should be_within(DELTA).of(@h.to_f)
     end
 
     it "should have the expected saturation component" do
-      @color.s.should be_close( @s.to_f, DELTA )
+      @color.s.should be_within(DELTA).of(@s.to_f)
     end
 
     it "should have the expected luminosity component" do
-      @color.l.should be_close( @l.to_f, DELTA )
+      @color.l.should be_within(DELTA).of(@l.to_f)
     end
 
     it "should have the expected alpha component" do
-      @color.a.should be_close( @a.to_f, DELTA )
+      @color.a.should be_within(DELTA).of(@a.to_f)
     end
   end
 
@@ -1021,7 +1021,7 @@ describe "ColorRGB255" do
   ##  RGB255  SHARED  SPECS   ##
   ##############################
 
-  describe "ColorRGB255 (shared)", :shared => true do 
+  shared_examples_for "ColorRGB255 (shared)" do 
     it "should have a 'r' (red) component which is a Fixnum" do
       @color.should respond_to(:r)
       @color.r.should be_instance_of( Fixnum )

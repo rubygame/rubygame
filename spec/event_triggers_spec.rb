@@ -11,7 +11,7 @@ include Rubygame::Events
 FakeEvent = Struct.new(:a)
 
 
-describe "an event trigger", :shared => true do 
+shared_examples_for "an event trigger" do 
 	
 	it "should have a #match? method" do 
 		@trigger.should respond_to(:match?)
@@ -522,7 +522,7 @@ end
 
 
 
-describe "a keyboard event trigger", :shared => true do
+shared_examples_for "a keyboard event trigger" do
 
 	it_should_behave_like "an event trigger"
 
@@ -630,7 +630,7 @@ end
 
 
 
-describe "a mouse button event trigger", :shared => true do
+shared_examples_for "a mouse button event trigger" do
 
 	it_should_behave_like "an event trigger"
 

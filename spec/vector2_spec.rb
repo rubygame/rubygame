@@ -7,7 +7,7 @@ require 'rubygame/vector2'
 include Rubygame
 
 
-Spec::Matchers.define :be_nearly_equal do |number2|
+RSpec::Matchers.define :be_nearly_equal do |number2|
   match do |number1|
     (number1 - number2).abs <= 1E-10
   end

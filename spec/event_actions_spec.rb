@@ -8,7 +8,7 @@ include Rubygame
 include Rubygame::EventActions
 
 
-describe "an event action", :shared => true do 
+shared_examples_for "an event action" do 
 
 	it "should have a #perform method" do 
 		@action.should respond_to(:perform)

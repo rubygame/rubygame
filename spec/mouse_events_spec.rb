@@ -8,7 +8,7 @@ include Rubygame::Events
 
 
 
-describe "a mouse button event", :shared => true do
+shared_examples_for "a mouse button event" do
   
   it "should have a button symbol" do
     @event.button.should == :mouse_left

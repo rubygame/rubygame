@@ -192,7 +192,7 @@ describe Music, "(playing)" do
 
   it "should be able to change volume" do
     @music.volume = 0.2
-    @music.volume.should be_close(0.2, small)
+    @music.volume.should be_within(small).of(0.2)
   end
 
 end
@@ -266,7 +266,7 @@ describe Music, "(paused)" do
 
   it "should be able to change volume" do
     @music.volume = 0.2
-    @music.volume.should be_close(0.2, small)
+    @music.volume.should be_within(small).of(0.2)
   end
 
 end
@@ -312,7 +312,7 @@ describe Music, "(stopped)" do
 
   it "should be able to change volume" do
     @music.volume = 0.2
-    @music.volume.should be_close(0.2, small)
+    @music.volume.should be_within(small).of(0.2)
   end
 
 end
@@ -508,7 +508,7 @@ describe Music, "(fading in)" do
   it "should not allow changing volume" do
     @music.play( :fade_in => 0.3 )
     lambda { @music.volume = 0.2 }.should raise_error(SDLError)
-    @music.volume.should be_close(0.1, small)
+    @music.volume.should be_within(small).of(0.1)
   end
 
 end
@@ -580,7 +580,7 @@ describe Music, "(fading out)" do
   it "should not allow changing volume" do
     @music.fade_out( 0.3 )
     lambda { @music.volume = 0.2 }.should raise_error(SDLError)
-    @music.volume.should be_close(0.1, small)
+    @music.volume.should be_within(small).of(0.1)
   end
 
 end

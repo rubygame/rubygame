@@ -8,7 +8,7 @@ include Rubygame::Events
 
 
 
-describe "a keyboard event", :shared => true do
+shared_examples_for "a keyboard event" do
   
   it "should have a key symbol" do
     @event.key.should == :a

@@ -134,21 +134,20 @@ end
 #########
 
 begin
-  require 'spec/rake/spectask'
-
+  require 'rspec/core/rake_task'
 
   desc "Run all specs"
-  Spec::Rake::SpecTask.new do |t|
+  RSpec::Core::RakeTask.new do |t|
     ENV["RUBYGAME_NEWRECT"] = "true"
-    t.spec_files = FileList['spec/*_spec.rb']
+    t.pattern = 'spec/*_spec.rb'
   end
 
 
   namespace :spec do
     desc "Run all specs"
-    Spec::Rake::SpecTask.new(:all) do |t|
+    RSpec::Core::RakeTask.new(:all) do |t|
       ENV["RUBYGAME_NEWRECT"] = "true"
-      t.spec_files = FileList['spec/*_spec.rb']
+      t.pattern = 'spec/*_spec.rb'
     end
 
     desc "Run spec/[name]_spec.rb (e.g. 'color')"
@@ -162,18 +161,19 @@ begin
   rule(/spec:.+/) do |t|
     name = t.name.gsub("spec:","")
 
-    path = File.join( File.dirname(__FILE__),'spec','%s_spec.rb'%name )
+    pattern = File.join('spec', '%s_spec.rb'%name)
+    path = File.join( File.dirname(__FILE__), pattern )
 
     if File.exist? path
-      Spec::Rake::SpecTask.new(name) do |t|
-        t.spec_files = [path]
+      RSpec::Core::RakeTask.new(name) do |t|
+        t.pattern = pattern
       end
 
-      puts "\nRunning spec/%s_spec.rb"%name
+      puts "\nRunning %s"%pattern
 
       Rake::Task[name].invoke
     else
-      puts "File does not exist: %s"%path
+      puts "File does not exist: %s"%pattern
     end
 
   end
@@ -184,18 +184,18 @@ begin
   ########
 
   desc "Run all specs with rcov"
-  Spec::Rake::SpecTask.new(:rcov) do |t|
+  RSpec::Core::RakeTask.new(:rcov) do |t|
     ENV["RUBYGAME_NEWRECT"] = "true"
-    t.spec_files = FileList['spec/*_spec.rb']
+    t.pattern = 'spec/*_spec.rb'
     t.rcov = true
   end
 
 
   namespace :rcov do
     desc "Run all specs with rcov"
-    Spec::Rake::SpecTask.new(:all) do |t|
+    RSpec::Core::RakeTask.new(:all) do |t|
       ENV["RUBYGAME_NEWRECT"] = "true"
-      t.spec_files = FileList['spec/*_spec.rb']
+      t.pattern = 'spec/*_spec.rb'
       t.rcov = true
     end
 
@@ -210,32 +210,41 @@ begin
   rule(/rcov:.+/) do |t|
     name = t.name.gsub("rcov:","")
 
-    path = File.join( File.dirname(__FILE__),'spec','%s_spec.rb'%name )
+    pattern = File.join('spec', '%s_spec.rb'%name)
+    path = File.join( pattern )
 
     if File.exist? path
-      Spec::Rake::SpecTask.new(name) do |t|
-        t.spec_files = [path]
+      RSpec::Core::RakeTask.new(name) do |t|
+        t.pattern = pattern
         t.rcov = true
       end
 
-      puts "\nRunning spec/%s_spec.rb"%name
+      puts "\nRunning %s"%pattern
 
       Rake::Task[name].invoke
     else
-      puts "File does not exist: %s"%path
+      puts "File does not exist: %s"%pattern
     end
 
   end
 
 rescue LoadError
 
-  error = "ERROR: RSpec is not installed?"
+  error = "ERROR: rspec >= 2.0 is not installed?"
 
   task :spec do 
     puts error
   end
 
   rule( /spec:.*/ ) do
+    puts error
+  end
+
+  task :rcov do 
+    puts error
+  end
+
+  rule( /rcov:.*/ ) do
     puts error
   end
 

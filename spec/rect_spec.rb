@@ -10,7 +10,7 @@ include Rubygame
 describe Rect do
 
 
-  describe "initializer (shared)", :shared => true do
+  shared_examples_for "initializer (shared)" do
 
     it "should accept 4 integers" do
       r = Rect.send(@method,1,2,3,4)
@@ -418,11 +418,7 @@ describe Rect do
 
 
 
-  describe "align (shared)", :shared => true do
-
-    before :each do
-      @r = Rect.new(1,2,3,4)
-    end
+  shared_examples_for "align (shared)" do
 
     [:left, :top, :right, :bottom, :centerx, :centery].each do |edge|
       it "#{edge.inspect} should accept an integer" do
@@ -561,6 +557,7 @@ describe Rect do
   describe "align" do
     before :each do
       @method = :align
+      @r = Rect.new(1,2,3,4)
     end
 
     it_should_behave_like "align (shared)"
@@ -575,6 +572,7 @@ describe Rect do
   describe "align!" do
     before :each do
       @method = :align!
+      @r = Rect.new(1,2,3,4)
     end
 
     it_should_behave_like "align (shared)"
@@ -588,7 +586,7 @@ describe Rect do
 
 
 
-  describe "a method that takes one rect-like", :shared => true do
+  shared_examples_for "a method that takes one rect-like" do
 
     it "should not raise when given a valid rect" do
       r1 = Rect.new(1,2,3,4)
@@ -1148,11 +1146,7 @@ describe Rect do
 
 
 
-  describe "stretch (shared)", :shared => true do
-
-    before :each do
-      @r = Rect.new(1,2,3,4)
-    end
+  shared_examples_for "stretch (shared)" do
 
     [:left, :top, :right, :bottom].each do |edge|
       it "#{edge.inspect} should accept an integer" do
@@ -1302,6 +1296,7 @@ describe Rect do
   describe "stretch" do
     before :each do
       @method = :stretch
+      @r = Rect.new(1,2,3,4)
     end
 
     it_should_behave_like "stretch (shared)"
@@ -1316,6 +1311,7 @@ describe Rect do
   describe "stretch!" do
     before :each do
       @method = :stretch!
+      @r = Rect.new(1,2,3,4)
     end
 
     it_should_behave_like "stretch (shared)"

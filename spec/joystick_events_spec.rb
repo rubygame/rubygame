@@ -8,7 +8,7 @@ include Rubygame::Events
 
 
 
-describe "a joystick event", :shared => true do
+shared_examples_for "a joystick event" do
 
 
   ###############
@@ -230,7 +230,7 @@ end
 ##############################
 
 
-describe "a joystick button event", :shared => true do
+shared_examples_for "a joystick button event" do
 
   def make_event( mods = {} )
     args = {
