@@ -48,7 +48,7 @@ gem_spec = Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 1.8"
   s.add_dependency( "rake", ">=0.7.0" )
-  s.add_dependency( "ruby-sdl-ffi", ">=0.1.0" )
+  s.add_dependency( "ruby-sdl-ffi", ">=0.4.0" )
   s.requirements = ["SDL       >= 1.2.7",
                     "SDL_gfx   >= 2.0.10 (optional)",
                     "SDL_image >= 1.2.3  (optional)",

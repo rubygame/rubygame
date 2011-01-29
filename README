@@ -18,10 +18,10 @@
 
  You will definitely need these software packages to use Rubygame:
 
- * Ruby          >= 1.8 
- * Ruby-SDL-FFI  >= 0.1
+ * Ruby          >= 1.8.6
+   * Or, JRuby   >= 1.4
+ * Ruby-SDL-FFI  >= 0.4
  * SDL           >= 1.2.7   (1.2.14 on MacOS X 10.6)
- * (MacOS X only): RSDL  ( http://github.com/knu/rsdl )
 
  It's highly recommended that you have these packages as well, or some
  cool features won't be available!
@@ -31,6 +31,10 @@
  * SDL_mixer   >= 1.2.7
  * SDL_ttf     >= 2.0.6
 
+ For running the spec suite ('rake spec'), you will need:
+
+ * RSpec   >= 2.4
+ * RCov    >= 0.9   (only needed for 'rake rcov')
 
  == Install
 
