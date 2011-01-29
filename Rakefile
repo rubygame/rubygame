@@ -42,8 +42,7 @@ gem_spec = Gem::Specification.new do |s|
 
   s.has_rdoc = true
   s.extra_rdoc_files = FileList.new do |fl|
-    fl.include "doc/*.rdoc"
-    fl.include "README", "LICENSE", "CREDITS", "ROADMAP", "NEWS"
+    fl.include "doc/*.rdoc", "./*.rdoc", "LICENSE.txt"
   end
 
   s.required_ruby_version = ">= 1.8"
@@ -69,15 +68,12 @@ end
 ########
 
 Rake::RDocTask.new do |rd|
-  rd.main = "README"
+  rd.main = "README.rdoc"
   rd.title = "Rubygame #{RUBYGAME_VERSION.join(".")} Docs"
   rd.rdoc_files.include("lib/rubygame/**/*.rb",
                         "doc/*.rdoc",
-                        "README",
-                        "LICENSE",
-                        "CREDITS",
-                        "ROADMAP",
-                        "NEWS")
+                        "./*.rdoc",
+                        "LICENSE.txt")
 end
 
 desc "Generate RI-formatted docs."
