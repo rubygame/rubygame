@@ -1,11 +1,9 @@
 
-# Prefer local library over installed version.
-$:.unshift( File.join( File.dirname(__FILE__), "..", "lib" ) )
-$:.unshift( File.join( File.dirname(__FILE__), "..", "ext", "rubygame" ) )
 
 require 'rubygame'
 include Rubygame
 include Rubygame::EventActions
+
 
 
 shared_examples_for "an event action" do 

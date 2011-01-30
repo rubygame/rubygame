@@ -1,12 +1,7 @@
 
-# Prefer local library over installed version.
-$:.unshift( File.join( File.dirname(__FILE__), "..", "lib" ) )
-$:.unshift( File.join( File.dirname(__FILE__), "..", "ext", "rubygame" ) )
 
 require 'rubygame/named_resource'
-
 include Rubygame
-
 
 TEST_DIR = File.dirname(__FILE__)
 

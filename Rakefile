@@ -132,10 +132,13 @@ end
 begin
   require 'rspec/core/rake_task'
 
+  rspec_opts = '-r spec/spec_helper.rb'
+
   desc "Run all specs"
   RSpec::Core::RakeTask.new do |t|
     ENV["RUBYGAME_NEWRECT"] = "true"
     t.pattern = 'spec/*_spec.rb'
+    t.rspec_opts = rspec_opts
   end
 
 
@@ -144,6 +147,7 @@ begin
     RSpec::Core::RakeTask.new(:all) do |t|
       ENV["RUBYGAME_NEWRECT"] = "true"
       t.pattern = 'spec/*_spec.rb'
+    t.rspec_opts = rspec_opts
     end
 
     desc "Run spec/[name]_spec.rb (e.g. 'color')"
@@ -163,6 +167,7 @@ begin
     if File.exist? path
       RSpec::Core::RakeTask.new(name) do |t|
         t.pattern = pattern
+        t.rspec_opts = rspec_opts
       end
 
       puts "\nRunning %s"%pattern
@@ -184,6 +189,7 @@ begin
     ENV["RUBYGAME_NEWRECT"] = "true"
     t.pattern = 'spec/*_spec.rb'
     t.rcov = true
+    t.rspec_opts = rspec_opts
   end
 
 
@@ -193,6 +199,7 @@ begin
       ENV["RUBYGAME_NEWRECT"] = "true"
       t.pattern = 'spec/*_spec.rb'
       t.rcov = true
+      t.rspec_opts = rspec_opts
     end
 
     desc "Run spec/[name]_spec.rb (e.g. 'color') with rcov"
@@ -213,6 +220,7 @@ begin
       RSpec::Core::RakeTask.new(name) do |t|
         t.pattern = pattern
         t.rcov = true
+        t.rspec_opts = rspec_opts
       end
 
       puts "\nRunning %s"%pattern

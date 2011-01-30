@@ -1,7 +1,4 @@
 
-# Prefer local library over installed version.
-$:.unshift( File.join( File.dirname(__FILE__), "..", "lib" ) )
-$:.unshift( File.join( File.dirname(__FILE__), "..", "ext", "rubygame" ) )
 
 require 'rubygame'
 include Rubygame::Events
@@ -9,7 +6,6 @@ include Rubygame::Events
 
 
 shared_examples_for "a joystick event" do
-
 
   ###############
   # JOYSTICK ID #

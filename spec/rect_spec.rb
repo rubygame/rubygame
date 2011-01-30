@@ -1,10 +1,9 @@
-# Prefer local library over installed version.
-$:.unshift( File.join( File.dirname(__FILE__), "..", "lib" ) )
 
 
-require 'rubygame/new_rect'
 require 'rubygame/vector2'
+require 'rubygame/new_rect'
 include Rubygame
+
 
 
 describe Rect do
