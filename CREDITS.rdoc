@@ -1,7 +1,7 @@
 == Developers
 
 - <b>John Croisant</b> / jacius 
-  Email:: jacius at users.sourceforge.net
+  Email:: jacius at gmail.com
   Role::  Creator; primary developer
   Date::  2004 - present
 
@@ -51,7 +51,7 @@
   Contribution::  Patch to add Sprite#undraw (based on UpdateGroup#undraw).
   Date::          2007-07-29 (r460).
 
-- <b>ippa</a>
+- <b>ippa</b>
   Email::         admin at rubylicio.us
   Contribution::  Patch to optimize Rect#collide_rect?
   Date::          2007-11-21 (r595)
