@@ -20,44 +20,38 @@
 #++
 
 
-this_dir = File.expand_path( File.dirname(__FILE__) )
-
-
 # Require Rubygame files. If these fail, don't rescue.
 # Note: screen.rb is intentionally loaded late.
-%w{ main
-    shared
-    clock
-    constants
-    color
-    event
-    events
-    event_handler
-    gl
-    joystick
-    named_resource
-    queue
-    surface
-    sprite
-    vector2
-}.each do |f|
-  require File.join( this_dir, "rubygame", f )
-end
+require "rubygame/main"
+require "rubygame/shared"
+require "rubygame/clock"
+require "rubygame/constants"
+require "rubygame/color"
+require "rubygame/event"
+require "rubygame/events"
+require "rubygame/event_handler"
+require "rubygame/gl"
+require "rubygame/joystick"
+require "rubygame/named_resource"
+require "rubygame/queue"
+require "rubygame/surface"
+require "rubygame/sprite"
+require "rubygame/vector2"
 
 
 # If RUBYGAME_NEWRECT is set, load the new Rect class. Otherwise load
 # the old Rect class, for backwards compatibility. The old Rect class
 # will be removed in Rubygame 3.0.
 if /^(1|t|true|y|yes)$/i =~ ENV["RUBYGAME_NEWRECT"]
-  require File.join( this_dir, "rubygame", "new_rect" )
+  require "rubygame/new_rect"
 else
-  require File.join( this_dir, "rubygame", "rect" )
+  require "rubygame/rect"
 end
 
 
 # SDL_gfx is optional, rescue if it fails.
 begin
-  require File.join( this_dir, "rubygame", "gfx" )
+  require "rubygame/gfx"
 rescue LoadError => e
   puts( "Warning: Could not load SDL_gfx! " +
         "Continuing anyway, but some Surface methods will be missing.\n" +
@@ -67,7 +61,7 @@ end
 
 # SDL_image is optional, rescue if it fails.
 begin
-  require File.join( this_dir, "rubygame", "image" )
+  require "rubygame/image"
 rescue LoadError => e
   puts( "Warning: Could not load SDL_image! " +
         "Continuing anyway, but image loading will be missing.\n" +
@@ -77,7 +71,7 @@ end
 
 # SDL_mixer is optional, rescue if it fails.
 begin
-  require File.join( this_dir, "rubygame", "mixer" )
+  require "rubygame/mixer"
 rescue LoadError => e
   puts( "Warning: Could not load SDL_mixer! " +
         "Continuing anyway, but audio features will be missing.\n" +
@@ -87,7 +81,7 @@ end
 
 # SDL_ttf is optional, rescue if it fails.
 begin
-  require File.join( this_dir, "rubygame", "ttf" )
+  require "rubygame/ttf"
 rescue LoadError => e
   puts( "Warning: Could not load SDL_ttf! " +
         "Continuing anyway, but the TTF class will be missing.\n" +
@@ -96,7 +90,7 @@ end
 
 
 # Loaded late so Screen can undefine some inherited Surface methods.
-require File.join( this_dir, "rubygame", "screen" )
+require "rubygame/screen"
 
 
 # Handle initialization automatically unless the RUBYGAME_NOINIT

@@ -18,10 +18,8 @@
 #++
 
 
-
-%w{ event_triggers event_actions }.each do |f|
-  require( File.join( File.dirname(__FILE__), f ) )
-end
+require "rubygame/event_triggers"
+require "rubygame/event_actions"
 
 
 module Rubygame 

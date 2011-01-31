@@ -20,8 +20,7 @@
 #++
 
 
-
-require( File.join( File.dirname(__FILE__), "event_hook" ) )
+require "rubygame/event_hook"
 
 
 # EventHandler provides a simple, extensible system for

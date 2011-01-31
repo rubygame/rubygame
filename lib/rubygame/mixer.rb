@@ -18,13 +18,11 @@
 #++
 
 
-
 require "ruby-sdl-ffi/mixer"
 
 Rubygame::VERSIONS[:sdl_mixer] = SDL::Mixer.Linked_Version.to_ary
 
-
-# Load sound.rb, music.rb, and deprecated_mixer.rb
-%w{ audio sound music deprecated_mixer }.each do |f|
-  require File.join( File.dirname(__FILE__), f )
-end
+require "rubygame/audio"
+require "rubygame/sound"
+require "rubygame/music"
+require "rubygame/deprecated_mixer"

@@ -18,15 +18,15 @@
 #++
 
 
+require "rubygame/color/models/base"
+require "rubygame/color/models/rgb"
+require "rubygame/color/models/rgb255"
+require "rubygame/color/models/hsv"
+require "rubygame/color/models/hsl"
 
-%w{  base rgb rgb255 hsv hsl  }.each do |f|
-  require( File.join( File.dirname(__FILE__), "color", "models", f ) )
-end
-
-%w{  palette x11 css  }.each do |f|
-  require( File.join( File.dirname(__FILE__), "color", "palettes", f ) )
-end
-
+require "rubygame/color/palettes/palette"
+require "rubygame/color/palettes/x11"
+require "rubygame/color/palettes/css"
 
 
 module Rubygame

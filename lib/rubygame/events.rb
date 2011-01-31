@@ -454,8 +454,8 @@ module Rubygame
 end
 
 
-# Load all the ruby files in events/
-glob = File.join( File.dirname(__FILE__), "events", "*.rb" )
-Dir.glob( glob ).each do |path|
-  require path
-end
+require "rubygame/events/clock_events"
+require "rubygame/events/joystick_events"
+require "rubygame/events/keyboard_events"
+require "rubygame/events/misc_events"
+require "rubygame/events/mouse_events"
