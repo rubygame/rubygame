@@ -37,13 +37,13 @@ module Rubygame
   def self.enable_key_repeat( delay=:default, interval=:default )
 
     delay = if delay == :default
-              SDL::DEFAULT_REPEAT_DELAY
+              SDL::DEFAULT_REPEAT_DELAY.to_f / 1000
             else
               delay.to_f
             end
 
     interval = if interval == :default
-                 SDL::DEFAULT_REPEAT_INTERVAL
+                 SDL::DEFAULT_REPEAT_INTERVAL.to_f / 1000
                else
                  interval.to_f
                end
