@@ -15,6 +15,7 @@ panda = samples_dir + "panda.png"
 dne = test_dir + "does_not_exist.png"
 
 
+
 describe Surface, "(creation)" do
   before(:each) do
     Rubygame.init()
@@ -42,6 +43,67 @@ describe Surface, "(creation)" do
       Surface.new([1])
     }.should raise_error(ArgumentError)
   end
+
+
+  context "with :alpha option" do
+
+    context "with no :depth option" do
+      it "should have depth 32" do
+        surface = Surface.new([10,10], :alpha => true)
+        surface.depth.should == 32
+      end
+
+      it "should not emit a warning" do
+        Kernel.should_not_receive(:warn)
+        surface = Surface.new([10,10], :alpha => true)
+      end
+    end
+
+    context "with :depth => 0" do
+      it "should have depth 32" do
+        surface = Surface.new([10,10], :alpha => true, :depth => 0)
+        surface.depth.should == 32
+      end
+
+      it "should not emit a warning" do
+        Kernel.should_not_receive(:warn)
+        surface = Surface.new([10,10], :alpha => true, :depth => 0)
+      end
+    end
+
+    context "with :depth => 32" do
+      it "should have depth 32" do
+        surface = Surface.new([10,10], :alpha => true, :depth => 32)
+        surface.depth.should == 32
+      end
+
+      it "should not emit a warning" do
+        Kernel.should_not_receive(:warn)
+        surface = Surface.new([10,10], :alpha => true, :depth => 32)
+      end
+    end
+
+    [8, 15, 16, 24].each { |d|
+      context "with :depth => #{d}" do
+        it "should have depth 32" do
+          # Don't want the warning text mucking up rspec output
+          Kernel.stub(:warn)
+
+          surface = Surface.new([10,10], :alpha => true, :depth => d)
+          surface.depth.should == 32
+        end
+
+        it "should emit a warning" do
+          Kernel.should_receive(:warn).
+            with("WARNING: Cannot create a #{d}-bit Surface with " +
+                 "an alpha channel. Using depth 32 instead.")
+          surface = Surface.new([10,10], :alpha => true, :depth => d)
+        end
+      end
+    }
+
+  end
+
 end
 
 

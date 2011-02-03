@@ -74,9 +74,11 @@ class Rubygame::Surface
   #               the depth based on the Screen mode or system depth.
   #               Possible values: 0, 8, 15, 16, 24, 32. Default: 0.
   # 
-  #   :alpha::    If true, Surfaces with depth 32 will have an alpha
-  #               channel (per-pixel transparency). Default: true.
-  #               (Note: Other depths cannot have an alpha channel.)
+  #   :alpha::    If true, the Surface will have an alpha channel
+  #               (per-pixel transparency). Only Surfaces with depth
+  #               32 can have an alpha channel. If an incompatible
+  #               :depth option is specified, a warning message will be
+  #               printed and depth 32 used instead. Default: false.
   # 
   #   :hardware:: If true, try to create a hardware accelerated
   #               Surface (using a graphics card), which may be very
@@ -181,7 +183,14 @@ class Rubygame::Surface
              " (expected integer >= 0)" )
     end
 
-    alpha = options.has_key?(:alpha) ? options[:alpha] : true
+    alpha = options.has_key?(:alpha) ? options[:alpha] : false
+    if alpha
+      unless depth == 0 or depth == 32
+        Kernel.warn("WARNING: Cannot create a #{depth}-bit Surface "+
+                    "with an alpha channel. Using depth 32 instead.")
+      end
+      depth = 32
+    end
 
     masks = options[:masks]
     if masks.nil?
