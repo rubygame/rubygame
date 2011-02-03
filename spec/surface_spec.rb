@@ -1067,3 +1067,23 @@ describe Surface, "(vector support)" do
   end
 
 end
+
+
+
+describe Surface do
+
+  context "without an alpha channel" do
+    it "should be flat" do
+      surface = Surface.new([10,10], :alpha => false)
+      surface.should be_flat
+    end
+  end
+
+  context "with an alpha channel" do
+    it "should not be flat" do
+      surface = Surface.new([10,10], :alpha => true)
+      surface.should_not be_flat
+    end
+  end
+
+end

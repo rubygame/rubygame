@@ -898,6 +898,15 @@ class Rubygame::Surface
   end
 
 
+  # Returns true if the Surface does NOT have a per-pixel alpha
+  # channel. (Not to be confused with #alpha, which returns the
+  # Surface's overall opacity.)
+  # 
+  def flat?
+    (@struct.format.Amask == 0)
+  end
+
+
   # Save the Surface as a Windows Bitmap (BMP) file with the given filename.
   # May raise SDLError if a problem occurs.
   #
