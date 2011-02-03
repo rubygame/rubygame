@@ -1087,3 +1087,157 @@ describe Surface do
   end
 
 end
+
+
+
+describe Surface, "#flatten" do
+
+  shared_examples_for "flatten" do |args|
+    args ||= []
+
+    it "should return a new Surface" do
+      orig_color = @surface.get_at([0,0])
+      s = @surface.flatten(*args)
+      s.fill(:red)
+      @surface.get_at([0,0]).should == orig_color
+    end
+
+    it "should return a flat Surface" do
+      @surface.flatten(*args).should be_flat
+    end
+
+    it "should not modify the original Surface" do
+      is_flat = @surface.flat?
+      @surface.flatten(*args)
+      @surface.flat?.should == is_flat
+    end
+
+
+    # Some examples of invalid args
+    invalid_scenarios =
+      [
+       ["given true",               [true],       TypeError],
+       ["given a bad color symbol", [:foo],       IndexError],
+       ["given a bad color name",   ["foo"],      IndexError],
+       ["given an integer",         [1],          TypeError],
+       ["given a float",            [2.3],        TypeError],
+       ["given an empty array",     [[]],         TypeError],
+       ["given a hash",             [{}],         TypeError],
+       ["given some object",        [Object.new], TypeError],
+      ]
+
+    invalid_scenarios.each do |scenario, args, error|
+      context scenario do
+        it "should raise #{error}" do
+          expect{ @surface.flatten(*args) }.to raise_error(error)
+        end
+      end
+    end
+
+  end
+
+
+  context "with an alpha channel" do
+
+    before(:each) do
+      Rubygame.init()
+      @surface = Surface.new([3,1], :depth => 32, :alpha => true)
+      @surface.set_at( [0,0], [0, 128, 255,   0] )
+      @surface.set_at( [1,0], [0, 128, 255, 128] )
+      @surface.set_at( [2,0], [0, 128, 255, 255] )
+    end
+
+    after(:each) do
+      Rubygame.quit
+    end
+
+
+    nocolor_scenarios = {
+      "given no args" => [],
+      "given nil"     => [nil],
+      "given false"   => [false],
+    }
+
+    nocolor_scenarios.each do |scenario, args|
+      context scenario do
+        it_should_behave_like "flatten", args
+
+        it "should only affect the alpha channel" do
+          s = @surface.flatten(*args)
+          s.get_at([0,0]).should == [0, 128, 255, 255]
+          s.get_at([1,0]).should == [0, 128, 255, 255]
+          s.get_at([2,0]).should == [0, 128, 255, 255]
+        end
+      end
+    end
+
+
+    color_scenarios = {
+      "given a color name symbol" => [:sky_blue],
+      "given a color name string" => ["sky_blue"],
+      "given a Color"             => [Rubygame::Color[:sky_blue]],
+      "given a [R,G,B] array"     => [[135, 206, 235]],
+      "given a [R,G,B,A] array"   => [[135, 206, 235, 128]],
+    }
+
+    color_scenarios.each do |scenario, args|
+
+      context scenario do
+        it_should_behave_like "flatten", args
+
+        it "should blit on top of the solid color" do
+          s = @surface.flatten(*args)
+          s.get_at([0,0]).should == [135, 206, 235, 255]
+          s.get_at([1,0]).should == [ 67, 167, 245, 255]
+          s.get_at([2,0]).should == [  0, 128, 255, 255]
+        end
+      end
+
+    end
+
+  end
+
+
+  context "with no alpha channel" do
+
+    before(:each) do
+      Rubygame.init()
+      @surface = Surface.new([3,1], :depth => 32)
+      @surface.set_at( [0,0], [0, 128, 255] )
+      @surface.set_at( [1,0], [0, 128, 255] )
+      @surface.set_at( [2,0], [0, 128, 255] )
+    end
+
+    after(:each) do
+      Rubygame.quit
+    end
+
+
+    scenarios = {
+      "given no argument"         => [],
+      "given nil"                 => [nil],
+      "given false"               => [false],
+      "given a color name symbol" => [:sky_blue],
+      "given a color name string" => ["sky_blue"],
+      "given a Color"             => [Rubygame::Color[:sky_blue]],
+      "given a [R,G,B] array"     => [[135, 206, 235]],
+      "given a [R,G,B,A] array"   => [[135, 206, 235, 128]],
+    }
+
+    scenarios.each do |scenario, args|
+
+      context scenario do
+        it_should_behave_like "flatten", args
+
+        it "should not affect any color channel" do
+          s = @surface.flatten(*args)
+          s.get_at([0,0]).should == [0, 128, 255, 255]
+          s.get_at([1,0]).should == [0, 128, 255, 255]
+          s.get_at([2,0]).should == [0, 128, 255, 255]
+        end
+      end
+
+    end
+
+  end
+end

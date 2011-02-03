@@ -907,6 +907,57 @@ class Rubygame::Surface
   end
 
 
+  # Returns a copy of this Surface with no per-pixel alpha channel. If
+  # this Surface already has no alpha channel, returns a copy anyway.
+  # 
+  # NOTE: This method only affects the per-pixel alpha channel, it
+  # does not change the Surface's overall #alpha value.
+  # 
+  # By default, the alpha channel is simply removed, without modifying
+  # the RGB channels. But, if you give a color for +background+, the
+  # Surface is blitted on top of a new Surface filled with that color.
+  # 
+  def flatten( background=nil )
+    newformat = SDL::PixelFormat.new( @struct.format )
+    newformat.Aloss  = 0
+    newformat.Amask  = 0
+    newformat.Ashift = 0
+
+    # Strip out SRCALPHA flag
+    newflags = @struct.flags & ~SDL::SRCALPHA
+
+    newsurf = nil
+
+    if( Rubygame.init_video_system() == 0 )
+
+      if background
+        # Create a new Surface with the desired format, fill it with
+        # the background color, then blit the original on top.
+        newsurf = SDL.CreateRGBSurface( flags, @struct.w, @struct.h, 
+                                        newformat.BitsPerPixel,
+                                        newformat.Rmask, newformat.Gmask,
+                                        newformat.Bmask, newformat.Amask )
+        unless( newsurf.pointer.null? )
+          SDL.FillRect( newsurf, nil, _map_sdl_color(background) )
+          SDL.BlitSurface( @struct, nil, newsurf, nil )
+        end
+      else
+        # Just remove the alpha channel.
+        newsurf = SDL.ConvertSurface( @struct, newformat, newflags )
+      end
+
+    end
+
+    if( newsurf.nil? or newsurf.pointer.null? )
+      raise( Rubygame::SDLError,
+             "Could not flatten Surface: #{SDL.GetError()}" )
+    end
+
+    # Wrap it
+    return self.class.new( newsurf )
+  end
+
+
   # Save the Surface as a Windows Bitmap (BMP) file with the given filename.
   # May raise SDLError if a problem occurs.
   #
