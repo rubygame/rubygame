@@ -902,6 +902,8 @@ class Rubygame::Surface
   # channel. (Not to be confused with #alpha, which returns the
   # Surface's overall opacity.)
   # 
+  # See also #flatten and #unflatten.
+  # 
   def flat?
     (@struct.format.Amask == 0)
   end
@@ -916,6 +918,10 @@ class Rubygame::Surface
   # By default, the alpha channel is simply removed, without modifying
   # the RGB channels. But, if you give a color for +background+, the
   # Surface is blitted on top of a new Surface filled with that color.
+  # 
+  # See also #flat? and #unflatten.
+  # 
+  # May raise SDLError if a problem occurs.
   # 
   def flatten( background=nil )
     newformat = SDL::PixelFormat.new( @struct.format )
@@ -951,6 +957,49 @@ class Rubygame::Surface
     if( newsurf.nil? or newsurf.pointer.null? )
       raise( Rubygame::SDLError,
              "Could not flatten Surface: #{SDL.GetError()}" )
+    end
+
+    # Wrap it
+    return self.class.new( newsurf )
+  end
+
+
+  # Returns a copy of this Surface with a per-pixel alpha channel. If
+  # this Surface already has an alpha channel, returns a copy anyway.
+  # The color depth of the copy may be different than the original,
+  # if the original color depth does not support alpha channels.
+  # 
+  # This method is very similar to #to_display_alpha, except that if
+  # the Surface already has an alpha channel, this method will never
+  # change the underlying pixel format (i.e. masks).
+  # 
+  # If this Surface has a #colorkey, but does NOT already have an
+  # alpha channel, pixels matching the colorkey will become totally
+  # transparent in the new copy. If this Surface already has an alpha
+  # channel, the colorkey is ignored. This is a limitation of SDL.
+  # 
+  # NOTE: This method only affects the per-pixel alpha channel, it
+  # does not change the Surface's overall #alpha value. (But, be aware
+  # that the overall #alpha value is ignored for Surfaces with a
+  # per-pixel alpha channel. This is a limitation of SDL.)
+  # 
+  # See also #flat? and #flatten.
+  # 
+  # May raise SDLError if a problem occurs.
+  # 
+  def unflatten
+    return dup if not flat?
+
+    newsurf =
+      if( Rubygame.init_video_system() == 0 )
+        SDL.DisplayFormatAlpha( @struct )
+      else
+        nil
+      end
+
+    if( newsurf.nil? or newsurf.pointer.null?)
+      raise( Rubygame::SDLError,
+             "Could not unflatten Surface: #{SDL.GetError()}" )
     end
 
     # Wrap it
