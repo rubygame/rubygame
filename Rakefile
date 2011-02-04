@@ -147,7 +147,7 @@ begin
     RSpec::Core::RakeTask.new(:all) do |t|
       ENV["RUBYGAME_NEWRECT"] = "true"
       t.pattern = 'spec/*_spec.rb'
-    t.rspec_opts = rspec_opts
+      t.rspec_opts = rspec_opts
     end
 
     desc "Run spec/[name]_spec.rb (e.g. 'color')"
@@ -155,11 +155,30 @@ begin
       puts( "This is just a stand-in spec.",
             "Run rake spec:[name] where [name] is e.g. 'color', 'music'." )
     end
+
+    desc "Run specific examples from spec/[name]_spec.rb"
+    task "name:\"example\"" do
+      puts( "This is just a stand-in spec.",
+            "Run rake spec:[name]:\"[example]\" where [name] is e.g."+
+            "'color', and [example] is a pattern matching an example." )
+    end
   end
 
 
   rule(/spec:.+/) do |t|
-    name = t.name.gsub("spec:","")
+
+    # Matches e.g. 'spec:foo' and 'spec:foo:"Example pattern"'
+    spec_regexp = /spec:([^:]+)(?::(.+))?/
+
+    match = t.name.match(spec_regexp)
+
+    unless match
+      puts "Invalid spec task: #{t.name}"
+      exit 1
+    end
+
+    name = match[1]
+    example = match[2] # optional
 
     pattern = File.join('spec', '%s_spec.rb'%name)
     path = File.join( File.dirname(__FILE__), pattern )
@@ -168,6 +187,9 @@ begin
       RSpec::Core::RakeTask.new(name) do |t|
         t.pattern = pattern
         t.rspec_opts = rspec_opts
+        if example
+          t.rspec_opts += " -e #{example.inspect}"
+        end
       end
 
       puts "\nRunning %s"%pattern
