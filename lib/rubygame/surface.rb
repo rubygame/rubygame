@@ -74,11 +74,12 @@ class Rubygame::Surface
   #               the depth based on the Screen mode or system depth.
   #               Possible values: 0, 8, 15, 16, 24, 32. Default: 0.
   # 
-  #   :alpha::    If true, the Surface will have an alpha channel
-  #               (per-pixel transparency). Only Surfaces with depth
-  #               32 can have an alpha channel. If an incompatible
-  #               :depth option is specified, a warning message will be
-  #               printed and depth 32 used instead. Default: false.
+  #   :alpha::    If true, the Surface will have a per-pixel alpha
+  #               channel (i.e. it will not be #flat?). Only Surfaces
+  #               with depth 32 can have an alpha channel. If an
+  #               incompatible :depth option is specified, a warning
+  #               message will be printed and depth 32 used instead.
+  #               Default: false.
   # 
   #   :hardware:: If true, try to create a hardware accelerated
   #               Surface (using a graphics card), which may be very
@@ -395,8 +396,8 @@ class Rubygame::Surface
   # 3.0. Use #opacity instead (but be aware that it ranges from 0.0 to
   # 1.0, not 0 to 255).
   #
-  # Return the per-surface alpha (opacity; non-transparency) of the surface.
-  # It can range from 0 (full transparent) to 255 (full opaque).
+  # Return the per-surface alpha (i.e. #opacity) of the surface. It
+  # can range from 0 (full transparent) to 255 (full opaque).
   # 
   def alpha
     Rubygame.deprecated("Surface#alpha", "3.0")
@@ -407,8 +408,8 @@ class Rubygame::Surface
   # 3.0. Use #opacity or #opacity= instead (but be aware that it
   # ranges from 0.0 to 1.0, not 0 to 255).
   #
-  # Set the per-surface alpha (opacity; non-transparency) of the surface.
-  # You can do the same thing with #alpha= if you don't care about flags.
+  # Sets the per-surface alpha (i.e. #opacity) of the surface. You can
+  # do the same thing with #alpha= if you don't care about flags.
   #
   # This function takes these arguments:
   # alpha:: requested opacity of the surface. Alpha must be from 0
@@ -692,10 +693,10 @@ class Rubygame::Surface
   #    get_at( [x,y] )
   #    get_at( x,y )
   #
-  # Return the color [r,g,b,a] (0-255) of the pixel at [x,y].
-  # If the Surface does not have a per-pixel alpha channel (i.e. not
-  # 32-bit), alpha will always be 255. The Surface's overall alpha
-  # value (from #set_alpha) does not affect the returned alpha value.
+  # Return the color [r,g,b,a] (0-255) of the pixel at [x,y]. If the
+  # Surface does not have a per-pixel alpha channel (i.e. not #flat?),
+  # alpha will always be 255. The Surface's #opacity does not affect
+  # the returned alpha value.
   #
   # Raises IndexError if the coordinates are out of bounds.
   #
@@ -744,8 +745,8 @@ class Rubygame::Surface
   #     set_at( [x,y], color )
   #
   # Set the color of the pixel at [x,y]. If no alpha value is given,
-  # or if the Surface does not have a per-pixel alpha channel (i.e. not
-  # 32-bit), the pixel will be set at full opacity.
+  # or if the Surface does not have a per-pixel alpha channel (i.e.
+  # not #flat?), the pixel will be set at full opacity.
   #
   # color can be one of:
   # * an Array, [r,g,b] or [r,g,b,a] with each component in 0-255.
@@ -918,13 +919,13 @@ class Rubygame::Surface
 
 
 
-  # Copies the Surface to a new Surface with the pixel format of the
-  # display, suitable for fast blitting to the display surface (i.e.
-  # Screen). May raise SDLError if a problem occurs.
+  # Returns a copy of this Surface, converted to the Screen's pixel
+  # format (to make blitting to the Screen more efficient).
+  # May raise SDLError if a problem occurs.
   #
-  # If you want to take advantage of hardware colorkey or alpha blit
-  # acceleration, you should set the colorkey and alpha value before
-  # calling this function.
+  # The new Surface returned by this method will be flat (see #flat?).
+  # You can use #to_display_alpha to convert to the Screen's pixel
+  # format without losing the alpha channel
   #
   def to_display
     newsurf =
@@ -945,14 +946,14 @@ class Rubygame::Surface
   end
 
 
-
-  # Like #to_display except the Surface has an extra channel for alpha
-  # (i.e. opacity). May raise SDLError if a problem occurs.
+  # Like #to_display except the new Surface will have a per-pixel
+  # alpha channel (i.e. it will not be #flat?). May raise SDLError if
+  # a problem occurs.
   #
-  # This function can be used to convert a colorkey to an alpha
-  # channel, if the SRCCOLORKEY flag is set on the surface. The
-  # generated surface will then be transparent (alpha=0) where the
-  # pixels match the colorkey, and opaque (alpha=255) elsewhere.
+  # If this Surface has a #colorkey, but does NOT already have an
+  # alpha channel, pixels matching the colorkey will become totally
+  # transparent in the new copy. If this Surface already has an alpha
+  # channel, the colorkey is ignored. This is a limitation of SDL.
   #
   def to_display_alpha
     newsurf =
