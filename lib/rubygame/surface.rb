@@ -1129,7 +1129,7 @@ class Rubygame::Surface
       :bmask    => m[2],
       :amask    => m[3],
       :pixels   => pixels,
-      :alpha    => alpha,
+      :opacity  => opacity,
       :colorkey => colorkey,
       :palette  => palette,
       :clip     => SDL.GetClipRect(@struct).to_ary,
@@ -1161,8 +1161,8 @@ class Rubygame::Surface
                     dump[:flags] & (SDL::SRCCOLORKEY|SDL::RLEACCEL) )
     end
 
-    if dump[:alpha]
-      set_alpha( dump[:alpha], dump[:flags] & SDL::SRCALPHA )
+    if dump[:opacity]
+      self.opacity = dump[:opacity]
     end
 
     if dump[:palette]

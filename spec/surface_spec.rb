@@ -206,7 +206,7 @@ describe Surface, "(marshalling)" do
     @surf.set_at([0,0], [12,34,56,78])
     @surf.set_at([9,9], [90,12,34,56])
     @surf.colorkey = [34,23,12]
-    @surf.alpha = 123
+    @surf.opacity = 0.123
     @surf.clip = [4,3,2,1]
   end
 
@@ -244,9 +244,9 @@ describe Surface, "(marshalling)" do
     surf2.colorkey.should == [34,23,12]
   end
 
-  it "should preserve alpha" do
+  it "should preserve opacity" do
     surf2 = Marshal.load( Marshal.dump(@surf) )
-    surf2.alpha.should == 123
+    surf2.opacity.should == 0.123
   end
 
   it "should preserve palette" do
