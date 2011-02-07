@@ -1292,6 +1292,20 @@ describe Surface, "#opacity" do
       @surface.opacity(2)
       @surface.opacity.should eql( 1.0 )
     end
+
+    invalid_args = {
+      "true"        => true,
+      "a symbol"    => :symbol,
+      "an array"    => [1.0],
+      "a hash"      => {1=>2},
+      "some object" => Object.new,
+    }
+
+    invalid_args.each do |thing, arg|
+      it "should fail when given #{thing}" do
+        expect{@surface.opacity(arg)}.to raise_error
+      end
+    end
   end
 
 end
@@ -1330,4 +1344,17 @@ describe Surface, "#opacity=" do
     @surface.opacity.should eql( 1.0 )
   end
 
+  invalid_args = {
+    "true"        => true,
+    "a symbol"    => :symbol,
+    "an array"    => [1.0],
+    "a hash"      => {1=>2},
+    "some object" => Object.new,
+  }
+
+  invalid_args.each do |thing, arg|
+    it "should fail when given #{thing}" do
+      expect{@surface.opacity = arg}.to raise_error
+    end
+  end
 end
