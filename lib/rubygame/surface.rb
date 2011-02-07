@@ -183,6 +183,8 @@ class Rubygame::Surface
              " (expected integer >= 0)" )
     end
 
+    flags = 0
+
     alpha = options.has_key?(:alpha) ? options[:alpha] : false
     if alpha
       unless depth == 0 or depth == 32
@@ -190,6 +192,7 @@ class Rubygame::Surface
                     "with an alpha channel. Using depth 32 instead.")
       end
       depth = 32
+      flags |= SDL::SRCALPHA
     end
 
     masks = options[:masks]
@@ -202,7 +205,6 @@ class Rubygame::Surface
       end
     end
 
-    flags = 0
     flags |= SDL::HWSURFACE if options[:hardware]    
 
     { :width  => size[0],
