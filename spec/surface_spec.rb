@@ -665,6 +665,10 @@ describe "A frozen", Surface do
     lambda{ @surface.opacity }.should_not raise_error
   end
 
+  it "opacity with arg should raise error" do
+    lambda{ @surface.opacity(0) }.should raise_error
+  end
+
   it "opacity= should raise error" do
     lambda{ @surface.opacity = 0 }.should raise_error
   end
