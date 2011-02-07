@@ -360,7 +360,7 @@ class Rubygame::Surface
   # ranging from 0.0 (fully transparent) to 1.0 (fully opaque).
   # The default opacity for new Surfaces is 1.0.
   # 
-  # If you given an argument to this method, it acts like #opacity=,
+  # If you give an argument to this method, it acts like #opacity=,
   # except that it returns self (so you can chain method calls).
   # 
   # Opacity < 1.0 makes flat Surfaces (see #flat?) appear partially
