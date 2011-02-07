@@ -128,20 +128,22 @@ class Rubygame::Surface
         raise Rubygame::SDLError, "Surface cannot wrap NULL Surface!"
       else
         @struct = surf
+        @opacity ||= @struct.format.alpha / 255.0
       end
     else
       # Support old argument style for backwards compatibility.
       if args.size > 1 or not args[0].is_a? Hash
         _initialize_old( size, *args )
+        @opacity ||= @struct.format.alpha / 255.0
       else
         args = _parse_args( size, args[0] )
         @struct = SDL.CreateRGBSurface( args[:flags],
                                         args[:width], args[:height],
                                         args[:depth], *args[:masks] )
+        @opacity ||= @struct.format.alpha / 255.0
       end
     end
 
-    @opacity = @struct.format.alpha / 255.0
   end
 
 
