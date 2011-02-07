@@ -437,6 +437,8 @@ class Rubygame::Surface
 
     result = SDL.SetAlpha(@struct, flags, alpha.to_i)
     raise Rubygame::SDLError, SDL.GetError() unless result == 0
+
+    @opacity = (alpha/255.0)
     return self
   end
 
@@ -453,6 +455,8 @@ class Rubygame::Surface
 
     result = SDL.SetAlpha(@struct, flags, alpha.to_i)
     raise Rubygame::SDLError, SDL.GetError() unless result == 0
+
+    @opacity = (alpha/255.0)
     return self
   end
 
