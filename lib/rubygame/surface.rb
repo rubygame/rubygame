@@ -1,6 +1,6 @@
 #--
 #	Rubygame -- Ruby code and bindings to SDL to facilitate game creation
-#	Copyright (C) 2004-2009  John Croisant
+#	Copyright (C) 2004-2011  John Croisant
 #
 #	This library is free software; you can redistribute it and/or
 #	modify it under the terms of the GNU Lesser General Public
@@ -140,6 +140,7 @@ class Rubygame::Surface
       end
     end
 
+    @opacity = @struct.format.alpha / 255.0
   end
 
 
@@ -341,13 +342,71 @@ class Rubygame::Surface
   end
 
 
+  # call-seq:
+  #   opacity  ->  Float
+  #   opacity( new_value )  ->  self
+  # 
+  # Returns the Surface's opacity (aka "per-surface alpha") as a Float
+  # ranging from 0.0 (fully transparent) to 1.0 (fully opaque).
+  # The default opacity for new Surfaces is 1.0.
+  # 
+  # If you given an argument to this method, it acts like #opacity=,
+  # except that it returns self (so you can chain method calls).
+  # 
+  # Opacity < 1.0 makes flat Surfaces (see #flat?) appear partially
+  # transparent when blitted onto another Surface. Opacity has NO
+  # EFFECT on Surfaces with a per-pixel alpha channel (i.e. non-flat
+  # Surfaces).
+  # 
+  def opacity( set=nil )
+    if set
+      self.opacity = set
+      self
+    else
+      @opacity
+    end
+  end
+
+  # Sets the Surface's opacity (aka "per-surface alpha") as a Float
+  # ranging from 0.0 (fully transparent) to 1.0 (fully opaque).
+  # 
+  # See also #opacity.
+  # 
+  def opacity=( new_value )
+    raise "can't modify frozen object" if frozen?
+
+    new_value = new_value.to_f
+    new_value = 0.0 if new_value < 0.0
+    new_value = 1.0 if new_value > 1.0
+    @opacity = new_value
+
+    flags = 0
+    if @opacity < 1.0 or not self.flat?
+      flags = SDL::SRCALPHA
+    end
+
+    SDL.SetAlpha( @struct, flags, (255 * @opacity).to_i )
+
+    @opacity
+  end
+
+
+  # NOTE: This method is DEPRECATED and will be removed in Rubygame
+  # 3.0. Use #opacity instead (but be aware that it ranges from 0.0 to
+  # 1.0, not 0 to 255).
+  #
   # Return the per-surface alpha (opacity; non-transparency) of the surface.
   # It can range from 0 (full transparent) to 255 (full opaque).
-  #
+  # 
   def alpha
+    Rubygame.deprecated("Surface#alpha", "3.0")
     @struct.format.alpha
   end
 
+  # NOTE: This method is DEPRECATED and will be removed in Rubygame
+  # 3.0. Use #opacity or #opacity= instead (but be aware that it
+  # ranges from 0.0 to 1.0, not 0 to 255).
+  #
   # Set the per-surface alpha (opacity; non-transparency) of the surface.
   # You can do the same thing with #alpha= if you don't care about flags.
   #
@@ -362,6 +421,8 @@ class Rubygame::Surface
   # Returns self.
   #
   def set_alpha( alpha, flags=Rubygame::SRCALPHA )
+    Rubygame.deprecated("Surface#set_alpha", "3.0")
+
     raise "can't modify frozen object" if frozen?
 
     result = SDL.SetAlpha(@struct, flags, alpha.to_i)
@@ -369,7 +430,21 @@ class Rubygame::Surface
     return self
   end
 
-  alias :alpha= :set_alpha
+  # Alias of #set_alpha.
+  # 
+  # NOTE: This method is DEPRECATED and will be removed in Rubygame
+  # 3.0. Use #opacity or #opacity= instead (but be aware that it
+  # ranges from 0.0 to 1.0, not 0 to 255).
+  #
+  def alpha=( alpha, flags=Rubygame::SRCALPHA )
+    Rubygame.deprecated("Surface#alpha=", "3.0")
+
+    raise "can't modify frozen object" if frozen?
+
+    result = SDL.SetAlpha(@struct, flags, alpha.to_i)
+    raise Rubygame::SDLError, SDL.GetError() unless result == 0
+    return self
+  end
 
 
   # call-seq:
@@ -899,8 +974,7 @@ class Rubygame::Surface
 
 
   # Returns true if the Surface does NOT have a per-pixel alpha
-  # channel. (Not to be confused with #alpha, which returns the
-  # Surface's overall opacity.)
+  # channel.
   # 
   # See also #flatten and #unflatten.
   # 
@@ -913,7 +987,7 @@ class Rubygame::Surface
   # this Surface already has no alpha channel, returns a copy anyway.
   # 
   # NOTE: This method only affects the per-pixel alpha channel, it
-  # does not change the Surface's overall #alpha value.
+  # does not change the Surface's #opacity.
   # 
   # By default, the alpha channel is simply removed, without modifying
   # the RGB channels. But, if you give a color for +background+, the
@@ -979,9 +1053,9 @@ class Rubygame::Surface
   # channel, the colorkey is ignored. This is a limitation of SDL.
   # 
   # NOTE: This method only affects the per-pixel alpha channel, it
-  # does not change the Surface's overall #alpha value. (But, be aware
-  # that the overall #alpha value is ignored for Surfaces with a
-  # per-pixel alpha channel. This is a limitation of SDL.)
+  # does not change the Surface's #opacity. (But, be aware that
+  # #opacity is ignored for Surfaces with a per-pixel alpha channel.
+  # This is a limitation of SDL.)
   # 
   # See also #flat? and #flatten.
   # 

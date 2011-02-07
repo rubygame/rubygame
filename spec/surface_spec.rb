@@ -1,5 +1,3 @@
-# This is mostly for regression testing and bugfix confirmation at the moment.
-
 
 require 'rubygame'
 include Rubygame
@@ -616,6 +614,15 @@ describe "A frozen", Surface do
 
   it "alpha= should raise error" do
     lambda{ @surface.alpha = 0 }.should raise_error
+  end
+
+ 
+  it "opacity should NOT raise error" do
+    lambda{ @surface.opacity }.should_not raise_error
+  end
+
+  it "opacity= should raise error" do
+    lambda{ @surface.opacity = 0 }.should raise_error
   end
 
  
@@ -1240,4 +1247,87 @@ describe Surface, "#flatten" do
     end
 
   end
+end
+
+
+
+describe Surface, "#opacity" do
+
+  before :each do
+    @surface = Rubygame::Surface.new([10,10])
+  end
+
+  it "should default to 1.0" do
+    @surface.opacity.should eql( 1.0 )
+  end
+
+  context "given an argument" do
+    it "should return self" do
+      @surface.opacity(0.5).should equal( @surface )
+    end
+
+    it "should set opacity" do
+      @surface.opacity(0.5)
+      @surface.opacity.should eql( 0.5 )
+    end
+
+    it "should clamp floats less than 0.0" do
+      @surface.opacity(-1.0)
+      @surface.opacity.should eql( 0.0 )
+    end
+
+    it "should clamp floats greater than 1.0" do
+      @surface.opacity(0.0)
+      @surface.opacity(2.0)
+      @surface.opacity.should eql( 1.0 )
+    end
+
+    it "should convert integers to floats" do
+      @surface.opacity(-1)
+      @surface.opacity.should eql( 0.0 )
+      @surface.opacity(0)
+      @surface.opacity.should eql( 0.0 )
+      @surface.opacity(1)
+      @surface.opacity.should eql( 1.0 )
+      @surface.opacity(2)
+      @surface.opacity.should eql( 1.0 )
+    end
+  end
+
+end
+
+
+describe Surface, "#opacity=" do
+
+  before :each do
+    @surface = Rubygame::Surface.new([10,10])
+  end
+
+  it "should set opacity" do
+    @surface.opacity = 0.5
+    @surface.opacity.should eql( 0.5 )
+  end
+
+  it "should clamp floats less than 0.0" do
+    @surface.opacity = -1.0
+    @surface.opacity.should eql( 0.0 )
+  end
+
+  it "should clamp floats greater than 1.0" do
+    @surface.opacity = 0.0
+    @surface.opacity = 2.0
+    @surface.opacity.should eql( 1.0 )
+  end
+
+  it "should convert integers to floats" do
+    @surface.opacity = -1
+    @surface.opacity.should eql( 0.0 )
+    @surface.opacity = 0
+    @surface.opacity.should eql( 0.0 )
+    @surface.opacity = 1
+    @surface.opacity.should eql( 1.0 )
+    @surface.opacity = 2
+    @surface.opacity.should eql( 1.0 )
+  end
+
 end
