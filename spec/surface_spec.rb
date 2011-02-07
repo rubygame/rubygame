@@ -102,6 +102,50 @@ describe Surface, "(creation)" do
 
   end
 
+
+  context "with :opacity option" do
+    it "should set the opacity" do
+      @surface = Surface.new([10,10], :opacity => 0.5)
+      @surface.opacity.should eql( 0.5 )
+    end
+
+    it "should clamp floats less than 0.0" do
+      @surface = Surface.new([10,10], :opacity => -1.0)
+      @surface.opacity.should eql( 0.0 )
+    end
+
+    it "should clamp floats greater than 1.0" do
+      @surface = Surface.new([10,10], :opacity => 2.0)
+      @surface.opacity.should eql( 1.0 )
+    end
+
+    it "should convert integers to floats" do
+      @surface = Surface.new([10,10], :opacity => -1)
+      @surface.opacity.should eql( 0.0 )
+      @surface = Surface.new([10,10], :opacity => 0)
+      @surface.opacity.should eql( 0.0 )
+      @surface = Surface.new([10,10], :opacity => 1)
+      @surface.opacity.should eql( 1.0 )
+      @surface = Surface.new([10,10], :opacity => 2)
+      @surface.opacity.should eql( 1.0 )
+    end
+
+    invalid_args = {
+      "true"        => true,
+      "a symbol"    => :symbol,
+      "an array"    => [1.0],
+      "a hash"      => {1=>2},
+      "some object" => Object.new,
+    }
+
+    invalid_args.each do |thing, arg|
+      it "should fail when given #{thing}" do
+        expect{ Surface.new([10,10], :opacity => arg) }.to raise_error
+      end
+    end
+
+  end
+
 end
 
 

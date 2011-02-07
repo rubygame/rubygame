@@ -81,6 +81,8 @@ class Rubygame::Surface
   #               message will be printed and depth 32 used instead.
   #               Default: false.
   # 
+  #   :opacity::  Initial value for #opacity. Default: 1.0.
+  # 
   #   :hardware:: If true, try to create a hardware accelerated
   #               Surface (using a graphics card), which may be very
   #               fast to blit onto other hardware accelerated
@@ -140,7 +142,11 @@ class Rubygame::Surface
         @struct = SDL.CreateRGBSurface( args[:flags],
                                         args[:width], args[:height],
                                         args[:depth], *args[:masks] )
-        @opacity ||= @struct.format.alpha / 255.0
+        if args[:opacity]
+          self.opacity = args[:opacity]
+        else
+          @opacity ||= @struct.format.alpha / 255.0
+        end
       end
     end
 
@@ -214,6 +220,7 @@ class Rubygame::Surface
       :depth  => depth,
       :masks  => masks,
       :flags  => flags,
+      :opacity => options[:opacity],
     }
   end
 
