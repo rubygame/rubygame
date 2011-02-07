@@ -128,20 +128,18 @@ class Rubygame::Surface
       else
         @struct = surf
       end
-      return
+    else
+      # Support old argument style for backwards compatibility.
+      if args.size > 1 or not args[0].is_a? Hash
+        _initialize_old( size, *args )
+      else
+        args = _parse_args( size, args[0] )
+        @struct = SDL.CreateRGBSurface( args[:flags],
+                                        args[:width], args[:height],
+                                        args[:depth], *args[:masks] )
+      end
     end
 
-    # Support old argument style for backwards compatibility.
-    if args.size > 1 or not args[0].is_a? Hash
-      _initialize_old( size, *args )
-      return
-    end
-
-    args = _parse_args( size, args[0] )
-
-    @struct = SDL.CreateRGBSurface( args[:flags],
-                                    args[:width], args[:height],
-                                    args[:depth], *args[:masks] )
   end
 
 
