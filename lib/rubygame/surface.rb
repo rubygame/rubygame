@@ -368,9 +368,9 @@ class Rubygame::Surface
   # EFFECT on Surfaces with a per-pixel alpha channel (i.e. non-flat
   # Surfaces).
   # 
-  def opacity( set=nil )
-    if set
-      self.opacity = set
+  def opacity( *args )
+    if not args.empty?
+      self.opacity = args[0]
       self
     else
       @opacity
@@ -515,7 +515,7 @@ class Rubygame::Surface
     raise "can't modify frozen object" if frozen?
 
     if flags == :auto
-      flags = SDL::SRCCOLORKEY|SDL::RLEACCEL
+      flags = SDL::SRCCOLORKEY
     else
       Rubygame.deprecated("Surface#colorkey= with flags", "3.0")
     end
