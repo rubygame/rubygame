@@ -1377,6 +1377,57 @@ describe Surface, "colorkey" do
     @surface.colorkey.should == [135, 206, 235]
   end
 
+  context "given an arg" do
+    it "should set the colorkey" do
+      @surface.colorkey( [135, 206, 235] )
+      @surface.colorkey.should == [135, 206, 235]
+    end
+
+    it "should accept a [R,G,B] array" do
+      @surface.colorkey( [135, 206, 235] )
+      @surface.colorkey.should == [135, 206, 235]
+    end
+
+    it "should accept a [R,G,B,A] array but ignore alpha" do
+      @surface.colorkey( [135, 206, 235, 128] )
+      @surface.colorkey.should == [135, 206, 235]
+    end
+
+    it "should accept a color name symbol" do
+      @surface.colorkey( :sky_blue )
+      @surface.colorkey.should == [135, 206, 235]
+    end
+
+    it "should accept a color name string" do
+      @surface.colorkey( "sky_blue" )
+      @surface.colorkey.should == [135, 206, 235]
+    end
+
+    it "should accept a Color" do
+      @surface.colorkey( Rubygame::Color[:sky_blue] )
+      @surface.colorkey.should == [135, 206, 235]
+    end
+
+    it "should accept nil" do
+      @surface.colorkey( nil )
+      @surface.colorkey.should be_nil
+    end
+
+    invalid_args = {
+      "true"          => true,
+      "false"         => false,
+      "a short array" => [1.0],
+      "a hash"        => {1=>2},
+      "some object"   => Object.new,
+    }
+
+    invalid_args.each do |thing, arg|
+      it "should fail when given #{thing}" do
+        expect{@surface.colorkey(arg)}.to raise_error
+      end
+    end
+  end
+
   context "writer" do
     it "should set the colorkey" do
       @surface.colorkey = [135, 206, 235]

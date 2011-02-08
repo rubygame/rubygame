@@ -462,36 +462,86 @@ class Rubygame::Surface
 
 
   # call-seq:
-  #    colorkey  ->  [r,g,b]  or  nil
+  #   colorkey  ->  [r,g,b] or nil
+  #   colorkey( new_value )  ->  self
   #
-  # Return the colorkey of the surface in the form [r,g,b] (or +nil+ if there
-  # is no key). The colorkey of a surface is the exact color which will be
-  # ignored when the surface is blitted, effectively turning that color
-  # transparent. This is often used to make a blue (for example) background
-  # on an image seem transparent.
+  # Return the colorkey of the surface in the form [r,g,b] (range
+  # 0..255). Returns nil if there is no colorkey.
+  # 
+  # If you give an argument to this method, it acts like #colorkey=,
+  # except that it returns self (so you can chain method calls).
+  # 
+  # The colorkey of a Surface is a color which will be ignored when
+  # the surface is blitted, effectively turning that color
+  # transparent. This is often used to make a solid background color
+  # on a flat image seem transparent.
+  # 
+  # The colorkey has no effect on Surfaces that are not flat (see
+  # #flat?). If you set a flat Surface's colorkey and then use
+  # #unflatten or #to_display_alpha, pixels matching the colorkey will
+  # become transparent in the new Surface returned by those methods.
   #
-  def colorkey
-    if( (@struct.flags & Rubygame::SRCCOLORKEY) == Rubygame::SRCCOLORKEY )
-      SDL::GetRGB(@struct.format.colorkey, @struct.format)
+  def colorkey( *args )
+    if not args.empty?
+      self.colorkey = args[0]
+      self
     else
-      nil
-    end 
+      if( (@struct.flags & SDL::SRCCOLORKEY) == SDL::SRCCOLORKEY )
+        SDL::GetRGB(@struct.format.colorkey, @struct.format)
+      else
+        nil
+      end 
+    end
   end
 
 
-  # Set the colorkey of the surface. See Surface#colorkey for a description
-  # of colorkeys.
+  # call-seq:
+  #   colorkey = color
+  # 
+  # Set the colorkey of the surface. See #colorkey for a description
+  # of what effect a colorkey has.
   #
-  # This method takes these arguments:
-  # color:: color to use as the key, in the form [r,g,b]. Can be +nil+ to
-  #         un-set the colorkey.
-  # flags:: 0 or Rubygame::SRCCOLORKEY (default) or
-  #         Rubygame::SRCCOLORKEY|Rubygame::SDL_RLEACCEL. Most people will
-  #         want the default, in which case this argument can be omitted. For
-  #         advanced users: this flag affects the surface as described in the
-  #         docs for the SDL C function, SDL_SetColorkey.
+  # color:: color to use as the colorkey, or +nil+ for no colorkey.
   #
+  # For backwards compatibility, this method accepts a second
+  # argument, +flags+. This argument is DEPRECATED and will no longer
+  # be accepted in Rubygame 3.0.
+  # 
+  # flags:: For advanced users only. This flag affects the Surface as
+  #         described in the docs for the SDL function
+  #         SDL_SetColorkey.
+  #
+  def colorkey=( color, flags=:auto )
+    raise "can't modify frozen object" if frozen?
+
+    if flags == :auto
+      flags = SDL::SRCCOLORKEY|SDL::RLEACCEL
+    else
+      Rubygame.deprecated("Surface#colorkey= with flags", "3.0")
+    end
+
+    if color.nil?
+      color, flags = 0, 0
+    else
+      color = _map_sdl_color( color )
+    end
+
+    result = SDL.SetColorKey(@struct, flags, color)
+    if result != 0
+      raise( Rubygame::SDLError, "Could not set colorkey: " + 
+             SDL.GetError() )
+    end
+
+    color
+  end
+
+
+  # Similar to #colorkey=. This method is DEPRECATED and will be
+  # removed in Rubygame 3.0. Use #colorkey or #colorkey= instead.
+  # 
   def set_colorkey( color, flags=Rubygame::SRCCOLORKEY )
+    Rubygame.deprecated("Surface#set_colorkey", "3.0")
+
     raise "can't modify frozen object" if frozen?
 
     if color.nil?
@@ -501,11 +551,13 @@ class Rubygame::Surface
     end
 
     result = SDL.SetColorKey(@struct, flags, color)
-    raise Rubygame::SDLError, SDL.GetError() unless result == 0
-    return self
-  end
+    if result != 0
+      raise( Rubygame::SDLError, "Could not set colorkey: " + 
+             SDL.GetError() )
+    end
 
-  alias :colorkey= :set_colorkey
+    color
+  end
 
 
   # Returns the palette of the Surface, as an array of [r,g,b] arrays
