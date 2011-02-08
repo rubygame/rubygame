@@ -25,21 +25,55 @@
 
 module Rubygame
 
-  # Warn of a deprecated Rubygame feature.
+  class DeprecationError < RuntimeError # :nodoc:
+  end
+
+  # Warn about a deprecated Rubygame feature. The behavior of this
+  # method is influenced by the value of ENV["RUBYGAME_DEPRECATED"]:
+  # 
+  # (default):: Print a warning with Kernel.warn the first time each
+  #             deprecated feature is used. Note that Kernel.warn is
+  #             silent unless warnings are enabled (e.g. -W flag).
+  # 
+  # "warn"::    Print a warning on STDERR the first time each
+  #             deprecated feature is used.
+  # 
+  # "warn!"::   Print a warning on STDERR every time a deprecated
+  #             feature is used.
+  # 
+  # "error"::   Raise Rubygame::DeprecationError the first time each
+  #             deprecated feature is used.
+  # 
+  # "error!"::  Raise Rubygame::DeprecationError every time a
+  #             deprecated feature is used.
+  # 
+  # "quiet"::   Never warn when any deprecated feature is used.
+  # 
   def self.deprecated( feature, version=nil, info=nil) # :nodoc:
     @deprec_warned ||= {}
 
-    if $VERBOSE and not @deprec_warned[feature]
-      info ||= "Please see the docs for more information."
-      if version
-        warn( "warning: #{feature} is DEPRECATED and will be removed " +
-              "in Rubygame #{version}! " + info.to_s )
+    config = ENV["RUBYGAME_DEPRECATED"]
+    return if /^quiet$/i =~ config
+
+    if( /^(error!|warn!)$/i =~ config || !@deprec_warned[feature] )
+      message =
+        "#{feature} is DEPRECATED and will be removed in " +
+        (version ? "Rubygame #{version}" : "a future version of Rubygame") +
+        "! " + (info || "Please see the docs for more information.")
+
+      case config
+      when /^error!?$/i
+        raise Rubygame::DeprecationError.new(message)
+      when /^warn!?$/i
+        STDERR.puts 'warning: ' + message
       else
-        warn( "warning: #{feature} is DEPRECATED and will be removed " +
-              "in a future version of Rubygame! " + info.to_s )
+        Kernel.warn 'warning: ' + message
       end
+
       @deprec_warned[feature] = true
     end
+
+    nil
   end
 
 
