@@ -404,53 +404,6 @@ end
 
 
 
-describe Surface, "(colorkey)" do 
-  before(:each) do
-    Rubygame.init()
-    @surface = Surface.new([100,100])
-  end
-
-  after(:each) do
-    Rubygame.quit
-  end
-
-
-  it "colorkey should be nil by default" do
-    @surface.colorkey.should be_nil
-  end
-
-  it "should not have colorkey flag by default" do
-    (@surface.flags & SRCCOLORKEY).should == 0
-  end
-
-
-  it "colorkey should be a color after it is set" do
-    @surface.set_colorkey([1,2,3])
-    @surface.colorkey.should == [1,2,3]
-  end
-
-  it "should have colorkey flag after colorkey is set" do
-    @surface.set_colorkey([1,2,3])
-    (@surface.flags & SRCCOLORKEY).should == SRCCOLORKEY
-  end
-
-
-  it "colorkey should be nil after it is set to nil" do
-    @surface.set_colorkey([1,2,3])
-    @surface.set_colorkey( nil )
-    @surface.colorkey.should be_nil
-  end
- 
-  it "should not have colorkey flag after colorkey is set to nil" do
-    @surface.set_colorkey([1,2,3])
-    @surface.set_colorkey( nil )
-    (@surface.flags & SRCCOLORKEY).should == 0
-  end
-end
-
-
-
-
 describe Surface, "(get_at)" do 
   before(:each) do
     Rubygame.init()
@@ -1404,5 +1357,117 @@ describe Surface, "#opacity=" do
     it "should fail when given #{thing}" do
       expect{@surface.opacity = arg}.to raise_error
     end
+  end
+end
+
+
+
+describe Surface, "colorkey" do
+
+  before :each do
+    @surface = Rubygame::Surface.new([10,10])
+  end
+
+  it "should be nil by default" do
+    @surface.colorkey.should be_nil
+  end
+
+  it "should return colors as [R,G,B] (0-255)" do
+    @surface.colorkey = :sky_blue
+    @surface.colorkey.should == [135, 206, 235]
+  end
+
+  context "writer" do
+    it "should set the colorkey" do
+      @surface.colorkey = [135, 206, 235]
+      @surface.colorkey.should == [135, 206, 235]
+    end
+
+    it "should accept a [R,G,B] array" do
+      @surface.colorkey = [135, 206, 235]
+      @surface.colorkey.should == [135, 206, 235]
+    end
+
+    it "should accept a [R,G,B,A] array but ignore alpha" do
+      @surface.colorkey = [135, 206, 235, 128]
+      @surface.colorkey.should == [135, 206, 235]
+    end
+
+    it "should accept a color name symbol" do
+      @surface.colorkey = :sky_blue
+      @surface.colorkey.should == [135, 206, 235]
+    end
+
+    it "should accept a color name string" do
+      @surface.colorkey = "sky_blue"
+      @surface.colorkey.should == [135, 206, 235]
+    end
+
+    it "should accept a Color" do
+      @surface.colorkey = Rubygame::Color[:sky_blue]
+      @surface.colorkey.should == [135, 206, 235]
+    end
+
+    it "should accept nil" do
+      @surface.colorkey = nil
+      @surface.colorkey.should be_nil
+    end
+
+    invalid_args = {
+      "true"          => true,
+      "false"         => false,
+      "a short array" => [1.0],
+      "a hash"        => {1=>2},
+      "some object"   => Object.new,
+    }
+
+    invalid_args.each do |thing, arg|
+      it "should fail when given #{thing}" do
+        expect{@surface.colorkey = arg}.to raise_error
+      end
+    end
+  end
+
+end
+
+
+describe Surface, "set_colorkey" do
+  before :each do
+    @surface = Rubygame::Surface.new([10,10])
+  end
+
+  it "should set the colorkey" do
+    @surface.set_colorkey( [135, 206, 235] )
+    @surface.colorkey.should == [135, 206, 235]
+  end
+
+  it "should accept a [R,G,B] array" do
+    @surface.set_colorkey( [135, 206, 235] )
+    @surface.colorkey.should == [135, 206, 235]
+  end
+
+  it "should accept a [R,G,B,A] array but ignore alpha" do
+    @surface.set_colorkey( [135, 206, 235, 128] )
+    @surface.colorkey.should == [135, 206, 235]
+  end
+
+  it "should accept a color name symbol" do
+    @surface.set_colorkey( :sky_blue )
+    @surface.colorkey.should == [135, 206, 235]
+  end
+
+  it "should accept a color name string" do
+    @surface.set_colorkey( "sky_blue" )
+    @surface.colorkey.should == [135, 206, 235]
+  end
+
+  it "should accept a Color" do
+    @surface.set_colorkey( Rubygame::Color[:sky_blue] )
+    @surface.colorkey.should == [135, 206, 235]
+  end
+
+  it "should accept nil" do
+    @surface.set_colorkey( nil )
+    @surface.colorkey.should be_nil
   end
 end
