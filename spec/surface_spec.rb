@@ -143,7 +143,58 @@ describe Surface, "(creation)" do
         expect{ Surface.new([10,10], :opacity => arg) }.to raise_error
       end
     end
+  end
 
+
+  context "with :colorkey option" do
+    it "should set the colorkey" do
+      surface = Surface.new([10,10], :colorkey => [1,2,3])
+      surface.colorkey.should == [1,2,3]
+    end
+
+    it "should accept a [R,G,B] array" do
+      surface = Surface.new([10,10], :colorkey => [135, 206, 235])
+      surface.colorkey.should == [135, 206, 235]
+    end
+
+    it "should accept a [R,G,B,A] array but ignore alpha" do
+      surface = Surface.new([10,10], :colorkey => [135, 206, 235, 128])
+      surface.colorkey.should == [135, 206, 235]
+    end
+
+    it "should accept a color name symbol" do
+      surface = Surface.new([10,10], :colorkey => :sky_blue)
+      surface.colorkey.should == [135, 206, 235]
+    end
+
+    it "should accept a color name string" do
+      surface = Surface.new([10,10], :colorkey => "sky_blue")
+      surface.colorkey.should == [135, 206, 235]
+    end
+
+    it "should accept a Color" do
+      surface = Surface.new([10,10], :colorkey => Rubygame::Color[:sky_blue])
+      surface.colorkey.should == [135, 206, 235]
+    end
+
+    it "should accept nil" do
+      surface = Surface.new([10,10], :colorkey => nil)
+      surface.colorkey.should be_nil
+    end
+
+    invalid_args = {
+      "true"          => true,
+      "false"         => false,
+      "a short array" => [1.0],
+      "a hash"        => {1=>2},
+      "some object"   => Object.new,
+    }
+
+    invalid_args.each do |thing, arg|
+      it "should fail when given #{thing}" do
+        expect{Surface.new([10,10], :colorkey => arg)}.to raise_error
+      end
+    end
   end
 
 end

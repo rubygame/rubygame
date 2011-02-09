@@ -83,6 +83,8 @@ class Rubygame::Surface
   # 
   #   :opacity::  Initial value for #opacity. Default: 1.0.
   # 
+  #   :colorkey:: Initial value for #colorkey. Default: nil.
+  # 
   #   :hardware:: If true, try to create a hardware accelerated
   #               Surface (using a graphics card), which may be very
   #               fast to blit onto other hardware accelerated
@@ -143,6 +145,11 @@ class Rubygame::Surface
         else
           @opacity ||= @struct.format.alpha / 255.0
         end
+
+        if args.has_key?(:colorkey)
+          self.colorkey = args[:colorkey]
+        end
+
       else
         # Support old argument style for backwards compatibility.
         _initialize_old( size, *args )
@@ -235,13 +242,23 @@ class Rubygame::Surface
 
     flags |= SDL::HWSURFACE if options[:hardware]    
 
-    { :width  => size[0],
+    args ={
+      :width  => size[0],
       :height => size[1],
       :depth  => depth,
       :masks  => masks,
       :flags  => flags,
-      :opacity => options[:opacity],
     }
+
+    if options.has_key?(:opacity)
+      args[:opacity] = options[:opacity]
+    end
+
+    if options.has_key?(:colorkey)
+      args[:colorkey] = options[:colorkey]
+    end
+
+    args
   end
 
 
