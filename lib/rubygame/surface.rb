@@ -133,11 +133,7 @@ class Rubygame::Surface
         @opacity ||= @struct.format.alpha / 255.0
       end
     else
-      # Support old argument style for backwards compatibility.
-      if args.size > 1 or not args[0].is_a? Hash
-        _initialize_old( size, *args )
-        @opacity ||= @struct.format.alpha / 255.0
-      else
+      if args.empty? or args[0].is_a? Hash
         args = _parse_args( size, args[0] )
         @struct = SDL.CreateRGBSurface( args[:flags],
                                         args[:width], args[:height],
@@ -147,6 +143,10 @@ class Rubygame::Surface
         else
           @opacity ||= @struct.format.alpha / 255.0
         end
+      else
+        # Support old argument style for backwards compatibility.
+        _initialize_old( size, *args )
+        @opacity ||= @struct.format.alpha / 255.0
       end
     end
 
@@ -179,6 +179,8 @@ class Rubygame::Surface
 
 
   def _parse_args( size, options )
+    options ||= {}
+
     unless size.is_a?(Array) and size.size == 2 and
         size.all?{ |i| i.is_a?(Integer) and i > 0 }
       raise( TypeError, "Invalid size: " + size.inspect +
