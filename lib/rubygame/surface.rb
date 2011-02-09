@@ -203,6 +203,24 @@ class Rubygame::Surface
       flags |= SDL::SRCALPHA
     end
 
+    # No depth determined yet, so choose one automatically
+    if depth == 0
+      vs = SDL.GetVideoSurface()
+      if not vs.pointer.null?
+        # Color depth is retrieved from the video surface (Screen).
+        depth = vs.format.BitsPerPixel
+      else
+        # We can only get the system color depth when the
+        # video system has been initialized.
+        if( Rubygame.init_video_system == 0 )
+          depth = SDL.GetVideoInfo().vfmt.BitsPerPixel
+        else
+          # No luck, use depth 24 just to be safe.
+          depth = 24
+        end
+      end
+    end
+
     masks = options[:masks]
     if masks.nil?
       masks = _make_masks( depth, alpha )
