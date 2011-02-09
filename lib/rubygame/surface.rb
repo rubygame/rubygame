@@ -285,7 +285,7 @@ class Rubygame::Surface
 
   # Initialize the Surface in the deprecated (pre-2.7) way.
   def _initialize_old( size, depth=0, flags=[] ) # :nodoc:
-    Rubygame.deprecated("Old Surface#new arguments style", "3.0")
+    Rubygame.deprecated("Rubygame::Surface#new legacy argument style", "3.0")
 
     unless size.kind_of? Array
       raise TypeError, "Surface size is not an Array: #{size.inspect}"
@@ -446,7 +446,7 @@ class Rubygame::Surface
   # can range from 0 (full transparent) to 255 (full opaque).
   # 
   def alpha
-    Rubygame.deprecated("Surface#alpha", "3.0")
+    Rubygame.deprecated("Rubygame::Surface#alpha", "3.0")
     @struct.format.alpha
   end
 
@@ -468,7 +468,7 @@ class Rubygame::Surface
   # Returns self.
   #
   def set_alpha( alpha, flags=Rubygame::SRCALPHA )
-    Rubygame.deprecated("Surface#set_alpha", "3.0")
+    Rubygame.deprecated("Rubygame::Surface#set_alpha", "3.0")
 
     raise "can't modify frozen object" if frozen?
 
@@ -486,7 +486,7 @@ class Rubygame::Surface
   # ranges from 0.0 to 1.0, not 0 to 255).
   #
   def alpha=( alpha, flags=Rubygame::SRCALPHA )
-    Rubygame.deprecated("Surface#alpha=", "3.0")
+    Rubygame.deprecated("Rubygame::Surface#alpha=", "3.0")
 
     raise "can't modify frozen object" if frozen?
 
@@ -554,7 +554,7 @@ class Rubygame::Surface
     if flags == :auto
       flags = SDL::SRCCOLORKEY
     else
-      Rubygame.deprecated("Surface#colorkey= with flags", "3.0")
+      Rubygame.deprecated("Rubygame::Surface#colorkey= with flags", "3.0")
     end
 
     if color.nil?
@@ -577,7 +577,7 @@ class Rubygame::Surface
   # removed in Rubygame 3.0. Use #colorkey or #colorkey= instead.
   # 
   def set_colorkey( color, flags=Rubygame::SRCCOLORKEY )
-    Rubygame.deprecated("Surface#set_colorkey", "3.0")
+    Rubygame.deprecated("Rubygame::Surface#set_colorkey", "3.0")
 
     raise "can't modify frozen object" if frozen?
 
