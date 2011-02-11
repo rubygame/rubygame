@@ -994,8 +994,7 @@ class Rubygame::Surface
                                    :Bmask         => masks[2],
                                    :Amask         => masks[3] || 0,
                                    :alpha         => 255,
-                                   :colorkey      => 0,
-                                   )
+                                   :colorkey      => 0 )
 
     new_struct = SDL.ConvertSurface( @struct, format, flags )
 
