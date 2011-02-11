@@ -937,6 +937,80 @@ class Rubygame::Surface
   end
 
 
+  # Returns a hash with pixel data and format information that you can
+  # use to create an OpenGL texture from this Surface.
+  # 
+  # If the Surface has an alpha channel (i.e. is not #flat?), and/or
+  # has a #colorkey, and/or #opacity is less than 1.0, the pixel data
+  # will be in 32-bit RGBA format. Otherwise, it will be in 24-bit RGB
+  # format.
+  # 
+  # The hash returned by this method has 3 keys:
+  # 
+  # :data::   A string containing the raw pixel data.
+  # :format:: An integer constant indicating the pixel format.
+  #           Currently, this will be GL_RGB (6407) or GL_RGBA (6408).
+  # :type::   An integer constant indicating the data storage type.
+  #           Currently, this is always GL_UNSIGNED_BYTE (5121).
+  # 
+  # You can use the information in the hash to create an OpenGL
+  # texture, like so:
+  # 
+  #   params = surf.to_opengl
+  #   glTexImage2D( GL_TEXTURE_2D, 0, params[:format],
+  #                 surf.width, surf.height, 0, params[:format],
+  #                 params[:type], params[:data] )
+  # 
+  # Note: glTexImage2D and GL_TEXTURE_2D may be different depending on
+  # which OpenGL library you use (e.g. ruby-opengl or ffi-opengl).
+  # 
+  def to_opengl
+    result = {
+      :type   => 5121, # GL_UNSIGNED_BYTE
+    }
+
+    if (not flat?) or (colorkey) or (opacity < 1.0)
+      result[:format] = 6408 # GL_RGBA
+      depth = 32
+      shifts = [0, 8, 16, 24]
+      flags = SDL::SRCALPHA
+    else
+      result[:format] = 6407 # GL_RGB
+      depth = 24
+      shifts = [0, 8, 16]
+      flags = 0
+    end
+
+    masks = shifts.map{ |i| 0xff << i }
+
+    format = SDL::PixelFormat.new( :BitsPerPixel  => depth,
+                                   :BytesPerPixel => depth/8,
+                                   :Rshift        => shifts[0],
+                                   :Gshift        => shifts[1],
+                                   :Bshift        => shifts[2],
+                                   :Ashift        => shifts[3] || 0,
+                                   :Rmask         => masks[0],
+                                   :Gmask         => masks[1],
+                                   :Bmask         => masks[2],
+                                   :Amask         => masks[3] || 0,
+                                   :alpha         => 255,
+                                   :colorkey      => 0,
+                                   )
+
+    new_struct = SDL.ConvertSurface( @struct, format, flags )
+
+    if( new_struct.nil? or new_struct.pointer.null? )
+      raise( Rubygame::SDLError,
+             "Could not convert to OpenGL: #{SDL.GetError()}" )
+    end
+
+    len = new_struct.pitch * new_struct.h
+    result[:data] = new_struct.pixels.get_bytes(0, len)
+
+    result
+  end
+
+
   # Return the clipping area for this Surface. See also #clip=.
   #
   # The clipping area of a Surface is the only part which can be drawn

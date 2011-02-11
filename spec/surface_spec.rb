@@ -1573,3 +1573,450 @@ describe Surface, "set_colorkey" do
     @surface.colorkey.should be_nil
   end
 end
+
+
+
+describe Surface, "#to_opengl" do
+
+  context "with an 8-bit Surface" do
+    before :each do
+      @surface = Surface.new([2,2], :depth => 8)
+      @surface.palette = [[10,20,30],[40,50,60],[70,80,90],[100,110,120]]
+      @surface.set_at([0,0], [ 10, 20, 30])
+      @surface.set_at([1,0], [ 40, 50, 60])
+      @surface.set_at([0,1], [ 70, 80, 90])
+      @surface.set_at([1,1], [100,110,120])
+    end
+
+    it ":type should be GL_UNSIGNED_BYTE (5121)" do
+      @surface.to_opengl[:type].should == 5121
+    end
+
+    it ":format should be GL_RGB (6407)" do
+      @surface.to_opengl[:format].should == 6407
+    end
+
+    it ":data should match expected" do
+      # 24-bit RGB format.
+      expected =
+        #  10  20  30       40  50  60    padding
+        "\x0a\x14\x1e" + "\x28\x32\x3c" + "\x0\x0" +
+        #  70  80  90      100 110 120    padding
+        "\x46\x50\x5a" + "\x64\x6e\x78" + "\x0\x0"
+      @surface.to_opengl[:data].should == expected
+    end
+  end
+
+
+  context "with a 15-bit RGB Surface" do
+    before :each do
+      masks = [0x007c00,  0x0003e0,  0x00001f, 0]
+      @surface = Surface.new([2,2], :depth => 15, :masks => masks)
+      @surface.set_at([0,0], [ 10, 20, 30])
+      @surface.set_at([1,0], [ 40, 50, 60])
+      @surface.set_at([0,1], [ 70, 80, 90])
+      @surface.set_at([1,1], [100,110,120])
+    end
+
+    it ":type should be GL_UNSIGNED_BYTE (5121)" do
+      @surface.to_opengl[:type].should == 5121
+    end
+
+    it ":format should be GL_RGB (6407)" do
+      @surface.to_opengl[:format].should == 6407
+    end
+
+    it ":data should match expected" do
+      # 24-bit RGB format. Note: 15-bit color format is lossy.
+      expected =
+        #   8  16  24       40  48  56    padding
+        "\x08\x10\x18" + "\x28\x30\x38" + "\x0\x0" +
+        #  64  80  88       96 104 120    padding
+        "\x40\x50\x58" + "\x60\x68\x78" + "\x0\x0"
+      @surface.to_opengl[:data].should == expected
+    end
+  end
+
+  context "with a 15-bit BGR Surface" do
+    before :each do
+      masks = [0x00001f,  0x0003e0,  0x007c00, 0]
+      @surface = Surface.new([2,2], :depth => 15, :masks => masks)
+      @surface.set_at([0,0], [ 10, 20, 30])
+      @surface.set_at([1,0], [ 40, 50, 60])
+      @surface.set_at([0,1], [ 70, 80, 90])
+      @surface.set_at([1,1], [100,110,120])
+    end
+
+    it ":type should be GL_UNSIGNED_BYTE (5121)" do
+      @surface.to_opengl[:type].should == 5121
+    end
+
+    it ":format should be GL_RGB (6407)" do
+      @surface.to_opengl[:format].should == 6407
+    end
+
+    it ":data should be in 24-bit RGB format" do
+      # 24-bit RGB format. Note: 15-bit color format is lossy.
+      expected =
+        #   8  16  24       40  48  56    padding
+        "\x08\x10\x18" + "\x28\x30\x38" + "\x0\x0" +
+        #  64  80  88       96 104 120    padding
+        "\x40\x50\x58" + "\x60\x68\x78" + "\x0\x0"
+      @surface.to_opengl[:data].should == expected
+    end
+  end
+
+
+  context "with a 16-bit RGB Surface" do
+    before :each do
+      masks = [0x00f800,  0x0007e0,  0x00001f, 0]
+      @surface = Surface.new([2,2], :depth => 16, :masks => masks)
+      @surface.set_at([0,0], [ 10, 20, 30])
+      @surface.set_at([1,0], [ 40, 50, 60])
+      @surface.set_at([0,1], [ 70, 80, 90])
+      @surface.set_at([1,1], [100,110,120])
+    end
+
+    it ":type should be GL_UNSIGNED_BYTE (5121)" do
+      @surface.to_opengl[:type].should == 5121
+    end
+
+    it ":format should be GL_RGB (6407)" do
+      @surface.to_opengl[:format].should == 6407
+    end
+
+    it ":data should match expected" do
+      # 24-bit RGB format. Note: 16-bit color format is lossy.
+      expected =
+        #   8  20  24       40  48  56    padding
+        "\x08\x14\x18" + "\x28\x30\x38" + "\x0\x0" +
+        #  64  80  88       96 108 120    padding
+        "\x40\x50\x58" + "\x60\x6c\x78" + "\x0\x0"
+      @surface.to_opengl[:data].should == expected
+    end
+  end
+
+  context "with a 16-bit BGR Surface" do
+    before :each do
+      masks = [0x00001f,  0x0007e0,  0x00f800, 0]
+      @surface = Surface.new([2,2], :depth => 16, :masks => masks)
+      @surface.set_at([0,0], [ 10, 20, 30])
+      @surface.set_at([1,0], [ 40, 50, 60])
+      @surface.set_at([0,1], [ 70, 80, 90])
+      @surface.set_at([1,1], [100,110,120])
+    end
+
+    it ":type should be GL_UNSIGNED_BYTE (5121)" do
+      @surface.to_opengl[:type].should == 5121
+    end
+
+    it ":format should be GL_RGB (6407)" do
+      @surface.to_opengl[:format].should == 6407
+    end
+
+    it ":data should match expected" do
+      # 24-bit RGB format. Note: 16-bit color format is lossy.
+      expected =
+        #   8  20  24       40  48  56    padding
+        "\x08\x14\x18" + "\x28\x30\x38" + "\x0\x0" +
+        #  64  80  88       96 108 120    padding
+        "\x40\x50\x58" + "\x60\x6c\x78" + "\x0\x0"
+      @surface.to_opengl[:data].should == expected
+    end
+  end
+
+
+  context "with a 24-bit RGB Surface" do
+    before :each do
+      masks = [0xff << 16, 0xff << 8, 0xff << 0, 0]
+      @surface = Surface.new([2,2], :depth => 24, :masks => masks)
+      @surface.set_at([0,0], [ 10, 20, 30])
+      @surface.set_at([1,0], [ 40, 50, 60])
+      @surface.set_at([0,1], [ 70, 80, 90])
+      @surface.set_at([1,1], [100,110,120])
+    end
+
+    it ":type should be GL_UNSIGNED_BYTE (5121)" do
+      @surface.to_opengl[:type].should == 5121
+    end
+
+    it ":format should be GL_RGB (6407)" do
+      @surface.to_opengl[:format].should == 6407
+    end
+
+    it ":data should match expected" do
+      # 24-bit RGB format
+      expected =
+        #  10  20  30       40  50  60    padding
+        "\x0a\x14\x1e" + "\x28\x32\x3c" + "\x0\x0" +
+        #  70  80  90      100 110 120    padding
+        "\x46\x50\x5a" + "\x64\x6e\x78" + "\x0\x0"
+      @surface.to_opengl[:data].should == expected
+    end
+  end
+
+  context "with a 24-bit BGR Surface" do
+    before :each do
+      masks = [0xff << 0, 0xff << 8, 0xff << 16, 0]
+      @surface = Surface.new([2,2], :depth => 24, :masks => masks)
+      @surface.set_at([0,0], [ 10, 20, 30])
+      @surface.set_at([1,0], [ 40, 50, 60])
+      @surface.set_at([0,1], [ 70, 80, 90])
+      @surface.set_at([1,1], [100,110,120])
+    end
+
+    it ":type should be GL_UNSIGNED_BYTE (5121)" do
+      @surface.to_opengl[:type].should == 5121
+    end
+
+    it ":format should be GL_RGB (6407)" do
+      @surface.to_opengl[:format].should == 6407
+    end
+
+    it ":data should match expected" do
+      # 24-bit RGB format.
+      expected =
+        #  10  20  30       40  50  60    padding
+        "\x0a\x14\x1e" + "\x28\x32\x3c" + "\x0\x0" +
+        #  70  80  90      100 110 120    padding
+        "\x46\x50\x5a" + "\x64\x6e\x78" + "\x0\x0"
+      @surface.to_opengl[:data].should == expected
+    end
+  end
+
+
+  context "with a 32-bit RGB Surface" do
+    before :each do
+      masks = [0xff << 16, 0xff << 8, 0xff << 0, 0]
+      @surface = Surface.new([2,2], :depth => 32, :masks => masks)
+      @surface.set_at([0,0], [ 10, 20, 30])
+      @surface.set_at([1,0], [ 40, 50, 60])
+      @surface.set_at([0,1], [ 70, 80, 90])
+      @surface.set_at([1,1], [100,110,120])
+    end
+
+    it ":type should be GL_UNSIGNED_BYTE (5121)" do
+      @surface.to_opengl[:type].should == 5121
+    end
+
+    it ":format should be GL_RGB (6407)" do
+      @surface.to_opengl[:format].should == 6407
+    end
+
+    it ":data should match expected" do
+      # 24-bit RGB format.
+      expected =
+        #  10  20  30       40  50  60    padding
+        "\x0a\x14\x1e" + "\x28\x32\x3c" + "\x0\x0" +
+        #  70  80  90      100 110 120    padding
+        "\x46\x50\x5a" + "\x64\x6e\x78" + "\x0\x0"
+      @surface.to_opengl[:data].should == expected
+    end
+  end
+
+  context "with a 32-bit BGR Surface" do
+    before :each do
+      masks = [0xff << 0, 0xff << 8, 0xff << 16, 0]
+      @surface = Surface.new([2,2], :depth => 32, :masks => masks)
+      @surface.set_at([0,0], [ 10, 20, 30])
+      @surface.set_at([1,0], [ 40, 50, 60])
+      @surface.set_at([0,1], [ 70, 80, 90])
+      @surface.set_at([1,1], [100,110,120])
+    end
+
+    it ":type should be GL_UNSIGNED_BYTE (5121)" do
+      @surface.to_opengl[:type].should == 5121
+    end
+
+    it ":format should be GL_RGB (6407)" do
+      @surface.to_opengl[:format].should == 6407
+    end
+
+    it ":data should match expected" do
+      # 24-bit RGB format.
+      expected =
+        #  10  20  30       40  50  60    padding
+        "\x0a\x14\x1e" + "\x28\x32\x3c" + "\x0\x0" +
+        #  70  80  90      100 110 120    padding
+        "\x46\x50\x5a" + "\x64\x6e\x78" + "\x0\x0"
+      @surface.to_opengl[:data].should == expected
+    end
+  end
+
+
+  context "with a 32-bit RGBA Surface" do
+    before :each do
+      masks = [0xff << 16, 0xff << 8, 0xff << 0, 0xff << 24]
+      @surface = Surface.new([2,2], :depth => 32, :masks => masks, :alpha => true)
+      @surface.set_at([0,0], [ 10, 20, 30, 40])
+      @surface.set_at([1,0], [ 50, 60, 70, 80])
+      @surface.set_at([0,1], [ 90,100,110,120])
+      @surface.set_at([1,1], [130,140,150,160])
+    end
+
+    it ":type should be GL_UNSIGNED_BYTE (5121)" do
+      @surface.to_opengl[:type].should == 5121
+    end
+
+    it ":format should be GL_RGBA (6408)" do
+      @surface.to_opengl[:format].should == 6408
+    end
+
+    it ":data should match expected" do
+      # 32-bit RGBA format.
+      expected =
+        #  10  20  30  40       50  60  70  80
+        "\x0a\x14\x1e\x28" + "\x32\x3c\x46\x50" +
+        #  90 100 110 120      130 140 150 160
+        "\x5a\x64\x6e\x78" + "\x82\x8c\x96\xa0"
+      @surface.to_opengl[:data].should == expected
+    end
+  end
+
+  context "with a 32-bit BGRA Surface" do
+    before :each do
+      masks = [0xff << 0, 0xff << 8, 0xff << 16, 0xff << 24]
+      @surface = Surface.new([2,2], :depth => 32, :masks => masks, :alpha => true)
+      @surface.set_at([0,0], [ 10, 20, 30, 40])
+      @surface.set_at([1,0], [ 50, 60, 70, 80])
+      @surface.set_at([0,1], [ 90,100,110,120])
+      @surface.set_at([1,1], [130,140,150,160])
+    end
+
+    it ":type should be GL_UNSIGNED_BYTE (5121)" do
+      @surface.to_opengl[:type].should == 5121
+    end
+
+    it ":format should be GL_RGBA (6408)" do
+      @surface.to_opengl[:format].should == 6408
+    end
+
+    it ":data should match expected" do
+      # 32-bit RGBA format.
+      expected =
+        #  10  20  30  40       50  60  70  80
+        "\x0a\x14\x1e\x28" + "\x32\x3c\x46\x50" +
+        #  90 100 110 120      130 140 150 160
+        "\x5a\x64\x6e\x78" + "\x82\x8c\x96\xa0"
+      @surface.to_opengl[:data].should == expected
+    end
+  end
+
+
+  context "with a flat Surface with a colorkey" do
+    before :each do
+      @surface = Surface.new([2,2], :depth => 24, :colorkey => [40,50,60])
+      @surface.set_at([0,0], [ 10, 20, 30])
+      @surface.set_at([1,0], [ 40, 50, 60])
+      @surface.set_at([0,1], [ 70, 80, 90])
+      @surface.set_at([1,1], [100,110,120])
+    end
+
+    it ":type should be GL_UNSIGNED_BYTE (5121)" do
+      @surface.to_opengl[:type].should == 5121
+    end
+
+    it ":format should be GL_RGBA (6408)" do
+      @surface.to_opengl[:format].should == 6408
+    end
+
+    it ":data should match expected" do
+      # 32-bit RGBA, non-colorkey pixels are fully opaque, colorkey
+      # pixels are transparent black.
+      expected =
+        #  10  20  30 255        0   0   0   0
+        "\x0a\x14\x1e\xff" + "\x00\x00\x00\x00" +
+        #  70  80  90 255      100 110 120 255
+        "\x46\x50\x5a\xff" + "\x64\x6e\x78\xff"
+
+      @surface.to_opengl[:data].should == expected
+    end
+  end
+
+  context "with a non-flat Surface with a colorkey" do
+    before :each do
+      @surface = Surface.new([2,2], :alpha => true, :colorkey => [50,60,70])
+      @surface.set_at([0,0], [ 10, 20, 30, 40])
+      @surface.set_at([1,0], [ 50, 60, 70, 80])
+      @surface.set_at([0,1], [ 90,100,110,120])
+      @surface.set_at([1,1], [130,140,150,160])
+    end
+
+    it ":type should be GL_UNSIGNED_BYTE (5121)" do
+      @surface.to_opengl[:type].should == 5121
+    end
+
+    it ":format should be GL_RGBA (6408)" do
+      @surface.to_opengl[:format].should == 6408
+    end
+
+    it ":data should match expected" do
+      # 32-bit RGBA, alpha channel is preserved on non-colorkey
+      # pixels, but colorkey pixels become transparent black.
+      expected =
+        #  10  20  30  40        0   0   0   0
+        "\x0a\x14\x1e\x28" + "\x00\x00\x00\x00" +
+        #  90 100 110 120      130 140 150 160
+        "\x5a\x64\x6e\x78" + "\x82\x8c\x96\xa0"
+      @surface.to_opengl[:data].should == expected
+    end
+  end
+
+
+  context "with a flat Surface with opacity" do
+    before :each do
+      @surface = Surface.new([2,2], :depth => 24, :opacity => 0.5)
+      @surface.set_at([0,0], [ 10, 20, 30])
+      @surface.set_at([1,0], [ 40, 50, 60])
+      @surface.set_at([0,1], [ 70, 80, 90])
+      @surface.set_at([1,1], [100,110,120])
+    end
+
+    it ":type should be GL_UNSIGNED_BYTE (5121)" do
+      @surface.to_opengl[:type].should == 5121
+    end
+
+    it ":format should be GL_RGBA (6408)" do
+      @surface.to_opengl[:format].should == 6408
+    end
+
+    it ":data should match expected" do
+      # 32-bit RGBA, opacity becomes alpha channel.
+      expected =
+        #  10  20  30 127       40  50  60 127 
+        "\x0a\x14\x1e\x7f" + "\x28\x32\x3c\x7f" +
+        #  70  80  90 127      100 110 120 127
+        "\x46\x50\x5a\x7f" + "\x64\x6e\x78\x7f"
+      @surface.to_opengl[:data].should == expected
+    end
+  end
+
+  context "with a non-flat Surface with opacity" do
+    before :each do
+      @surface = Surface.new([2,2], :alpha => true, :opacity => 0.5)
+      @surface.set_at([0,0], [ 10, 20, 30, 40])
+      @surface.set_at([1,0], [ 50, 60, 70, 80])
+      @surface.set_at([0,1], [ 90,100,110,120])
+      @surface.set_at([1,1], [130,140,150,160])
+    end
+
+    it ":type should be GL_UNSIGNED_BYTE (5121)" do
+      @surface.to_opengl[:type].should == 5121
+    end
+
+    it ":format should be GL_RGBA (6408)" do
+      @surface.to_opengl[:format].should == 6408
+    end
+
+    it ":data should match expected" do
+      # In SDL, alpha channel is not affected by opacity.
+      expected =
+        #  10  20  30  40       50  60  70  80
+        "\x0a\x14\x1e\x28" + "\x32\x3c\x46\x50" +
+        #  90 100 110 120      130 140 150 160
+        "\x5a\x64\x6e\x78" + "\x82\x8c\x96\xa0"
+      @surface.to_opengl[:data].should == expected
+    end
+  end
+
+end
