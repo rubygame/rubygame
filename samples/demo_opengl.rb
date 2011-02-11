@@ -165,8 +165,12 @@ class Cube
   def setup_texture
     @tex_id = 1
     glBindTexture(GL_TEXTURE_2D, @tex_id)
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, @image.w, @image.h, 0,
-                 GL_RGB, GL_UNSIGNED_BYTE, @image.pixels)
+
+    params = @image.to_opengl
+    glTexImage2D(GL_TEXTURE_2D, 0, params[:format],
+                 @image.width, @image.height, 0, params[:format],
+                 params[:type], params[:data])
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
   end
