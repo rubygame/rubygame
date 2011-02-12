@@ -88,7 +88,7 @@ module Rubygame
       # load the surface containing all the glyphs
       surface = nil
       if filename.is_a? String
-        surface = Surface.load_image(filename)
+        surface = Surface.load(filename)
       elsif filename.is_a? Surface
         surface = filename
       end
@@ -97,7 +97,7 @@ module Rubygame
 
       # set colorkey if "transparent" color is not actually transparent
       if colorkey[3] != 0
-        surface.set_colorkey(colorkey[0..2])
+        surface.colorkey = colorkey[0..2]
       end
 
       @glyphs = {}
