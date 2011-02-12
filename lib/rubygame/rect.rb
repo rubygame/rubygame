@@ -140,11 +140,11 @@ class Rect < Array
 	end
 
 
-	# Print the Rect in the form "+#<Rect [x,y,w,h]>+"
-	def to_s; "#<Rect [%s,%s,%s,%s]>"%self; end
+	# Formats the Rect as a string in the form "#<Rect [x,y,w,h]>"
+	def to_s; "#<Rect [%s,%s,%s,%s]>"%[x,y,w,h]; end
 
-	# Print the Rect in the form "+#<Rect:id [x,y,w,h]>+"
-	def inspect; "#<Rect:#{self.object_id} [%s,%s,%s,%s]>"%self; end
+	# Formats the Rect as a string in the form "#<Rect:id [x,y,w,h]>"
+	def inspect; "#<Rect:#{self.object_id} [%s,%s,%s,%s]>"%[x,y,w,h]; end
 
 
   # Returns an SDL::Rect version of this Rect. Float values are
@@ -196,7 +196,7 @@ class Rect < Array
 	alias height= h=;
 
 	# Return the width and height of the Rect.
-	def size; return self[2,2]; end
+	def size; return self.to_a[2,2]; end
 
 	# Set the width and height of the Rect.
 	def size=(size)
@@ -259,7 +259,7 @@ class Rect < Array
 	alias cy= centery=;
 
 	# Return the x and y coordinates of the top-left corner of the Rect
-	def topleft; return self[0,2].to_a; end
+	def topleft; return self.to_a[0,2]; end
 
 	# Set the x and y coordinates of the top-left corner of the Rect by 
 	# translating the Rect (adjusting the x and y offsets).
