@@ -32,9 +32,9 @@ module Rubygame
 # ImageFont is more flexible than traditional \SFont, because it
 # allows you to specify a custom set of glyphs, not just the default
 # ASCII characters. For example, you can create a font with accented
-# characters like é, ü, and ñ. If you are using Ruby 1.9, ImageFont
-# can handle Unicode characters (e.g. Japanese hiragana, katakana,
-# and even kanji).
+# characters like é, ü, and ñ. ImageFont can even handle multi-byte
+# characters (e.g. Japanese hiragana, katakana, and kanji), ligatures,
+# emoticons, and other strings with multiple characters.
 # 
 # \SFont-compatible font images are simple and easy to create. The
 # image contains all glyphs in a row, ordered from left to right.
@@ -123,10 +123,9 @@ class ImageFont
   #                   * Otherwise, set the colorkey to the color of
   #                     the bottom left pixel of the image.
   #
-  # +:glyphs+::     An Array of single-character strings listing every
-  #                 glyph in the font, in the order they appear in the
-  #                 surface. See ImageFont.default_glyphs for the
-  #                 default list.
+  # +:glyphs+::     An Array of strings listing every glyph in the
+  #                 font, in the order they appear in the surface.
+  #                 See ImageFont.default_glyphs for the default list.
   #
   # +:whitespace+:: A Hash describing how wide to render certain
   #                 whitespace characters (e.g. space, tab). See
@@ -165,14 +164,19 @@ class ImageFont
   #
   #     my_font2 = ImageFont.new( my_font_surf, :colorkey => :blue )
   #
-  # * Using a custom set of glyphs to render a non-English language
-  #   (requires Ruby 1.9):
+  # * Using a custom set of glyphs to render a non-English language:
   #
   #     # encoding: UTF-8
   #     hiragana_surf = Surface.load("hiragana.gif")
   #     glyphs = ["あ", "い", "う", "え", "お"] # ... etc.
   #     hiragana = ImageFont.new( hiragana_surf, :glyphs => glyphs )
   #
+  # * Using a custom set of glyphs to render emoticons.
+  # 
+  #     emotes_surf = Surface.load("emoticons.png")
+  #     glyphs = [":)", ":(", ":P", "^_^", ":lol:", "(heart)"]
+  #     emotes = ImageFont.new( emotes_surf, :glyphs => glyphs )
+  # 
   # * Using custom whitespace widths:
   #
   #     whitespace = {" " => "0.4em", "\t" => "20px"}
@@ -212,32 +216,43 @@ class ImageFont
       @surface.colorkey = options[:colorkey]
     end
 
-    @glyphs = options[:glyphs]
+    @glyphs = options[:glyphs].dup.freeze
     @rects = {}
     scan_glyphs
 
-    @whitespace = options[:whitespace]
+    @whitespace = options[:whitespace].dup.freeze
+
+    @tokens = _build_token_regexp
   end
 
 
-  # Surface containing the font image. See ImageFont.new's surface arg.
-  # Note: You should call #scan_glyphs if you modify @surface.
-  #
+  # See ImageFont.new's +surface+ arg.
+  # Note: You should call #scan_glyphs if you modify surface.
+  # 
   attr_accessor :surface
 
 
   # Array of glyphs in the font. See ImageFont.new's +:glyphs+ option.
-  # Note: You should call #scan_glyphs if you modify @glyphs.
-  #
-  attr_accessor :glyphs
+  attr_reader :glyphs
 
-
+  # Note: You should call #scan_glyphs after setting glyphs.
+  def glyphs=( new_glyphs )
+    @glyphs = new_glyphs.dup.freeze
+    @tokens = _build_token_regexp
+    nil
+  end
+  
   # Hash describing the widths of certain whitespace characters.
   # See ImageFont.new's +:whitespace+ option.
-  # Note: You should call #scan_glyphs if you modify @glyphs.
   #
-  attr_accessor :whitespace
+  attr_reader :whitespace
 
+  def whitespace=( new_whitespace )
+    @whitespace = new_whitespace.dup.freeze
+    @tokens = _build_token_regexp
+    nil
+  end
+  
 
   # Scans the surface to determine the position and size of each
   # individual glyph. You should call this if you change #surface or
@@ -361,26 +376,45 @@ class ImageFont
     cur_x, cur_y = start_x, start_y
     font_height = height()
 
-    # Is String#each_char available? (Ruby 1.8.7+)
-    # If not, fall back on #each_byte.
-    m = (text.respond_to? :each_char) ? (:each_char) : (:each_byte)
-
-    text.method(m).call { |char|
-      # each_byte can yield a Fixnum in some Ruby versions.
-      char = char.chr if char.is_a? Fixnum
-
-      if whitespace[char]
-        cur_x += whitespace[char]
-      elsif @rects[char]
-        @surface.blit(dest, [cur_x, cur_y], @rects[char])
-        cur_x += @rects[char].width
-      elsif char == "\n"
+    text.scan(@tokens) { |token|
+      if whitespace[token]
+        cur_x += whitespace[token]
+      elsif @rects[token]
+        @surface.blit(dest, [cur_x, cur_y], @rects[token])
+        cur_x += @rects[token].width
+      elsif token == "\n"
         cur_x = start_x
         cur_y += font_height
       end
     }
 
     nil
+  end
+
+
+  private
+
+
+  # Builds a Regexp that matches any of the @glyphs or @whitespace, or
+  # "\n" (but nothing else). This regexp is used in #render_to to scan
+  # the text and break it up into an array of individual tokens.
+  # 
+  def _build_token_regexp
+    tokens = (@glyphs + @whitespace.keys + ["\n"]).uniq
+
+    # Sort by string length (descending), so that the Regexp gets the
+    # largest possible match.
+    tokens.sort!{|a,b| b.length <=> a.length }
+
+    # For each token, escape any chars that have special Regexp
+    # meaning, so they don't mess up the final Regexp.
+    escape_chars = %W( \\. \\? \\*  \\+ \\^ \\$ \\|
+                       \\( \\) \\\\ \\{ \\} \\[ \\] )
+    escape_regexp = Regexp.new( escape_chars.join("|") )
+    tokens.collect!{ |t| t.gsub(escape_regexp, "\\\\\\0") }
+
+    # Return the final Regexp.
+    /#{tokens.join("|")}/u
   end
 
 
@@ -403,8 +437,6 @@ class ImageFont
 
     whitespace
   end
-  private :_parse_whitespace
-
 
 end
 
