@@ -22,7 +22,7 @@ module Rubygame
 
 # ImageFont is a class for loading and rendering \SFont-compatible
 # font images. Unlike a TTF font, an ImageFont is loaded from a
-# normal image containing all the glyphs (letters, numbers,
+# normal image, which contains all the glyphs (letters, numbers,
 # punctuation, etc.) in one long row. Because it's an image, you can
 # easily create colorful, fun, or unusual custom fonts that would be
 # impossible with TTF. ImageFont supports both colorkeyed images
@@ -44,9 +44,9 @@ module Rubygame
 # separator color mark a division between glyphs. Everywhere else is
 # interpreted to be part of a glyph.
 #
-# So, the image should look like this, where each <code>"_"</code>
-# is a line of separator pixels at the top of the image, and A, B,
-# C, and D are the glyphs:
+# So, the image should look like this, where the lines represent the
+# separator pixels at the top of the image, and A, B, C, and D
+# represent the glyphs themselves:
 # 
 #   _ _ _ _ _
 #    A B C D 
@@ -95,6 +95,7 @@ class ImageFont
   # surface:: A Surface containing a properly-formatted
   #           SFont-compatible font. See the ImageFont class
   #           description for details about the format.
+  # options:: Options hash (see below).
   #
   # Note: The surface is used directly, not copied. That means if you
   # modify the surface later, the appearance of the ImageFont will be
@@ -226,16 +227,21 @@ class ImageFont
   end
 
 
-  # See ImageFont.new's +surface+ arg.
-  # Note: You should call #scan_glyphs if you modify surface.
+  # See ImageFont.new's +surface+ arg. Note: You should call
+  # #scan_glyphs if you modify or replace the surface.
   # 
   attr_accessor :surface
 
 
   # Array of glyphs in the font. See ImageFont.new's +:glyphs+ option.
+  # Use #glyphs= to modify glyphs.
+  # 
   attr_reader :glyphs
 
+  # Replace the glyphs Array.
+  # Equivalent to ImageFont.new's +:glyphs+ option.
   # Note: You should call #scan_glyphs after setting glyphs.
+  # 
   def glyphs=( new_glyphs )
     @glyphs = new_glyphs.dup.freeze
     @tokens = _build_token_regexp
@@ -244,9 +250,13 @@ class ImageFont
   
   # Hash describing the widths of certain whitespace characters.
   # See ImageFont.new's +:whitespace+ option.
+  # Use #whitespace= to modify whitespace.
   #
   attr_reader :whitespace
 
+  # Replace the whitespace Hash.
+  # Equivalent to ImageFont.new's +:whitespace+ option.
+  # 
   def whitespace=( new_whitespace )
     @whitespace = new_whitespace.dup.freeze
     @tokens = _build_token_regexp
@@ -255,8 +265,8 @@ class ImageFont
   
 
   # Scans the surface to determine the position and size of each
-  # individual glyph. You should call this if you change #surface or
-  # #glyphs, to make sure the ImageFont stays in sync with the surface.
+  # individual glyph. You should call this if you modify or replace
+  # #surface or #glyphs, to make sure the ImageFont stays in sync.
   #
   # May raise ImageFont::ScanError if there is a problem scanning the
   # surface.
@@ -318,6 +328,9 @@ class ImageFont
   end
 
 
+  # call-seq:
+  #   render_size( text )  ->  [w,h]
+  # 
   # Calculates and returns the Surface size necessary to #render the
   # given text.
   #
