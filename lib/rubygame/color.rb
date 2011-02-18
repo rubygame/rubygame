@@ -80,11 +80,24 @@ module Rubygame
 
     # For use by Rubygame methods only:
 
-    # Convert a color name (string or symbol), Color instance, or Array
-    # to a color array.
+    # Convert a color name (string or symbol), hex color string, Color
+    # instance, or Array to a color array. Color names take precedence
+    # over hex color strings.
     def self.convert_color( color ) # :nodoc:
       color = 
-        if color.kind_of?(Symbol) or color.kind_of?(String)
+        if color.kind_of?(String)
+          begin
+            Rubygame::Color[color].to_sdl_rgba_ary
+          rescue IndexError => e
+            # Match 3, 4, 6, or 8-digit hex color. "#" is required.
+            if /\#([0-9a-f]{3}|[0-9a-f]{4}|
+                   [0-9a-f]{6}|[0-9a-f]{8})/ix =~ color
+              Rubygame::Color::ColorRGB255.hex(color).to_sdl_rgba_ary
+            else
+              raise e
+            end
+          end
+        elsif color.kind_of?(Symbol)
           Rubygame::Color[color].to_sdl_rgba_ary
         elsif color.respond_to? :to_sdl_rgba_ary
           color.to_sdl_rgba_ary

@@ -172,6 +172,11 @@ describe Surface, "(creation)" do
       surface.colorkey.should == [135, 206, 235]
     end
 
+    it "should accept a hex color string" do
+      surface = Surface.new([10,10], :colorkey => "#87ceeb")
+      surface.colorkey.should == [135, 206, 235]
+    end
+
     it "should accept a Color" do
       surface = Surface.new([10,10], :colorkey => Rubygame::Color[:sky_blue])
       surface.colorkey.should == [135, 206, 235]
@@ -610,6 +615,11 @@ describe Surface, "(set_palette)" do
 
       it "should work with a color name string" do
         @surf.set_palette(["red"])
+        @surf.palette[0..2].should == [[255,0,0], [0,0,0], [0,0,0]]
+      end
+
+      it "should work with a hex color string" do
+        @surf.set_palette(["#f00"])
         @surf.palette[0..2].should == [[255,0,0], [0,0,0], [0,0,0]]
       end
 
@@ -1234,6 +1244,7 @@ describe Surface, "#flatten" do
     color_scenarios = {
       "given a color name symbol" => [:sky_blue],
       "given a color name string" => ["sky_blue"],
+      "given a hex color string"  => ["#87ceeb"],
       "given a Color"             => [Rubygame::Color[:sky_blue]],
       "given a [R,G,B] array"     => [[135, 206, 235]],
       "given a [R,G,B,A] array"   => [[135, 206, 235, 128]],
@@ -1278,6 +1289,7 @@ describe Surface, "#flatten" do
       "given false"               => [false],
       "given a color name symbol" => [:sky_blue],
       "given a color name string" => ["sky_blue"],
+      "given a hex color string"  => ["#87ceeb"],
       "given a Color"             => [Rubygame::Color[:sky_blue]],
       "given a [R,G,B] array"     => [[135, 206, 235]],
       "given a [R,G,B,A] array"   => [[135, 206, 235, 128]],
@@ -1454,6 +1466,11 @@ describe Surface, "colorkey" do
       @surface.colorkey.should == [135, 206, 235]
     end
 
+    it "should accept a hex color string" do
+      @surface.colorkey( "#87ceeb" )
+      @surface.colorkey.should == [135, 206, 235]
+    end
+
     it "should accept a Color" do
       @surface.colorkey( Rubygame::Color[:sky_blue] )
       @surface.colorkey.should == [135, 206, 235]
@@ -1502,6 +1519,11 @@ describe Surface, "colorkey" do
 
     it "should accept a color name string" do
       @surface.colorkey = "sky_blue"
+      @surface.colorkey.should == [135, 206, 235]
+    end
+
+    it "should accept a hex color string" do
+      @surface.colorkey = "#87ceeb"
       @surface.colorkey.should == [135, 206, 235]
     end
 
@@ -1560,6 +1582,11 @@ describe Surface, "set_colorkey" do
 
   it "should accept a color name string" do
     @surface.set_colorkey( "sky_blue" )
+    @surface.colorkey.should == [135, 206, 235]
+  end
+
+  it "should accept a hex color string" do
+    @surface.set_colorkey( "#87ceeb" )
     @surface.colorkey.should == [135, 206, 235]
   end
 
