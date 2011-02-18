@@ -19,6 +19,9 @@
 
 module Rubygame
 
+  # *NOTE*: SFont is DEPRECATED and will be removed in Rubygame 3.0!
+  # Use ImageFont instead.
+  # 
   # *NOTE*: you must require 'rubygame/sfont' manually to gain access to
   # Rubygame::SFont. It is not imported with Rubygame by default!
   # 
@@ -85,6 +88,9 @@ module Rubygame
     #            in the list of glyphs, it will have the same width as
     #            the double-quote character (").
     def initialize(filename,glyphs=nil,spacew=nil)
+      Rubygame.deprecated("Rubygame::SFont", "3.0",
+                          "Use Rubygame::ImageFont instead.")
+
       # load the surface containing all the glyphs
       surface = nil
       if filename.is_a? String
