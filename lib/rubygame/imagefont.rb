@@ -421,10 +421,8 @@ class ImageFont
 
     # For each token, escape any chars that have special Regexp
     # meaning, so they don't mess up the final Regexp.
-    escape_chars = %W( \\. \\? \\*  \\+ \\^ \\$ \\|
-                       \\( \\) \\\\ \\{ \\} \\[ \\] )
-    escape_regexp = Regexp.new( escape_chars.join("|") )
-    tokens.collect!{ |t| t.gsub(escape_regexp, "\\\\\\0") }
+    escape = /\.|\?|\*|\+|\^|\$|\||\(|\)|\\|\{|\}|\[|\]/
+    tokens.collect!{ |t| t.gsub(escape, "\\\\\\0") }
 
     # Return the final Regexp.
     /#{tokens.join("|")}/u
