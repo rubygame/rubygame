@@ -79,7 +79,7 @@ class App
 
   def redraw
     @screen.fill(@background)
-    @font.render_to(@message, @screen, [@padding, @padding])
+    @font.render_to(@message, @screen, :offset => [@padding, @padding])
     @screen.update
   end
 

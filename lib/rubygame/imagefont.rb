@@ -377,15 +377,23 @@ class ImageFont
 
   # Renders the given text onto the destination Surface.
   #
-  # text:: The text to render.
-  # dest:: The destination Surface that the text will be rendered to.
-  # pos::  The starting [x,y] position (top-left corner) for rendering
-  #        the text. Default: [0,0].
+  # text::    The text to render.
+  # dest::    The destination Surface to render the text on.
+  # options:: Options hash (see below).
+  # 
+  # Recognized keys for the options hash are:
+  # 
+  # :offset:: Shift the position of all text by [x,y] pixels.
+  #           Default: [0,0].
   #
-  def render_to( text, dest, pos=[0,0] )
+  def render_to( text, dest, options={} )
+    options = {
+      :offset => [0,0]
+    }.merge(options)
+
     whitespace = _parse_whitespace
 
-    start_x, start_y = pos[0,2]
+    start_x, start_y = options[:offset][0,2]
     cur_x, cur_y = start_x, start_y
     font_height = height()
 
