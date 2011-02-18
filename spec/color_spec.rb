@@ -1156,6 +1156,66 @@ describe "ColorRGB255" do
 
   end
 
+  describe "#hex" do
+    it 'should create a ColorRGB255 instance' do
+      ColorRGB255.hex("#248").should be_instance_of(ColorRGB255)
+    end
+
+    it 'should understand "#rgb" strings' do
+      ColorRGB255.hex("#248").should == [34, 68, 136, 255]
+    end
+
+    it 'should understand "rgb" strings' do
+      ColorRGB255.hex("248").should == [34, 68, 136, 255]
+    end
+
+    it 'should understand "#rgba" strings' do
+      ColorRGB255.hex("#248f").should == [34, 68, 136, 255]
+    end
+
+    it 'should understand "rgba" strings' do
+      ColorRGB255.hex("248f").should == [34, 68, 136, 255]
+    end
+
+    it 'should understand "#rrggbb" strings' do
+      ColorRGB255.hex("#214387").should == [33, 67, 135, 255]
+    end
+
+    it 'should understand "rrggbb" strings' do
+      ColorRGB255.hex("214387").should == [33, 67, 135, 255]
+    end
+
+    it 'should understand "#rrggbbaa" strings' do
+      ColorRGB255.hex("#214387fe").should == [33, 67, 135, 254]
+    end
+
+    it 'should understand "rrggbbaa" strings' do
+      ColorRGB255.hex("214387fe").should == [33, 67, 135, 254]
+    end
+
+    it 'should ignore case' do
+      ColorRGB255.hex("ABCDEF").should == ColorRGB255.hex("abcdef")
+    end
+    
+    invalid = {
+      "nil"         => nil,
+      "true"        => true,
+      "false"       => false,
+      "an integer"  => 1234,
+      "a float"     => 12.34,
+      "an array"    => [1,2,3,4],
+      "a hash"      => {1=>2, 3=>4},
+      "some object" => Object.new,
+      "a Color"     => ColorRGB.new([1,1,1,1])
+    }
+
+    invalid.each do |thing, value|
+      it 'should fail when given #{thing}' do
+        expect{ColorRGB255.hex(value)}.to raise_error
+      end
+    end
+  end
+
 
   ##############################
   #        RGB255 EQL?         #

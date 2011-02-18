@@ -68,6 +68,67 @@ module Rubygame
         new( rgba )
       end
 
+      # Creates a new instance from a string containing an HTML/CSS
+      # color string, i.e. "#RGB", "#RGBA", "#RRGGBB", or "#RRGGBBAA".
+      # The leading "#" is optional.
+      # 
+      # Example:
+      # 
+      #   include Rubygame::Color
+      # 
+      #   # 4 ways of specifying the same color:
+      #   
+      #   # "#RGB"
+      #   ColorRGB255.hex("#248")
+      #   # => #<ColorRGB255 [34, 68, 136, 255]>
+      #   
+      #   # "#RGBA"
+      #   ColorRGB255.hex("#248f")
+      #   # => #<ColorRGB255 [34, 68, 136, 255]>
+      #   
+      #   # "#RRGGBB"
+      #   ColorRGB255.hex("#224488")
+      #   # => #<ColorRGB255 [34, 68, 136, 255]>
+      #   
+      #   # "#RRGGBBAA"
+      #   ColorRGB255.hex("#224488ff")
+      #   # => #<ColorRGB255 [34, 68, 136, 255]>
+      #   
+      def self.hex( color_str )
+        case color_str
+        when /^#?([0-9a-f]{8}$)/i
+          r = $1[0,2].hex
+          g = $1[2,2].hex
+          b = $1[4,2].hex
+          a = $1[6,2].hex
+          new( [r, g, b, a] )
+        when /^#?([0-9a-f]{6}$)/i
+          r = $1[0,2].hex
+          g = $1[2,2].hex
+          b = $1[4,2].hex
+          a = 255
+          new( [r, g, b, a] )
+        when /^#?([0-9a-f]{4})$/i
+          # As with HTML/CSS, each hexdigit is repeated.
+          # So, "#1234" means "#11223344" (i.e. [17, 34, 51, 68]).
+          r = ($1[0,1]*2).hex
+          g = ($1[1,1]*2).hex
+          b = ($1[2,1]*2).hex
+          a = ($1[3,1]*2).hex
+          new( [r, g, b, a] )
+        when /^#?([0-9a-f]{3})$/i
+          # As with HTML/CSS, each hexdigit is repeated.
+          # So, "#123" means "#112233" (i.e. [17, 34, 51]).
+          r = ($1[0,1]*2).hex
+          g = ($1[1,1]*2).hex
+          b = ($1[2,1]*2).hex
+          a = 255
+          new( [r, g, b, a] )
+        else
+          raise "Invalid hex color string #{color_str.inspect}."
+        end
+      end
+
       # Returns the color as an RGBA array of integers ranging from 0
       # to 255, as SDL wants.
       def to_sdl_rgba_ary
