@@ -65,3 +65,8 @@
   Email::         elcugo at gmail.com
   Contribution::  Patch to fix color conversion segfault on x86_64.
   Date::          2008-07-31
+
+- <b>Tyler Church</b>
+  Email::         tylertrain at yahoo.com
+  Contribution::  Added a get_key_state method
+  Date::          2010-09-06
