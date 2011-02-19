@@ -1195,10 +1195,10 @@ describe Surface, "#flatten" do
        ["given some object",        [Object.new], TypeError],
       ]
 
-    invalid_scenarios.each do |scenario, args, error|
+    invalid_scenarios.each do |scenario, invargs, error|
       context scenario do
         it "should raise #{error}" do
-          expect{ @surface.flatten(*args) }.to raise_error(error)
+          expect{ @surface.flatten(*invargs) }.to raise_error(error)
         end
       end
     end
