@@ -21,6 +21,7 @@
 # 
 #  Changes:
 #  * Tyler Church, 2010-09-06: Added Rubygame.get_key_state
+#                              (now Rubygame.pressed_keys)
 # 
 #++
 
@@ -88,21 +89,34 @@ module Rubygame
   end
 
 
-  # Returns a hash of all the keys, if a key's value in the hash
-  # is true, the key is currently pressed down, otherwise it's
-  # value is false.
-  #
-  # Usage: Rubygame.get_key_state[:a]
-  #
-  def self.get_key_state
-    hash = {}
-    key_state = SDL.GetKeyState
-    key_state.length.times do |i|
-      state = (key_state[i] != 0)
-      hash[Rubygame::Events._convert_key_symbol(i)] = state
+  # Returns a Hash of the keys that are currently being pressed on the
+  # keyboard. Keys that are being pressed with have a value of true.
+  # Keys that are not being pressed will not be in the Hash.
+  # 
+  # Example:
+  # 
+  #   # Assuming that the "A" and left "Ctrl" keys are being pressed.
+  #   
+  #   Rubygame.pressed_keys
+  #   # => {:a => true, :left_ctrl => true}
+  #   
+  #   Rubygame.pressed_keys.keys
+  #   # => [:a, :left_ctrl]
+  #   
+  #   Rubygame.pressed_keys[:a]
+  #   # => true
+  #   
+  #   # Not being pressed
+  #   Rubygame.pressed_keys[:b]
+  #   # => nil
+  # 
+  def self.pressed_keys
+    SDL.PumpEvents()
+    keys = {}
+    SDL.GetKeyState().each_with_index do |state, key|
+      keys[Events._convert_key_symbol(key)] = true if state != 0
     end
-    hash.delete :unknown_key
-    return hash
+    keys
   end
 
 

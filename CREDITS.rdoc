@@ -69,4 +69,5 @@
 - <b>Tyler Church</b>
   Email::         tylertrain at yahoo.com
   Contribution::  Patch to add Rubygame.get_key_state
+                  (now Rubygame.pressed_keys)
   Date::          2010-09-06
