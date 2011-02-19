@@ -68,5 +68,5 @@
 
 - <b>Tyler Church</b>
   Email::         tylertrain at yahoo.com
-  Contribution::  Added a get_key_state method
+  Contribution::  Patch to add Rubygame.get_key_state
   Date::          2010-09-06

@@ -17,6 +17,11 @@
 #  You should have received a copy of the GNU Lesser General Public
 #  License along with this library; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# 
+# 
+#  Changes:
+#  * Tyler Church, 2010-09-06: Added Rubygame.get_key_state
+# 
 #++
 
 
@@ -82,6 +87,23 @@ module Rubygame
     return nil
   end
 
+
+  # Returns a hash of all the keys, if a key's value in the hash
+  # is true, the key is currently pressed down, otherwise it's
+  # value is false.
+  #
+  # Usage: Rubygame.get_key_state[:a]
+  #
+  def self.get_key_state
+    hash = {}
+    key_state = SDL.GetKeyState
+    key_state.length.times do |i|
+      state = (key_state[i] != 0)
+      hash[Rubygame::Events._convert_key_symbol(i)] = state
+    end
+    hash.delete :unknown_key
+    return hash
+  end
 
 
   # The Events module contains classes representing various

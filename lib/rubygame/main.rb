@@ -1,6 +1,6 @@
 #--
 #	Rubygame -- Ruby code and bindings to SDL to facilitate game creation
-#	Copyright (C) 2004-2010  John Croisant, Tyler Church
+#	Copyright (C) 2004-2010  John Croisant
 #
 #	This library is free software; you can redistribute it and/or
 #	modify it under the terms of the GNU Lesser General Public
@@ -50,23 +50,8 @@ module Rubygame
   def self.quit
     SDL.Quit
   end
-  
-  # Returns a hash of all the keys, if a key's value in the hash
-  # is true, the key is currently pressed down, otherwise it's
-  # value is false.
-  #
-  # Usage: Rubygame.get_key_state[:a]
-  #
-  def self.get_key_state
-    hash = {}
-    key_state = SDL.GetKeyState
-    key_state.length.times do |i|
-      state = (key_state[i] != 0)
-      hash[Rubygame::Events._convert_key_symbol(i)] = state
-    end
-    hash.delete :unknown_key
-    return hash
-  end
+
+
 
   # Indicates that an SDL function failed.
   class SDLError < RuntimeError
